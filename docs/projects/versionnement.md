@@ -11,6 +11,7 @@ files:
   - .drwil/installed-files.json
   - .github/workflows/ia-first.yml
   - .github/pull_request_template.md
+  - docs/architecture.md
 -->
 
 ## 1. Besoin
@@ -29,7 +30,7 @@ Un projet gouverné a un dépôt Git, une forge (GitHub ou GitLab), une CI qui r
 
 - Garantie obligatoire, sans dérogation : un contrôle non exécuté n'est jamais passé (`QUA-013`), aucun contrôle n'est contourné (`QUA-019`).
 - 2026-10-30, décision humaine du demandeur : accord pour poser la protection de la branche principale `master` avec `npx drwil guarantees --protect` (fusion par PR, contrôles requis, sans contournement administrateur).
-- CI GitHub écrite par `npx drwil init --ci github` (`.github/workflows/ia-first.yml`, job `checks` qui rejoue `node .githooks/run-checks.mjs`, et le rejeu par les hooks de la branche principale sur une PR) ; le modèle de PR `.github/pull_request_template.md` et l'empreinte des fichiers installés (`.drwil/installed-files.json`) viennent avec et entrent au cadrage.
+- CI GitHub écrite par `npx drwil init --ci github` (`.github/workflows/ia-first.yml`, job `checks` qui rejoue `node .githooks/run-checks.mjs`, et le rejeu par les hooks de la branche principale sur une PR) ; le modèle de PR `.github/pull_request_template.md` et l'empreinte des fichiers installés (`.drwil/installed-files.json`) viennent avec et entrent au cadrage, ainsi que la carte `docs/architecture.md`, qui doit citer `.github/workflows/` (QUA-040).
 
 ## Points à trancher
 
