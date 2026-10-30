@@ -7,8 +7,9 @@ do not copy it here.
 ## Context
 
 Couche unique : l'application WebXR entière (TypeScript strict, Vite, three.js), cadrée le 2026-10-30.
-Socle posé le 2026-10-30 (fiche `docs/projects/couverture-app.md`) : configuration, point d'entrée `src/main.ts` et
-module `src/route/speed.ts` ; les autres modules ci-dessous restent à écrire.
+Socle posé le 2026-10-30 (configuration, point d'entrée, vitesse), puis une première tranche verticale : accueil,
+session `immersive-ar`, rue simple, marche en ligne droite, joystick, fondu tête baissée (carte :
+`docs/architecture.md`). Restent à écrire : la vraie ville (city/), les itinéraires GPS, la zone tapis et la vignette.
 
 - Code dans src/, un dossier par module : xr/ (session `immersive-ar`, manettes), city/ (3d-tiles-renderer,
   repli OSM), route/ (itinéraires, déplacement à vitesse réglée), safety/ (fondu tête baissée, zone tapis,
@@ -22,6 +23,9 @@ module `src/route/speed.ts` ; les autres modules ci-dessous restent à écrire.
   Node lui-même (retrait natif des types), sans transformation par Vite, pour que c8 mesure les vraies lignes. Seule
   la syntaxe effaçable est permise (`erasableSyntaxOnly` : pas d'`enum`, pas de `namespace`).
 - Aucune exclusion de couverture : un fichier de configuration (`vite.config.ts`, `eslint.config.js`) a son test.
+- Le DOM se teste avec happy-dom (`new Window().document`) passé en paramètre, sans environnement global de test.
+- Le rendu three.js est injecté (classe `Renderer` passée à `startExperience`) : les tests passent une doublure,
+  seul `src/main.ts` branche le vrai `WebGLRenderer`.
 - Clé Google lue via `import.meta.env.VITE_GOOGLE_MAPS_API_KEY`, jamais en dur.
 
 ## Test pitfalls
@@ -30,14 +34,16 @@ module `src/route/speed.ts` ; les autres modules ci-dessous restent à écrire.
   écrite) : garder `pool: "threads"` dans `vite.config.ts`.
 - 2026-10-30 : c8 compte des branches sur des commentaires si le code passe par le module runner de Vite (positions
   décalées) : garder `experimental.viteModuleRunner: false`.
-- Le point d'entrée s'exécute à l'import : son test fournit un `document` de substitution (`vi.stubGlobal`) puis
-  l'importe dynamiquement.
+- Le point d'entrée s'exécute à l'import : son test fournit un `document` (happy-dom) et un `navigator` de
+  substitution (`vi.stubGlobal`) puis l'importe dynamiquement.
+- 2026-10-30 : three.js fait tourner sa boucle de page en plus de celle de la session si `setAnimationLoop` est appelé
+  après `xr.setSession` (images sans `XRFrame`) : poser la boucle avant la session, et ignorer une image sans frame.
 
 ## Layer contracts
 
 | ID | Subject | Reference file |
 |---|---|---|
-| APP-001 | Sécurité-visibilité : le réel reste visible (tête baissée, zone tapis) | module `safety/` (à écrire) |
+| APP-001 | Sécurité-visibilité : le réel reste visible (tête baissée, zone tapis) | `src/safety/visibility.ts` |
 
 ## Style guide and recipes
 

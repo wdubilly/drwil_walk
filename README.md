@@ -16,8 +16,9 @@ Le détail de la v0.1 est dans `MISSION.md`.
 
 ## Démarrer
 
-Le socle de l'application est posé (configuration, premier module) ; les fonctionnalités de la v0.1 arrivent chantier
-par chantier. Avec Node.js 24 :
+Une première tranche est codée : accueil, entrée en réalité mixte, marche en ligne droite dans une rue simple à la
+vitesse réglée (joystick droit : ±0,1 km/h), ville qui s'efface tête baissée. La vraie ville, les itinéraires et la
+zone tapis arrivent chantier par chantier. Avec Node.js 24 :
 
 ```bash
 cd app
