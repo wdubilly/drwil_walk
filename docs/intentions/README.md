@@ -20,7 +20,8 @@ removes it when fully covered.
 
 | Brief | In one line |
 |---|---|
-*(empty at install — one line per brief created)*
+| `docs/intentions/test-voisin-module-pur.md` | Outiller `QUA-006` : un module de logique pure a son test à côté |
+| `docs/intentions/test-desactive-cite-fiche.md` | Outiller `QUA-009` : un test désactivé cite la fiche qui le justifie |
 
 A one-line idea, too light for a brief, is noted with one command:
 `node .githooks/note.mjs "<text>"` appends a dated line to

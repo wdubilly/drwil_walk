@@ -24,9 +24,19 @@ Décidée le 2026-10-30 par le demandeur :
 
 ## Couches
 
-- `app/` : l'application entière (code, tests, configuration Vite). Contexte de la couche : `app/AGENTS.md`.
-  Découpage prévu en modules : xr (session et contrôles), city (tuiles 3D et repli OSM), route (itinéraires et
-  déplacement), safety (visibilité du réel), ui (accueil et panneau d'infos).
+- `app/` : l'application entière, paquet npm à part (`app/package.json`). Contexte de la couche : `app/AGENTS.md`.
+  - `app/index.html` : la page servie ; elle charge le point d'entrée `app/src/main.ts`.
+  - `app/src/` : le code, un dossier par module, chaque fichier de logique avec son test `*.test.ts` à côté.
+    Découpage prévu : xr (session et contrôles), city (tuiles 3D et repli OSM), route (itinéraires et déplacement),
+    safety (visibilité du réel), ui (accueil et panneau d'infos).
+  - `app/src/route/` : la vitesse de marche (bornage 1 à 8 km/h, pas de 0,1, conversion en m/s), seul module écrit
+    au 2026-10-30.
+  - Configuration, chacune testée comme le code : `app/vite.config.ts` (Vite en HTTPS sur le réseau local, build
+    dans le dossier dist/app de la racine, hors de la mesure de couverture, et
+    Vitest), `app/eslint.config.js` (règles des contrats de qualité), `app/tsconfig.json` (TypeScript strict).
+  - Couverture : c8 autour de `npm test` (Vitest), 100 % sans exclusion. Les tests tournent en threads et le code
+    est importé par Node avec retrait natif des types, pour que c8 mesure les vraies lignes des fichiers .ts :
+    d'où l'extension .ts dans les imports relatifs.
 
 ## Gouvernance IA-first
 
@@ -40,3 +50,5 @@ Décidée le 2026-10-30 par le demandeur :
 - `.github/workflows/` — CI GitHub (`.github/workflows/ia-first.yml`, écrit par `npx drwil init --ci github`) : le job `checks` rejoue
   `node .githooks/run-checks.mjs` à chaque push et PR, et sur une PR les rejoue avec les hooks de la branche principale ;
   c'est le contrôle requis par la protection de `master`. Modèle de PR : `.github/pull_request_template.md`.
+  Avant les contrôles, le job installe les dépendances de `app/` (`npm ci`) : les contrôles de la couche tournent
+  depuis ce dossier.

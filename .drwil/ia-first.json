@@ -26,6 +26,47 @@
       "id": "file-size",
       "name": "taille des fichiers de code (QUA-001)",
       "run": "node .githooks/check-file-size.mjs app 200 ts,tsx,js,jsx,mjs,cjs"
+    },
+    {
+      "id": "coverage-app",
+      "name": "coverage of app (c8)",
+      "run": "npx c8 --check-coverage --lines 100 --branches 100 --functions 100 --statements 100 --all npm test",
+      "cwd": "app",
+      "paths": [
+        "app/**"
+      ],
+      "degradable": false
+    },
+    {
+      "id": "typecheck-app",
+      "name": "typage strict de app (tsc --noEmit, QUA-005)",
+      "run": "npm run typecheck",
+      "cwd": "app",
+      "paths": [
+        "app/**"
+      ],
+      "degradable": false
+    },
+    {
+      "id": "lint-app",
+      "name": "lint de app sans avertissement (ESLint, QUA-002, QUA-005, QUA-007, QUA-008)",
+      "run": "npm run lint",
+      "cwd": "app",
+      "paths": [
+        "app/**"
+      ],
+      "degradable": false
+    },
+    {
+      "id": "licenses-app",
+      "name": "licences des dépendances de app (SEC-012)",
+      "run": "npm run licenses",
+      "cwd": "app",
+      "paths": [
+        "app/package.json",
+        "app/package-lock.json"
+      ],
+      "degradable": false
     }
   ],
   "scopeReminder": "blocking",
@@ -62,7 +103,9 @@
   },
   "guarantees": {
     "enforced": true,
-    "layers": {},
+    "layers": {
+      "app": "existing"
+    },
     "protection": {
       "forge": "github",
       "branch": "master",

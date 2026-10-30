@@ -16,8 +16,17 @@ Le détail de la v0.1 est dans `MISSION.md`.
 
 ## Démarrer
 
-L'application n'est pas encore écrite : le projet est cadré, le développement commence avec le premier chantier. Les
-commandes d'installation, de lancement et de test seront décrites ici, puis dans `INSTALL.md`, au fil des chantiers.
+Le socle de l'application est posé (configuration, premier module) ; les fonctionnalités de la v0.1 arrivent chantier
+par chantier. Avec Node.js 24 :
+
+```bash
+cd app
+npm ci
+npm run dev    # serveur HTTPS sur le réseau local, à ouvrir depuis le navigateur du Quest 3
+npm test       # tests unitaires
+```
+
+Installation complète et contrôles : `INSTALL.md`.
 
 ## Documentation
 
