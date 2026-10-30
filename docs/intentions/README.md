@@ -22,6 +22,12 @@ removes it when fully covered.
 |---|---|
 | `docs/intentions/test-voisin-module-pur.md` | Outiller `QUA-006` : un module de logique pure a son test à côté |
 | `docs/intentions/test-desactive-cite-fiche.md` | Outiller `QUA-009` : un test désactivé cite la fiche qui le justifie |
+| `docs/intentions/interface-accueil.md` | Un accueil lisible dans le casque, avec le choix d'itinéraire |
+| `docs/intentions/zone-tapis-vignette.md` | Zone tapis toujours transparente et vignette réelle |
+| `docs/intentions/commandes-panneau.md` | Pause, recalibrage et panneau d'infos dans le casque |
+| `docs/intentions/autres-itineraires.md` | Pune Vieille ville, Pune FC Road et Doha Corniche |
+| `docs/intentions/google-3d-tiles.md` | Google Photorealistic 3D Tiles, reportées après la v0.1 |
+| `docs/intentions/mise-a-jour-drwil.md` | Mettre drwil à jour pour clore les trois chantiers de garantie |
 
 A one-line idea, too light for a brief, is noted with one command:
 `node .githooks/note.mjs "<text>"` appends a dated line to
