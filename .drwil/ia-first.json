@@ -1,0 +1,65 @@
+{
+  "projectName": "drwil_walk",
+  "projectShort": "drwil_walk",
+  "lang": "fr",
+  "layers": [
+    "app"
+  ],
+  "contractPrefixes": [
+    "SEC",
+    "QUA"
+  ],
+  "tools": [
+    "claude"
+  ],
+  "ci": "none",
+  "dirs": {
+    "projects": "docs/projects",
+    "intentions": "docs/intentions",
+    "recipes": "docs/recipes",
+    "contracts": "docs/contracts.md",
+    "index": "docs/projects/pending.md"
+  },
+  "stack": [],
+  "checks": [
+    {
+      "id": "file-size",
+      "name": "taille des fichiers de code (QUA-001)",
+      "run": "node .githooks/check-file-size.mjs app 200 ts,tsx,js,jsx,mjs,cjs"
+    }
+  ],
+  "scopeReminder": "blocking",
+  "transitions": "human",
+  "scopeGate": "warning",
+  "newRequirements": "blocking",
+  "layerPrefixes": [
+    "app",
+    "tests",
+    "src",
+    "scripts"
+  ],
+  "codePrefixes": [
+    "scripts",
+    ".githooks",
+    "e2e"
+  ],
+  "extraCodeFiles": [],
+  "extraCodeGlobs": [
+    "docker-compose*.yml"
+  ],
+  "ciFiles": [],
+  "mode": "full",
+  "risk": {
+    "sensitivePaths": [
+      ".githooks/*",
+      ".github/workflows/*",
+      ".gitlab-ci.yml",
+      ".drwil/*",
+      "app/*"
+    ]
+  },
+  "guarantees": {
+    "enforced": true,
+    "layers": {}
+  }
+}
