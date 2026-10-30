@@ -24,9 +24,11 @@ drwil garantit une couverture de test à 100 % (lignes, branches, fonctions, ins
 
 - Garantie obligatoire, sans dérogation : un contrôle non exécuté n'est jamais passé (`QUA-013`), aucun contrôle n'est contourné (`QUA-019`).
 
+- 2026-10-30, décision humaine du demandeur : couverture mesurée par c8 autour de Vitest (`npm test`), à 100 % sur lignes, branches, fonctions et instructions, **sans aucune exclusion** (y compris le code d'amorçage three.js/WebXR, testé avec des doublures).
+
 ## Points à trancher
 
-- [décision] Quel outil de couverture pour cette pile, et quelles exclusions déclarer (avec leur raison) ?
+*(aucun : décisions prises le 2026-10-30)*
 
 ## 5. Lots
 
