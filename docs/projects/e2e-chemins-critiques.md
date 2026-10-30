@@ -24,9 +24,11 @@ drwil exige un test de bout en bout (e2e) des chemins critiques, rejoué par un 
 
 - Garantie obligatoire, sans dérogation : un contrôle non exécuté n'est jamais passé (`QUA-013`), aucun contrôle n'est contourné (`QUA-019`).
 
+- 2026-10-30, décision humaine du demandeur : e2e avec Playwright et un Quest 3 émulé (IWER), 3 chemins critiques : (1) accueil → entrée en réalité mixte, session `immersive-ar` ; (2) marche : la position avance à la vitesse réglée, le joystick change la vitesse de ±0,1 km/h ; (3) sécurité APP-001 : tête baissée au-delà de 25°, la ville devient transparente.
+
 ## Points à trancher
 
-- [décision] Quels sont les chemins critiques, et avec quel outil e2e de la pile les tester ?
+*(aucun : décisions prises le 2026-10-30)*
 
 ## 5. Lots
 
