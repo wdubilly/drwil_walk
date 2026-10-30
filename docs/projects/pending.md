@@ -33,6 +33,5 @@ otherwise.
 - [x] topic delivered (YYYY-MM-DD).
 -->
 
-- [ ] [humain] [P0] Garantie : test de bout en bout des chemins critiques (travail fusionné, clôture en attente de la mise à jour de drwil : `docs/intentions/mise-a-jour-drwil.md`) — `docs/projects/e2e-chemins-critiques.md`
 - [ ] [humain] [P0] Garantie : dépôt, forge, CI et protection de la branche principale (travail fusionné, clôture en attente de la mise à jour de drwil : `docs/intentions/mise-a-jour-drwil.md`) — `docs/projects/versionnement.md`
 - [ ] [AI] [P1] Marcher dans le souk de Doha (Souq Waqif) en bâtiments OpenStreetMap — `docs/projects/doha-souq-waqif.md`
