@@ -19,8 +19,8 @@ choix de l'itinéraire.
 
 La ville défile le long de l'itinéraire à la vitesse réglée (défaut 4,0 km/h, de 1 à 8 km/h, par pas de 0,1), avec une
 caméra qui suit la rue sans rotation brusque. Manettes : gâchette droite pour pause / reprise, joystick droit pour la
-vitesse, bouton A pour recalibrer, bouton B pour le panneau d'infos (vitesse, distance, temps, lieu). Sans clé Google
-ou sans couverture 3D, la ville passe sur des bâtiments OpenStreetMap.
+vitesse, bouton A pour recalibrer, bouton B pour le panneau d'infos (vitesse, distance, temps, lieu). La ville est faite
+de bâtiments OpenStreetMap extrudés (pas de Google en v0.1), avec la mention « © contributeurs OpenStreetMap ».
 
 Codé : session `immersive-ar` (passthrough), une rue simple (sol et blocs) qui défile en ligne droite à la vitesse
 réglée et reprend à son début après 240 m, joystick droit haut / bas pour +0,1 / −0,1 km/h (un cran par poussée),
