@@ -89,10 +89,10 @@ contracts » section).
 **Rule** : la couverture de test de la couche `app/`, mesurée par c8 autour de `npm test` (Vitest), est de 100 % en lignes, branches, fonctions et instructions, sans aucune exclusion de fichier (configuration et point d'entrée compris).
 **Scope** : tout le code de `app/` (hors `node_modules/` et fichiers de test)
 **Source of truth** : le contrôle `coverage-app` de `.drwil/ia-first.json`, écrit par `npx drwil guarantees`
-**Proof** : c8 `--check-coverage` à 100 % sur les quatre mesures, avec `--all` (un fichier jamais importé par un test compte à 0 %), au commit, en CI et par `drwil verify`
+**Proof** : c8 `--check-coverage` à 100 % sur les quatre mesures, avec `--all` (un fichier jamais importé par un test compte à 0 %), et 100 % des lignes ajoutées ou modifiées par rapport à `origin/master` (diff-cover sur le rapport Cobertura de c8), au commit, en CI et par `drwil verify`
 **Reason** : garantie obligatoire du kit (`catalog:QUA-004`) ; sans casque pour déboguer, chaque ligne doit avoir été exécutée par un test. Limite : 100 % prouve que chaque ligne est exécutée, pas qu'elle est juste.
 **Origin** : couverture-app — « Le contrôle de couverture de la couche `app` est déclaré, cité par le contrat de couverture du projet et vert à 100 % »
-**Check** : `coverage-app`
+**Check** : `coverage-app`, `coverage-diff-app`
 
 ## QUA-005 — Typage strict
 **Rule** : TypeScript en mode `strict`, aucun `any` injustifié.

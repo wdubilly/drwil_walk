@@ -1,6 +1,6 @@
 # Intention : outiller QUA-009, un test désactivé cite la fiche qui le justifie
 
-**Statut** : proposée le 2026-10-30, à la clôture du socle de `app/` (fiche `docs/projects/couverture-app.md`).
+**Statut** : proposée le 2026-10-30, à la clôture du socle de `app/` (journal `docs/projects/journal.md`).
 
 ## Besoin
 
