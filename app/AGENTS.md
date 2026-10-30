@@ -36,6 +36,9 @@ session `immersive-ar`, rue simple, marche en ligne droite, joystick, fondu têt
   décalées) : garder `experimental.viteModuleRunner: false`.
 - Le point d'entrée s'exécute à l'import : son test fournit un `document` (happy-dom) et un `navigator` de
   substitution (`vi.stubGlobal`) puis l'importe dynamiquement.
+- 2026-10-30 : les e2e sont nommés `*.test.ts` dans e2e/ : c8 exclut les fichiers de test par défaut (pas les
+  `*.spec.ts`), et Vitest ne lit que src/ et la racine. IWER n'applique un axe de manette qu'à l'image suivante :
+  laisser passer des images entre deux poussées (`letFramesPass`).
 - 2026-10-30 : three.js fait tourner sa boucle de page en plus de celle de la session si `setAnimationLoop` est appelé
   après `xr.setSession` (images sans `XRFrame`) : poser la boucle avant la session, et ignorer une image sans frame.
 
@@ -62,5 +65,9 @@ Depuis `app/`, après `npm ci` :
 - `npm run build` : typecheck puis build Vite, hors de la couche, dans le dossier dist/app de la racine (ignoré par
   Git) : sous app/, c8 compterait le bundle généré comme du code non couvert.
 
-Depuis la racine, `node .githooks/run-checks.mjs` lance les contrôles déclarés dans `.drwil/ia-first.json`. L'e2e
-(Playwright) arrivera avec la fiche `docs/projects/e2e-chemins-critiques.md`.
+- `npm test -- -t "APP-001"` : les seuls tests du contrat APP-001 (contrôle `app-001`).
+- `npm run e2e` : Playwright (contrôle `e2e`, QUA-020) ; il lance lui-même Vite sur le port 5174 et injecte le Quest 3
+  émulé (IWER) dans la page ; premier lancement : `npx playwright install chromium`. Résultats d'échec dans le
+  dossier dist/e2e-results de la racine, hors de la couche.
+
+Depuis la racine, `node .githooks/run-checks.mjs` lance les contrôles déclarés dans `.drwil/ia-first.json`.

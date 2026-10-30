@@ -42,7 +42,7 @@ drwil exige un test de bout en bout (e2e) des chemins critiques, rejoué par un 
 
 ## Critères d'acceptation
 
-- Les chemins critiques nommés par le demandeur (entrée en réalité mixte, marche à la vitesse réglée, fondu tête baissée) sont couverts par un test e2e rejoué par le contrôle `e2e` — contrat à créer
+- Les chemins critiques nommés par le demandeur (entrée en réalité mixte, marche à la vitesse réglée, fondu tête baissée) sont couverts par un test e2e rejoué par le contrôle `e2e` — `QUA-020`
 - La sécurité-visibilité tête baissée, l'opacité bornée et la session `immersive-ar` sont prouvées par des tests rejoués — `APP-001`
 
 ## Contrats modifiés

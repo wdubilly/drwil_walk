@@ -77,6 +77,16 @@
         "app/**"
       ],
       "degradable": false
+    },
+    {
+      "id": "e2e",
+      "name": "e2e des chemins critiques (Playwright, Quest 3 émulé par IWER, QUA-020)",
+      "run": "npm run e2e",
+      "cwd": "app",
+      "paths": [
+        "app/**"
+      ],
+      "degradable": false
     }
   ],
   "scopeReminder": "blocking",

@@ -183,6 +183,16 @@ contracts » section).
 **Reason** : bypassing a check silently hides a regression, the opposite of QUA-013
 **Manual** : a bypass rarely leaves a machine-checkable trace.
 
+## QUA-020 — Les chemins critiques sont testés de bout en bout
+**Rule** : les trois chemins critiques nommés par le demandeur sont rejoués de bout en bout dans Chromium avec un Meta Quest 3 émulé (IWER) : (1) de l'accueil à l'entrée en réalité mixte, session `immersive-ar` ; (2) la marche avance à la vitesse réglée et le joystick droit change la vitesse de ±0,1 km/h ; (3) tête baissée au-delà de 25°, la ville devient transparente (APP-001).
+**Scope** : l'application de `app/`, servie par Vite, vue comme l'utilisateur la voit (page, boutons, panneau de marche)
+**Source of truth** : `app/e2e/chemins-critiques.test.ts`, configuré par `app/playwright.config.ts`
+**Proof** : Playwright, au commit, en CI (navigateur Chromium installé par le job) et par `drwil verify` ; un chemin qui ne s'exécute pas fait échouer le contrôle, jamais un « passé »
+**Reason** : garantie obligatoire du kit (`catalog:QUA-020`) ; la couverture à 100 % prouve que chaque ligne est exécutée, pas que les modules s'assemblent : l'e2e juge le comportement de bout en bout. Limite : un casque émulé, pas un vrai Quest 3 (rendu, passthrough et manettes réels restent à essayer).
+**Origin** : e2e-chemins-critiques — « Les chemins critiques nommés par le demandeur (entrée en réalité mixte, marche à la vitesse réglée, fondu tête baissée) sont couverts par un test e2e rejoué par le contrôle `e2e` »
+**Check** : `e2e`
+**Tests** : `app/e2e/chemins-critiques.test.ts`
+
 ## QUA-029 — A contract's cited tests exist and carry its ID
 **Rule** : Every file cited by the **Tests** field of a contract exists and contains the contract's ID (cited in the name of the test that protects it). Stack-agnostic: test names are not parsed. Blocking if the project enforces recent requirements (`newRequirements`: `blocking`, default of fresh installs), warning otherwise.
 **Scope** : the **Tests** field of this registry

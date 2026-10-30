@@ -41,7 +41,10 @@ Décidée le 2026-10-30 par le demandeur :
     fond pour le passthrough). Les 3D Tiles et le repli OpenStreetMap la remplaceront.
   - `app/src/ui/` : l'écran d'accueil (`app/src/ui/home.ts` : vitesse, opacité, rappel de sécurité, bouton « Entrer en réalité
     mixte ») et le panneau de marche sur la page (`app/src/ui/panel.ts` : vitesse, distance, temps, opacité de la ville).
-  - Configuration, chacune testée comme le code : `app/vite.config.ts` (Vite en HTTPS sur le réseau local, build
+  - `app/e2e/` : l'e2e des chemins critiques (`app/e2e/chemins-critiques.test.ts`, contrat QUA-020), Playwright sur
+    Chromium avec un Quest 3 émulé par IWER, injecté par le test (jamais livré dans l'application).
+  - Configuration, chacune testée comme le code : `app/playwright.config.ts` (e2e contre Vite sur le port 5174, en
+    HTTPS, résultats hors de la couche), `app/vite.config.ts` (Vite en HTTPS sur le réseau local, build
     dans le dossier dist/app de la racine, hors de la mesure de couverture, et
     Vitest), `app/eslint.config.js` (règles des contrats de qualité), `app/tsconfig.json` (TypeScript strict).
   - Couverture : c8 autour de `npm test` (Vitest), 100 % sans exclusion. Les tests tournent en threads et le code
@@ -61,5 +64,5 @@ Décidée le 2026-10-30 par le demandeur :
 - `.github/workflows/` — CI GitHub (`.github/workflows/ia-first.yml`, écrit par `npx drwil init --ci github`) : le job `checks` rejoue
   `node .githooks/run-checks.mjs` à chaque push et PR, et sur une PR les rejoue avec les hooks de la branche principale ;
   c'est le contrôle requis par la protection de `master`. Modèle de PR : `.github/pull_request_template.md`.
-  Avant les contrôles, le job installe les dépendances de `app/` (`npm ci`) : les contrôles de la couche tournent
-  depuis ce dossier.
+  Avant les contrôles, le job installe les dépendances de `app/` (`npm ci`) et le navigateur Chromium de Playwright
+  (`npx playwright install --with-deps chromium`) : les contrôles de la couche, e2e compris, tournent depuis ce dossier.

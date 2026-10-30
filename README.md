@@ -25,6 +25,7 @@ cd app
 npm ci
 npm run dev    # serveur HTTPS sur le réseau local, à ouvrir depuis le navigateur du Quest 3
 npm test       # tests unitaires
+npm run e2e    # chemins critiques de bout en bout, Quest 3 émulé (après npx playwright install chromium)
 ```
 
 Installation complète et contrôles : `INSTALL.md`.
