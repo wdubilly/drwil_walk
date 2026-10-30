@@ -62,10 +62,10 @@ contracts » section).
 ## SEC-012 — Licences des dépendances compatibles
 **Rule** : la licence de chaque dépendance est compatible avec celle du projet ; aucun copyleft fort introduit sans revue explicite.
 **Scope** : les dépendances de `app/`
-**Source of truth** : —
-**Proof** : `license-checker` avec une liste de licences autorisées, au commit et en CI
+**Source of truth** : `app/package.json` (script `licenses` : liste des licences autorisées)
+**Proof** : license-checker-rseidelsohn avec `--onlyAllow` (licences permissives et MPL-2.0, copyleft faible ; aucun copyleft fort), paquet privé de l'application exclu, au commit, en CI et par `drwil verify`
 **Reason** : une dépendance mal licenciée peut interdire de distribuer l'application
-**Manual** : contrôle à câbler au premier chantier, quand la stack de `app/` existe (fiche `docs/projects/couverture-app.md`) : le déclarer dans `.drwil/ia-first.json` → `checks` avec un `id`, le citer ici en **Check**, puis retirer ce champ.
+**Check** : `licenses-app`
 
 ## Quality (QUA)
 
@@ -80,10 +80,10 @@ contracts » section).
 ## QUA-002 — Aucune erreur avalée en silence
 **Rule** : aucun bloc `catch` vide ni promesse rejetée non traitée : l'erreur est au minimum journalisée, propagée quand c'est pertinent.
 **Scope** : le code de `app/`
-**Source of truth** : —
-**Proof** : ESLint (`no-empty`, `@typescript-eslint/no-floating-promises`)
+**Source of truth** : `app/eslint.config.js`
+**Proof** : ESLint (`no-empty`, `@typescript-eslint/no-floating-promises`), au commit, en CI et par `drwil verify` ; le test `app/eslint.config.test.ts` garde ces règles actives
 **Reason** : une erreur avalée dans la boucle XR masque une panne au moment où l'utilisateur marche
-**Manual** : contrôle à câbler au premier chantier, quand la stack de `app/` existe (fiche `docs/projects/couverture-app.md`) : le déclarer dans `.drwil/ia-first.json` → `checks` avec un `id`, le citer ici en **Check**, puis retirer ce champ.
+**Check** : `lint-app`
 
 ## QUA-004 — Couverture de test à 100 % de la couche app
 **Rule** : la couverture de test de la couche `app/`, mesurée par c8 autour de `npm test` (Vitest), est de 100 % en lignes, branches, fonctions et instructions, sans aucune exclusion de fichier (configuration et point d'entrée compris).
@@ -97,10 +97,10 @@ contracts » section).
 ## QUA-005 — Typage strict
 **Rule** : TypeScript en mode `strict`, aucun `any` injustifié.
 **Scope** : le code de `app/`
-**Source of truth** : —
-**Proof** : `tsc --noEmit` en mode strict
+**Source of truth** : `app/tsconfig.json` (mode `strict`), `app/eslint.config.js` (`no-explicit-any`)
+**Proof** : `tsc --noEmit` en mode strict (contrôle `typecheck-app`) et ESLint `@typescript-eslint/no-explicit-any` (contrôle `lint-app`) : un `any` n'existe que derrière une désactivation justifiée (QUA-008)
 **Reason** : le typage attrape les erreurs avant le casque, où déboguer est difficile
-**Manual** : contrôle à câbler au premier chantier, quand la stack de `app/` existe (fiche `docs/projects/couverture-app.md`) : le déclarer dans `.drwil/ia-first.json` → `checks` avec un `id`, le citer ici en **Check**, puis retirer ce champ.
+**Check** : `typecheck-app`, `lint-app`
 
 ## QUA-006 — Un module de logique pure a son test à côté
 **Rule** : chaque module de logique pure (sans effet de bord) a son fichier `*.test.ts` juste à côté.
@@ -113,18 +113,18 @@ contracts » section).
 ## QUA-007 — Lint sans avertissement
 **Rule** : le lint ne tolère aucun avertissement.
 **Scope** : le code de `app/`
-**Source of truth** : —
-**Proof** : ESLint avec `--max-warnings 0`
+**Source of truth** : `app/eslint.config.js`, script `lint` de `app/package.json`
+**Proof** : ESLint avec `--max-warnings 0` et `reportUnusedDisableDirectives: "error"`, au commit, en CI et par `drwil verify`
 **Reason** : un avertissement toléré finit en dette invisible
-**Manual** : contrôle à câbler au premier chantier, quand la stack de `app/` existe (fiche `docs/projects/couverture-app.md`) : le déclarer dans `.drwil/ia-first.json` → `checks` avec un `id`, le citer ici en **Check**, puis retirer ce champ.
+**Check** : `lint-app`
 
 ## QUA-008 — Toute suppression de type est justifiée
 **Rule** : chaque `@ts-ignore`, `@ts-expect-error` ou `as any` est accompagné d'un commentaire qui en donne la raison.
 **Scope** : le code de `app/`
-**Source of truth** : —
-**Proof** : ESLint (`@typescript-eslint/ban-ts-comment` avec description obligatoire) ou script dédié
+**Source of truth** : `app/eslint.config.js`
+**Proof** : ESLint : `@typescript-eslint/ban-ts-comment` (description obligatoire, 10 caractères au moins), `@typescript-eslint/no-explicit-any` (un `as any` exige une désactivation) et `@eslint-community/eslint-comments/require-description` (toute désactivation porte sa raison) ; le test `app/eslint.config.test.ts` garde ces règles actives
 **Reason** : une suppression sans raison cache un vrai défaut de type
-**Manual** : contrôle à câbler au premier chantier, quand la stack de `app/` existe (fiche `docs/projects/couverture-app.md`) : le déclarer dans `.drwil/ia-first.json` → `checks` avec un `id`, le citer ici en **Check**, puis retirer ce champ.
+**Check** : `lint-app`
 
 ## QUA-009 — Un test désactivé cite la fiche qui le justifie
 **Rule** : un test désactivé (`skip`, `todo`) cite l'ID d'une fiche ouverte de `docs/projects/` qui justifie sa désactivation (QUA-019 appliqué aux tests).
