@@ -204,11 +204,12 @@ contracts » section).
 ## APP-001 — Sécurité-visibilité : le réel reste visible
 **Rule** : en réalité mixte, la ville ne masque jamais le tapis réel : (1) tête baissée au-delà de 25° sous l'horizontale, l'opacité de la ville décroît jusqu'à 0 ; (2) le volume « zone tapis » défini par l'utilisateur est toujours rendu transparent ; (3) l'opacité globale réglée par l'utilisateur reste bornée entre 30 % et 100 % ; (4) la session XR est `immersive-ar` (passthrough), jamais `immersive-vr`.
 **Scope** : le module safety de la couche `app/` et tout code qui fixe l'opacité ou le mode de la session XR
-**Source of truth** : le module safety de `app/` (à écrire au premier chantier)
-**Proof** : des tests de cette règle, nommés par son ID, déclarés comme contrôle propre (`.drwil/ia-first.json` → `checks`, avec un `id`, filtrant les tests par l'ID : `npm test -- -t "APP-001"`), rejoués par `drwil verify` à chaque chantier
+**Source of truth** : `app/src/safety/visibility.ts` (fondu, opacité), `app/src/xr/session.ts` (mode de session), appliqués par `app/src/xr/frame.ts` et `app/src/city/street.ts`
+**Proof** : des tests de cette règle, nommés par son ID, déclarés comme contrôle propre (`.drwil/ia-first.json` → `checks`, avec un `id`, filtrant les tests par l'ID : `npm test -- -t "APP-001"`), rejoués par `drwil verify` à chaque chantier ; les points (1) et (4) sont aussi rejoués de bout en bout par l'e2e des chemins critiques (QUA-020)
 **Reason** : l'utilisateur marche sur un tapis en mouvement avec un casque : s'il ne voit plus le tapis, la rampe ou le bouton d'arrêt, il risque de chuter (risque du projet : élevé)
-**Manual** : contrôle à compléter au premier chantier : écrire les tests, les déclarer dans `checks` avec un `id`, les citer ici en **Check**, lister leurs fichiers en **Tests**, puis retirer ce champ (`docs/recipes/adopt-the-kit.md`, étape 5). D'ici là, vérification humaine sur le Quest 3.
-
+**Check** : `app-001`
+**Tests** : `app/src/safety/visibility.test.ts`, `app/src/xr/session.test.ts`, `app/src/xr/frame.test.ts`, `app/src/xr/experience.test.ts`, `app/src/city/street.test.ts`, `app/src/ui/home.test.ts`
+**Manual** : le point (2), zone tapis, n'est pas encore codé (chantier suivant) : il n'est prouvé par aucun test. D'ici là, vérification humaine sur le Quest 3 que le tapis reste visible ; une fois la zone tapis codée et testée sous cet ID, retirer ce champ. Les points (1), (3) et (4) sont prouvés par le contrôle ci-dessus, dans un Quest 3 émulé : jamais encore sur un vrai casque.
 
 ## Out of registry (these are not contracts)
 
