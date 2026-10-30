@@ -108,7 +108,7 @@ contracts » section).
 **Source of truth** : —
 **Proof** : script ou règle de lint listant les modules sans test voisin
 **Reason** : la logique de vitesse, d'opacité et de trajectoire reste testable sans casque
-**Manual** : contrôle à câbler au premier chantier, quand la stack de `app/` existe (fiche `docs/projects/couverture-app.md`) : le déclarer dans `.drwil/ia-first.json` → `checks` avec un `id`, le citer ici en **Check**, puis retirer ce champ.
+**Manual** : aucun outil prêt dans la stack de `app/` (constaté au chantier couverture-app, 2026-10-30) : revue humaine d'ici là ; script à écrire, intention `docs/intentions/test-voisin-module-pur.md`. Une fois écrit : le déclarer dans `.drwil/ia-first.json` → `checks` avec un `id`, le citer ici en **Check**, puis retirer ce champ.
 
 ## QUA-007 — Lint sans avertissement
 **Rule** : le lint ne tolère aucun avertissement.
@@ -132,7 +132,7 @@ contracts » section).
 **Source of truth** : —
 **Proof** : script listant les tests désactivés sans fiche citée à côté
 **Reason** : un test éteint en silence est un contrôle contourné
-**Manual** : contrôle à câbler au premier chantier, quand la stack de `app/` existe (fiche `docs/projects/couverture-app.md`) : le déclarer dans `.drwil/ia-first.json` → `checks` avec un `id`, le citer ici en **Check**, puis retirer ce champ.
+**Manual** : aucun outil prêt dans la stack de `app/` (constaté au chantier couverture-app, 2026-10-30) : revue humaine d'ici là ; script à écrire, intention `docs/intentions/test-desactive-cite-fiche.md`. Une fois écrit : le déclarer dans `.drwil/ia-first.json` → `checks` avec un `id`, le citer ici en **Check**, puis retirer ce champ.
 
 ## QUA-011 — Docs never wrong
 **Rule** : Every repo path and every contract ID cited in the docs and the skills exist (IDs defined exactly once in the registry).
