@@ -90,6 +90,7 @@ files:
   - .githooks/check-contrast.mjs
 
   - .claude/settings.json
+  - .github/workflows/ia-first.yml
 -->
 
 ## 1. Need

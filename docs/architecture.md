@@ -37,3 +37,6 @@ Décidée le 2026-10-30 par le demandeur :
 - Contrôles : `.githooks/run-checks.mjs`, lancé au commit par `.githooks/pre-commit`. Les contrôles propres à la stack
   sont déclarés dans `.drwil/ia-first.json` (clé `checks`).
 - Configuration du kit : `.drwil/ia-first.json`.
+- `.github/workflows/` — CI GitHub (`.github/workflows/ia-first.yml`, écrit par `npx drwil init --ci github`) : le job `checks` rejoue
+  `node .githooks/run-checks.mjs` à chaque push et PR, et sur une PR les rejoue avec les hooks de la branche principale ;
+  c'est le contrôle requis par la protection de `master`. Modèle de PR : `.github/pull_request_template.md`.
