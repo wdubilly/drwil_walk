@@ -7,7 +7,8 @@ do not copy it here.
 ## Context
 
 Couche unique : l'application WebXR entière (TypeScript strict, Vite, three.js), cadrée le 2026-10-30.
-Aucun code écrit à cette date : l'organisation ci-dessous est celle à suivre au premier chantier.
+Socle posé le 2026-10-30 (fiche `docs/projects/couverture-app.md`) : configuration, point d'entrée `src/main.ts` et
+module `src/route/speed.ts` ; les autres modules ci-dessous restent à écrire.
 
 - Code dans src/, un dossier par module : xr/ (session `immersive-ar`, manettes), city/ (3d-tiles-renderer,
   repli OSM), route/ (itinéraires, déplacement à vitesse réglée), safety/ (fondu tête baissée, zone tapis,
@@ -17,12 +18,20 @@ Aucun code écrit à cette date : l'organisation ci-dessous est celle à suivre 
 - Les itinéraires sont des données (liste de points GPS par itinéraire), pas du code.
 - La vitesse passe par une interface `SpeedSource` (réglage manuel en v0.1, Bluetooth plus tard).
 - Tests unitaires à côté du code (`*.test.ts`), e2e Playwright dans e2e/ avec un casque émulé (IWER).
+- Imports relatifs **avec l'extension .ts** (`import { x } from "./speed.ts"`) : les tests importent le code par
+  Node lui-même (retrait natif des types), sans transformation par Vite, pour que c8 mesure les vraies lignes. Seule
+  la syntaxe effaçable est permise (`erasableSyntaxOnly` : pas d'`enum`, pas de `namespace`).
+- Aucune exclusion de couverture : un fichier de configuration (`vite.config.ts`, `eslint.config.js`) a son test.
 - Clé Google lue via `import.meta.env.VITE_GOOGLE_MAPS_API_KEY`, jamais en dur.
 
 ## Test pitfalls
 
-*(optional: pitfalls already met while testing this layer, so as not to
-meet them again — one per line, dated if useful.)*
+- 2026-10-30 : c8 lit 0 % si Vitest tourne en forks (le fork est tué par signal, sa couverture V8 n'est jamais
+  écrite) : garder `pool: "threads"` dans `vite.config.ts`.
+- 2026-10-30 : c8 compte des branches sur des commentaires si le code passe par le module runner de Vite (positions
+  décalées) : garder `experimental.viteModuleRunner: false`.
+- Le point d'entrée s'exécute à l'import : son test fournit un `document` de substitution (`vi.stubGlobal`) puis
+  l'importe dynamiquement.
 
 ## Layer contracts
 
@@ -33,10 +42,18 @@ meet them again — one per line, dated if useful.)*
 ## Style guide and recipes
 
 - `docs/recipes/refactor-without-breaking.md` pour toute restructuration.
-- `docs/recipes/run-locally.md` pour lancer l'application (à compléter au premier chantier).
+- `docs/recipes/run-locally.md` pour lancer l'application.
 
 ## Check
 
-Depuis `app/` (commandes à créer au premier chantier) : `npm test` (Vitest + couverture), `npm run typecheck`
-(`tsc --noEmit`), `npm run lint`, `npm run build`, `npm run e2e` (Playwright). Depuis la racine,
-`node .githooks/run-checks.mjs` les lance toutes.
+Depuis `app/`, après `npm ci` :
+
+- `npm test` : tests Vitest ; la couverture se mesure par
+  `npx c8 --check-coverage --lines 100 --branches 100 --functions 100 --statements 100 --all npm test`.
+- `npm run typecheck` : `tsc --noEmit` en mode strict.
+- `npm run lint` : ESLint, zéro avertissement (`--max-warnings 0`).
+- `npm run licenses` : licences des dépendances, liste autorisée.
+- `npm run build` : typecheck puis build Vite dans `dist/`.
+
+Depuis la racine, `node .githooks/run-checks.mjs` lance les contrôles déclarés dans `.drwil/ia-first.json`. L'e2e
+(Playwright) arrivera avec la fiche `docs/projects/e2e-chemins-critiques.md`.

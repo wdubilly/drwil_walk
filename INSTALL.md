@@ -1,15 +1,24 @@
 # Installation by someone else
 
-Prerequisites, clone/setup steps and first startup, to be detailed by the
-project once the stack has been chosen.
+Prérequis, clonage et premier lancement de drwil_walk.
 
 ## 1. Prerequisites
 
-*(tools to install: runtime, package manager, Docker…)*
+- Node.js 24 et npm 11 (l'outil de licences exige ces versions).
+- Git ; gitleaks pour le contrôle des secrets au commit (sinon le contrôle est « non exécuté »).
+- Un Meta Quest 3 sur le même réseau local que le poste, pour essayer la page en réalité mixte.
 
 ## 2. Clone and configure
 
-*(repo to clone, config file to fill in, e.g. `.env` from `.env.example`)*
+```bash
+git clone https://github.com/wdubilly/drwil_walk.git
+cd drwil_walk
+npm ci              # outillage de gouvernance (drwil), à la racine
+npm ci --prefix app # l'application
+```
+
+La clé Google Maps (tuiles 3D) n'est pas encore utilisée par le code ; elle sera lue dans le fichier .env de app/
+(`VITE_GOOGLE_MAPS_API_KEY`), jamais commitée.
 
 Once per clone, enable the governance hooks (checks at commit and push):
 
@@ -19,7 +28,8 @@ git config core.hooksPath .githooks
 
 ## 3. First startup and check
 
-Run and check: `docs/recipes/run-locally.md` (if present).
+Lancer et vérifier : `docs/recipes/run-locally.md`. Contrôles de la couche (tests, couverture, typage, lint,
+licences) : section « Check » de `app/AGENTS.md`.
 
 ## 4. Using an AI tool other than Claude
 
