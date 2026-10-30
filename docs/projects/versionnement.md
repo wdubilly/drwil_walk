@@ -24,7 +24,7 @@ Un projet gouverné a un dépôt Git, une forge (GitHub ou GitLab), une CI qui r
 
 ## Critères d'acceptation
 
-- `drwil guarantees` ne signale plus rien sur le dépôt, la forge, la CI ni la protection de branche — contrat à créer
+- `drwil guarantees` ne signale plus rien sur le dépôt, la forge, la CI ni la protection de branche (fusion sur `master` par PR seulement, CI requise) `QUA-017`
 
 ## 4. Décisions
 
