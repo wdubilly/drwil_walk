@@ -10,7 +10,7 @@ in `docs/ia-first.md`, section 8 (read by section, never end to end).
 1. **Besoin** : marcher sur un tapis de course classique (non connecté) avec un Meta Quest 3 en visitant une vraie ville, sans perdre de vue l'environnement réel.
 2. **Utilisateur** : une seule personne, sur son tapis, casque Quest 3 ; aucun compte, aucun serveur, aucune donnée personnelle.
 3. **v0.1** : le MVP de `MISSION.md` : 4 itinéraires (Pune Vieille ville par défaut, Pune FC Road, Doha Corniche, Doha Souq Waqif), vitesse réglée à la manette, sécurité par passthrough, sans Bluetooth.
-4. **Stack** : TypeScript strict + Vite + three.js + 3d-tiles-renderer (Google Photorealistic 3D Tiles, repli OpenStreetMap), WebXR `immersive-ar` ; tests Vitest, e2e Playwright avec émulation WebXR (IWER). Une seule couche : `app/`.
+4. **Stack** : TypeScript strict + Vite + three.js, ville en bâtiments OpenStreetMap extrudés (extrait figé dans le dépôt, sans Google en v0.1), WebXR `immersive-ar` ; tests Vitest, e2e Playwright avec émulation WebXR (IWER). Une seule couche : `app/`.
 5. **Risque : élevé** (risque physique de chute) : la sécurité-visibilité (APP-001) est un contrat testé ; tout chantier qui touche `app/` est HIGH.
 
 Carte complète et stack : `docs/architecture.md`. Mission détaillée : `MISSION.md`.

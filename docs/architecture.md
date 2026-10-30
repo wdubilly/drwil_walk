@@ -17,8 +17,9 @@ Décidée le 2026-10-30 par le demandeur :
 - **Langage** : TypeScript strict.
 - **Build et serveur de dev** : Vite, en HTTPS (WebXR l'exige), accessible sur le réseau local pour le Quest 3.
 - **3D et XR** : three.js, session WebXR `immersive-ar` (passthrough du Quest 3).
-- **Ville** : 3d-tiles-renderer avec Google Photorealistic 3D Tiles (clé lue dans `.env`, jamais commitée). Repli
-  automatique sur des bâtiments OpenStreetMap si la clé ou la couverture manque.
+- **Ville** : bâtiments OpenStreetMap extrudés en three.js, à partir d'un extrait GeoJSON figé dans le dépôt (aucun
+  appel réseau dans le casque), mention « © contributeurs OpenStreetMap » affichée (licence ODbL). Décision du
+  2026-10-30 : pas de Google Photorealistic 3D Tiles en v0.1 (intention `docs/intentions/google-3d-tiles.md`).
 - **Tests** : Vitest (unitaires, couverture à 100 %), Playwright avec émulation WebXR (IWER) pour l'e2e.
 - **Hébergement** : application 100 % statique, aucun serveur ni base de données.
 
@@ -27,7 +28,7 @@ Décidée le 2026-10-30 par le demandeur :
 - `app/` : l'application entière, paquet npm à part (`app/package.json`). Contexte de la couche : `app/AGENTS.md`.
   - `app/index.html` : la page servie ; elle charge le point d'entrée `app/src/main.ts`.
   - `app/src/` : le code, un dossier par module, chaque fichier de logique avec son test `*.test.ts` à côté.
-    Découpage prévu : xr (session et contrôles), city (tuiles 3D et repli OSM), route (itinéraires et déplacement),
+    Découpage prévu : xr (session et contrôles), city (bâtiments OSM extrudés), route (itinéraires et déplacement),
     safety (visibilité du réel), ui (accueil et panneau d'infos).
   - `app/src/main.ts` : point d'entrée ; il monte l'accueil et branche le renderer three.js (`WebGLRenderer`).
   - `app/src/route/` : la vitesse de marche (`app/src/route/speed.ts` : bornage 1 à 8 km/h, pas de 0,1, conversion en m/s) et le
@@ -38,7 +39,7 @@ Décidée le 2026-10-30 par le demandeur :
     par poussée), l'image de marche en logique pure (`app/src/xr/frame.ts`) et l'assemblage accueil → session → boucle de rendu
     (`app/src/xr/experience.ts`, renderer injecté pour être testé avec une doublure).
   - `app/src/city/` : la rue simple (`app/src/city/street.ts` : sol et blocs three.js, opacité appliquée aux matériaux, scène sans
-    fond pour le passthrough). Les 3D Tiles et le repli OpenStreetMap la remplaceront.
+    fond pour le passthrough). Les bâtiments OpenStreetMap la remplaceront (fiche `docs/projects/doha-souq-waqif.md`).
   - `app/src/ui/` : l'écran d'accueil (`app/src/ui/home.ts` : vitesse, opacité, rappel de sécurité, bouton « Entrer en réalité
     mixte ») et le panneau de marche sur la page (`app/src/ui/panel.ts` : vitesse, distance, temps, opacité de la ville).
   - `app/e2e/` : l'e2e des chemins critiques (`app/e2e/chemins-critiques.test.ts`, contrat QUA-020), Playwright sur
