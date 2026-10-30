@@ -1,6 +1,6 @@
 # Intention : outiller QUA-006, un module de logique pure a son test à côté
 
-**Statut** : proposée le 2026-10-30, à la clôture du socle de `app/` (fiche `docs/projects/couverture-app.md`).
+**Statut** : proposée le 2026-10-30, à la clôture du socle de `app/` (journal `docs/projects/journal.md`).
 
 ## Besoin
 
