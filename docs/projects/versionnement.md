@@ -32,6 +32,8 @@ Un projet gouverné a un dépôt Git, une forge (GitHub ou GitLab), une CI qui r
 - 2026-10-30, décision humaine du demandeur : accord pour poser la protection de la branche principale `master` avec `npx drwil guarantees --protect` (fusion par PR, contrôles requis, sans contournement administrateur).
 - CI GitHub écrite par `npx drwil init --ci github` (`.github/workflows/ia-first.yml`, job `checks` qui rejoue `node .githooks/run-checks.mjs`, et le rejeu par les hooks de la branche principale sur une PR) ; le modèle de PR `.github/pull_request_template.md` et l'empreinte des fichiers installés (`.drwil/installed-files.json`) viennent avec et entrent au cadrage, ainsi que la carte `docs/architecture.md`, qui doit citer `.github/workflows/` (QUA-040).
 
+- 2026-10-30, décision humaine du demandeur : critère d'acceptation rattaché au contrat existant `QUA-017` (pas de travail direct sur la branche principale), sans créer de nouveau contrat ; fusion de la PR #1 sans attendre la clôture, la clôture restant bloquée tant que les garanties couverture et e2e ne sont pas tenues ; fusion automatique activée sur le dépôt.
+
 ## Points à trancher
 
 - Aucun.
