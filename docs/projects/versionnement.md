@@ -2,7 +2,7 @@
 
 **Statut** : ouvert le 2026-10-30 — garantie bloquante, écrite par `drwil guarantees`.
 **Risque** : HIGH
-**Maturité** : à affiner
+**Maturité** : prêt
 **Garantie** : bloquante
 
 <!-- scope
@@ -44,6 +44,6 @@ Un projet gouverné a un dépôt Git, une forge (GitHub ou GitLab), une CI qui r
 
 ## 6. Reprise
 
-- **Dernier état (2026-10-30)** : CI GitHub déclarée et verte sur la PR #1 (job `checks`) ; protection de `master` posée par `npx drwil guarantees --protect` (contrôle requis `checks`, branche à jour, administrateurs inclus, pas de force push) et consignée dans `.drwil/ia-first.json` (`guarantees.protection`). `drwil guarantees` : « ✓ Versionnement : dépôt, forge github, CI et protection de `master` en place ». Restent signalées les garanties hors chantier (couverture de `app/`, e2e).
-- **Blocage de clôture (2026-10-30)** : `npx drwil verify --evidence` donne `GOVERNANCE: FAIL` (8 PASS, 11 MANUAL, 0 FAIL ; erreurs de registre : garanties couverture de `app` et e2e non tenues, hors de ce chantier) ; `node .githooks/state.mjs move CLOSING` répond « ✗ clôture refusée : verdict FAIL : revenir en BUILD ». Retour en BUILD, rien n'est contourné.
-- **Étape suivante** : décision humaine — attestations (`drwil attest`, geste humain) et traitement des garanties couverture et e2e, ou autre voie de clôture ; puis `drwil verify --evidence`, entrée de journal citant la preuve de clôture du chantier et `node .githooks/close.mjs`. Auto-merge non autorisé par le dépôt (`allow_auto_merge: false`).
+- **Dernier état (2026-10-30, recadrage)** : travail fusionné (PR #1 et #2). `drwil guarantees` : « ✓ Versionnement : dépôt, forge github, CI et protection de `master` en place ». Les blocages de clôture sont levés : contrats MANUAL attestés par l'humain (commit `da29073`), contrôle `coverage-diff-app` déclaré et garantie de couverture close (PR #6), fichiers du socle de `app/` rattachés à la fiche de référence `docs/projects/socle-app.md`. Fusion automatique activée sur le dépôt.
+- **Travail non commité** : aucun.
+- **Étape suivante** : clôture seule, aucun code à écrire. Lancer le chantier, branche `workstream/versionnement` depuis `master` à jour, `npx drwil verify --evidence` (attendu : PASS), entrée de journal citant la preuve de clôture, `node .githooks/close.mjs`, PR, fusion.

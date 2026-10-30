@@ -2,7 +2,7 @@
 
 **Statut** : ouvert le 2026-10-30 — garantie bloquante, écrite par `drwil guarantees`.
 **Risque** : HIGH
-**Maturité** : à affiner
+**Maturité** : prêt
 **Garantie** : bloquante
 
 <!-- scope
@@ -52,7 +52,7 @@ drwil exige un test de bout en bout (e2e) des chemins critiques, rejoué par un 
 ## 2. Hors périmètre
 
 - Zone tapis (volume transparent défini à la manette, `localStorage`) et vignette réelle : chantiers suivants.
-- Ville réelle (3D Tiles Google, repli OpenStreetMap), itinéraires GPS, pause, recalibrage, panneau d'infos en XR : chantiers suivants.
+- Ville réelle (bâtiments OpenStreetMap, fiche `docs/projects/doha-souq-waqif.md`), itinéraires GPS, pause, recalibrage, panneau d'infos en XR : chantiers suivants.
 
 ## 4. Décisions
 
@@ -73,14 +73,13 @@ drwil exige un test de bout en bout (e2e) des chemins critiques, rejoué par un 
 
 ## 6. Reprise
 
-- **Dernier état (2026-10-30)** : lot 1 codé et commité sur `workstream/e2e-chemins-critiques` : première tranche
-  verticale (accueil, session `immersive-ar`, rue simple, marche, joystick, fondu tête baissée), contrôles `app-001`
-  et `e2e` déclarés, contrat QUA-020 créé, APP-001 câblé (champ **Manual** réduit à la zone tapis), CI qui installe
-  Chromium. `drwil guarantees` : toutes les garanties tenues. `run-checks` vert, couverture c8 à 100 %, e2e 3 chemins
-  verts.
-- **Bloquant** : `drwil verify` en FAIL pour des raisons hors chantier, traitées par l'humain dans drwil : contrats
-  MANUAL en attente d'attestation (SEC-006, QUA-006, QUA-009, QUA-015, QUA-019, APP-001) et contrôle
-  `coverage-diff-app` réclamé par `guarantees.layers.app: "existing"`. La clôture n'est donc pas faite.
+- **Dernier état (2026-10-30, recadrage)** : lot 1 fusionné (PR #4) : première tranche verticale, contrôles `app-001`
+  et `e2e`, contrat QUA-020, APP-001 câblé. Les blocages de clôture sont levés : contrats MANUAL attestés par l'humain
+  (commit `da29073`), contrôle `coverage-diff-app` déclaré et garantie de couverture close (PR #6). Les fichiers que
+  cette fiche est seule à couvrir (`app/playwright.config.ts`, son test, `app/src/safety/visibility.ts`, son test)
+  sont aussi rattachés à la fiche de référence `docs/projects/socle-app.md` : la suppression de la fiche ne les laisse
+  pas orphelins.
 - **Travail non commité** : aucun.
-- **Étape suivante** : humain : attester les contrats MANUAL (`drwil attest <ID>`) et régler le défaut
-  `coverage-diff-app` côté drwil, puis verify, clôture et fusion de la PR.
+- **Étape suivante** : clôture seule, aucun code à écrire. Lancer le chantier, branche
+  `workstream/e2e-chemins-critiques` depuis `master` à jour, `npx drwil verify --evidence` (attendu : PASS), entrée
+  de journal citant la preuve de clôture, `node .githooks/close.mjs`, PR, fusion.
