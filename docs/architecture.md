@@ -50,3 +50,5 @@ Décidée le 2026-10-30 par le demandeur :
 - `.github/workflows/` — CI GitHub (`.github/workflows/ia-first.yml`, écrit par `npx drwil init --ci github`) : le job `checks` rejoue
   `node .githooks/run-checks.mjs` à chaque push et PR, et sur une PR les rejoue avec les hooks de la branche principale ;
   c'est le contrôle requis par la protection de `master`. Modèle de PR : `.github/pull_request_template.md`.
+  Avant les contrôles, le job installe les dépendances de `app/` (`npm ci`) : les contrôles de la couche tournent
+  depuis ce dossier.
