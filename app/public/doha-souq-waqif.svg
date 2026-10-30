@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" aria-hidden="true">
+  <defs><linearGradient id="ciel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7d3c98"/><stop offset="1" stop-color="#e8b4d8"/></linearGradient></defs>
+  <rect width="320" height="180" fill="url(#ciel)"/>
+  <circle cx="270" cy="40" r="18" fill="#fff0c2"/>
+  <rect x="14" y="86" width="74" height="60" fill="#c9a26b"/><rect x="26" y="100" width="18" height="46" fill="#7a4e2a"/><rect x="56" y="100" width="18" height="46" fill="#7a4e2a"/>
+  <rect x="98" y="70" width="52" height="76" fill="#d8b47c"/><rect x="108" y="40" width="10" height="30" fill="#c9a26b"/><polygon points="103,40 113,24 123,40" fill="#a47c45"/>
+  <rect x="160" y="92" width="74" height="54" fill="#c9a26b"/><rect x="176" y="104" width="18" height="42" fill="#7a4e2a"/><rect x="206" y="104" width="18" height="42" fill="#7a4e2a"/>
+  <rect x="244" y="78" width="60" height="68" fill="#d8b47c"/>
+  <rect y="146" width="320" height="34" fill="#232a36"/>
+  <path d="M0 163h320" stroke="#c9d1de" stroke-width="2" stroke-dasharray="14 12"/>
+</svg>

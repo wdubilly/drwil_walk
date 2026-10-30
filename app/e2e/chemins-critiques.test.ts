@@ -1,6 +1,6 @@
 // e2e des chemins critiques (QUA-020), dans Chromium avec un Meta Quest 3 émulé (IWER) :
-// (1) accueil → réalité mixte immersive-ar ; (2) marche à la vitesse réglée, joystick ±0,1 km/h ;
-// (3) APP-001 : tête baissée au-delà de 25°, la ville devient transparente.
+// (1) accueil → réalité mixte immersive-ar ; (2) choix de l'itinéraire à l'accueil ; (3) marche à la vitesse réglée, joystick ±0,1 km/h ;
+// (4) APP-001 : tête baissée au-delà de 25°, la ville devient transparente.
 import { createRequire } from "node:module";
 import { expect, test, type Page } from "@playwright/test";
 
@@ -88,7 +88,34 @@ test("chemin 1 : de l'accueil à la réalité mixte, en session immersive-ar", a
   await expect(panel(page)).toBeVisible();
 });
 
-test("chemin 2 : la position avance à la vitesse réglée, le joystick change la vitesse de ±0,1 km/h", async ({
+// Captures de l'accueil, pour le demandeur qui n'a pas de casque : hors de la couche (dist/ est ignoré par Git),
+// publiées en pièce jointe par la CI.
+const CAPTURES = "../dist/e2e-captures";
+const card = (page: Page, name: string) => page.locator("label.card", { hasText: name });
+
+test("chemin 2 : l'accueil propose quatre itinéraires, le choisi est celui qui démarre", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 1100 });
+  await page.goto("/");
+  await expect(page.getByRole("radio")).toHaveCount(4);
+  await expect(page.getByRole("radio", { name: /Pune Vieille ville/ })).toBeChecked();
+  await page.screenshot({ path: `${CAPTURES}/accueil-defaut.png`, fullPage: true });
+
+  const soon = page.getByRole("radio", { name: /Doha Souq Waqif/ });
+  await expect(soon).toBeDisabled();
+  await expect(card(page, "Doha Souq Waqif")).toContainText("Bientôt");
+  await card(page, "Doha Souq Waqif").click({ force: true });
+  await expect(page.getByRole("radio", { name: /Pune Vieille ville/ })).toBeChecked();
+  await card(page, "Doha Souq Waqif").screenshot({ path: `${CAPTURES}/carte-bientot.png` });
+
+  await card(page, "Pune Vieille ville").click();
+  await card(page, "Pune Vieille ville").screenshot({ path: `${CAPTURES}/carte-choisie.png` });
+  const box = await page.getByRole("button", { name: "Entrer en réalité mixte" }).boundingBox();
+  expect(box?.height ?? 0).toBeGreaterThanOrEqual(48);
+  await enter(page);
+  await expect(page.locator("#app")).toHaveAttribute("data-route", "pune-vieille-ville");
+});
+
+test("chemin 3 : la position avance à la vitesse réglée, le joystick change la vitesse de ±0,1 km/h", async ({
   page,
 }) => {
   // 3,6 km/h = 1 m/s : la distance parcourue égale le temps de marche.
@@ -111,7 +138,7 @@ test("chemin 2 : la position avance à la vitesse réglée, le joystick change l
   await expect(field(page, "speed")).toHaveText("3,5 km/h");
 });
 
-test("chemin 3 : APP-001, tête baissée au-delà de 25°, la ville devient transparente", async ({ page }) => {
+test("chemin 4 : APP-001, tête baissée au-delà de 25°, la ville devient transparente", async ({ page }) => {
   await enter(page);
   await tiltHead(page, 0);
   await expect(field(page, "opacity")).toHaveText("100 %");

@@ -9,7 +9,7 @@ do not copy it here.
 Couche unique : l'application WebXR entière (TypeScript strict, Vite, three.js), cadrée le 2026-10-30.
 Socle posé le 2026-10-30 (configuration, point d'entrée, vitesse), puis une première tranche verticale : accueil,
 session `immersive-ar`, rue simple, marche en ligne droite, joystick, fondu tête baissée (carte :
-`docs/architecture.md`). Restent à écrire : la vraie ville (city/), les itinéraires GPS, la zone tapis et la vignette.
+`docs/architecture.md`). Accueil sombre à cartes d'itinéraire (`app/src/ui/home.css`, `app/src/ui/route-choice.ts`, `app/src/route/itineraries.ts`, illustrations dans `app/public/`) posé le 2026-10-31. Restent à écrire : la vraie ville (city/), les itinéraires GPS, la zone tapis et la vignette.
 
 - Code dans src/, un dossier par module : xr/ (session `immersive-ar`, manettes), city/ (3d-tiles-renderer,
   repli OSM), route/ (itinéraires, déplacement à vitesse réglée), safety/ (fondu tête baissée, zone tapis,
@@ -72,6 +72,7 @@ Depuis `app/`, après `npm ci` :
 - `npm test -- -t "APP-001"` : les seuls tests du contrat APP-001 (contrôle `app-001`).
 - `npm run e2e` : Playwright (contrôle `e2e`, QUA-020) ; il lance lui-même Vite sur le port 5174 et injecte le Quest 3
   émulé (IWER) dans la page ; premier lancement : `npx playwright install chromium`. Résultats d'échec dans le
-  dossier dist/e2e-results de la racine, hors de la couche.
+  dossier dist/e2e-results de la racine, hors de la couche. Les captures de l'accueil (état par défaut, carte « Bientôt », carte choisie) sont écrites dans
+  dist/e2e-captures de la racine et publiées par la CI (artefact `captures-accueil`).
 
 Depuis la racine, `node .githooks/run-checks.mjs` lance les contrôles déclarés dans `.drwil/ia-first.json`.

@@ -32,7 +32,8 @@ Décidée le 2026-10-30 par le demandeur :
     safety (visibilité du réel), ui (accueil et panneau d'infos).
   - `app/src/main.ts` : point d'entrée ; il monte l'accueil et branche le renderer three.js (`WebGLRenderer`).
   - `app/src/route/` : la vitesse de marche (`app/src/route/speed.ts` : bornage 1 à 8 km/h, pas de 0,1, conversion en m/s) et le
-    déplacement (`app/src/route/walk.ts` : distance à la vitesse réglée, rue qui boucle, affichage distance et temps).
+    déplacement (`app/src/route/walk.ts` : distance à la vitesse réglée, rue qui boucle, affichage distance et temps) et
+    les quatre itinéraires de l'accueil (`app/src/route/itineraries.ts` : données, dont l'indicateur « disponible »).
   - `app/src/safety/` : la sécurité-visibilité (`app/src/safety/visibility.ts`, contrat APP-001) : inclinaison de la tête lue dans la
     pose WebXR, fondu de la ville au-delà de 25°, opacité globale bornée 30 à 100 %. Zone tapis et vignette : à écrire.
   - `app/src/xr/` : la session `immersive-ar` (`app/src/xr/session.ts`), le joystick droit (`app/src/xr/joystick.ts`, un cran de 0,1 km/h
@@ -41,9 +42,12 @@ Décidée le 2026-10-30 par le demandeur :
   - `app/src/city/` : la rue simple (`app/src/city/street.ts` : sol et blocs three.js, opacité appliquée aux matériaux, scène sans
     fond pour le passthrough). Les bâtiments OpenStreetMap la remplaceront (fiche `docs/projects/doha-souq-waqif.md`).
   - `app/src/ui/` : l'écran d'accueil (`app/src/ui/home.ts` : vitesse, opacité, rappel de sécurité, bouton « Entrer en réalité
-    mixte ») et le panneau de marche sur la page (`app/src/ui/panel.ts` : vitesse, distance, temps, opacité de la ville).
+    mixte » ; `app/src/ui/route-choice.ts` : cartes d'itinéraire en boutons radio ; `app/src/ui/home.css` : thème sombre et
+    couleurs ; `app/src/ui/contrast.ts` : mesure du contraste, contrat QUA-014), les illustrations des cartes
+    (`app/public/*.svg`, servies telles quelles, sans réseau) et le panneau de marche sur la page (`app/src/ui/panel.ts` : vitesse, distance, temps, opacité de la ville).
   - `app/e2e/` : l'e2e des chemins critiques (`app/e2e/chemins-critiques.test.ts`, contrat QUA-020), Playwright sur
-    Chromium avec un Quest 3 émulé par IWER, injecté par le test (jamais livré dans l'application).
+    Chromium avec un Quest 3 émulé par IWER, injecté par le test (jamais livré dans l'application). Il prend aussi les
+    captures de l'accueil dans `dist/e2e-captures/` (ignoré par Git), publiées par la CI sous le nom `captures-accueil`.
   - Configuration, chacune testée comme le code : `app/playwright.config.ts` (e2e contre Vite sur le port 5174, en
     HTTPS, résultats hors de la couche), `app/vite.config.ts` (Vite en HTTPS sur le réseau local, build
     dans le dossier dist/app de la racine, hors de la mesure de couverture, et

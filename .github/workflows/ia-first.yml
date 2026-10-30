@@ -37,6 +37,15 @@ jobs:
         run: npx playwright install --with-deps chromium
         working-directory: app
       - run: node .githooks/run-checks.mjs
+      # Les captures de l'accueil prises par l'e2e (QUA-020), à télécharger : le demandeur n'a pas de casque
+      # et juge le rendu dessus. Publiées même si un contrôle échoue, pour voir ce qui a été rendu.
+      - name: Publish the home screen captures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: captures-accueil
+          path: dist/e2e-captures/
+          if-no-files-found: warn
       # QUA-113: on a pull request, the checks are replayed with the main branch's hooks (its
       # .githooks/, read through Git) and the PR's list of checks: a PR that weakens a hook or
       # removes a check does not validate itself. The main branch's copy of base-checks.mjs runs;

@@ -12,6 +12,12 @@ Corniche** (Musée d'art islamique → West Bay), avec la même méthode (extrai
 
 Lu le 2026-10-30 : aucun itinéraire réel ; le souk est le premier, cadré dans sa propre fiche.
 
+**Mis à jour le 2026-10-31** (chantier accueil-casque) : l'accueil affiche déjà les quatre cartes ; ces trois itinéraires
+y sont « Bientôt » et non sélectionnables (`available: false` dans `app/src/route/itineraries.ts`). L'itinéraire choisi
+est lu (`HomeView.readRouteId`) et inscrit sur la page (`data-route`), mais `app/src/xr/experience.ts` ne le consomme pas
+encore : la marche reste la rue simple. Chaque ville livrée passe son itinéraire à `available: true` et branche son
+extrait dans `app/src/xr/experience.ts`.
+
 ## Questions à trancher
 
 - [decision] Ordre : Pune Vieille ville d'abord (itinéraire par défaut de `MISSION.md`) ?

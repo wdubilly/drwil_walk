@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" aria-hidden="true">
+  <defs><linearGradient id="ciel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a6f97"/><stop offset="1" stop-color="#a9d6e5"/></linearGradient></defs>
+  <rect width="320" height="180" fill="url(#ciel)"/>
+  <circle cx="270" cy="40" r="18" fill="#fff8e1"/>
+  <rect y="120" width="320" height="26" fill="#1b5e82"/>
+  <rect x="30" y="50" width="22" height="70" fill="#d9e4ec"/><rect x="62" y="30" width="26" height="90" fill="#c3d3de"/>
+  <rect x="98" y="62" width="22" height="58" fill="#d9e4ec"/><rect x="132" y="40" width="30" height="80" fill="#b5c8d6"/>
+  <rect x="176" y="70" width="24" height="50" fill="#d9e4ec"/><rect x="212" y="52" width="26" height="68" fill="#c3d3de"/>
+  <path d="M0 132h320" stroke="#7fb8d6" stroke-width="3"/>
+  <rect y="146" width="320" height="34" fill="#232a36"/>
+  <path d="M0 163h320" stroke="#c9d1de" stroke-width="2" stroke-dasharray="14 12"/>
+</svg>
