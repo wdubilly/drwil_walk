@@ -67,6 +67,26 @@
         "app/package-lock.json"
       ],
       "degradable": false
+    },
+    {
+      "id": "app-001",
+      "name": "APP-001 sécurité-visibilité : tests nommés par l'ID (Vitest)",
+      "run": "npm test -- -t \"APP-001\"",
+      "cwd": "app",
+      "paths": [
+        "app/**"
+      ],
+      "degradable": false
+    },
+    {
+      "id": "e2e",
+      "name": "e2e des chemins critiques (Playwright, Quest 3 émulé par IWER, QUA-020)",
+      "run": "npm run e2e",
+      "cwd": "app",
+      "paths": [
+        "app/**"
+      ],
+      "degradable": false
     }
   ],
   "scopeReminder": "blocking",

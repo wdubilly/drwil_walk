@@ -16,14 +16,16 @@ Le détail de la v0.1 est dans `MISSION.md`.
 
 ## Démarrer
 
-Le socle de l'application est posé (configuration, premier module) ; les fonctionnalités de la v0.1 arrivent chantier
-par chantier. Avec Node.js 24 :
+Une première tranche est codée : accueil, entrée en réalité mixte, marche en ligne droite dans une rue simple à la
+vitesse réglée (joystick droit : ±0,1 km/h), ville qui s'efface tête baissée. La vraie ville, les itinéraires et la
+zone tapis arrivent chantier par chantier. Avec Node.js 24 :
 
 ```bash
 cd app
 npm ci
 npm run dev    # serveur HTTPS sur le réseau local, à ouvrir depuis le navigateur du Quest 3
 npm test       # tests unitaires
+npm run e2e    # chemins critiques de bout en bout, Quest 3 émulé (après npx playwright install chromium)
 ```
 
 Installation complète et contrôles : `INSTALL.md`.

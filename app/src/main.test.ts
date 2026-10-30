@@ -1,3 +1,4 @@
+import { Window } from "happy-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 afterEach(() => {
@@ -5,21 +6,31 @@ afterEach(() => {
   vi.resetModules();
 });
 
+function pageWithApp(withApp: boolean): Document {
+  const doc = new Window().document as unknown as Document;
+  if (withApp) {
+    const app = doc.createElement("main");
+    app.id = "app";
+    doc.body.append(app);
+  }
+  return doc;
+}
+
 describe("point d'entrée", () => {
-  it("affiche la vitesse de départ dans l'élément #app au chargement", async () => {
-    const app = { textContent: null as string | null };
-    const querySelector = vi.fn(() => app);
-    vi.stubGlobal("document", { querySelector });
+  it("affiche l'accueil dans l'élément #app au chargement", async () => {
+    const doc = pageWithApp(true);
+    vi.stubGlobal("document", doc);
+    vi.stubGlobal("navigator", { xr: undefined });
     await import("./main.ts");
-    expect(querySelector).toHaveBeenCalledWith("#app");
-    expect(app.textContent).toBe("Vitesse de départ : 4,0 km/h");
+    expect(doc.querySelector("#app button")?.textContent).toBe("Entrer en réalité mixte");
   });
 
   it("signale une page sans élément #app au lieu de rester muette", async () => {
-    vi.stubGlobal("document", { querySelector: () => ({ textContent: null }) });
+    vi.stubGlobal("document", pageWithApp(true));
+    vi.stubGlobal("navigator", { xr: undefined });
     const { mount } = await import("./main.ts");
     expect(() => {
-      mount(null);
+      mount(pageWithApp(false), undefined);
     }).toThrow("élément #app introuvable");
   });
 });

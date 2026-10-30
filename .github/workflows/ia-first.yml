@@ -24,6 +24,11 @@ jobs:
       - name: Install the app layer's dependencies
         run: npm ci
         working-directory: app
+      # Le contrôle e2e (QUA-020) lance Playwright : sans navigateur, il serait « non exécuté » (QUA-013).
+      # Chromium seul, à la version épinglée par @playwright/test (app/package-lock.json), avec ses dépendances système.
+      - name: Install the e2e browser (Playwright Chromium)
+        run: npx playwright install --with-deps chromium
+        working-directory: app
       - run: node .githooks/run-checks.mjs
       # QUA-113: on a pull request, the checks are replayed with the main branch's hooks (its
       # .githooks/, read through Git) and the PR's list of checks: a PR that weakens a hook or

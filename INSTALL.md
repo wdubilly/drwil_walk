@@ -15,6 +15,7 @@ git clone https://github.com/wdubilly/drwil_walk.git
 cd drwil_walk
 npm ci              # outillage de gouvernance (drwil), à la racine
 npm ci --prefix app # l'application
+(cd app && npx playwright install chromium)  # navigateur des tests de bout en bout (contrôle e2e)
 ```
 
 La clé Google Maps (tuiles 3D) n'est pas encore utilisée par le code ; elle sera lue dans le fichier .env de app/
@@ -29,7 +30,7 @@ git config core.hooksPath .githooks
 ## 3. First startup and check
 
 Lancer et vérifier : `docs/recipes/run-locally.md`. Contrôles de la couche (tests, couverture, typage, lint,
-licences) : section « Check » de `app/AGENTS.md`.
+licences, e2e) : section « Check » de `app/AGENTS.md`.
 
 ## 4. Using an AI tool other than Claude
 
