@@ -26,6 +26,16 @@
       "id": "file-size",
       "name": "taille des fichiers de code (QUA-001)",
       "run": "node .githooks/check-file-size.mjs app 200 ts,tsx,js,jsx,mjs,cjs"
+    },
+    {
+      "id": "coverage-app",
+      "name": "coverage of app (c8)",
+      "run": "npx c8 --check-coverage --lines 100 --branches 100 --functions 100 --statements 100 --all npm test",
+      "cwd": "app",
+      "paths": [
+        "app/**"
+      ],
+      "degradable": false
     }
   ],
   "scopeReminder": "blocking",
@@ -62,7 +72,9 @@
   },
   "guarantees": {
     "enforced": true,
-    "layers": {},
+    "layers": {
+      "app": "existing"
+    },
     "protection": {
       "forge": "github",
       "branch": "master",

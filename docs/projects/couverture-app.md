@@ -40,7 +40,7 @@ drwil garantit une couverture de test à 100 % (lignes, branches, fonctions, ins
 
 ## Critères d'acceptation
 
-- Le contrôle de couverture de la couche est déclaré, cité par le contrat de couverture du projet et vert — contrat à créer
+- Le contrôle de couverture de la couche `app` est déclaré, cité par le contrat de couverture du projet et vert à 100 % — `QUA-004`
 
 ## 4. Décisions
 
@@ -56,7 +56,7 @@ drwil garantit une couverture de test à 100 % (lignes, branches, fonctions, ins
 
 ## Contrats cités
 
-- Contrat de couverture du projet (`catalog:QUA-004`, à créer par ce chantier) : couverture de test à 100 % de la couche `app`.
+- `QUA-004` (créé par ce chantier, depuis `catalog:QUA-004`) : couverture de test à 100 % de la couche `app`, contrôle `coverage-app`.
 - `QUA-002`, `QUA-005`, `QUA-007`, `QUA-008`, `SEC-012` : contrôle câblé par ce chantier (champ Manual retiré).
 - `QUA-006`, `QUA-009` : restent MANUAL (intentions ouvertes).
 - `QUA-013` (un contrôle non exécuté n'est pas passé), `QUA-019` (aucun contournement), `QUA-011` (docs à jour dans le même commit).
