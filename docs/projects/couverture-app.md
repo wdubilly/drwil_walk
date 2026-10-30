@@ -63,6 +63,10 @@ drwil garantit une couverture de test à 100 % (lignes, branches, fonctions, ins
 - `QUA-006`, `QUA-009` : restent MANUAL (intentions ouvertes).
 - `QUA-013` (un contrôle non exécuté n'est pas passé), `QUA-019` (aucun contournement), `QUA-011` (docs à jour dans le même commit).
 
+## Contrats modifiés
+
+- `QUA-004` — ajout du contrôle `coverage-diff-app` (couverture différentielle à 100 % contre `origin/master`) dans les champs Check et Proof (validé par le demandeur le 2026-10-30, décision transmise par la session principale)
+
 ## 2. Hors périmètre
 
 - Les fonctionnalités de la v0.1 (session XR, ville, itinéraires, sécurité-visibilité `APP-001`, interface) : chantiers à part.
