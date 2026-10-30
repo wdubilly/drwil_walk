@@ -20,8 +20,7 @@ npm ci --prefix app # l'application
 (cd app && npx playwright install chromium)  # navigateur des tests de bout en bout (contrôle e2e)
 ```
 
-La clé Google Maps (tuiles 3D) n'est pas encore utilisée par le code ; elle sera lue dans le fichier .env de app/
-(`VITE_GOOGLE_MAPS_API_KEY`), jamais commitée.
+Aucune clé d'API n'est nécessaire : en v0.1, la ville vient d'un extrait OpenStreetMap figé dans le dépôt.
 
 Once per clone, enable the governance hooks (checks at commit and push):
 

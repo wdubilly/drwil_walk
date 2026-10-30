@@ -26,7 +26,8 @@ session `immersive-ar`, rue simple, marche en ligne droite, joystick, fondu têt
 - Le DOM se teste avec happy-dom (`new Window().document`) passé en paramètre, sans environnement global de test.
 - Le rendu three.js est injecté (classe `Renderer` passée à `startExperience`) : les tests passent une doublure,
   seul `src/main.ts` branche le vrai `WebGLRenderer`.
-- Clé Google lue via `import.meta.env.VITE_GOOGLE_MAPS_API_KEY`, jamais en dur.
+- Aucune clé ni appel réseau en v0.1 : la ville vient d'un extrait OpenStreetMap figé dans le dépôt (Google 3D Tiles
+  reporté : `docs/intentions/google-3d-tiles.md`).
 
 ## Test pitfalls
 
