@@ -51,7 +51,9 @@ Décidée le 2026-10-30 par le demandeur :
   - Couverture : c8 autour de `npm test` (Vitest), 100 % sans exclusion. Les tests tournent en threads et le code
     est importé par Node avec retrait natif des types, pour que c8 mesure les vraies lignes des fichiers .ts :
     d'où l'extension .ts dans les imports relatifs. Les tests du DOM utilisent happy-dom (`new Window()`), sans
-    environnement global.
+    environnement global. La couverture différentielle (contrôle `coverage-diff-app`, QUA-004) exige en plus
+    100 % des lignes ajoutées ou modifiées par rapport à `origin/master` : c8 écrit un rapport Cobertura dans
+    app/coverage/ (ignoré par Git), lu par diff-cover (outil Python).
 
 ## Gouvernance IA-first
 

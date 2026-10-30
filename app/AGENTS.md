@@ -59,6 +59,9 @@ Depuis `app/`, après `npm ci` :
 
 - `npm test` : tests Vitest ; la couverture se mesure par
   `npx c8 --check-coverage --lines 100 --branches 100 --functions 100 --statements 100 --all npm test`.
+  Couverture différentielle (contrôle `coverage-diff-app`, diff-cover installé à part) :
+  `npx c8 --reporter=cobertura --report-dir=coverage npm test && diff-cover coverage/cobertura-coverage.xml --compare-branch=origin/master --fail-under=100`
+  (compare à `origin/master` : la branche principale n'est pas `main`, valeur par défaut de diff-cover).
 - `npm run typecheck` : `tsc --noEmit` en mode strict.
 - `npm run lint` : ESLint, zéro avertissement (`--max-warnings 0`).
 - `npm run licenses` : licences des dépendances, liste autorisée.

@@ -6,6 +6,8 @@ Prérequis, clonage et premier lancement de drwil_walk.
 
 - Node.js 24 et npm 11 (l'outil de licences exige ces versions).
 - Git ; gitleaks pour le contrôle des secrets au commit (sinon le contrôle est « non exécuté »).
+- diff-cover 10.6 (outil Python, `pipx install diff-cover==10.6.0`) pour le contrôle de couverture différentielle
+  `coverage-diff-app` (sinon le contrôle est « non exécuté »).
 - Un Meta Quest 3 sur le même réseau local que le poste, pour essayer la page en réalité mixte.
 
 ## 2. Clone and configure

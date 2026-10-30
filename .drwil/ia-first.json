@@ -38,6 +38,16 @@
       "degradable": false
     },
     {
+      "id": "coverage-diff-app",
+      "name": "couverture différentielle de app à 100 % (c8 + diff-cover contre origin/master, QUA-004)",
+      "run": "npx c8 --reporter=cobertura --report-dir=coverage npm test && diff-cover coverage/cobertura-coverage.xml --compare-branch=origin/master --fail-under=100",
+      "cwd": "app",
+      "paths": [
+        "app/**"
+      ],
+      "degradable": false
+    },
+    {
       "id": "typecheck-app",
       "name": "typage strict de app (tsc --noEmit, QUA-005)",
       "run": "npm run typecheck",

@@ -18,6 +18,13 @@ jobs:
           echo "5bc41815076e6ed6ef8fbecc9d9b75bcae31f39029ceb55da08086315316e3ba  gitleaks.tar.gz" | sha256sum -c -
           mkdir -p ~/.local/bin && tar -xzf gitleaks.tar.gz -C ~/.local/bin gitleaks && rm gitleaks.tar.gz
           ~/.local/bin/gitleaks version
+      # Le contrôle coverage-diff-app (QUA-004) lit le rapport de c8 avec diff-cover, outil Python : sans lui,
+      # le contrôle serait « non exécuté » (QUA-013). Version épinglée ; pipx est fourni par ubuntu-latest.
+      # Il compare à origin/master : l'historique complet vient de fetch-depth: 0 ci-dessus.
+      - name: Install diff-cover 10.6.0
+        run: |
+          pipx install diff-cover==10.6.0
+          diff-cover --version
       # Les contrôles de la couche app (coverage-app, typecheck-app, lint-app, licenses-app) tournent
       # depuis app/ : sans ses dépendances, ils seraient « non exécutés », ce qui fait échouer
       # run-checks en CI (QUA-013). npm ci : versions verrouillées par app/package-lock.json.
