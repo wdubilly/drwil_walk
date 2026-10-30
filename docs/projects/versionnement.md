@@ -42,4 +42,5 @@ Un projet gouverné a un dépôt Git, une forge (GitHub ou GitLab), une CI qui r
 
 ## 6. Reprise
 
-- **Dernier état** : écrite par `drwil guarantees` ; tant qu'elle n'est pas résolue, `drwil verify` est en FAIL et `/drwil-start` ne propose qu'elle.
+- **Dernier état (2026-10-30)** : CI GitHub déclarée et verte sur la PR #1 (job `checks`) ; protection de `master` posée par `npx drwil guarantees --protect` (contrôle requis `checks`, branche à jour, administrateurs inclus, pas de force push) et consignée dans `.drwil/ia-first.json` (`guarantees.protection`). `drwil guarantees` : « ✓ Versionnement : dépôt, forge github, CI et protection de `master` en place ». Restent signalées les garanties hors chantier (couverture de `app/`, e2e).
+- **Étape suivante** : preuve (`drwil verify --evidence`), puis clôture.
