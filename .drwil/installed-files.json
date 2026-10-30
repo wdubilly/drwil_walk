@@ -136,5 +136,7 @@
   ".claude/skills/view-progress/SKILL.md": "b1359e32c837fb92f9b28ed8a6ea89761fede61363b2ccb4649f4ea799eadc06",
   "CLAUDE.md": "336cc4fbf19beaada7ccf9986414fa91851a8d7a07dfb3ccbe800a69eed0ab49",
   "app/AGENTS.md": "2f3196473a141ed2b15f3b34ba145bec3db01b001d426620571ec00829b609d0",
-  "app/CLAUDE.md": "336cc4fbf19beaada7ccf9986414fa91851a8d7a07dfb3ccbe800a69eed0ab49"
+  "app/CLAUDE.md": "336cc4fbf19beaada7ccf9986414fa91851a8d7a07dfb3ccbe800a69eed0ab49",
+  ".github/pull_request_template.md": "59caec662ce0332f0d92a88e4cc69c979e42aca0296c84a7fc558ee4e0fd3ae0",
+  ".github/workflows/ia-first.yml": "c1bccc6b71e91b84c5c3cd85e0b7c0466fde15ee1f8b3b9ff61e2668921a21c4"
 }
