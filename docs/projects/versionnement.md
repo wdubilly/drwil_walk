@@ -8,14 +8,18 @@
 <!-- scope
 files:
   - .drwil/ia-first.json
+  - .drwil/installed-files.json
+  - .github/workflows/ia-first.yml
+  - .github/pull_request_template.md
 -->
 
 ## 1. Besoin
 
 Un projet gouverné a un dépôt Git, une forge (GitHub ou GitLab), une CI qui rejoue les contrôles du hook et une branche principale protégée (fusion par PR/MR, contrôles requis, sans contournement même pour les administrateurs). Il manque :
 
-- pas de dépôt distant `origin` sur GitHub ou GitLab
+- ~~pas de dépôt distant `origin` sur GitHub ou GitLab~~ (fait : https://github.com/wdubilly/drwil_walk, branche par défaut `master`)
 - pas de CI déclarée (`npx drwil init --ci github` ou `--ci gitlab`)
+- branche principale `master` non protégée (`npx drwil guarantees --protect`)
 
 ## Critères d'acceptation
 
@@ -24,10 +28,12 @@ Un projet gouverné a un dépôt Git, une forge (GitHub ou GitLab), une CI qui r
 ## 4. Décisions
 
 - Garantie obligatoire, sans dérogation : un contrôle non exécuté n'est jamais passé (`QUA-013`), aucun contrôle n'est contourné (`QUA-019`).
+- 2026-10-30, décision humaine du demandeur : accord pour poser la protection de la branche principale `master` avec `npx drwil guarantees --protect` (fusion par PR, contrôles requis, sans contournement administrateur).
+- CI GitHub écrite par `npx drwil init --ci github` (`.github/workflows/ia-first.yml`, job `checks` qui rejoue `node .githooks/run-checks.mjs`, et le rejeu par les hooks de la branche principale sur une PR) ; le modèle de PR `.github/pull_request_template.md` et l'empreinte des fichiers installés (`.drwil/installed-files.json`) viennent avec et entrent au cadrage.
 
 ## Points à trancher
 
-- [décision] Accord pour poser la protection de la branche principale (`drwil guarantees --protect`) ?
+- Aucun.
 
 ## 5. Lots
 
