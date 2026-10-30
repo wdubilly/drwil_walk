@@ -24,6 +24,7 @@ files:
   - app/AGENTS.md
   - docs/architecture.md
   - docs/contracts.md
+  - docs/contracts-catalog.md
   - docs/recipes/run-locally.md
   - docs/intentions/README.md
   - docs/intentions/test-voisin-module-pur.md
