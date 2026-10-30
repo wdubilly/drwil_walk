@@ -53,7 +53,8 @@ Depuis `app/`, après `npm ci` :
 - `npm run typecheck` : `tsc --noEmit` en mode strict.
 - `npm run lint` : ESLint, zéro avertissement (`--max-warnings 0`).
 - `npm run licenses` : licences des dépendances, liste autorisée.
-- `npm run build` : typecheck puis build Vite dans `dist/`.
+- `npm run build` : typecheck puis build Vite, hors de la couche, dans le dossier dist/app de la racine (ignoré par
+  Git) : sous app/, c8 compterait le bundle généré comme du code non couvert.
 
 Depuis la racine, `node .githooks/run-checks.mjs` lance les contrôles déclarés dans `.drwil/ia-first.json`. L'e2e
 (Playwright) arrivera avec la fiche `docs/projects/e2e-chemins-critiques.md`.

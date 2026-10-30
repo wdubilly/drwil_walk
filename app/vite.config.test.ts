@@ -12,6 +12,10 @@ describe("configuration Vite", () => {
     expect(config.preview?.host).toBe(true);
   });
 
+  it("construit hors de la couche, pour que c8 ne mesure pas le bundle généré", () => {
+    expect(config.build?.outDir).toBe("../dist/app");
+  });
+
   it("garde les tests dans un mode que c8 sait mesurer", () => {
     expect(config.test?.pool).toBe("threads");
     expect(config.test?.experimental?.viteModuleRunner).toBe(false);

@@ -7,6 +7,9 @@ export default defineConfig({
   plugins: [basicSsl()],
   server: { host: true },
   preview: { host: true },
+  // Le build sort hors de la couche (dist/ de la racine, ignoré par Git) : c8 mesure avec --all
+  // tout ce qui est sous app/, et un bundle généré y compterait comme du code non couvert.
+  build: { outDir: "../dist/app", emptyOutDir: true },
   test: {
     // La couverture est mesurée par c8 autour de `npm test` (décision du demandeur, fiche
     // couverture-app). c8 lit la couverture V8 que Node écrit à la sortie de chaque processus :

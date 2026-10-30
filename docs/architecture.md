@@ -31,7 +31,8 @@ Décidée le 2026-10-30 par le demandeur :
     safety (visibilité du réel), ui (accueil et panneau d'infos).
   - `app/src/route/` : la vitesse de marche (bornage 1 à 8 km/h, pas de 0,1, conversion en m/s), seul module écrit
     au 2026-10-30.
-  - Configuration, chacune testée comme le code : `app/vite.config.ts` (Vite en HTTPS sur le réseau local, et
+  - Configuration, chacune testée comme le code : `app/vite.config.ts` (Vite en HTTPS sur le réseau local, build
+    dans le dossier dist/app de la racine, hors de la mesure de couverture, et
     Vitest), `app/eslint.config.js` (règles des contrats de qualité), `app/tsconfig.json` (TypeScript strict).
   - Couverture : c8 autour de `npm test` (Vitest), 100 % sans exclusion. Les tests tournent en threads et le code
     est importé par Node avec retrait natif des types, pour que c8 mesure les vraies lignes des fichiers .ts :
