@@ -43,7 +43,7 @@ drwil exige un test de bout en bout (e2e) des chemins critiques, rejoué par un 
 ## Critères d'acceptation
 
 - Les chemins critiques nommés par le demandeur (entrée en réalité mixte, marche à la vitesse réglée, fondu tête baissée) sont couverts par un test e2e rejoué par le contrôle `e2e` — `QUA-020`
-- La sécurité-visibilité tête baissée, l'opacité bornée et la session `immersive-ar` sont prouvées par des tests rejoués — `APP-001`
+- La sécurité-visibilité tête baissée, l'opacité bornée et la session `immersive-ar` sont prouvées par le contrôle `app-001` ; la zone tapis, pas encore codée, reste à vérifier par l'humain sur le Quest 3 [human] — `APP-001`
 
 ## Contrats modifiés
 
@@ -73,4 +73,14 @@ drwil exige un test de bout en bout (e2e) des chemins critiques, rejoué par un 
 
 ## 6. Reprise
 
-- **Dernier état** : écrite par `drwil guarantees` ; tant qu'elle n'est pas résolue, `drwil verify` est en FAIL et `/drwil-start` ne propose qu'elle.
+- **Dernier état (2026-10-30)** : lot 1 codé et commité sur `workstream/e2e-chemins-critiques` : première tranche
+  verticale (accueil, session `immersive-ar`, rue simple, marche, joystick, fondu tête baissée), contrôles `app-001`
+  et `e2e` déclarés, contrat QUA-020 créé, APP-001 câblé (champ **Manual** réduit à la zone tapis), CI qui installe
+  Chromium. `drwil guarantees` : toutes les garanties tenues. `run-checks` vert, couverture c8 à 100 %, e2e 3 chemins
+  verts.
+- **Bloquant** : `drwil verify` en FAIL pour des raisons hors chantier, traitées par l'humain dans drwil : contrats
+  MANUAL en attente d'attestation (SEC-006, QUA-006, QUA-009, QUA-015, QUA-019, APP-001) et contrôle
+  `coverage-diff-app` réclamé par `guarantees.layers.app: "existing"`. La clôture n'est donc pas faite.
+- **Travail non commité** : aucun.
+- **Étape suivante** : humain : attester les contrats MANUAL (`drwil attest <ID>`) et régler le défaut
+  `coverage-diff-app` côté drwil, puis verify, clôture et fusion de la PR.
