@@ -1,6 +1,6 @@
 # Intention : pause, recalibrage et panneau d'infos dans le casque
 
-**Statut** : proposée le 2026-10-30. Cadrée le 2026-10-31 : `docs/projects/commandes-panneau.md`.
+**Statut** : proposée le 2026-10-30. Cadrée le 2026-10-31 : `docs/projects/journal.md`.
 
 ## Besoin
 

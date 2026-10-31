@@ -13,7 +13,7 @@ défis (Paris → Moscou, tour du monde, objectif annuel de 1 000 km) ; en bas, 
 ## Existant
 
 Lu le 2026-10-31 : seul le joystick droit règle la vitesse dans le casque ; le panneau de marche est sur la page web, pas
-dans la scène (`app/src/ui/panel.ts`). `docs/projects/commandes-panneau.md` (cadré) ajoute la pause, le recalibrage et un
+dans la scène (`app/src/ui/panel.ts`). `docs/projects/journal.md` (cadré) ajoute la pause, le recalibrage et un
 panneau d'infos flottant dans la scène ; `docs/projects/zone-tapis-vignette.md` (cadré) protège le tapis. Il n'existe
 aucune source d'élévation, aucune notion d'étape, de défi ni de progression conservée d'une séance à l'autre.
 
