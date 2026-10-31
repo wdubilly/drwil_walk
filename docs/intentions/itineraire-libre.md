@@ -14,9 +14,14 @@ Lu le 2026-10-31 : les quatre itinéraires sont des boucles calculées hors casq
 casque »). Rien ne permet de choisir un point, de calculer un chemin ni de charger une ville autour d'un point
 quelconque. `MISSION.md` prévoyait des itinéraires configurables (un fichier de routes), pas un choix libre.
 
+## Décisions du demandeur (2026-10-31)
+
+- Routage : API Google Routes, mode piéton, avec **sa propre clé** (`VITE_GOOGLE_ROUTES_API_KEY`), distincte de la clé
+  Map Tiles : les deux API s'activent et se restreignent séparément.
+- À l'arrivée d'un trajet libre : la marche s'arrête et le dit, sans boucle ni retour.
+- Départ et arrivée : deux touches sur une carte à l'accueil.
+- Longueur maximale : 5 km.
+
 ## Questions à trancher
 
-- [decision] Service de routage : API Google Routes (même clé que les 3D Tiles) ou OSRM / Valhalla sans clé ?
-- [decision] Aller simple (arrêt ou retour à l'arrivée) ou aller-retour automatique ?
-- [decision] Choix des points : carte touchée à l'accueil, recherche d'adresse, ou coordonnées saisies ?
-- [decision] Longueur maximale d'un trajet libre, pour borner les chargements et la durée de marche ?
+- [decision] Recherche d'adresse en plus de la carte touchée, ou plus tard ?

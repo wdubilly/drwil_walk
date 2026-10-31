@@ -32,4 +32,4 @@ otherwise.
   are needed, otherwise the topic fits here.
 - [x] topic delivered (YYYY-MM-DD).
 -->
-- [ ] [decision] [P2] Choisir son propre itinéraire, après google-3d-tiles — `docs/projects/itineraire-libre.md`
+- [ ] [AI] [P1] Choisir son propre itinéraire (carte touchée, Google Routes) — `docs/projects/itineraire-libre.md`
