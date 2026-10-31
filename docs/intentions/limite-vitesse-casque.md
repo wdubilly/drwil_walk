@@ -12,7 +12,7 @@ la borne ne sont pas faits : leurs fichiers (`app/src/xr/`) étaient hors du pé
 ## Existant
 
 Le panneau de la page est vu à travers le navigateur, pas dans la scène ; le panneau flottant dépend de
-`docs/projects/commandes-panneau.md` et de `docs/intentions/hud-casque.md`.
+`docs/projects/journal.md` et de `docs/intentions/hud-casque.md`.
 
 ## Questions à trancher
 

@@ -52,7 +52,7 @@ réelle** : la périphérie du champ de vision reste en passthrough. Aujourd'hui
 
 ## 2. Hors périmètre
 
-- Les commandes de pause, de recalibrage et le panneau d'infos : `docs/projects/commandes-panneau.md`, à faire avant celui-ci
+- Les commandes de pause, de recalibrage et le panneau d'infos : `docs/projects/journal.md`, à faire avant celui-ci
   (les deux touchent `app/src/xr/*` et `app/src/main.ts`).
 - Un menu d'opacité globale dans le casque.
 - La maquette complète du casque : `docs/intentions/hud-casque.md`.

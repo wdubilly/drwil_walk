@@ -74,7 +74,7 @@ describe("expérience en réalité mixte", () => {
   it("change la vitesse au joystick droit", async () => {
     const t = setup();
     await t.enter();
-    t.inputSources[0] = { handedness: "right", gamepad: { axes: [0, 0, 0, -1] } };
+    t.inputSources[0] = { handedness: "right", gamepad: { axes: [0, 0, 0, -1], buttons: [] } };
     t.frame(0, poseFrame(0));
     expect(t.panel()?.getAttribute("data-speed-kmh")).toBe("4.1");
   });

@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
+import { BUTTONS_RELEASED } from "./buttons.ts";
 import { initialWalkState, nextWalkState, type FrameInput } from "./frame.ts";
 
-const still: Omit<FrameInput, "timeMs"> = { axisY: 0, pitchDownDeg: 0, globalOpacityPct: 100 };
+const still: Omit<FrameInput, "timeMs"> = { axisY: 0, buttons: BUTTONS_RELEASED, pitchDownDeg: 0, globalOpacityPct: 100 };
 
 describe("image de la marche", () => {
   it("part immobile, à la vitesse et à l'opacité réglées", () => {
@@ -57,5 +58,58 @@ describe("image de la marche", () => {
     s = nextWalkState(s, { ...still, timeMs: 1_000_000 });
     expect(s.arrived).toBe(false);
     expect(s.distanceM).toBeGreaterThan(1000);
+  });
+
+  it("APP-002: la gâchette met en pause et reprend, la vitesse réglée est conservée", () => {
+    const trigger = { ...BUTTONS_RELEASED, trigger: true };
+    let s = nextWalkState(initialWalkState(3.6, 100), { ...still, timeMs: 0 });
+    s = nextWalkState(s, { ...still, timeMs: 2000 });
+    expect(s.distanceM).toBeCloseTo(2);
+    s = nextWalkState(s, { ...still, timeMs: 3000, buttons: trigger });
+    expect(s).toMatchObject({ paused: true, speedKmh: 3.6, timeS: 2 });
+    expect(s.distanceM).toBeCloseTo(2);
+    s = nextWalkState(s, { ...still, timeMs: 5000, axisY: -1 });
+    expect(s).toMatchObject({ paused: true, speedKmh: 3.7, timeS: 2 });
+    expect(s.distanceM).toBeCloseTo(2);
+    s = nextWalkState(s, { ...still, timeMs: 6000, buttons: trigger });
+    expect(s.paused).toBe(false);
+    s = nextWalkState(s, { ...still, timeMs: 7000 });
+    expect(s.distanceM).toBeGreaterThan(2.9);
+  });
+
+  it("APP-001: en pause, le fondu de sécurité continue de s'appliquer", () => {
+    const trigger = { ...BUTTONS_RELEASED, trigger: true };
+    let s = nextWalkState(initialWalkState(4, 100), { ...still, timeMs: 0, buttons: trigger });
+    expect(s.paused).toBe(true);
+    s = nextWalkState(s, { ...still, timeMs: 10, buttons: trigger, pitchDownDeg: 50 });
+    expect(s).toMatchObject({ paused: true, cityOpacity: 0 });
+    s = nextWalkState(s, { ...still, timeMs: 20, pitchDownDeg: 0 });
+    expect(s.cityOpacity).toBe(1);
+  });
+
+  it("APP-002: un bouton tenu ne déclenche qu'une action, le suivant en redéclenche une", () => {
+    const b = { ...BUTTONS_RELEASED, b: true };
+    const a = { ...BUTTONS_RELEASED, a: true };
+    let s = initialWalkState(4, 100);
+    expect(s).toMatchObject({ showPanel: true, recalibrate: false });
+    s = nextWalkState(s, { ...still, timeMs: 0, buttons: b });
+    expect(s.showPanel).toBe(false);
+    s = nextWalkState(s, { ...still, timeMs: 10, buttons: b });
+    expect(s.showPanel).toBe(false);
+    s = nextWalkState(s, { ...still, timeMs: 20 });
+    s = nextWalkState(s, { ...still, timeMs: 30, buttons: b });
+    expect(s.showPanel).toBe(true);
+    s = nextWalkState(s, { ...still, timeMs: 40, buttons: a });
+    expect(s.recalibrate).toBe(true);
+    s = nextWalkState(s, { ...still, timeMs: 50, buttons: a });
+    expect(s.recalibrate).toBe(false);
+  });
+
+  it("APP-002: le recalage ne touche pas à la distance parcourue", () => {
+    let s = nextWalkState(initialWalkState(3.6, 100), { ...still, timeMs: 0 });
+    s = nextWalkState(s, { ...still, timeMs: 2000 });
+    const before = s.distanceM;
+    s = nextWalkState(s, { ...still, timeMs: 2000, buttons: { ...BUTTONS_RELEASED, a: true } });
+    expect(s.distanceM).toBe(before);
   });
 });

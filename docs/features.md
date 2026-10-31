@@ -45,7 +45,7 @@ réglée et reprend au départ à la fin de la boucle (contrat APP-002), joystic
 panneau sur la page (vitesse, distance, temps, opacité de la ville, mention OpenStreetMap) et panneau de mention dans
 la scène du casque, effacé avec la ville (contrat APP-003). Limites : la ville n'a pas encore été vue sur un vrai Quest 3
 (rendu, 72 images par seconde, lisibilité de la mention) ; environ 20 m de la boucle traversent des passages couverts
-dessinés comme des bâtiments par OpenStreetMap. À venir : la gâchette (pause), les boutons A et B, le panneau d'infos dans le casque.
+dessinés comme des bâtiments par OpenStreetMap. Dans le casque : la gâchette droite met la marche en pause et la reprend (l'avancée s'arrête, la vitesse réglée est gardée), le bouton A recale le parcours sur l'endroit et la direction où l'on regarde (la distance parcourue ne change pas), le bouton B masque ou réaffiche le panneau d'infos (vitesse, distance, temps, lieu), un texte flottant devant soi affiché dès le départ, qui disparaît tête baissée avec la ville ; un appui ne compte qu'une fois. Limite : jamais essayé sur un vrai Quest 3 (lisibilité, place du panneau, tapis resté visible).
 
 Codé aussi : la Vieille ville de Pune (2 079 bâtiments OpenStreetMap extrudés) qui défile le long d'une boucle d'environ
 1,5 km (Shaniwar Wada, contour nord du fort, ruelles à l'est jusqu'au temple Dagdusheth Halwai Ganpati, retour par l'ouest
