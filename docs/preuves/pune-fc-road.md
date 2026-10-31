@@ -1,7 +1,7 @@
 # Preuve de clôture — pune-fc-road
 
 **Clos le** : 2026-10-31
-**Commit vérifié** : `5c00079837` — verdict `drwil verify` : PASS
+**Commit vérifié** : `3f9188e35c` — verdict `drwil verify` : PASS
 
 critères de ce chantier, et ce qui les prouve aujourd'hui encore (rejoués par `drwil verify` après la clôture) :
 
