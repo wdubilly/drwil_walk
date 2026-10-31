@@ -1,6 +1,7 @@
 // e2e des chemins critiques (QUA-020), dans Chromium avec un Meta Quest 3 émulé (IWER) :
 // (1) accueil → réalité mixte immersive-ar ; (2) choix de l'itinéraire à l'accueil ; (3) marche à la vitesse réglée, joystick ±0,1 km/h ;
 // (4) APP-001 : tête baissée au-delà de 25°, la ville devient transparente ; (5) le souk de Doha ; (6) la Vieille ville de Pune ; (7) la Corniche de Doha ; (8) FC Road à Pune ; (10) l'itinéraire libre : e2e/itineraire-libre.test.ts.
+// Les parcours (5) à (8) chargent les extraits enrichis (arbres, mobilier, teintes OSM) : rendu enrichi rejoué de bout en bout.
 import { createRequire } from "node:module";
 import { expect, test, type Page } from "@playwright/test";
 

@@ -1,5 +1,5 @@
 import { Window } from "happy-dom";
-import { Group, HemisphereLight, Mesh, type Material, type MeshLambertMaterial } from "three";
+import { Group, HemisphereLight, InstancedMesh, Mesh, type Material, type MeshLambertMaterial } from "three";
 import { describe, expect, it } from "vitest";
 import { withCanvasContext } from "./canvas-double.ts";
 import { createPath } from "../route/path.ts";
@@ -18,6 +18,11 @@ const souq: Souq = {
   route,
   palette,
   roads: [{ highway: "primary", points: [{ x: 0, z: 0 }, { x: 0, z: -100 }] }],
+  props: [
+    { kind: "tree", at: { x: 3, z: -10 } },
+    { kind: "lamp", at: { x: -3, z: -20 } },
+    { kind: "bench", at: { x: -3, z: -30 } },
+  ],
   buildings: [
     {
       heightM: 8,
@@ -78,6 +83,24 @@ describe("scène du souk", () => {
     expect(color("voies").color.getHex()).toBe(palette.road);
     expect(color("batiments").vertexColors).toBe(true);
     expect((city.getObjectByName("batiments") as Mesh).geometry.getAttribute("color").count).toBeGreaterThan(0);
+  });
+
+  it("APP-003: les arbres sont un maillage instancié, le mobilier un maillage fusionné, dans le groupe OpenStreetMap", () => {
+    const { osm } = setup();
+    const trees = osm.getObjectByName("arbres") as InstancedMesh;
+    expect(trees.count).toBe(1);
+    expect((osm.getObjectByName("mobilier") as Mesh).geometry.getAttribute("position").count).toBeGreaterThan(0);
+  });
+
+  it("APP-001: le fondu de sécurité efface aussi les arbres et le mobilier", () => {
+    const { world, osm } = setup();
+    setCityOpacity(world, 0.3);
+    for (const name of ["arbres", "mobilier", "batiments"]) {
+      const material = (osm.getObjectByName(name) as Mesh).material as Material;
+      expect([name, material.transparent, material.opacity]).toEqual([name, true, 0.3]);
+    }
+    setCityOpacity(world, 0);
+    expect(world.visible).toBe(false);
   });
 
   it("range le sol, les voies et les bâtiments OpenStreetMap dans un groupe que le rendu Google peut masquer", () => {

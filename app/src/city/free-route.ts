@@ -1,7 +1,7 @@
 // La ville d'un trajet libre (APP-003) : pas d'extrait versionné, mais les bâtiments et voies OpenStreetMap proches du
 // tracé, demandés à Overpass à l'accueil quand le trajet se prépare (jamais pendant la marche). Le trajet part au service
 // de routage choisi (Valhalla par défaut) ; rien n'est enregistré. Les droits (ODbL) sont les mêmes que pour les extraits figés.
-import { OVERPASS_URL, toGeoJsonText, type OverpassResponse } from "../../scripts/extract-souq.ts";
+import { OVERPASS_URL, PROP_NODES, toGeoJsonText, type OverpassResponse } from "../../scripts/extract-souq.ts";
 import { toLocalMetres, type LonLat } from "../route/geo.ts";
 import { createPath } from "../route/path.ts";
 import type { Place, Providers } from "../route/providers.ts";
@@ -25,14 +25,14 @@ function sample(points: readonly LonLat[]): string {
 
 export function corridorQuery(points: readonly LonLat[]): string {
   const around = `(around:${String(CORRIDOR_M)},${sample(points)})`;
-  return `[out:json][timeout:60];(way["building"]${around};way["highway"]${around};);out geom;`;
+  return `[out:json][timeout:60];(way["building"]${around};way["highway"]${around};${PROP_NODES.map((n) => `${n}${around};`).join("")});out geom;`;
 }
 
 /** Le trajet en mètres locaux, sans aucune ville : le sol seul, quand Overpass ne répond pas. */
 export function bareSouq(points: readonly LonLat[]): Souq {
   const origin = points[0] as LonLat;
   const route = createPath(points.map((p) => toLocalMetres(origin, p)), false);
-  return { origin, route, buildings: [], roads: [], palette: FREE_PALETTE };
+  return { origin, route, buildings: [], roads: [], props: [], palette: FREE_PALETTE };
 }
 
 export async function loadFreeCity(points: readonly LonLat[], fetchFn: typeof fetch): Promise<Souq> {
