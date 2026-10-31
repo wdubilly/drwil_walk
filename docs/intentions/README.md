@@ -24,15 +24,15 @@ removes it when fully covered.
 | `docs/intentions/test-desactive-cite-fiche.md` | Outiller `QUA-009` : un test désactivé cite la fiche qui le justifie |
 | `docs/intentions/controles-couleurs-kit.md` | Installer les contrôles de couleurs et de contraste du kit (`QUA-014`) |
 | `docs/intentions/zone-tapis-vignette.md` | Zone tapis toujours transparente et vignette réelle |
+| `docs/intentions/hud-casque.md` | Le tableau de bord de marche dans le casque (maquette : statistiques, défis, boussole, étapes) |
 | `docs/intentions/commandes-panneau.md` | Pause, recalibrage et panneau d'infos dans le casque |
-| `docs/intentions/autres-itineraires.md` | Pune Vieille ville, Pune FC Road et Doha Corniche |
 | `docs/intentions/corniche-west-bay.md` | La Corniche de Doha jusqu'à West Bay, départ au musée |
 | `docs/intentions/google-3d-tiles.md` | Google Photorealistic 3D Tiles, en option (report levé le 2026-10-31) |
 | `docs/intentions/cle-google-couverture.md` | Créer la clé Google, la restreindre, vérifier la couverture de Pune et de Doha |
 | `docs/intentions/essai-casque-google.md` | Essayer le rendu Google 3D au casque (netteté, fondu, 72 images par seconde) |
 | `docs/intentions/mise-a-jour-drwil.md` | Mettre drwil à jour pour clore les trois chantiers de garantie |
 | `docs/intentions/relecture-guide-casque.md` | Relire `docs/guide-utilisateur.md` sur un vrai Quest 3 |
-| `docs/intentions/rendu-ville.md` | Une ville moins austère dans le casque (teintes, voies, palette par itinéraire) |
+| `docs/intentions/rendu-ville.md` | Une ville moins austère : reste la question des types de bâtiments (église, mosquée, commerce) |
 | `docs/intentions/osm-enrichi.md` | Le relief du sol (reste du rendu OSM enrichi) |
 | `docs/intentions/essai-casque-itineraire-libre.md` | Essayer un trajet libre au casque (carte, adresse, cadence, arrivée) |
 | `docs/intentions/essai-fournisseurs-ouverts.md` | Essayer un trajet libre sur les instances publiques de Valhalla et de Photon |

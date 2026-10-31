@@ -123,3 +123,8 @@ One entry per closed project, most recent last.
 - Contrats : `APP-003` complété (règle, source, preuve, tests), `QUA-020` (parcours 5 à 8 et 10 rejoués avec le rendu enrichi). Choix de l'agent : balises exactes du mobilier, formes simples, plafonds, teintes des matériaux et des arbres, ombrage à 55 % au pied.
 - Limites (lot 5, humain) : jamais vu au casque, 72 images par seconde non mesurées, l'e2e émulé ne juge pas l'apparence (un test e2e a expiré une fois sous charge, puis passé) ; relief du sol non fait (`docs/intentions/osm-enrichi.md`). Intention `docs/intentions/essai-casque-osm-enrichi.md`.
 - Branche `workstream/osm-enrichi`. Preuve de clôture : docs/preuves/osm-enrichi.md (écrite par la clôture).
+
+## 2026-10-31 — Intention `autres-itineraires` retirée (entièrement livrée)
+
+- Les quatre itinéraires de `MISSION.md` sont livrés : le souk de Doha, la Vieille ville de Pune, la Corniche de Doha et FC Road, chacun avec son extrait OpenStreetMap figé (`app/data/`) ; aucun n'est plus « Bientôt ».
+- Reste de l'intention, sans objet propre : la relecture des itinéraires et leur essai sur un vrai Quest 3, déjà portés par `docs/intentions/essai-casque-itineraire-libre.md` et `docs/intentions/essai-casque-osm-enrichi.md`. Le parcours de la Corniche jusqu'à West Bay : `docs/intentions/corniche-west-bay.md`.

@@ -1,6 +1,6 @@
 # Intention : la Corniche de Doha jusqu'à West Bay
 
-**Statut** : proposée le 2026-10-31.
+**Statut** : proposée le 2026-10-31. Cadrée le 2026-10-31 : `docs/projects/corniche-west-bay.md`.
 
 ## Besoin
 
@@ -16,5 +16,5 @@ point relié le plus proche. West Bay est à environ 3,5 km du départ : hors du
 
 ## Questions à trancher
 
-- [decision] Allonger l'aller (environ 5 à 6 km, jusqu'aux tours) ou garder le tronçon de 2 km ?
-- [decision] Relier à la main le réseau du musée à celui de la Corniche (ajout d'un segment sans voie OSM) ou accepter le départ décalé ?
+- Tranché le 2026-10-31 : allonger l'aller jusqu'aux tours de West Bay (environ 5 à 6 km).
+- Tranché le 2026-10-31 : relier à la main le réseau du musée à celui de la Corniche (un segment sans voie OSM).

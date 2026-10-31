@@ -1,6 +1,6 @@
 # Intention : pause, recalibrage et panneau d'infos dans le casque
 
-**Statut** : proposée le 2026-10-30.
+**Statut** : proposée le 2026-10-30. Cadrée le 2026-10-31 : `docs/projects/commandes-panneau.md`.
 
 ## Besoin
 
@@ -14,5 +14,5 @@ Lu le 2026-10-30 : seul le joystick droit (±0,1 km/h) est codé (`app/src/xr/jo
 
 ## Questions à trancher
 
-- [decision] Panneau dans le casque : texte flottant devant soi ou attaché au poignet ?
-- [decision] La pause fige-t-elle aussi la ville, ou seulement l'avancée ?
+- Tranché le 2026-10-31 : texte flottant devant soi, pas attaché au poignet.
+- Tranché le 2026-10-31 : la pause ne fige que l'avancée, la ville et le fondu de sécurité continuent.
