@@ -51,6 +51,8 @@ files:
   - app/src/city/souq.ts
   - app/src/main.test.ts
   - app/src/main.ts
+  - app/src/route/create-providers.test.ts
+  - app/src/route/create-providers.ts
   - app/src/route/geo.test.ts
   - app/src/route/geo.ts
   - app/src/route/geocoding.test.ts
@@ -59,11 +61,16 @@ files:
   - app/src/route/itineraries.ts
   - app/src/route/path.test.ts
   - app/src/route/path.ts
+  - app/src/route/photon.test.ts
+  - app/src/route/photon.ts
+  - app/src/route/providers.ts
   - app/src/route/reject-double.ts
   - app/src/route/routes-api.test.ts
   - app/src/route/routes-api.ts
   - app/src/route/speed.test.ts
   - app/src/route/speed.ts
+  - app/src/route/valhalla.test.ts
+  - app/src/route/valhalla.ts
   - app/src/route/walk.test.ts
   - app/src/route/walk.ts
   - app/src/safety/visibility.test.ts
