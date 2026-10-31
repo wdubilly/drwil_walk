@@ -22,6 +22,11 @@ export interface WalkInfo {
   attribution: string;
   /** Trajet libre arrivé : le panneau le dit. */
   arrived: boolean;
+  /** Marche en pause (gâchette droite) et panneau du casque affiché (bouton B). */
+  paused: boolean;
+  showPanel: boolean;
+  /** Où le parcours est posé après un recalage (bouton A) : position en mètres et cap en radians. */
+  calibration: { x: number; z: number; yawRad: number };
 }
 
 export interface WalkPanel {
@@ -61,7 +66,11 @@ export function renderWalkPanel(doc: Document, root: HTMLElement): WalkPanel {
   limit.className = "speed-limit";
   limit.setAttribute("aria-live", "polite");
   limit.hidden = true;
-  panel.append(list, limit, arrival, credit);
+  const pause = doc.createElement("p");
+  pause.className = "paused";
+  pause.textContent = "Marche en pause : la gâchette droite la reprend.";
+  pause.hidden = true;
+  panel.append(list, limit, pause, arrival, credit);
   root.append(panel);
   return {
     remove: () => {
@@ -77,6 +86,12 @@ export function renderWalkPanel(doc: Document, root: HTMLElement): WalkPanel {
       show(limit, bound);
       limit.hidden = bound === "";
       arrival.hidden = !info.arrived;
+      pause.hidden = !info.paused;
+      panel.dataset.paused = String(info.paused);
+      panel.dataset.hudVisible = String(info.showPanel);
+      panel.dataset.calibrationX = String(info.calibration.x);
+      panel.dataset.calibrationZ = String(info.calibration.z);
+      panel.dataset.calibrationYaw = String(info.calibration.yawRad);
       panel.dataset.arrived = String(info.arrived);
       panel.dataset.speedKmh = String(info.speedKmh);
       panel.dataset.distanceM = String(info.distanceM);

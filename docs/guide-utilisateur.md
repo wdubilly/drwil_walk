@@ -101,7 +101,7 @@ L'opacité de la ville se règle à l'accueil (30 à 100 %) : baissez-la si vous
    s'affiche sur la page et dans la scène ; à 8 km/h (ou 1 km/h), il le dit : le joystick ne va pas plus loin. À la fin d'une boucle, la marche reprend au départ ; sur un itinéraire libre,
    elle s'arrête à l'arrivée et le dit (page et casque) : arrêtez alors le tapis.
 
-Les autres commandes de manette décrites dans `docs/features.md` (pause, recalibrage, panneau d'infos) sont à venir.
+Autres commandes de la **manette droite** : **gâchette** = pause / reprise (la ville reste affichée, la vitesse réglée est gardée ; pensez à arrêter ou ralentir le tapis) ; **bouton A** = recalibrer (« je suis face au tapis » : le parcours repart d'où vous êtes, dans le sens où vous regardez, sans changer la distance parcourue) ; **bouton B** = afficher / masquer le panneau d'infos flottant devant vous (vitesse, distance, temps, lieu). Il s'efface avec la ville quand vous baissez la tête. Un appui compte une fois, même si vous gardez le bouton enfoncé. Ces commandes n'ont pas encore été essayées sur un vrai Quest 3.
 Les données de la ville sont © contributeurs OpenStreetMap (et © Google en rendu Google 3D).
 
 ## 6. Ennuis connus et remèdes

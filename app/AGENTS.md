@@ -51,7 +51,7 @@ session `immersive-ar`, rue simple, marche en ligne droite, joystick, fondu têt
   substitution (`vi.stubGlobal`) puis l'importe dynamiquement.
 - 2026-10-30 : les e2e sont nommés `*.test.ts` dans e2e/ : c8 exclut les fichiers de test par défaut (pas les
   `*.spec.ts`), et Vitest ne lit que src/ et la racine. IWER n'applique un axe de manette qu'à l'image suivante :
-  laisser passer des images entre deux poussées (`letFramesPass`).
+  laisser passer des images entre deux poussées (`letFramesPass`) ; même règle pour un bouton (`updateButtonValue`) : tenir la valeur, observer l'effet, relâcher, laisser passer des images avant l'appui suivant. Les commandes de la manette droite sont lues par `src/xr/buttons.ts` (gâchette 0, A 4, B 5) : un appui est un front montant.
 - 2026-10-30 : three.js fait tourner sa boucle de page en plus de celle de la session si `setAnimationLoop` est appelé
   après `xr.setSession` (images sans `XRFrame`) : poser la boucle avant la session, et ignorer une image sans frame.
 - 2026-10-31 : `GLTFExtensionsPlugin` (3d-tiles-renderer) libère à sa fin un chargeur KTX2 même absent et lève alors une erreur : le

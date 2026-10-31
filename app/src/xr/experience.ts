@@ -6,7 +6,7 @@ import { cityFor } from "../city/cities.ts";
 import { createTripPlanner } from "../city/free-route.ts";
 import { createSouqScene, placeOnRoute, setCityOpacity } from "../city/souq.ts";
 import type { Souq } from "../city/souq-data.ts";
-import { FREE_ITINERARY_ID } from "../route/itineraries.ts";
+import { FREE_ITINERARY_ID, ITINERARIES, type Itinerary } from "../route/itineraries.ts";
 import { pointAt } from "../route/path.ts";
 import type { Providers } from "../route/providers.ts";
 import { ARRIVAL_TEXT } from "../route/walk.ts";
@@ -15,7 +15,10 @@ import { renderHome, type HomeView } from "../ui/home.ts";
 import { chooseRendering, type GoogleConfig } from "./google-mode.ts";
 import { renderWalkPanel } from "../ui/panel.ts";
 import { initialWalkState, nextWalkState } from "./frame.ts";
+import { rightButtons } from "./buttons.ts";
+import { createHudPanel } from "./hud-panel.ts";
 import { rightThumbstickY } from "./joystick.ts";
+import { NO_CALIBRATION, calibrationFrom, type HeadPose } from "./pose.ts";
 import { REFERENCE_SPACE, SESSION_MODE, requestMixedRealitySession, type XrSystemLike } from "./session.ts";
 
 export type RendererLike = Pick<WebGLRenderer, "xr" | "setAnimationLoop" | "render" | "domElement" | "dispose">;
@@ -90,6 +93,11 @@ async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession, so
   renderer.xr.setReferenceSpaceType(REFERENCE_SPACE);
   deps.root.append(renderer.domElement);
   const panel = renderWalkPanel(deps.document, deps.root);
+  // Le panneau d'infos du casque : dans la scène, hors de `world`, mais soumis au même fondu (APP-001).
+  const hud = createHudPanel(deps.document);
+  scene.add(hud.mesh);
+  const place = (ITINERARIES.find((itinerary) => itinerary.id === home.readRouteId()) as Itinerary).name;
+  let calibration = NO_CALIBRATION;
   const globalOpacityPct = home.readOpacityPct();
   let state = initialWalkState(home.readSpeedKmh(), globalOpacityPct);
   // La boucle est posée avant la session : three.js arrête alors sa boucle de page au démarrage
@@ -99,20 +107,31 @@ async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession, so
     if (!frame) return;
     const space = renderer.xr.getReferenceSpace();
     const pose = space ? frame.getViewerPose(space) : undefined;
+    const head: HeadPose | undefined = pose?.transform;
     state = nextWalkState(state, {
       timeMs,
       axisY: rightThumbstickY(session.inputSources),
+      buttons: rightButtons(session.inputSources),
       pitchDownDeg: pose ? headPitchDownDeg(pose.transform.orientation) : null,
       globalOpacityPct,
       // Un trajet libre s'arrête à l'arrivée ; une boucle reprend au départ (APP-002).
       endM: souq.route.loop ? undefined : souq.route.lengthM,
     });
+    // Bouton A : le parcours repart d'où l'on est, dans le sens où l'on regarde ; la distance ne bouge pas (APP-002).
+    if (state.recalibrate && head) calibration = calibrationFrom(head);
+    world.position.set(calibration.x, 0, calibration.z);
+    world.rotation.y = calibration.yawRad;
     arrival.mesh.visible = state.arrived;
     placeOnRoute(city, souq.route, state.distanceM);
     setCityOpacity(world, state.cityOpacity);
     mode.update(camera, renderer.xr.getCamera());
+    hud.update(
+      { ...state, place },
+      { show: state.showPanel, opacity: state.cityOpacity, pose: head },
+    );
     panel.update({
       ...state,
+      calibration,
       position: pointAt(souq.route, state.distanceM),
       buildingCount,
       rendering: mode.rendering(),

@@ -10,10 +10,12 @@ import type { XrSystemLike } from "./session.ts";
 
 type Loop = ((timeMs: number, frame?: XRFrame) => void) | null;
 
-/** Pose de tête inclinée de `deg` degrés (négatif : tête baissée). */
-export function poseFrame(deg: number | null): XRFrame {
-  const a = ((deg ?? 0) * Math.PI) / 360;
-  const pose = deg === null ? undefined : { transform: { orientation: { x: Math.sin(a), y: 0, z: 0, w: Math.cos(a) } } };
+/** Pose de tête inclinée de `deg` degrés (négatif : tête baissée), tournée de `yawDeg` vers la gauche, à la position `at`. */
+export function poseFrame(deg: number | null, { yawDeg = 0, at = { x: 0, y: 1.6, z: 0 } } = {}): XRFrame {
+  const p = ((deg ?? 0) * Math.PI) / 360;
+  const y = (yawDeg * Math.PI) / 360;
+  const orientation = { x: Math.cos(y) * Math.sin(p), y: Math.sin(y) * Math.cos(p), z: -Math.sin(y) * Math.sin(p), w: Math.cos(y) * Math.cos(p) };
+  const pose = deg === null ? undefined : { transform: { position: at, orientation } };
   return { getViewerPose: () => pose } as unknown as XRFrame;
 }
 
@@ -26,7 +28,15 @@ export function setup(
   const root = doc.createElement("main");
   doc.body.append(root);
   const listeners: Record<string, () => void> = {};
-  const inputSources = [{ handedness: "right", gamepad: { axes: [0, 0, 0, 0] } }];
+  const released = () => Array.from({ length: 6 }, () => ({ pressed: false, value: 0 }));
+  const inputSources = [{ handedness: "right", gamepad: { axes: [0, 0, 0, 0], buttons: released() } }];
+  /** Tient les boutons d'index donnés de la manette droite (aucun : tous relâchés). */
+  const hold = (...indices: number[]) => {
+    inputSources[0] = {
+      handedness: "right",
+      gamepad: { axes: [0, 0, 0, 0], buttons: released().map((b, i) => (indices.includes(i) ? { pressed: true, value: 1 } : b)) },
+    };
+  };
   const session = {
     inputSources,
     addEventListener: (type: string, cb: () => void) => (listeners[type] = cb),
@@ -82,6 +92,6 @@ export function setup(
   const fail = (reason: string) => {
     for (const failure of failures) failure(reason);
   };
-  return { root, home, xr, fake, inputSources, listeners, status, panel, enter, frame, notice, chooseGoogle, create, tiles, tileMesh, fail };
+  return { root, home, xr, fake, inputSources, hold, listeners, status, panel, enter, frame, notice, chooseGoogle, create, tiles, tileMesh, fail };
 }
 
