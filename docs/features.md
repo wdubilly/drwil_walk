@@ -13,7 +13,7 @@ de la rampe), bouton « Entrer en réalité mixte ». Une seule personne utilise
 Codé : accueil sombre à grandes cibles (48 px au moins, contraste prouvé par QUA-014, contraste du texte et de son
 fond) ; quatre cartes d'itinéraire avec une illustration, Doha Souq Waqif choisi par défaut, choix d'un clic ou à la
 manette ; un itinéraire sans ville dans le dépôt serait marqué « Bientôt » et ne se choisirait pas (plus aucun aujourd'hui) ;
-vitesse de départ (1 à 8 km/h, défaut 4,0), opacité de la ville (30 à 100 %), rappel de sécurité, mention « © contributeurs OpenStreetMap » (suivie de « Google » quand ce rendu est choisi), bouton d'entrée ; rendu OpenStreetMap par défaut, Google 3D en option : sans clé, ou si les tuiles ne se chargent pas, la marche se fait en OpenStreetMap et la raison s'affiche sur l'accueil ; un
+vitesse de départ (1 à 8 km/h, défaut 4,0 ; la plage est écrite sous le champ et une saisie hors plage est ramenée à la borne en le disant, avec la raison), opacité de la ville (30 à 100 %), rappel de sécurité, mention « © contributeurs OpenStreetMap » (suivie de « Google » quand ce rendu est choisi), bouton d'entrée ; rendu OpenStreetMap par défaut, Google 3D en option : sans clé, ou si les tuiles ne se chargent pas, la marche se fait en OpenStreetMap et la raison s'affiche sur l'accueil ; un
 échec (navigateur sans WebXR, réalité mixte non prise en charge) s'affiche sur la page. Les itinéraires qui démarrent sont le souk
 de Doha, la Vieille ville de Pune, la Corniche de Doha et FC Road à Pune ; le choisi est inscrit sur la page (`data-route`) .
 
@@ -34,7 +34,7 @@ vrai Quest 3 (cadence avec des milliers de bâtiments en bande de 150 m, profil 
 
 ## Marche dans la ville
 
-La ville défile le long de l'itinéraire à la vitesse réglée (défaut 4,0 km/h, de 1 à 8 km/h, par pas de 0,1), avec une
+La ville défile le long de l'itinéraire à la vitesse réglée (défaut 4,0 km/h, de 1 à 8 km/h, par pas de 0,1 ; le panneau de la page dit quand la vitesse est à une borne, le message dans le casque lui-même reste à faire : `docs/intentions/hud-casque.md`), avec une
 caméra qui suit le parcours sans rotation brusque (la direction est lissée sur 8 m dans les virages). Manettes : gâchette droite pour pause / reprise, joystick droit pour la
 vitesse, bouton A pour recalibrer, bouton B pour le panneau d'infos (vitesse, distance, temps, lieu). La ville est faite
 de bâtiments OpenStreetMap extrudés par défaut, ou des tuiles photoréalistes Google 3D au choix de l'accueil (clé requise), avec les mentions « © contributeurs OpenStreetMap » et, en rendu Google, celle de Google et les droits des tuiles. Le fondu tête baissée efface les tuiles Google comme la ville OpenStreetMap. À juger au casque : netteté à hauteur d'yeux, 72 images par seconde, lisibilité des mentions.

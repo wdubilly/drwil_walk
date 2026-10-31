@@ -6,6 +6,9 @@ import {
   clampSpeedKmh,
   formatSpeedKmh,
   kmhToMs,
+  speedBoundMessage,
+  speedLimitMessage,
+  SPEED_RANGE_TEXT,
   stepSpeedKmh,
 } from "./speed.ts";
 
@@ -54,5 +57,20 @@ describe("vitesse de marche", () => {
   it("affiche la vitesse à la française, avec une décimale", () => {
     expect(formatSpeedKmh(4)).toBe("4,0 km/h");
     expect(formatSpeedKmh(5.25)).toBe("5,3 km/h");
+  });
+
+  it("QUA-002: dit la limite et la raison quand une vitesse saisie est hors de la plage", () => {
+    expect(SPEED_RANGE_TEXT).toBe("De 1 à 8 km/h, par sécurité sur le tapis.");
+    expect(speedLimitMessage(50)).toBe("50 km/h dépasse la limite : 8,0 km/h retenus, par sécurité sur le tapis.");
+    expect(speedLimitMessage(0.5)).toBe("0,5 km/h est sous la limite : 1,0 km/h retenus, plage de 1 à 8 km/h.");
+    expect(speedLimitMessage(5)).toBe("");
+    expect(speedLimitMessage(8)).toBe("");
+    expect(speedLimitMessage(Number.NaN)).toBe("Vitesse illisible : 4,0 km/h retenus.");
+  });
+
+  it("QUA-002: dit qu'une vitesse est à la borne quand le joystick tente de la dépasser", () => {
+    expect(speedBoundMessage(8)).toBe("Vitesse au maximum : 8 km/h, limite de sécurité sur le tapis.");
+    expect(speedBoundMessage(1)).toBe("Vitesse au minimum : 1 km/h.");
+    expect(speedBoundMessage(4)).toBe("");
   });
 });

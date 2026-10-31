@@ -280,3 +280,9 @@ input:focus-visible {
   color: var(--texte);
   font-weight: 600;
 }
+
+.speed-hint,
+.speed-limit {
+  margin: 0.25rem 0;
+  color: var(--bientot-texte);
+}

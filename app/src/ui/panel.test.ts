@@ -34,4 +34,20 @@ describe("panneau de marche", () => {
     panel.remove();
     expect(root.querySelector("[aria-label='Marche']")).toBeNull();
   });
+
+  it("QUA-002: dit la limite quand la vitesse est à la borne, et l'efface sinon", () => {
+    const doc = new Window().document as unknown as Document;
+    const root = doc.createElement("main");
+    const panel = renderWalkPanel(doc, root);
+    const info = { speedKmh: 8, distanceM: 0, timeS: 0, cityOpacity: 1, position: { x: 0, z: 0 }, buildingCount: 1,
+      rendering: "osm" as const, tileCount: 0, attribution: "", arrived: false };
+    const limit = () => root.querySelector<HTMLElement>(".speed-limit");
+    panel.update(info);
+    expect(limit()?.hidden).toBe(false);
+    expect(limit()?.textContent).toBe("Vitesse au maximum : 8 km/h, limite de sécurité sur le tapis.");
+    panel.update({ ...info, speedKmh: 7.9 });
+    expect(limit()?.hidden).toBe(true);
+    panel.update({ ...info, speedKmh: 1 });
+    expect(limit()?.textContent).toBe("Vitesse au minimum : 1 km/h.");
+  });
 });
