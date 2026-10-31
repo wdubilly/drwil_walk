@@ -5,13 +5,63 @@
 
 <!-- scope
 files:
+  - app/data/souq-waqif-boucle.json
+  - app/data/souq-waqif.json
+  - app/e2e/chemins-critiques.test.ts
   - app/eslint.config.js
   - app/eslint.config.test.ts
   - app/index.html
+  - app/package-lock.json
+  - app/package.json
   - app/playwright.config.test.ts
   - app/playwright.config.ts
+  - app/scripts/extract-souq.ts
+  - app/src/city/attribution.test.ts
+  - app/src/city/attribution.ts
+  - app/src/city/buildings.test.ts
+  - app/src/city/buildings.ts
+  - app/src/city/canvas-double.ts
+  - app/src/city/extract-souq.test.ts
+  - app/src/city/licence.ts
+  - app/src/city/souq-data.test.ts
+  - app/src/city/souq-data.ts
+  - app/src/city/souq.test.ts
+  - app/src/city/souq.ts
+  - app/src/main.test.ts
+  - app/src/main.ts
+  - app/src/route/geo.test.ts
+  - app/src/route/geo.ts
+  - app/src/route/itineraries.test.ts
+  - app/src/route/itineraries.ts
+  - app/src/route/path.test.ts
+  - app/src/route/path.ts
+  - app/src/route/speed.test.ts
+  - app/src/route/speed.ts
+  - app/src/route/walk.test.ts
+  - app/src/route/walk.ts
   - app/src/safety/visibility.test.ts
   - app/src/safety/visibility.ts
+  - app/src/ui/contrast.test.ts
+  - app/src/ui/contrast.ts
+  - app/src/ui/doha-corniche.svg
+  - app/src/ui/doha-souq-waqif.svg
+  - app/src/ui/home.css
+  - app/src/ui/home.test.ts
+  - app/src/ui/home.ts
+  - app/src/ui/panel.test.ts
+  - app/src/ui/panel.ts
+  - app/src/ui/pune-fc-road.svg
+  - app/src/ui/pune-vieille-ville.svg
+  - app/src/ui/route-choice.test.ts
+  - app/src/ui/route-choice.ts
+  - app/src/xr/experience.test.ts
+  - app/src/xr/experience.ts
+  - app/src/xr/frame.test.ts
+  - app/src/xr/frame.ts
+  - app/src/xr/joystick.test.ts
+  - app/src/xr/joystick.ts
+  - app/src/xr/session.test.ts
+  - app/src/xr/session.ts
   - app/tsconfig.json
   - app/vite.config.test.ts
   - app/vite.config.ts
@@ -44,3 +94,5 @@ Toute modification de ces fichiers : elle passe par un chantier dont le bloc
 - **Dernier état** (2026-10-30) : fiche créée à la clôture de la garantie
   couverture, rien à reprendre. Un nouveau fichier de socle livré par un
   chantier s'ajoute ici à sa clôture.
+- 2026-10-31 : clôture du chantier doha-souq-waqif (souk de Doha, voir le journal) : ses fichiers de code, de test et
+  d'e2e s'ajoutent au périmètre ci-dessus, comme le demande la ligne précédente.

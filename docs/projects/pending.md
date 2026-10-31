@@ -33,4 +33,3 @@ otherwise.
 - [x] topic delivered (YYYY-MM-DD).
 -->
 
-- [ ] [AI] [P1] Marcher dans le souk de Doha (Souq Waqif) en bâtiments OpenStreetMap — `docs/projects/doha-souq-waqif.md`
