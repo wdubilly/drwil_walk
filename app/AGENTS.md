@@ -9,7 +9,7 @@ do not copy it here.
 Couche unique : l'application WebXR entière (TypeScript strict, Vite, three.js), cadrée le 2026-10-30.
 Socle posé le 2026-10-30 (configuration, point d'entrée, vitesse), puis une première tranche verticale : accueil,
 session `immersive-ar`, rue simple, marche en ligne droite, joystick, fondu tête baissée (carte :
-`docs/architecture.md`). Souk de Doha (bâtiments OpenStreetMap extrudés, boucle GPS d'environ 1,5 km, mention d'attribution) posé le 2026-10-31. Accueil sombre à cartes d'itinéraire (`app/src/ui/home.css`, `app/src/ui/route-choice.ts`, `app/src/route/itineraries.ts`, illustrations `app/src/ui/<id>.svg`) posé le 2026-10-31. Vieille ville de Pune (même méthode, `app/src/city/cities.ts` associe chaque itinéraire à sa ville ; la marche lit l'itinéraire choisi) posée le 2026-10-31. Restent à écrire : les deux autres itinéraires (Pune FC Road, Doha Corniche), la zone tapis et la vignette.
+`docs/architecture.md`). Souk de Doha (bâtiments OpenStreetMap extrudés, boucle GPS d'environ 1,5 km, mention d'attribution) posé le 2026-10-31. Accueil sombre à cartes d'itinéraire (`app/src/ui/home.css`, `app/src/ui/route-choice.ts`, `app/src/route/itineraries.ts`, illustrations `app/src/ui/<id>.svg`) posé le 2026-10-31. Vieille ville de Pune (même méthode, `app/src/city/cities.ts` associe chaque itinéraire à sa ville ; la marche lit l'itinéraire choisi) posée le 2026-10-31. Corniche de Doha (aller-retour d'environ 4 km, même méthode) posée le 2026-10-31. Reste à écrire : le dernier itinéraire (Pune FC Road), la zone tapis et la vignette.
 
 - Code dans src/, un dossier par module : xr/ (session `immersive-ar`, manettes), city/ (3d-tiles-renderer,
   repli OSM), route/ (itinéraires, déplacement à vitesse réglée), safety/ (fondu tête baissée, zone tapis,
@@ -75,10 +75,11 @@ Depuis `app/`, après `npm ci` :
 
 - `npm test -- -t "APP-001"` : les seuls tests du contrat APP-001 (contrôle `app-001`) ; de même `APP-002` (`app-002`) et `APP-003` (`app-003`).
 - `npm run extract` : relance l'extraction Overpass du souk et réécrit `data/souq-waqif.json` (réseau, hors casque) ; le tracé `data/souq-waqif-boucle.json` est versionné à part (voir sa description) et un test vérifie que chacun de ses points est un sommet d'une voie de l'extrait.
+- `npm run extract:corniche` : de même pour la Corniche de Doha (`data/doha-corniche.json`, tracé `data/doha-corniche-boucle.json`, aller-retour versionné à part et vérifié par le même test de sommets).
 - `npm run extract:pune` : de même pour la Vieille ville de Pune (`data/pune-vieille-ville.json`, tracé `data/pune-vieille-ville-boucle.json`, versionné à part et vérifié par le même test de sommets).
 - `npm run e2e` : Playwright (contrôle `e2e`, QUA-020) ; il lance lui-même Vite sur le port 5174 et injecte le Quest 3
   émulé (IWER) dans la page ; premier lancement : `npx playwright install chromium`. Résultats d'échec dans le
-  dossier dist/e2e-results de la racine, hors de la couche. Les captures de l'accueil (état par défaut, carte « Bientôt », carte choisie) et de la marche à Pune sont écrites dans
+  dossier dist/e2e-results de la racine, hors de la couche. Les captures de l'accueil (état par défaut, carte « Bientôt », carte choisie) et de la marche à Pune et sur la Corniche sont écrites dans
   dist/e2e-captures de la racine et publiées par la CI (artefact `captures-accueil`).
 
 Depuis la racine, `node .githooks/run-checks.mjs` lance les contrôles déclarés dans `.drwil/ia-first.json`.

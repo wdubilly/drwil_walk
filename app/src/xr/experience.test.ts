@@ -96,6 +96,20 @@ describe("expérience en réalité mixte", () => {
     expect(Number(pune.panel()?.getAttribute("data-distance-m"))).toBeCloseTo(40 / 3.6);
   });
 
+  it("APP-002: la Corniche de Doha se choisit et la marche suit sa propre boucle", async () => {
+    const souk = setup();
+    await souk.enter();
+    const soukCount = Number(souk.panel()?.getAttribute("data-building-count"));
+    const corniche = setup();
+    corniche.root.querySelector<HTMLInputElement>("input[value='doha-corniche']")?.click();
+    await corniche.enter();
+    corniche.frame(0, poseFrame(0));
+    corniche.frame(10_000, poseFrame(0));
+    expect(corniche.panel()?.getAttribute("data-building-count")).not.toBe(String(soukCount));
+    expect(Number(corniche.panel()?.getAttribute("data-building-count"))).toBeGreaterThan(500);
+    expect(Number(corniche.panel()?.getAttribute("data-distance-m"))).toBeCloseTo(40 / 3.6);
+  });
+
   it("change la vitesse au joystick droit", async () => {
     const t = setup();
     await t.enter();

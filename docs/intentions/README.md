@@ -26,6 +26,7 @@ removes it when fully covered.
 | `docs/intentions/zone-tapis-vignette.md` | Zone tapis toujours transparente et vignette réelle |
 | `docs/intentions/commandes-panneau.md` | Pause, recalibrage et panneau d'infos dans le casque |
 | `docs/intentions/autres-itineraires.md` | Pune Vieille ville, Pune FC Road et Doha Corniche |
+| `docs/intentions/corniche-west-bay.md` | La Corniche de Doha jusqu'à West Bay, départ au musée |
 | `docs/intentions/google-3d-tiles.md` | Google Photorealistic 3D Tiles, reportées après la v0.1 |
 | `docs/intentions/mise-a-jour-drwil.md` | Mettre drwil à jour pour clore les trois chantiers de garantie |
 
