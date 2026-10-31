@@ -43,7 +43,7 @@ marche suit un **vrai parcours** dans le souk, à la vitesse réglée.
 ## 2. Hors périmètre
 
 - Les trois autres itinéraires (Pune Vieille ville, Pune FC Road, Doha Corniche) : `docs/intentions/autres-itineraires.md`.
-- Le choix d'itinéraire et le style de l'accueil : `docs/intentions/interface-accueil.md`. Ici, le souk remplace
+- Le choix d'itinéraire et le style de l'accueil :. Ici, le souk remplace
   la rue de test comme seul parcours.
 - Google Photorealistic 3D Tiles : `docs/intentions/google-3d-tiles.md`.
 - Zone tapis, vignette, pause, boutons A/B, panneau dans le casque : `docs/intentions/zone-tapis-vignette.md`,

@@ -26,6 +26,15 @@ describe("écran d'accueil", () => {
     expect(button.textContent).toBe(ENTER_LABEL);
   });
 
+  it("propose le choix d'itinéraire et transmet celui qui démarre", () => {
+    const { root, view, button } = setup();
+    expect(view.readRouteId()).toBe("pune-vieille-ville");
+    const handler = vi.fn(() => root.getAttribute("data-route"));
+    view.onEnter(handler);
+    button.click();
+    expect(handler).toHaveReturnedWith("pune-vieille-ville");
+  });
+
   it("propose 4,0 km/h par défaut, réglable de 1 à 8 km/h par pas de 0,1", () => {
     const { view, input } = setup();
     const speed = input("Vitesse de départ");

@@ -184,7 +184,7 @@ contracts » section).
 **Manual** : a bypass rarely leaves a machine-checkable trace.
 
 ## QUA-020 — Les chemins critiques sont testés de bout en bout
-**Rule** : les trois chemins critiques nommés par le demandeur sont rejoués de bout en bout dans Chromium avec un Meta Quest 3 émulé (IWER) : (1) de l'accueil à l'entrée en réalité mixte, session `immersive-ar` ; (2) la marche avance à la vitesse réglée et le joystick droit change la vitesse de ±0,1 km/h ; (3) tête baissée au-delà de 25°, la ville devient transparente (APP-001).
+**Rule** : les chemins critiques nommés par le demandeur sont rejoués de bout en bout dans Chromium avec un Meta Quest 3 émulé (IWER) : (1) de l'accueil à l'entrée en réalité mixte, session `immersive-ar` ; (2) à l'accueil, quatre cartes d'itinéraire, un itinéraire « bientôt » non sélectionnable, et l'itinéraire choisi est celui qui démarre ; (3) la marche avance à la vitesse réglée et le joystick droit change la vitesse de ±0,1 km/h ; (4) tête baissée au-delà de 25°, la ville devient transparente (APP-001).
 **Scope** : l'application de `app/`, servie par Vite, vue comme l'utilisateur la voit (page, boutons, panneau de marche)
 **Source of truth** : `app/e2e/chemins-critiques.test.ts`, configuré par `app/playwright.config.ts`
 **Proof** : Playwright, au commit, en CI (navigateur Chromium installé par le job) et par `drwil verify` ; un chemin qui ne s'exécute pas fait échouer le contrôle, jamais un « passé »
@@ -220,6 +220,16 @@ contracts » section).
 **Check** : `app-001`
 **Tests** : `app/src/safety/visibility.test.ts`, `app/src/xr/session.test.ts`, `app/src/xr/frame.test.ts`, `app/src/xr/experience.test.ts`, `app/src/city/street.test.ts`, `app/src/ui/home.test.ts`
 **Manual** : le point (2), zone tapis, n'est pas encore codé (chantier suivant) : il n'est prouvé par aucun test. D'ici là, vérification humaine sur le Quest 3 que le tapis reste visible ; une fois la zone tapis codée et testée sous cet ID, retirer ce champ. Les points (1), (3) et (4) sont prouvés par le contrôle ci-dessus, dans un Quest 3 émulé : jamais encore sur un vrai casque.
+
+## QUA-014 — Contraste du texte et de son fond (RGAA 4.1 / WCAG AA)
+**Rule** : tout texte de l'accueil du casque a un rapport de contraste d'au moins 4,5:1 avec son fond (3:1 pour le grand texte : 24 px, ou 18,5 px gras) ; les couleurs sont déclarées une seule fois, dans les variables de `app/src/ui/home.css`, jamais en dur ailleurs dans la feuille.
+**Scope** : les écrans de `app/src/ui/` (accueil, cartes d'itinéraire, panneau de marche)
+**Source of truth** : `app/src/ui/home.css` (couleurs), `app/src/ui/contrast.ts` (mesure WCAG)
+**Proof** : des tests nommés par l'ID, qui lisent les couleurs dans la feuille de style et mesurent chaque couple texte / fond ; ils tournent avec tous les tests de la couche dans le contrôle `coverage-app`, à chaque commit et en CI
+**Reason** : `catalog:QUA-014` adopté par le chantier accueil-casque ; un accueil sombre lu dans un casque doit rester lisible. Limite : les couples sont déclarés dans le test, un nouveau texte sur un nouveau fond doit y être ajouté ; les scripts du kit (le contrôle des couleurs en dur du kit, le contrôle de contraste du kit) ne sont pas installés : `docs/intentions/controles-couleurs-kit.md`.
+**Origin** : accueil-casque — « Le texte et son fond respectent un contraste d'au moins 4,5:1 (3:1 pour le grand texte) »
+**Check** : `coverage-app`
+**Tests** : `app/src/ui/contrast.test.ts`
 
 ## Out of registry (these are not contracts)
 

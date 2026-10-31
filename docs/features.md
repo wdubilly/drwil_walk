@@ -11,9 +11,12 @@ Ouvert dans le navigateur du Quest 3 : choix de l'itinéraire (Pune Vieille vill
 Corniche, Doha Souq Waqif) et de la vitesse de départ, rappel de sécurité (clé de sécurité du tapis attachée, main près
 de la rampe), bouton « Entrer en réalité mixte ». Une seule personne utilise l'application : pas de compte ni de rôle.
 
-Codé : vitesse de départ (1 à 8 km/h, défaut 4,0), opacité de la ville (30 à 100 %), rappel de sécurité, bouton
-d'entrée ; un échec (navigateur sans WebXR, réalité mixte non prise en charge) s'affiche sur la page. À venir : le
-choix de l'itinéraire.
+Codé : accueil sombre à grandes cibles (48 px au moins, contraste prouvé par QUA-014, contraste du texte et de son
+fond) ; quatre cartes d'itinéraire avec une illustration, Pune Vieille ville choisie par défaut, choix d'un clic ou à la
+manette ; les trois autres sont marquées « Bientôt » et ne se choisissent pas (leur ville n'existe pas encore) ;
+vitesse de départ (1 à 8 km/h, défaut 4,0), opacité de la ville (30 à 100 %), rappel de sécurité, bouton d'entrée ; un
+échec (navigateur sans WebXR, réalité mixte non prise en charge) s'affiche sur la page. Limite : l'itinéraire choisi est
+lu et inscrit sur la page (`data-route`), la marche reste la rue simple pour tous (`docs/intentions/autres-itineraires.md`).
 
 ## Marche dans la ville
 

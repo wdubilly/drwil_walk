@@ -20,7 +20,6 @@ model of the lines below.
 | catalog:SEC-009 | Every incoming piece of data (request, uploaded file, webhook) is validated/sanitized at the boundary, never used as-is. | API entry points | systematic validation schema (e.g. zod, pydantic) on every route |
 | catalog:SEC-011 | Personal data: minimized, access-restricted, never in clear in a log or an AI output. | the whole repo | human review + grep of known fields in logs (partial proof, to document as such) |
 | catalog:QUA-003 | CI installs dependencies in locked mode (frozen lockfile, no on-the-fly version resolution). | CI pipeline | `npm ci` / the stack's locked equivalent, never `npm install` in CI |
-| catalog:QUA-014 | Text/background contrast per RGAA 4.1 / WCAG AA (4.5:1, 3:1 for large text), light and dark. | front-end screens | `.githooks/check-colors.mjs` (to create), `.githooks/check-contrast.mjs` (to create) — copied from `templates/common/optional/front-quality/` in the kit package, see its README |
 
 `QUA-004` (coverage) and `QUA-020` (e2e), both adopted (see `docs/contracts.md`), are mandatory guarantees,
 wired by `npx drwil guarantees` once the stack is known: a **new project**
