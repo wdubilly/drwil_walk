@@ -17,12 +17,12 @@ function setup() {
 }
 
 describe("choix de l'itinéraire", () => {
-  it("montre quatre cartes avec une image, Pune Vieille ville choisie par défaut", () => {
+  it("montre quatre cartes avec une image, Doha Souq Waqif choisi par défaut", () => {
     const { choice, cards, radio } = setup();
     expect(choice.element.querySelector("legend")?.textContent).toBe("Itinéraire");
     expect(cards).toHaveLength(4);
     for (const card of cards) expect(card.querySelector("img")?.getAttribute("src")).toMatch(/\.svg$/);
-    expect(radio("Pune Vieille ville").checked).toBe(true);
+    expect(radio("Doha Souq Waqif").checked).toBe(true);
     expect(choice.readId()).toBe(DEFAULT_ITINERARY_ID);
   });
 
@@ -30,19 +30,19 @@ describe("choix de l'itinéraire", () => {
     const { choice, cards, radio } = setup();
     const soon = cards.filter((c) => c.textContent.includes(SOON_LABEL));
     expect(soon.map((c) => c.querySelector(".card-name")?.textContent)).toEqual([
+      "Pune Vieille ville",
       "Pune FC Road",
       "Doha Corniche",
-      "Doha Souq Waqif",
     ]);
     expect(radio("Pune FC Road").disabled).toBe(true);
-    expect(radio("Pune Vieille ville").disabled).toBe(false);
+    expect(radio("Doha Souq Waqif").disabled).toBe(false);
     radio("Doha Corniche").click();
     expect(choice.readId()).toBe(DEFAULT_ITINERARY_ID);
   });
 
   it("garde l'itinéraire par défaut si plus aucune carte n'est cochée", () => {
     const { choice, radio } = setup();
-    radio("Pune Vieille ville").checked = false;
+    radio("Doha Souq Waqif").checked = false;
     expect(choice.readId()).toBe(DEFAULT_ITINERARY_ID);
   });
 });

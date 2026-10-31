@@ -83,6 +83,6 @@ marche suit un **vrai parcours** dans le souk, à la vitesse réglée.
 
 ## 7. Reprise
 
-- **Dernier état** (2026-10-30) : fiche cadrée, rien de codé.
-- **Travail non commité** : aucun.
-- **Prochaine étape** : [AI] lancer le chantier (`/drwil-start`).
+- **Dernier état** (2026-10-31) : lots 1 à 3 codés sur la branche `workstream/doha-souq-waqif` (extrait OSM de 253 bâtiments et tracé de 1,45 km versionnés, scène du souk, marche en boucle, mention d'attribution, contrats `APP-002` et `APP-003`, e2e du souk) ; contrôles locaux verts ; clôture en cours.
+- **Travail non commité** : voir `git status` ; rien d'important hors de la branche.
+- **Prochaine étape** : [human] relire l'extrait et le tracé (lot 1), puis l'essai réel sur le Quest 3, tapis à vitesse lente (lot 4).

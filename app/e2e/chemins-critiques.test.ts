@@ -97,22 +97,22 @@ test("chemin 2 : l'accueil propose quatre itinéraires, le choisi est celui qui 
   await page.setViewportSize({ width: 1280, height: 1100 });
   await page.goto("/");
   await expect(page.getByRole("radio")).toHaveCount(4);
-  await expect(page.getByRole("radio", { name: /Pune Vieille ville/ })).toBeChecked();
+  await expect(page.getByRole("radio", { name: /Doha Souq Waqif/ })).toBeChecked();
   await page.screenshot({ path: `${CAPTURES}/accueil-defaut.png`, fullPage: true });
 
-  const soon = page.getByRole("radio", { name: /Doha Souq Waqif/ });
+  const soon = page.getByRole("radio", { name: /Pune Vieille ville/ });
   await expect(soon).toBeDisabled();
-  await expect(card(page, "Doha Souq Waqif")).toContainText("Bientôt");
-  await card(page, "Doha Souq Waqif").click({ force: true });
-  await expect(page.getByRole("radio", { name: /Pune Vieille ville/ })).toBeChecked();
-  await card(page, "Doha Souq Waqif").screenshot({ path: `${CAPTURES}/carte-bientot.png` });
+  await expect(card(page, "Pune Vieille ville")).toContainText("Bientôt");
+  await card(page, "Pune Vieille ville").click({ force: true });
+  await expect(page.getByRole("radio", { name: /Doha Souq Waqif/ })).toBeChecked();
+  await card(page, "Pune Vieille ville").screenshot({ path: `${CAPTURES}/carte-bientot.png` });
 
-  await card(page, "Pune Vieille ville").click();
-  await card(page, "Pune Vieille ville").screenshot({ path: `${CAPTURES}/carte-choisie.png` });
+  await card(page, "Doha Souq Waqif").click();
+  await card(page, "Doha Souq Waqif").screenshot({ path: `${CAPTURES}/carte-choisie.png` });
   const box = await page.getByRole("button", { name: "Entrer en réalité mixte" }).boundingBox();
   expect(box?.height ?? 0).toBeGreaterThanOrEqual(48);
   await enter(page);
-  await expect(page.locator("#app")).toHaveAttribute("data-route", "pune-vieille-ville");
+  await expect(page.locator("#app")).toHaveAttribute("data-route", "doha-souq-waqif");
 });
 
 test("chemin 3 : la position avance à la vitesse réglée, le joystick change la vitesse de ±0,1 km/h", async ({
@@ -150,4 +150,24 @@ test("chemin 4 : APP-001, tête baissée au-delà de 25°, la ville devient tran
   await expect(field(page, "opacity")).toHaveText("0 %");
   await tiltHead(page, 0);
   await expect(field(page, "opacity")).toHaveText("100 %");
+});
+
+test("chemin 5 : le souk de Doha, ses bâtiments OpenStreetMap et sa mention, le long du parcours", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByText("© contributeurs OpenStreetMap")).toBeVisible();
+  // 7,2 km/h = 2 m/s : quelques secondes suffisent à quitter le départ de la boucle.
+  await enter(page, "7.2");
+  await expect(panel(page).getByText("© contributeurs OpenStreetMap")).toBeVisible();
+  expect(Number(await panel(page).getAttribute("data-building-count"))).toBeGreaterThan(100);
+  await expect.poll(async () => Number(await panel(page).getAttribute("data-distance-m"))).toBeGreaterThan(8);
+  const walked = await panel(page).evaluate((el) => ({
+    distance: Number(el.getAttribute("data-distance-m")),
+    crow: Math.hypot(Number(el.getAttribute("data-position-x")), Number(el.getAttribute("data-position-z"))),
+  }));
+  // On suit des ruelles : à vol d'oiseau on est plus près du départ que la distance marchée, mais on a bougé.
+  expect(walked.crow).toBeGreaterThan(1);
+  expect(walked.crow).toBeLessThanOrEqual(walked.distance + 1e-6);
+  // APP-001 dans le souk : tête baissée, la ville s'efface.
+  await tiltHead(page, -45);
+  await expect(field(page, "opacity")).toHaveText("0 %");
 });

@@ -1,5 +1,7 @@
 // Panneau de marche, sur la page : vitesse, distance, temps et opacité de la ville.
 // Les valeurs exactes sont aussi en attributs data-*, lues par l'e2e (texte arrondi à l'affichage).
+import type { Vec2 } from "../route/geo.ts";
+import { OSM_ATTRIBUTION } from "../city/licence.ts";
 import { formatSpeedKmh } from "../route/speed.ts";
 import { formatDistanceM, formatDurationS } from "../route/walk.ts";
 import { formatOpacity } from "../safety/visibility.ts";
@@ -9,6 +11,9 @@ export interface WalkInfo {
   distanceM: number;
   timeS: number;
   cityOpacity: number;
+  /** Position sur le parcours, en mètres depuis le départ (x est, z sud). */
+  position: Vec2;
+  buildingCount: number;
 }
 
 export interface WalkPanel {
@@ -37,7 +42,10 @@ export function renderWalkPanel(doc: Document, root: HTMLElement): WalkPanel {
   const distance = row("distance", "Distance");
   const time = row("time", "Temps");
   const opacity = row("opacity", "Opacité de la ville");
-  panel.append(list);
+  const credit = doc.createElement("p");
+  credit.className = "attribution";
+  credit.textContent = OSM_ATTRIBUTION;
+  panel.append(list, credit);
   root.append(panel);
   return {
     remove: () => {
@@ -52,6 +60,9 @@ export function renderWalkPanel(doc: Document, root: HTMLElement): WalkPanel {
       panel.dataset.distanceM = String(info.distanceM);
       panel.dataset.timeS = String(info.timeS);
       panel.dataset.cityOpacity = String(info.cityOpacity);
+      panel.dataset.positionX = String(info.position.x);
+      panel.dataset.positionZ = String(info.position.z);
+      panel.dataset.buildingCount = String(info.buildingCount);
     },
   };
 }

@@ -1,6 +1,7 @@
 // Écran d'accueil (MISSION.md, « Écran d'accueil ») : vitesse de départ, opacité de la ville,
 // choix de l'itinéraire, rappel de sécurité et bouton d'entrée en réalité mixte. Construit en DOM simple, sans framework.
 import { DEFAULT_SPEED_KMH, MAX_SPEED_KMH, MIN_SPEED_KMH, SPEED_STEP_KMH, clampSpeedKmh } from "../route/speed.ts";
+import { OSM_ATTRIBUTION } from "../city/licence.ts";
 import { renderRouteChoice } from "./route-choice.ts";
 import {
   DEFAULT_GLOBAL_OPACITY_PCT,
@@ -73,6 +74,9 @@ export function renderHome(doc: Document, root: HTMLElement): HomeView {
   button.className = "enter";
   const status = doc.createElement("p");
   status.setAttribute("role", "status");
+  const credit = doc.createElement("p");
+  credit.className = "attribution";
+  credit.textContent = OSM_ATTRIBUTION;
   root.replaceChildren(
     title,
     routes.element,
@@ -81,6 +85,7 @@ export function renderHome(doc: Document, root: HTMLElement): HomeView {
     field(doc, "Opacité de la ville (%)", opacity),
     button,
     status,
+    credit,
   );
   return {
     root,

@@ -1,8 +1,9 @@
-// Assemblage de l'expérience : accueil → session immersive-ar → marche dans la rue.
+// Assemblage de l'expérience : accueil → session immersive-ar → marche dans le souk.
 // Le rendu three.js est injecté (classe du renderer) : les tests le remplacent par une doublure.
 import type { WebGLRenderer } from "three";
-import { createStreetScene, placeStreet, setCityOpacity } from "../city/street.ts";
-import { streetOffsetM } from "../route/walk.ts";
+import { createSouqScene, placeOnRoute, setCityOpacity } from "../city/souq.ts";
+import { souqData } from "../city/souq-data.ts";
+import { pointAt } from "../route/path.ts";
 import { headPitchDownDeg } from "../safety/visibility.ts";
 import { renderHome, type HomeView } from "../ui/home.ts";
 import { renderWalkPanel } from "../ui/panel.ts";
@@ -46,11 +47,13 @@ async function enter(deps: ExperienceDeps, home: HomeView): Promise<void> {
 }
 
 async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession): Promise<void> {
+  // La scène d'abord : si elle ne se construit pas, aucun renderer ni canevas n'est laissé derrière.
+  const souq = souqData();
+  const { scene, camera, world, city, buildingCount } = createSouqScene(deps.document, souq);
   const renderer = new deps.Renderer({ antialias: true, alpha: true });
   renderer.xr.enabled = true;
   renderer.xr.setReferenceSpaceType(REFERENCE_SPACE);
   deps.root.append(renderer.domElement);
-  const { scene, camera, city } = createStreetScene();
   const panel = renderWalkPanel(deps.document, deps.root);
   const globalOpacityPct = home.readOpacityPct();
   let state = initialWalkState(home.readSpeedKmh(), globalOpacityPct);
@@ -67,9 +70,9 @@ async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession): P
       pitchDownDeg: pose ? headPitchDownDeg(pose.transform.orientation) : null,
       globalOpacityPct,
     });
-    placeStreet(city, streetOffsetM(state.distanceM));
-    setCityOpacity(city, state.cityOpacity);
-    panel.update(state);
+    placeOnRoute(city, souq.route, state.distanceM);
+    setCityOpacity(world, state.cityOpacity);
+    panel.update({ ...state, position: pointAt(souq.route, state.distanceM), buildingCount });
     renderer.render(scene, camera);
   });
   const stop = () => {

@@ -1,5 +1,5 @@
 // Les itinéraires proposés à l'accueil (MISSION.md). Données, pas du code (l'illustration de chaque carte est `app/src/ui/<id>.svg`) : la ville de chacun s'ajoutera
-// quand son extrait OpenStreetMap existera (docs/intentions/autres-itineraires.md).
+// quand son extrait OpenStreetMap existera (docs/intentions/autres-itineraires.md ; le souk de Doha est le premier).
 export interface Itinerary {
   id: string;
   name: string;
@@ -9,14 +9,14 @@ export interface Itinerary {
   available: boolean;
 }
 
-export const DEFAULT_ITINERARY_ID = "pune-vieille-ville";
+export const DEFAULT_ITINERARY_ID = "doha-souq-waqif";
 
 export const ITINERARIES: readonly Itinerary[] = [
   {
-    id: DEFAULT_ITINERARY_ID,
+    id: "pune-vieille-ville",
     name: "Pune Vieille ville",
     place: "Shaniwar Wada, temple Dagdusheth Ganpati",
-    available: true,
+    available: false,
   },
   {
     id: "pune-fc-road",
@@ -31,9 +31,9 @@ export const ITINERARIES: readonly Itinerary[] = [
     available: false,
   },
   {
-    id: "doha-souq-waqif",
+    id: DEFAULT_ITINERARY_ID,
     name: "Doha Souq Waqif",
-    place: "Le souk et ses ruelles",
-    available: false,
+    place: "Le souk et ses ruelles, de la place Al Koot aux écuries",
+    available: true,
   },
 ];
