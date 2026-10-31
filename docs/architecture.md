@@ -44,7 +44,7 @@ Décidée le 2026-10-30 par le demandeur :
   - `app/src/ui/` : l'écran d'accueil (`app/src/ui/home.ts` : vitesse, opacité, rappel de sécurité, bouton « Entrer en réalité
     mixte » ; `app/src/ui/route-choice.ts` : cartes d'itinéraire en boutons radio ; `app/src/ui/home.css` : thème sombre et
     couleurs ; `app/src/ui/contrast.ts` : mesure du contraste, contrat QUA-014), les illustrations des cartes
-    (`app/public/*.svg`, servies telles quelles, sans réseau) et le panneau de marche sur la page (`app/src/ui/panel.ts` : vitesse, distance, temps, opacité de la ville).
+    (`app/src/ui/*.svg`, une par itinéraire, livrées par Vite avec l'application, sans réseau) et le panneau de marche sur la page (`app/src/ui/panel.ts` : vitesse, distance, temps, opacité de la ville).
   - `app/e2e/` : l'e2e des chemins critiques (`app/e2e/chemins-critiques.test.ts`, contrat QUA-020), Playwright sur
     Chromium avec un Quest 3 émulé par IWER, injecté par le test (jamais livré dans l'application). Il prend aussi les
     captures de l'accueil dans `dist/e2e-captures/` (ignoré par Git), publiées par la CI sous le nom `captures-accueil`.

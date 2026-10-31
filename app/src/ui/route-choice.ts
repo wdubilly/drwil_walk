@@ -27,7 +27,8 @@ function card(doc: Document, itinerary: Itinerary): HTMLLabelElement {
   radio.checked = itinerary.id === DEFAULT_ITINERARY_ID;
   radio.disabled = !itinerary.available;
   const image = doc.createElement("img");
-  image.src = itinerary.image;
+  // Illustration versionnée à côté du code, sans réseau : Vite la livre avec l'application.
+  image.src = new URL(`./${itinerary.id}.svg`, import.meta.url).href;
   // Décorative : le nom de la carte dit déjà l'itinéraire.
   image.alt = "";
   label.append(radio, image, text(doc, "card-name", itinerary.name), text(doc, "card-place", itinerary.place));

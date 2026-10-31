@@ -9,7 +9,7 @@ do not copy it here.
 Couche unique : l'application WebXR entière (TypeScript strict, Vite, three.js), cadrée le 2026-10-30.
 Socle posé le 2026-10-30 (configuration, point d'entrée, vitesse), puis une première tranche verticale : accueil,
 session `immersive-ar`, rue simple, marche en ligne droite, joystick, fondu tête baissée (carte :
-`docs/architecture.md`). Accueil sombre à cartes d'itinéraire (`app/src/ui/home.css`, `app/src/ui/route-choice.ts`, `app/src/route/itineraries.ts`, illustrations dans `app/public/`) posé le 2026-10-31. Restent à écrire : la vraie ville (city/), les itinéraires GPS, la zone tapis et la vignette.
+`docs/architecture.md`). Accueil sombre à cartes d'itinéraire (`app/src/ui/home.css`, `app/src/ui/route-choice.ts`, `app/src/route/itineraries.ts`, illustrations `app/src/ui/<id>.svg`) posé le 2026-10-31. Restent à écrire : la vraie ville (city/), les itinéraires GPS, la zone tapis et la vignette.
 
 - Code dans src/, un dossier par module : xr/ (session `immersive-ar`, manettes), city/ (3d-tiles-renderer,
   repli OSM), route/ (itinéraires, déplacement à vitesse réglée), safety/ (fondu tête baissée, zone tapis,

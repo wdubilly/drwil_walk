@@ -34,4 +34,3 @@ otherwise.
 -->
 
 - [ ] [AI] [P1] Marcher dans le souk de Doha (Souq Waqif) en bâtiments OpenStreetMap — `docs/projects/doha-souq-waqif.md`
-- [ ] [AI] [P1] Un accueil sombre à grands boutons dans le casque, avec cartes d'itinéraire — `docs/projects/accueil-casque.md`

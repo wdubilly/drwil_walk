@@ -16,8 +16,7 @@ describe("itinéraires", () => {
     expect(ITINERARIES.filter((i) => i.available).map((i) => i.id)).toEqual([DEFAULT_ITINERARY_ID]);
   });
 
-  it("chaque itinéraire a un identifiant unique et une illustration locale", () => {
+  it("chaque itinéraire a un identifiant unique", () => {
     expect(new Set(ITINERARIES.map((i) => i.id)).size).toBe(ITINERARIES.length);
-    for (const i of ITINERARIES) expect(i.image).toMatch(/^\/[a-z-]+\.svg$/);
   });
 });

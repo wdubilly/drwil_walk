@@ -35,3 +35,10 @@ One entry per closed project, most recent last.
 - Protection de `master` posée par `npx drwil guarantees --protect` (fusion par PR, contrôles requis, sans contournement administrateur) : le contrat `QUA-017` (pas de travail direct sur la branche principale) est tenu ; carte `docs/architecture.md` citant `.github/workflows/` (`QUA-040`).
 - `npx drwil guarantees` : « Versionnement : dépôt, forge github, CI et protection de `master` en place » ; `npx drwil verify --evidence` : `GOVERNANCE: PASS` (21 contrats, 15 PASS, 6 attestés).
 - Branche `workstream/versionnement`. Preuve de clôture : `docs/preuves/versionnement.md`.
+
+## 2026-10-31 — Un accueil lisible dans le casque, avec le choix d'itinéraire
+
+- Accueil sombre à grandes cibles (48 px au moins) : feuille `app/src/ui/home.css`, quatre cartes d'itinéraire avec illustration SVG versionnée à côté du code (`app/src/ui/<id>.svg`), Pune Vieille ville choisie par défaut, choix d'un clic ou à la manette (boutons radio), les trois autres marqués « Bientôt » et non sélectionnables (leur ville n'existe pas encore) ; l'itinéraire choisi est lu et inscrit sur la page, la marche reste la rue simple.
+- Contrat `QUA-014` (contraste du texte et de son fond) adopté depuis le catalogue : test `app/src/ui/contrast.test.ts` rejoué par le contrôle `coverage-app` ; les scripts du kit ne sont pas installés (hors périmètre) : intention `docs/intentions/controles-couleurs-kit.md`. Fondu de sécurité (`APP-001`) inchangé.
+- L'e2e (`QUA-020`, chemins critiques de bout en bout) rejoue le choix d'itinéraire dans le Quest 3 émulé et prend les captures de l'accueil (défaut, carte « Bientôt », carte choisie) dans `dist/e2e-captures/` ; la CI les publie sous le nom `captures-accueil`. Reste humain : juger le rendu sur les captures, puis essai dans le vrai Quest 3.
+- Intention `interface-accueil` couverte, retirée ; `autres-itineraires` mise à jour. Branche `workstream/accueil-casque`. Preuve de clôture : `docs/preuves/accueil-casque.md`.
