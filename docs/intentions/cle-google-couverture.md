@@ -2,6 +2,8 @@
 
 **Statut** : proposée le 2026-10-31 (reste du chantier google-3d-tiles, lot 1, réservé à l'humain).
 
+**Revue le 2026-10-31 (EEA)** : créer la clé Map Tiles est inutile avec une facturation de l'EEA (403, voir `docs/intentions/google-3d-tiles.md`). À ne faire qu'avec une facturation hors EEA.
+
 ## Besoin
 
 Le rendu Google 3D est livré et prouvé avec des tuiles factices, mais il n'a jamais tourné avec une vraie clé : l'agent n'en
