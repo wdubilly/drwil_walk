@@ -106,7 +106,6 @@ files:
   - app/tsconfig.json
   - app/vite.config.test.ts
   - app/vite.config.ts
-  - p/data/doha-corniche-boucle.json
 -->
 
 ## 1. Besoin
