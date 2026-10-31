@@ -34,10 +34,10 @@ marche suit un **vrai parcours** dans le souk, à la vitesse réglée.
 ## Critères d'acceptation
 
 - La position de marche suit le parcours GPS de la boucle du souk : la distance parcourue est égale à la vitesse
-  réglée multipliée par le temps, et la boucle reprend au départ à la fin — `APP-002` (à créer)
+  réglée multipliée par le temps, et la boucle reprend au départ à la fin — `APP-002`
 - Les bâtiments affichés sont ceux de l'extrait OpenStreetMap versionné, et la mention « © contributeurs
-  OpenStreetMap » est visible dans l'accueil et dans le casque — `APP-003` (à créer)
-- Le fondu de sécurité reste actif dans le souk : tête baissée au-delà de 25°, la ville devient transparente — `APP-001`
+  OpenStreetMap » est visible dans l'accueil et dans le casque — `APP-003`
+- Le fondu de sécurité reste actif dans le souk : tête baissée au-delà de 25°, la ville devient transparente — `APP-001` [humain]
 - Le parcours du souk est rejoué de bout en bout dans le Quest 3 émulé — `QUA-020`
 
 ## 2. Hors périmètre
@@ -65,7 +65,12 @@ marche suit un **vrai parcours** dans le souk, à la vitesse réglée.
   - parcours : **boucle du souk**, entrée côté Corniche / place Al Koot, ruelle principale jusqu'aux écuries et
     retour, environ 1,5 km, points GPS tracés depuis les voies OpenStreetMap ;
   - le repli « sans Google » de `MISSION.md` devient la seule source de la ville.
-- Contrats concernés : `APP-001` (repris tel quel), `QUA-020` (repris), `APP-002` et `APP-003` à créer.
+- Contrats concernés : `APP-001` (repris tel quel), `QUA-020` (repris), `APP-002` et `APP-003` (créés ici).
+
+## Contrats modifiés
+
+- `QUA-020` — étendu d'un chemin : le parcours du souk rejoué dans le Quest 3 émulé (décidé au cadrage du 2026-10-30 : « Le parcours du souk est rejoué de bout en bout dans le Quest 3 émulé »)
+- `APP-001` — fichiers de référence et tests mis à jour (la rue de test devient la scène du souk, `app/src/city/souq.ts`), règle inchangée (décidé au cadrage du 2026-10-30 : « repris tel quel »)
 
 ## 5. Points à trancher
 

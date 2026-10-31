@@ -227,6 +227,7 @@ contracts » section).
 **Source of truth** : `app/src/route/path.ts` (position, direction, reprise de la boucle), `app/src/route/walk.ts` (distance à la vitesse réglée), `app/data/souq-waqif-boucle.json` (tracé)
 **Proof** : des tests nommés par l'ID (contrôle `app-002`, `npm test -- -t "APP-002"`), dont la longueur du tracé (entre 1,2 et 1,8 km), son retour au départ et le fait que chacun de ses points est un sommet d'une voie de l'extrait OpenStreetMap ; la distance égale au temps marché est aussi rejouée de bout en bout (QUA-020)
 **Reason** : le demandeur veut marcher dans un vrai quartier, à la vitesse de son tapis. Limite : le tracé est relu par le demandeur (lot 1 de la fiche doha-souq-waqif) mais jamais encore essayé sur un vrai Quest 3 ; quelques dizaines de mètres de la boucle traversent des passages couverts que l'extrait OpenStreetMap dessine comme des bâtiments.
+**Origin** : doha-souq-waqif — « La position de marche suit le parcours GPS de la boucle du souk : la distance parcourue est égale à la vitesse réglée multipliée par le temps, et la boucle reprend au départ à la fin »
 **Check** : `app-002`
 **Tests** : `app/src/route/path.test.ts`, `app/src/city/souq.test.ts`, `app/src/city/souq-data.test.ts`, `app/src/xr/experience.test.ts`
 
@@ -236,6 +237,7 @@ contracts » section).
 **Source of truth** : `app/src/city/licence.ts` (texte de la mention), `app/src/city/souq-data.ts` (lecture de l'extrait), `app/scripts/extract-souq.ts` (production de l'extrait)
 **Proof** : des tests nommés par l'ID (contrôle `app-003`, `npm test -- -t "APP-003"`) : autant de bâtiments lus que dans le fichier, mention présente à l'accueil, dans le panneau et dessinée sur le panneau de la scène, extrait qui porte l'attribution ODbL ; la mention de l'accueil et du panneau est aussi rejouée de bout en bout (QUA-020)
 **Reason** : les données OpenStreetMap sont sous licence ODbL, dont l'attribution est une obligation. Limite : la mention dessinée dans le casque n'a jamais été regardée sur un vrai Quest 3 (taille, lisibilité).
+**Origin** : doha-souq-waqif — « Les bâtiments affichés sont ceux de l'extrait OpenStreetMap versionné, et la mention « © contributeurs OpenStreetMap » est visible dans l'accueil et dans le casque »
 **Check** : `app-003`
 **Tests** : `app/src/city/souq-data.test.ts`, `app/src/city/attribution.test.ts`, `app/src/city/extract-souq.test.ts`, `app/src/ui/home.test.ts`, `app/src/ui/panel.test.ts`
 
