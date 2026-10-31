@@ -8,6 +8,7 @@ import {
   Mesh,
   MeshLambertMaterial,
   PerspectiveCamera,
+  Plane,
   PlaneGeometry,
   Scene,
   type Material,
@@ -66,8 +67,11 @@ export function createSouqScene(doc: Document, souq: Souq): SouqScene {
   return { scene, camera: new PerspectiveCamera(70, 1, 0.1, 1000), world, city, osm, label, buildingCount: souq.buildings.length };
 }
 
-/** Applique l'opacité calculée par le module safety (APP-001) à tous les matériaux de la scène. */
-export function setCityOpacity(world: Group, opacity: number): void {
+/**
+ * Applique l'opacité calculée par le module safety (APP-001) à tous les matériaux de la scène, et la découpe de la
+ * zone tapis à ceux de la ville (pas aux mentions : leur lisibilité est exigée par APP-003).
+ */
+export function setCityOpacity(world: Group, opacity: number, zonePlanes: Plane[]): void {
   // Ville invisible : rien n'est rendu, le passthrough montre le réel sans aucun voile.
   world.visible = opacity > 0;
   world.traverse((object) => {
@@ -75,6 +79,9 @@ export function setCityOpacity(world: Group, opacity: number): void {
     const mat = object.material as Material;
     mat.transparent = opacity < 1;
     mat.opacity = opacity;
+    if (object.userData["zoneExempt"] === true) return;
+    mat.clippingPlanes = zonePlanes;
+    mat.clipIntersection = true;
   });
 }
 

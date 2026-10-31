@@ -95,6 +95,6 @@ réelle** : la périphérie du champ de vision reste en passthrough. Aujourd'hui
 
 ## 7. Reprise
 
-- **Dernier état** (2026-10-31) : cadrage seul, aucun code.
-- **Travail non commité** : la fiche, sur la branche `cadrage/commandes-panneau`.
-- **Prochaine étape** : [AI] lot 1, après `commandes-panneau`.
+- **Dernier état** (2026-11-01) : lots 1 à 5 codés et testés sur la branche `workstream/zone-tapis-vignette` (zone, découpe, réglage à la manette gauche, vignette, e2e chemin 13, docs, contrat `APP-001`). Lot 6 (essai réel) : réservé à l'humain, repris dans `docs/intentions/essai-casque-zone-tapis.md`.
+- **Travail non commité** : voir `git status`.
+- **Prochaine étape** : [human] attestation d'`APP-001` après l'essai au casque (`drwil attest APP-001`), puis clôture.

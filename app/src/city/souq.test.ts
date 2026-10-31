@@ -3,6 +3,8 @@ import { Group, HemisphereLight, InstancedMesh, Mesh, type Material, type MeshLa
 import { describe, expect, it } from "vitest";
 import { withCanvasContext } from "./canvas-double.ts";
 import { createPath } from "../route/path.ts";
+import { DEFAULT_ZONE } from "../safety/zone.ts";
+import { createZoneClip } from "./zone-clip.ts";
 import { createSouqScene, placeOnRoute, setCityOpacity } from "./souq.ts";
 import type { Souq } from "./souq-data.ts";
 
@@ -63,14 +65,25 @@ describe("scène du souk", () => {
     expect(camera.near).toBeGreaterThan(0);
   });
 
+  it("APP-001: la zone tapis découpe la ville mais pas les mentions", () => {
+    const { world, label } = setup();
+    const planes = createZoneClip(DEFAULT_ZONE).planes;
+    setCityOpacity(world, 1, planes);
+    const city = world.getObjectByName("ville") as Group;
+    const cityMats = materials(city);
+    expect(cityMats.length).toBeGreaterThan(0);
+    expect(cityMats.every((m) => m.clippingPlanes === planes && m.clipIntersection)).toBe(true);
+    expect((label.mesh.material as Material).clippingPlanes).toBeNull();
+  });
+
   it("APP-001: rend la ville transparente, puis invisible à opacité nulle", () => {
     const { world } = setup();
-    setCityOpacity(world, 0.4);
+    setCityOpacity(world, 0.4, []);
     expect(world.visible).toBe(true);
     expect(materials(world).every((m) => m.transparent && m.opacity === 0.4)).toBe(true);
-    setCityOpacity(world, 0);
+    setCityOpacity(world, 0, []);
     expect(world.visible).toBe(false);
-    setCityOpacity(world, 1);
+    setCityOpacity(world, 1, []);
     expect(world.visible).toBe(true);
     expect(materials(world).every((m) => !m.transparent && m.opacity === 1)).toBe(true);
   });
@@ -94,12 +107,12 @@ describe("scène du souk", () => {
 
   it("APP-001: le fondu de sécurité efface aussi les arbres et le mobilier", () => {
     const { world, osm } = setup();
-    setCityOpacity(world, 0.3);
+    setCityOpacity(world, 0.3, []);
     for (const name of ["arbres", "mobilier", "batiments"]) {
       const material = (osm.getObjectByName(name) as Mesh).material as Material;
       expect([name, material.transparent, material.opacity]).toEqual([name, true, 0.3]);
     }
-    setCityOpacity(world, 0);
+    setCityOpacity(world, 0, []);
     expect(world.visible).toBe(false);
   });
 
@@ -114,7 +127,7 @@ describe("scène du souk", () => {
     const { world } = setup();
     world.add(new Group());
     expect(() => {
-      setCityOpacity(world, 0.5);
+      setCityOpacity(world, 0.5, []);
     }).not.toThrow();
   });
 

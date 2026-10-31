@@ -33,6 +33,8 @@ export interface HomeView {
   readTrip(): PlannedTrip | null;
   /** Le rendu choisi : OpenStreetMap par défaut, ou Google 3D. */
   readRendering: () => Rendering;
+  /** La vignette réelle (périphérie en passthrough), activée par défaut (APP-001). */
+  readVignette(): boolean;
   /** Une raison qui reste lisible pendant la marche (ex. repli sur OpenStreetMap) ; vide l'efface. */
   showNotice: (text: string) => void;
   onEnter(handler: () => void): void;
@@ -99,6 +101,9 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
     10,
     String(DEFAULT_GLOBAL_OPACITY_PCT),
   );
+  const vignette = doc.createElement("input");
+  vignette.type = "checkbox";
+  vignette.checked = true;
   const button = doc.createElement("button");
   button.type = "button";
   button.textContent = ENTER_LABEL;
@@ -131,6 +136,7 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
     speedHint,
     speedLimit,
     field(doc, "Opacité de la ville (%)", opacity),
+    field(doc, "Vignette réelle (le réel reste visible sur les bords)", vignette),
     button,
     status,
     notice,
@@ -143,6 +149,7 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
     readRouteId: () => routes.readId(),
     readTrip: () => freeTrip.readTrip(),
     readRendering: rendering.readRendering,
+    readVignette: () => vignette.checked,
     showNotice: (text) => {
       notice.textContent = text;
     },

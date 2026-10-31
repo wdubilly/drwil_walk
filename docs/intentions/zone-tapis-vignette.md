@@ -1,6 +1,6 @@
 # Intention : zone tapis toujours transparente et vignette réelle
 
-**Statut** : proposée le 2026-10-30. Cadrée le 2026-10-31 : `docs/projects/zone-tapis-vignette.md`.
+**Statut** : proposée le 2026-10-30. Cadrée le 2026-10-31 : `docs/projects/zone-tapis-vignette.md`. Codée le 2026-11-01 ; l'essai au casque est dans `docs/intentions/essai-casque-zone-tapis.md`.
 
 ## Besoin
 

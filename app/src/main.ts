@@ -15,6 +15,7 @@ export function mount(doc: Document, xr: XrSystemLike | undefined, env: Record<s
     xr,
     Renderer: WebGLRenderer,
     google: { apiKey: readApiKey(env), create: createGoogleTiles },
+    storage: doc.defaultView?.localStorage,
     routes: createProviders(env, fetch.bind(globalThis)),
   });
 }

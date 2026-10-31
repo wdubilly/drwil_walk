@@ -39,6 +39,8 @@ export function createAttributionLabel(
   draw(text);
   const mesh = new Mesh(new PlaneGeometry(1.2, 0.15), new MeshBasicMaterial({ map: texture }));
   mesh.name = name;
+  // Une mention n'est pas la ville : la zone tapis ne la découpe pas (APP-003).
+  mesh.userData["zoneExempt"] = true;
   mesh.position.set(0, y, -2.5);
   return { mesh, setText: draw };
 }
