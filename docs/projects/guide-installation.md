@@ -21,14 +21,14 @@ poste de développement (clonage, gouvernance, contrôles).
 ## Critères d'acceptation
 
 - Le guide utilisateur (nouveau fichier, voir le bloc scope) décrit pas à pas : prérequis (Node, poste et Quest 3 sur le même réseau), lancer
-  l'application, ouvrir l'adresse `Network` dans le navigateur du Quest, accepter le certificat auto-signé,
-  entrer en réalité mixte, choisir l'itinéraire, régler la vitesse.
+  l'application, ouvrir l'adresse Network dans le navigateur du Quest, accepter le certificat auto-signé,
+  entrer en réalité mixte, choisir l'itinéraire, régler la vitesse — `QUA-011`
 - Il explique l'installation du tapis et la **sécurité** : zone dégagée, rappel de l'accueil, fondu de la ville
-  quand on baisse la tête (`APP-001`), la ville n'est jamais un substitut à la vigilance.
-- Il liste les ennuis connus avec leur remède (certificat, bouton grisé sans WebXR, casque sur un autre réseau).
+  quand on baisse la tête, la ville n'est jamais un substitut à la vigilance [humain] — `APP-001`
+- Il liste les ennuis connus avec leur remède (certificat, bouton grisé sans WebXR, casque sur un autre réseau) — `QUA-011`
 - Chaque commande citée est exécutée telle quelle avant d'être écrite (preuve avant affirmation) ; ce qui n'a pu
-  être essayé sans casque est signalé « non vérifié ».
-- `README.md` et `INSTALL.md` renvoient au guide, sans en copier le contenu (une information, une source).
+  être essayé sans casque est signalé « non vérifié » — `QUA-011`
+- README.md et INSTALL.md renvoient au guide, sans en copier le contenu (une information, une source) — `QUA-011`
 
 ## 2. Hors périmètre
 

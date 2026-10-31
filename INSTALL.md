@@ -28,6 +28,9 @@ Once per clone, enable the governance hooks (checks at commit and push):
 git config core.hooksPath .githooks
 ```
 
+Mode d'emploi pour utiliser l'application avec un Quest 3 (sans connaissance de développement) :
+`docs/guide-utilisateur.md`.
+
 ## 3. First startup and check
 
 Lancer et vérifier : `docs/recipes/run-locally.md`. Contrôles de la couche (tests, couverture, typage, lint,
