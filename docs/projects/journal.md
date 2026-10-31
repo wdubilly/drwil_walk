@@ -72,3 +72,10 @@ One entry per closed project, most recent last.
 - Carte Pune FC Road à `available: true`, ville branchée dans `app/src/city/cities.ts` : les quatre itinéraires sont livrés. `renderRouteChoice` prend la liste des cartes en paramètre pour que la carte « Bientôt » reste testée. Contrats `APP-002` (longueur entre 3 et 4 km) et `APP-003` étendus ; `APP-001` rejoué sur FC Road ; `QUA-020` étendu d'un chemin 8 avec captures (`dist/e2e-captures/fc-road-*.png`), le chemin 2 vérifiant que plus aucune carte n'est « Bientôt ».
 - Limites : tracé calculé par l'agent (hypothèse de cadrage : aller-retour par le même chemin, pas de rue parallèle), à relire par le demandeur (lot 1) ; 1 410 bâtiments sur 1 427 sans hauteur OSM (7 m par défaut) ; jamais essayé sur un vrai Quest 3 (lot 4, 72 images par seconde avec 1 427 bâtiments fusionnés).
 - Branche `workstream/pune-fc-road`. Preuve de clôture : `docs/preuves/pune-fc-road.md` (écrite par la clôture).
+
+## 2026-10-31 — Un mode d'emploi pour installer et utiliser drwil_walk avec un Quest 3
+
+- Nouveau guide `docs/guide-utilisateur.md`, pour quelqu'un qui n'est pas développeur : prérequis (Node, poste et Quest 3 sur le même réseau), lancement (`cd app`, `npm ci`, `npm run dev`, exécutés avant d'être écrits), adresse Network dans le navigateur du Quest, certificat auto-signé, entrée en réalité mixte, itinéraire, vitesse, installation du tapis et sécurité (fondu tête baissée, `APP-001`), ennuis connus avec remède.
+- `README.md`, `INSTALL.md` et `docs/recipes/run-locally.md` renvoient au guide sans en copier le contenu.
+- Limite : tout ce qui se passe dans le casque (certificat, autorisation, manettes, réseau, pare-feu) est signalé « non vérifié » dans le guide ; relecture sur le vrai poste et le vrai Quest 3 par l'humain (lot 2 de la fiche), repris par l'intention `docs/intentions/relecture-guide-casque.md`. Le critère de sécurité reste attesté par l'humain (`APP-001`, sécurité-visibilité : le réel reste visible).
+- Branche `workstream/guide-installation`. Preuve de clôture : docs/preuves/guide-installation.md (écrite par la clôture).

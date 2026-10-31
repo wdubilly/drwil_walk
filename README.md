@@ -34,6 +34,7 @@ npm run e2e    # chemins critiques de bout en bout, Quest 3 émulé (après npx 
                # les captures de l'accueil et de la marche à Pune, sur la Corniche et sur FC Road sont écrites dans dist/e2e-captures/
 ```
 
+Mode d'emploi pas à pas avec le Quest 3 (réseau, certificat, tapis, sécurité) : `docs/guide-utilisateur.md`.
 Installation complète et contrôles : `INSTALL.md`.
 
 ## Documentation
