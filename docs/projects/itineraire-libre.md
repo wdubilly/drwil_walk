@@ -2,7 +2,7 @@
 
 **Statut** : cadré le 2026-10-31.
 **Risque** : HIGH
-**Maturité** : à affiner
+**Maturité** : prêt
 **Intention** : `docs/intentions/itineraire-libre.md`
 
 <!-- scope
@@ -51,7 +51,7 @@ chemin à pied et charge la ville autour.
 
 ## 3. Contraintes
 
-- Dépend de `google-3d-tiles` (accès réseau, clé et chargement de la ville hors extrait) : à lancer après lui.
+- Dépend de `google-3d-tiles`, livré le 2026-10-31 (accès réseau, clé et chargement de la ville hors extrait).
 - Aucune donnée personnelle conservée : les points choisis ne sont ni enregistrés ni envoyés ailleurs qu'au service de routage.
 - Trajet borné en longueur (hypothèse : 5 km au plus) pour limiter les chargements.
 - Couverture à 100 % sans exclusion, fichiers de 200 lignes au plus, e2e vert en CI (`QUA-004`, `QUA-001`, `QUA-020`).
@@ -61,8 +61,12 @@ chemin à pied et charge la ville autour.
 
 - 2026-10-31, décisions humaines du demandeur (« oui pour tout ») : accès réseau pendant la marche accepté, clé
   Google acceptée.
-- 2026-10-31, hypothèses de cadrage de l'agent, à corriger au lancement : routage par l'API Google Routes (mode piéton,
-  même clé) ; départ et arrivée choisis en touchant une carte à l'accueil ; aller simple, arrêt à l'arrivée ; 5 km au plus.
+- 2026-10-31, décisions humaines du demandeur : routage par l'API Google Routes (mode piéton) avec **sa propre clé**
+  `VITE_GOOGLE_ROUTES_API_KEY`, distincte de la clé Map Tiles (deux API, deux clés) ; départ et arrivée choisis en
+  touchant une carte à l'accueil ; aller simple, arrêt à l'arrivée ; 5 km au plus.
+- 2026-10-31, hypothèses de cadrage de l'agent, à corriger au lancement : la carte de l'accueil est une carte légère
+  (tuiles OpenStreetMap, avec leur attribution) dont la bibliothèque est choisie au lot 1 ; le testeur utilise les
+  clés de `.env.local` (jamais dans le dépôt), `.env.example` n'a que des valeurs fictives (`SEC-007`).
 - Contrats concernés : `APP-001`, `APP-002`, `APP-003`, `QUA-002`, `QUA-004`, `QUA-020`.
 
 ## Contrats modifiés
@@ -72,8 +76,7 @@ chemin à pied et charge la ville autour.
 
 ## 5. Points à trancher
 
-- [decision] Service de routage, aller simple ou retour, mode de choix des points, longueur maximale : voir
-  `docs/intentions/itineraire-libre.md`. À trancher avant de passer la fiche à « prêt ».
+*(aucun : la recherche d'adresse est une question d'intention, hors de ce chantier)*
 
 ## 6. Lots
 
@@ -88,4 +91,4 @@ chemin à pied et charge la ville autour.
 
 - **Dernier état** (2026-10-31) : cadrage seul, aucun code.
 - **Travail non commité** : aucun.
-- **Prochaine étape** : [decision] trancher les points du § 5, puis lancer après `google-3d-tiles`.
+- **Prochaine étape** : [AI] lot 1 (`google-3d-tiles` est livré).
