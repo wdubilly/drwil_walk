@@ -1,1 +1,2 @@
 {"workstream":"e2e-chemins-critiques","increment":"all","tokens":64872,"input":2,"output":3675,"cache_read":9012,"cache_write":36475,"requests":1,"model":"claude-haiku-5-5","duration_min":0,"date":"2026-10-30","source":"claude-code-logs"}
+{"workstream":"google-3d-tiles","increment":"all","tokens":200974,"input":6,"output":11889,"cache_read":34671,"cache_write":110445,"requests":3,"model":"claude-haiku-5-5","duration_min":2,"date":"2026-10-31","source":"claude-code-logs"}

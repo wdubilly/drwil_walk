@@ -19,7 +19,7 @@ Décidée le 2026-10-30 par le demandeur :
 - **3D et XR** : three.js, session WebXR `immersive-ar` (passthrough du Quest 3).
 - **Ville** : par défaut, bâtiments OpenStreetMap extrudés en three.js, à partir d'un extrait GeoJSON figé dans le dépôt
   (aucun appel réseau dans le casque), mention « © contributeurs OpenStreetMap » affichée (licence ODbL). En option
-  (décision du demandeur du 2026-10-31, `docs/projects/google-3d-tiles.md`) : les Google Photorealistic 3D Tiles par
+  (décision du demandeur du 2026-10-31, `docs/projects/journal.md`) : les Google Photorealistic 3D Tiles par
   `3d-tiles-renderer`, avec une clé lue de `.env.local` (dans `app/`) (`VITE_GOOGLE_MAPS_API_KEY`) ; sans clé ou si les tuiles
   échouent, le rendu OpenStreetMap reste le plan B et la raison est dite à l'écran.
 - **Tests** : Vitest (unitaires, couverture à 100 %), Playwright avec émulation WebXR (IWER) pour l'e2e.

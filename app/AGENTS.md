@@ -29,7 +29,7 @@ session `immersive-ar`, rue simple, marche en ligne droite, joystick, fondu têt
 - Les fichiers de `data/` sont importés comme JSON (attribut d'import de type JSON) : l'extrait est du GeoJSON dans un fichier d'extension json, que Vite et Node lisent sans configuration.
 - Le script `scripts/extract-souq.ts` n'a pas de point d'entrée à lui (il ne serait pas couvert) : `npm run extract` l'appelle en ligne, et son test vit dans `src/city/` (Vitest ne lit que `src/` et la racine).
 - Rendu par défaut sans clé ni réseau : la ville vient d'un extrait OpenStreetMap figé dans le dépôt. Rendu Google 3D en
-  option (`docs/projects/google-3d-tiles.md`) : clé `VITE_GOOGLE_MAPS_API_KEY` lue de `.env.local` (dans `app/`) par `src/main.ts` (jamais
+  option (`docs/projects/journal.md`) : clé `VITE_GOOGLE_MAPS_API_KEY` lue de `.env.local` (dans `app/`) par `src/main.ts` (jamais
   commitée, SEC-007), tuiles par `3d-tiles-renderer` dans `src/city/google-tiles.ts`, injectées dans `startExperience`
   (`ExperienceDeps.google`) pour que les tests n'appellent jamais Google ; l'e2e (`e2e/google-3d.test.ts`) sert un jeu de
   tuiles factice par `page.route`, avec une clé fictive donnée au serveur de test.
