@@ -98,6 +98,6 @@ casque** et non plus seulement sur la page web.
 
 ## 7. Reprise
 
-- **Dernier état** (2026-10-31) : cadrage seul, aucun code.
-- **Travail non commité** : la fiche et la mise à jour de l'intention, sur la branche `cadrage/commandes-panneau`.
-- **Prochaine étape** : [AI] lot 1, une fois le cadrage commité et fusionné.
+- **Dernier état** (2026-11-01) : lots 1 à 4 codés, testés et documentés ; lot 5 (essai réel) fait par l'humain, qui a attesté `APP-001` ; `verify --agent` : `GOVERNANCE: PASS`.
+- **Travail non commité** : la mise à jour de cette section et de l'entrée de journal.
+- **Prochaine étape** : clôture (`node .githooks/close.mjs`), PR, fusion automatique.
