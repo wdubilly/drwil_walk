@@ -10,6 +10,12 @@ export function toneIndex(building: Building, toneCount: number): number {
   return Math.abs(Math.floor(p.x * 7.3 + p.z * 13.1)) % toneCount;
 }
 
+/** Part de lumière au pied d'un mur : l'ombrage par sommet l'assombrit vers le sol et l'éclaircit jusqu'au toit. */
+export const FOOT_LIGHT = 0.55;
+
+/** Le toit se reconnaît à sa normale tournée vers le haut. */
+const isRoof = (normalY: number): boolean => normalY > 0.5;
+
 /** Un bâtiment debout : le contour (x, z) du repère local, tiré vers le haut sur sa hauteur. */
 function extrude(building: Building, tone: Color): BufferGeometry {
   // ExtrudeGeometry pousse le contour (x, y) le long de +Z ; la rotation couche cet axe sur +Y.
@@ -17,9 +23,18 @@ function extrude(building: Building, tone: Color): BufferGeometry {
   const shape = new Shape(building.footprint.map((p) => new Vector2(p.x, -p.z)));
   const geometry = new ExtrudeGeometry(shape, { depth: building.heightM, bevelEnabled: false });
   geometry.rotateX(-Math.PI / 2);
-  // Couleur par sommet : tous les bâtiments restent dans un seul maillage.
-  const count = geometry.getAttribute("position").count;
-  geometry.setAttribute("color", new Float32BufferAttribute(Array.from({ length: count }, () => [tone.r, tone.g, tone.b]).flat(), 3));
+  // Couleur par sommet (teinte, toit à part, ombrage vers le pied) : tous les bâtiments restent dans un seul maillage.
+  const position = geometry.getAttribute("position");
+  const normal = geometry.getAttribute("normal");
+  const wall = building.wall === undefined ? tone : new Color(building.wall);
+  const roof = building.roof === undefined ? wall : new Color(building.roof);
+  const colors: number[] = [];
+  for (let i = 0; i < position.count; i++) {
+    const color = isRoof(normal.getY(i)) ? roof : wall;
+    const light = isRoof(normal.getY(i)) ? 1 : FOOT_LIGHT + (1 - FOOT_LIGHT) * Math.min(position.getY(i) / building.heightM, 1);
+    colors.push(color.r * light, color.g * light, color.b * light);
+  }
+  geometry.setAttribute("color", new Float32BufferAttribute(colors, 3));
   return geometry;
 }
 

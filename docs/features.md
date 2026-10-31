@@ -65,6 +65,14 @@ OpenStreetMap, qui préfère les cheminements piétons (hypothèse de cadrage, �
 relié le plus proche du musée et n'atteint pas West Bay (environ 3,5 km plus loin), dont les tours ne se voient que de loin ;
 310 bâtiments sur 756 sans hauteur OSM (7 m par défaut) ; jamais essayé sur un vrai Quest 3.
 
+Rendu enrichi (chantier osm-enrichi) : les bâtiments prennent la couleur, la couleur de toit ou le matériau de leurs balises
+OpenStreetMap, sinon un ton de la palette de l'itinéraire ; les murs s'assombrissent vers le pied (ombrage par sommet) ; les
+arbres, lampadaires et bancs de l'extrait s'affichent (300 arbres et 400 éléments de mobilier au plus, les plus proches du
+parcours). Constaté sur les extraits du 2026-10-31 : arbres 155 (souk), 285 (Vieille ville), 513 (Corniche), 105 (FC Road) ;
+bancs 19 (souk) et 8 (Corniche) ; aucun lampadaire ; très peu de bâtiments portent une couleur ou un matériau (7 matériaux
+au total, un seul toit coloré hors bâtiment), donc la plupart gardent le ton de la palette. À juger au casque, cadence
+comprise (lot 5 du chantier, humain) ; le relief du sol n'est pas fait (`docs/intentions/osm-enrichi.md`).
+
 ## Sécurité : le réel reste visible
 
 La ville s'efface quand on baisse la tête (au-delà d'environ 25°), la zone du tapis définie à la manette reste

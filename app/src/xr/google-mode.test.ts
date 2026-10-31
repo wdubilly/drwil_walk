@@ -14,6 +14,7 @@ const souq: Souq = {
   palette: { ground: 1, road: 2, buildings: [3] },
   roads: [],
   buildings: [],
+  props: [],
 };
 const KEY = "cle-fictive-pour-les-tests";
 const camera = new PerspectiveCamera();

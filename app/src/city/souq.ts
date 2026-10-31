@@ -15,6 +15,7 @@ import {
 import { headingAt, pointAt, type Path } from "../route/path.ts";
 import { createAttributionLabel, type AttributionLabel } from "./attribution.ts";
 import { buildBuildingsGeometry } from "./buildings.ts";
+import { buildFurniture, buildTrees } from "./props.ts";
 import { buildRoadsGeometry } from "./roads.ts";
 import type { Souq } from "./souq-data.ts";
 
@@ -53,7 +54,7 @@ export function createSouqScene(doc: Document, souq: Souq): SouqScene {
   buildings.name = "batiments";
   const osm = new Group();
   osm.name = "osm";
-  osm.add(ground, roads, buildings);
+  osm.add(ground, roads, buildings, buildTrees(souq.props, souq.route), buildFurniture(souq.props, souq.route));
   city.add(osm);
   const label = createAttributionLabel(doc);
   const world = new Group();

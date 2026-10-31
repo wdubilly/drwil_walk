@@ -1,6 +1,8 @@
 // Extraction du quartier de Souq Waqif (et, via `extract`, de tout autre quartier : voir extract-pune.ts) depuis OpenStreetMap (Overpass) : bâtiments et voies, en GeoJSON.
 // Relançable : `npm run extract` réécrit data/souq-waqif.json. Le casque, lui, ne fait aucun appel réseau :
 // il ne lit que ce fichier versionné. Données © contributeurs OpenStreetMap, licence ODbL.
+import { buildingLook, propKind } from "./osm-tags.ts";
+
 export const BBOX = { south: 25.284, west: 51.529, north: 25.29, east: 51.538 };
 export const OVERPASS_URL = "https://overpass-api.de/api/interpreter";
 /** Overpass refuse (406) les requêtes sans identification. */
@@ -14,6 +16,9 @@ export interface OverpassWay {
   id: number;
   tags?: Record<string, string>;
   geometry?: { lat: number; lon: number }[];
+  /** Position d'un nœud (arbre, lampadaire, banc). */
+  lat?: number;
+  lon?: number;
 }
 export interface OverpassResponse {
   osm3s?: { timestamp_osm_base?: string };
@@ -22,13 +27,19 @@ export interface OverpassResponse {
 export interface ExtractFeature {
   type: "Feature";
   id: number;
-  properties: { kind: "building"; heightM: number } | { kind: "highway"; highway: string };
-  geometry: { type: "Polygon"; coordinates: number[][][] } | { type: "LineString"; coordinates: number[][] };
+  properties:
+    | { kind: "building"; heightM: number; colour?: string; roofColour?: string; material?: string }
+    | { kind: "highway"; highway: string }
+    | { kind: "tree" | "lamp" | "bench" };
+  geometry: { type: "Polygon"; coordinates: number[][][] } | { type: "LineString"; coordinates: number[][] } | { type: "Point"; coordinates: number[] };
 }
+
+/** Les nœuds ponctuels demandés avec les bâtiments et voies : arbres, lampadaires, bancs. */
+export const PROP_NODES = ['node["natural"="tree"]', 'node["highway"="street_lamp"]', 'node["amenity"="bench"]'] as const;
 
 export function buildQuery(bbox = BBOX): string {
   const area = `(${String(bbox.south)},${String(bbox.west)},${String(bbox.north)},${String(bbox.east)})`;
-  return `[out:json][timeout:90];(way["building"]${area};way["highway"]${area};);out geom;`;
+  return `[out:json][timeout:90];(way["building"]${area};way["highway"]${area};${PROP_NODES.map((n) => `${n}${area};`).join("")});out geom;`;
 }
 
 /** Hauteur en mètres : `height` si lisible, sinon les niveaux, sinon la valeur par défaut. */
@@ -44,6 +55,11 @@ const round6 = (n: number): number => Math.round(n * 1e6) / 1e6;
 
 function feature(way: OverpassWay): ExtractFeature | undefined {
   const tags = way.tags ?? {};
+  const prop = way.type === "node" ? propKind(tags) : undefined;
+  if (way.type === "node") {
+    if (!prop || way.lat === undefined || way.lon === undefined) return undefined;
+    return { type: "Feature", id: way.id, properties: { kind: prop }, geometry: { type: "Point", coordinates: [round6(way.lon), round6(way.lat)] } };
+  }
   const line = (way.geometry ?? []).map((p) => [round6(p.lon), round6(p.lat)]);
   if (tags["building"] !== undefined) {
     // Un bâtiment est un anneau fermé d'au moins trois sommets.
@@ -51,7 +67,7 @@ function feature(way: OverpassWay): ExtractFeature | undefined {
     return {
       type: "Feature",
       id: way.id,
-      properties: { kind: "building", heightM: buildingHeightM(tags) },
+      properties: { kind: "building", heightM: buildingHeightM(tags), ...buildingLook(tags) },
       geometry: { type: "Polygon", coordinates: [line] },
     };
   }

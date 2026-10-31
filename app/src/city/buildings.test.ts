@@ -1,5 +1,6 @@
+import { Color, type BufferGeometry } from "three";
 import { describe, expect, it } from "vitest";
-import { buildBuildingsGeometry, toneIndex } from "./buildings.ts";
+import { FOOT_LIGHT, buildBuildingsGeometry, toneIndex } from "./buildings.ts";
 import type { Building } from "./souq-data.ts";
 
 const TONES = [0xff0000, 0x00ff00, 0x0000ff];
@@ -13,6 +14,16 @@ const square = (x: number, z: number, heightM: number): Building => ({
     { x, z },
   ],
 });
+
+const rgb = (hex: number): string => new Color(hex).toArray().map((v) => v.toFixed(4)).join(",");
+/** Les couleurs des sommets du toit (normale vers le haut), qui ne sont pas assombries par l'ombrage. */
+function roofColors(geometry: BufferGeometry): string[] {
+  const normal = geometry.getAttribute("normal");
+  const color = geometry.getAttribute("color");
+  return Array.from({ length: color.count }, (_, i) => i)
+    .filter((i) => normal.getY(i) > 0.5)
+    .map((i) => [color.getX(i), color.getY(i), color.getZ(i)].map((v) => v.toFixed(4)).join(","));
+}
 
 describe("bâtiments extrudés", () => {
   it("fusionne les bâtiments en un seul maillage, debout sur le sol", () => {
@@ -39,8 +50,24 @@ describe("bâtiments extrudés", () => {
     expect(new Set(indexes).size).toBeGreaterThan(1);
     expect(indexes.every((i) => i >= 0 && i < TONES.length)).toBe(true);
     expect(row.map((b) => toneIndex(b, TONES.length))).toEqual(indexes);
-    const colors = buildBuildingsGeometry(row, TONES).getAttribute("color");
-    const distinct = new Set(Array.from({ length: colors.count }, (_, i) => [colors.getX(i), colors.getY(i), colors.getZ(i)].join(",")));
-    expect(distinct.size).toBe(new Set(indexes).size);
+    const geometry = buildBuildingsGeometry(row, TONES);
+    expect(new Set(roofColors(geometry)).size).toBe(new Set(indexes).size);
+  });
+
+  it("APP-003: la couleur des murs vient des balises, celle du toit à part, sinon le ton de la palette", () => {
+    const geometry = buildBuildingsGeometry([{ ...square(0, 0, 8), wall: 0x102030 }, { ...square(20, 0, 8), wall: 0x102030, roof: 0xff8000 }], TONES);
+    expect(new Set(roofColors(geometry))).toEqual(new Set([rgb(0x102030), rgb(0xff8000)]));
+  });
+
+  it("APP-003: l'ombrage par sommet assombrit les murs vers le pied, le toit garde toute sa lumière", () => {
+    const geometry = buildBuildingsGeometry([{ ...square(0, 0, 10), wall: 0xffffff }], TONES);
+    const position = geometry.getAttribute("position");
+    const normal = geometry.getAttribute("normal");
+    const color = geometry.getAttribute("color");
+    const light = (y: number, roof: boolean) =>
+      Array.from({ length: position.count }, (_, i) => i).filter((i) => (normal.getY(i) > 0.5) === roof && Math.abs(position.getY(i) - y) < 1e-6).map((i) => color.getX(i));
+    expect(new Set(light(0, false))).toEqual(new Set([Math.fround(FOOT_LIGHT)]));
+    expect(new Set(light(10, false))).toEqual(new Set([1]));
+    expect(new Set(light(10, true))).toEqual(new Set([1]));
   });
 });

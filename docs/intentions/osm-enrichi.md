@@ -1,6 +1,7 @@
 # Intention : un rendu OpenStreetMap plus riche
 
 **Statut** : proposée le 2026-10-31.
+**Relu le 2026-10-31** : le chantier `osm-enrichi` a fait les couleurs et matériaux, l'ombrage par sommet, les arbres et le mobilier (`docs/projects/journal.md`) ; reste vivant le seul relief du sol.
 
 ## Besoin
 
@@ -11,7 +12,7 @@ et à Doha (à ma connaissance : aucune trouvée) et du rendu Google inaccessibl
 ## Existant
 
 Lu le 2026-10-31 : bâtiments fusionnés en un seul maillage à quatre tons de palette, voies dessinées (`app/src/city/`).
-L'extraction ne conserve que `kind` et `heightM` (`app/scripts/extract-souq.ts`) : couleurs, matériaux et arbres sont perdus.
+L'extraction conserve désormais couleurs, matériaux, arbres, lampadaires et bancs (`app/scripts/osm-tags.ts`) ; le relief du sol n'existe pas (sol plat).
 `building:levels` sert déjà à calculer la hauteur ; les bâtiments sans hauteur ni niveaux prennent 7 m par défaut.
 
 ## Décisions du demandeur (2026-10-31)
@@ -29,4 +30,4 @@ L'extraction ne conserve que `kind` et `heightM` (`app/scripts/extract-souq.ts`)
 
 - [decision] Relief du sol : quelle source d'élévation (ouverte, ou ArcGIS World Elevation en option), et est-elle assez précise à hauteur de piéton pour Pune
   et Doha ? Non vérifié ; le relief n'est pas dans le chantier `osm-enrichi` tant que ce n'est pas tranché.
-- [decision] Quelle part des arbres et du mobilier OSM existe réellement à Pune et à Doha ? À constater sur les extraits.
+- Constaté sur les extraits du 2026-10-31 (question tranchée) : arbres 155 (souk), 285 (Vieille ville), 513 (Corniche), 105 (FC Road) ; bancs 19 et 8 ; aucun lampadaire ; presque aucune couleur ni matériau de bâtiment (7 matériaux). Le rendu enrichi dépend surtout des arbres ; compléter OpenStreetMap serait un travail de cartographie, pas de code.

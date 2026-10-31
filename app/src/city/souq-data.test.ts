@@ -57,6 +57,36 @@ describe("données du souk", () => {
     expect(missing).toEqual([]);
   });
 
+  it("APP-003: les extraits versionnés portent les arbres, et les bâtiments leurs balises lisibles", () => {
+    const { props } = cityFor("doha-souq-waqif");
+    expect(props.filter((q) => q.kind === "tree").length).toBeGreaterThan(100);
+    expect(props.some((q) => q.kind === "bench")).toBe(true);
+    expect(cityFor("pune-vieille-ville").buildings.some((b) => b.wall !== undefined)).toBe(true);
+  });
+
+  it("APP-003: teinte un bâtiment de sa couleur ou de son matériau, son toit à part, et lit arbres et mobilier", () => {
+    const ring = [[[51.5, 25.3], [51.501, 25.3], [51.501, 25.301], [51.5, 25.3]]];
+    const feature = (properties: object) => ({ properties: { kind: "building", heightM: 5, ...properties }, geometry: { coordinates: ring } });
+    const point = (kind: string, c: number[]) => ({ properties: { kind }, geometry: { coordinates: c } });
+    const souq = loadSouq(
+      {
+        features: [
+          feature({ colour: "#102030", roofColour: "#ff8000", material: "brick" }),
+          feature({ material: "brick" }),
+          feature({ material: "papier", colour: "?" }),
+          point("tree", [51.5, 25.3]),
+          point("lamp", [51.5, 25.301]),
+          point("bench", [51.501, 25.3]),
+        ],
+      },
+      { geometry: { coordinates: [[51.5, 25.3], [51.5, 25.301]] } },
+      palette,
+    );
+    expect(souq.buildings.map((b) => [b.wall, b.roof])).toEqual([[0x102030, 0xff8000], [0xa4513b, undefined], [undefined, undefined]]);
+    expect(souq.props.map((q) => q.kind)).toEqual(["tree", "lamp", "bench"]);
+    expect(souq.props[1]?.at.z).toBeCloseTo(-111.2, 0);
+  });
+
   it("lit n'importe quel couple extrait / boucle", () => {
     const souq = loadSouq(
       {

@@ -33,9 +33,10 @@ removes it when fully covered.
 | `docs/intentions/mise-a-jour-drwil.md` | Mettre drwil à jour pour clore les trois chantiers de garantie |
 | `docs/intentions/relecture-guide-casque.md` | Relire `docs/guide-utilisateur.md` sur un vrai Quest 3 |
 | `docs/intentions/rendu-ville.md` | Une ville moins austère dans le casque (teintes, voies, palette par itinéraire) |
-| `docs/intentions/osm-enrichi.md` | Un rendu OSM plus riche : couleurs, arbres, ombrage, relief |
+| `docs/intentions/osm-enrichi.md` | Le relief du sol (reste du rendu OSM enrichi) |
 | `docs/intentions/essai-casque-itineraire-libre.md` | Essayer un trajet libre au casque (carte, adresse, cadence, arrivée) |
 | `docs/intentions/essai-fournisseurs-ouverts.md` | Essayer un trajet libre sur les instances publiques de Valhalla et de Photon |
+| `docs/intentions/essai-casque-osm-enrichi.md` | Juger le rendu OSM enrichi et ses 72 images par seconde sur un vrai Quest 3 |
 | `docs/intentions/auto-heberger-valhalla-photon.md` | Auto-héberger Valhalla et Photon |
 | `docs/intentions/relais-cles-google.md` | Ne pas exposer les clés Google restantes dans le navigateur |
 
