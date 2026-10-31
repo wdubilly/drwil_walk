@@ -20,7 +20,14 @@ npm ci --prefix app # l'application
 (cd app && npx playwright install chromium)  # navigateur des tests de bout en bout (contrôle e2e)
 ```
 
-Aucune clé d'API n'est nécessaire : en v0.1, la ville vient d'un extrait OpenStreetMap figé dans le dépôt.
+Aucune clé d'API n'est nécessaire : par défaut, la ville vient d'un extrait OpenStreetMap figé dans le dépôt.
+
+Rendu photoréaliste Google 3D (facultatif, avec une clé « Map Tiles API » de Google, payante au-delà d'un quota) :
+mettez `VITE_GOOGLE_MAPS_API_KEY=<votre clé>` dans `.env.local` (dans `app/`) (fichier ignoré par Git, jamais commité ; le modèle
+fictif est `.env.example`), puis relancez `npm run dev` depuis `app/`. Restreignez la clé dans la console Google (référents
+HTTP, « Map Tiles API » seule) : elle est lisible dans la page. À l'accueil, choisissez alors « Google 3D » ; sans clé, ou si
+les tuiles ne se chargent pas, la marche se fait en OpenStreetMap et la raison s'affiche sur l'accueil. Ce rendu appelle le
+réseau (`tile.googleapis.com`, `www.gstatic.com`) pendant la marche ; les tests, eux, n'appellent jamais Google.
 
 Once per clone, enable the governance hooks (checks at commit and push):
 

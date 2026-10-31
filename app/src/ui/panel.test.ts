@@ -3,11 +3,12 @@ import { describe, expect, it } from "vitest";
 import { renderWalkPanel } from "./panel.ts";
 
 describe("panneau de marche", () => {
-  it("APP-003: affiche vitesse, distance, temps, opacité et la mention OpenStreetMap, avec les valeurs exactes", () => {
+  it("APP-003: affiche vitesse, distance, temps, opacité et les mentions de données, avec les valeurs exactes", () => {
     const doc = new Window().document as unknown as Document;
     const root = doc.createElement("main");
     const panel = renderWalkPanel(doc, root);
-    const info = { speedKmh: 4.1, distanceM: 12.34, timeS: 65, cityOpacity: 0.5, position: { x: 3, z: -4 }, buildingCount: 253 };
+    const info = { speedKmh: 4.1, distanceM: 12.34, timeS: 65, cityOpacity: 0.5, position: { x: 3, z: -4 }, buildingCount: 253,
+      rendering: "google" as const, tileCount: 7, attribution: "© contributeurs OpenStreetMap · Google" };
     panel.update(info);
     panel.update(info);
     const section = root.querySelector("[aria-label='Marche']");
@@ -22,7 +23,9 @@ describe("panneau de marche", () => {
     expect(section?.getAttribute("data-city-opacity")).toBe("0.5");
     expect([section?.getAttribute("data-position-x"), section?.getAttribute("data-position-z")]).toEqual(["3", "-4"]);
     expect(section?.getAttribute("data-building-count")).toBe("253");
-    expect(section?.querySelector(".attribution")?.textContent).toBe("© contributeurs OpenStreetMap");
+    expect(section?.getAttribute("data-rendering")).toBe("google");
+    expect(section?.getAttribute("data-tile-count")).toBe("7");
+    expect(section?.querySelector(".attribution")?.textContent).toBe("© contributeurs OpenStreetMap · Google");
     panel.remove();
     expect(root.querySelector("[aria-label='Marche']")).toBeNull();
   });

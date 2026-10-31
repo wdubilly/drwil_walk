@@ -13,7 +13,7 @@ import {
   type Material,
 } from "three";
 import { headingAt, pointAt, type Path } from "../route/path.ts";
-import { createAttributionLabel } from "./attribution.ts";
+import { createAttributionLabel, type AttributionLabel } from "./attribution.ts";
 import { buildBuildingsGeometry } from "./buildings.ts";
 import { buildRoadsGeometry } from "./roads.ts";
 import type { Souq } from "./souq-data.ts";
@@ -31,6 +31,9 @@ export interface SouqScene {
   world: Group;
   /** La ville, qui bouge le long du parcours. */
   city: Group;
+  /** Le sol, les voies et les bâtiments OpenStreetMap : masqués quand les tuiles Google les remplacent. */
+  osm: Group;
+  label: AttributionLabel;
   buildingCount: number;
 }
 
@@ -48,14 +51,18 @@ export function createSouqScene(doc: Document, souq: Souq): SouqScene {
     new MeshLambertMaterial({ vertexColors: true }),
   );
   buildings.name = "batiments";
-  city.add(ground, roads, buildings);
+  const osm = new Group();
+  osm.name = "osm";
+  osm.add(ground, roads, buildings);
+  city.add(osm);
+  const label = createAttributionLabel(doc);
   const world = new Group();
-  world.add(city, createAttributionLabel(doc));
+  world.add(city, label.mesh);
   const scene = new Scene();
   scene.background = null;
   scene.add(new HemisphereLight(0xffffff, 0x444444, 2));
   scene.add(world);
-  return { scene, camera: new PerspectiveCamera(70, 1, 0.1, 1000), world, city, buildingCount: souq.buildings.length };
+  return { scene, camera: new PerspectiveCamera(70, 1, 0.1, 1000), world, city, osm, label, buildingCount: souq.buildings.length };
 }
 
 /** Applique l'opacité calculée par le module safety (APP-001) à tous les matériaux de la scène. */

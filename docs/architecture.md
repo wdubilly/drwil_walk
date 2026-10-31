@@ -17,9 +17,11 @@ Décidée le 2026-10-30 par le demandeur :
 - **Langage** : TypeScript strict.
 - **Build et serveur de dev** : Vite, en HTTPS (WebXR l'exige), accessible sur le réseau local pour le Quest 3.
 - **3D et XR** : three.js, session WebXR `immersive-ar` (passthrough du Quest 3).
-- **Ville** : bâtiments OpenStreetMap extrudés en three.js, à partir d'un extrait GeoJSON figé dans le dépôt (aucun
-  appel réseau dans le casque), mention « © contributeurs OpenStreetMap » affichée (licence ODbL). Décision du
-  2026-10-30 : pas de Google Photorealistic 3D Tiles en v0.1 (intention `docs/intentions/google-3d-tiles.md`).
+- **Ville** : par défaut, bâtiments OpenStreetMap extrudés en three.js, à partir d'un extrait GeoJSON figé dans le dépôt
+  (aucun appel réseau dans le casque), mention « © contributeurs OpenStreetMap » affichée (licence ODbL). En option
+  (décision du demandeur du 2026-10-31, `docs/projects/google-3d-tiles.md`) : les Google Photorealistic 3D Tiles par
+  `3d-tiles-renderer`, avec une clé lue de `.env.local` (dans `app/`) (`VITE_GOOGLE_MAPS_API_KEY`) ; sans clé ou si les tuiles
+  échouent, le rendu OpenStreetMap reste le plan B et la raison est dite à l'écran.
 - **Tests** : Vitest (unitaires, couverture à 100 %), Playwright avec émulation WebXR (IWER) pour l'e2e.
 - **Hébergement** : application 100 % statique, aucun serveur ni base de données.
 
@@ -44,18 +46,19 @@ Décidée le 2026-10-30 par le demandeur :
   - `app/src/city/` : les villes des itinéraires, le souk de Doha, la Vieille ville de Pune, la Corniche de Doha et FC Road (chantiers doha-souq-waqif, pune-vieille-ville, doha-corniche et pune-fc-road, `docs/projects/journal.md`) : lecture de l'extrait
     (`app/src/city/souq-data.ts`), choix de la ville et de la boucle par identifiant d'itinéraire (`app/src/city/cities.ts`, lu par `app/src/xr/experience.ts`), bâtiments extrudés et fusionnés en un maillage à couleurs par sommet, un ton de la palette par bâtiment (`app/src/city/buildings.ts`), voies posées à plat sur le sol et fusionnées en un maillage, largeur selon leur classe (`app/src/city/roads.ts`), palette par itinéraire (`app/src/city/cities.ts`), scène,
     placement de la ville sur le parcours et opacité (`app/src/city/souq.ts` : scène sans fond pour le passthrough),
-    mention OpenStreetMap dans la scène (`app/src/city/attribution.ts`) et son texte (`app/src/city/licence.ts`,
-    contrat APP-003). `app/src/city/canvas-double.ts` est une doublure de test, importée par les seuls tests.
+    mentions de données dans la scène (`app/src/city/attribution.ts`) et leur texte (`app/src/city/licence.ts`,
+    contrat APP-003), tuiles Google 3D (`app/src/city/google-tiles.ts` : clé, alignement sur l'origine de la boucle,
+    repli, droits des tuiles ; `app/src/xr/google-mode.ts` : rendu choisi, message de repli, mentions affichées). `app/src/city/canvas-double.ts` est une doublure de test, importée par les seuls tests.
   - `app/data/` : l'extrait OpenStreetMap du quartier, bâtiments et voies (`app/data/souq-waqif.json`, `app/data/pune-vieille-ville.json`, `app/data/doha-corniche.json`, `app/data/pune-fc-road.json`, GeoJSON versionnés, ©
     contributeurs OpenStreetMap, ODbL) et le tracé de chaque boucle (`app/data/souq-waqif-boucle.json`, `app/data/pune-vieille-ville-boucle.json`, `app/data/doha-corniche-boucle.json`, `app/data/pune-fc-road-boucle.json`).
   - `app/scripts/extract-souq.ts` : l'extraction Overpass qui produit l'extrait (`npm run extract`), `app/scripts/extract-pune.ts`, `app/scripts/extract-corniche.ts` et `app/scripts/extract-fc-road.ts`
     (`npm run extract:pune`, `npm run extract:corniche`, `npm run extract:fc-road`, même fonction sur un autre cadre) ; elles ne sont jamais exécutées dans le casque, qui ne fait
     aucun appel réseau. Leurs tests sont `app/src/city/extract-souq.test.ts`, `app/src/city/extract-pune.test.ts`, `app/src/city/extract-corniche.test.ts` et `app/src/city/extract-fc-road.test.ts`.
   - `app/src/ui/` : l'écran d'accueil (`app/src/ui/home.ts` : vitesse, opacité, rappel de sécurité, bouton « Entrer en réalité
-    mixte » ; `app/src/ui/route-choice.ts` : cartes d'itinéraire en boutons radio ; `app/src/ui/home.css` : thème sombre et
+    mixte » ; `app/src/ui/route-choice.ts` : cartes d'itinéraire en boutons radio ; `app/src/ui/render-choice.ts` : rendu OpenStreetMap ou Google 3D ; `app/src/ui/home.css` : thème sombre et
     couleurs ; `app/src/ui/contrast.ts` : mesure du contraste, contrat QUA-014), les illustrations des cartes
     (`app/src/ui/*.svg`, une par itinéraire, livrées par Vite avec l'application, sans réseau) et le panneau de marche sur la page (`app/src/ui/panel.ts` : vitesse, distance, temps, opacité de la ville).
-  - `app/e2e/` : l'e2e des chemins critiques (`app/e2e/chemins-critiques.test.ts`, contrat QUA-020), Playwright sur
+  - `app/e2e/` : l'e2e des chemins critiques (`app/e2e/chemins-critiques.test.ts` et `app/e2e/google-3d.test.ts` pour le rendu Google, servi par des tuiles factices sans appel à Google, contrat QUA-020), Playwright sur
     Chromium avec un Quest 3 émulé par IWER, injecté par le test (jamais livré dans l'application). Il prend aussi les
     captures de l'accueil et de la marche à Pune, sur la Corniche et sur FC Road dans `dist/e2e-captures/` (ignoré par Git), publiées par la CI sous le nom `captures-accueil`.
   - Configuration, chacune testée comme le code : `app/playwright.config.ts` (e2e contre Vite sur le port 5174, en

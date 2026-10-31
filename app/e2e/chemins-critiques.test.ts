@@ -96,7 +96,7 @@ const CAPTURES = "../dist/e2e-captures";
 test("chemin 2 : l'accueil propose quatre itinéraires, le choisi est celui qui démarre", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 1100 });
   await page.goto("/");
-  await expect(page.getByRole("radio")).toHaveCount(4);
+  await expect(page.locator(".routes").getByRole("radio")).toHaveCount(4);
   await expect(page.getByRole("radio", { name: /Doha Souq Waqif/ })).toBeChecked();
   await page.screenshot({ path: `${CAPTURES}/accueil-defaut.png`, fullPage: true });
 

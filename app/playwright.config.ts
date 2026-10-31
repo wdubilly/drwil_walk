@@ -27,6 +27,9 @@ export default defineConfig({
     url: baseURL,
     ignoreHTTPSErrors: true,
     reuseExistingServer: false,
+    // Une clé FICTIVE : le rendu Google est proposé aux e2e, qui servent eux-mêmes les tuiles (google-3d.test.ts) ; elle prime
+    // sur toute vraie clé de .env.local, qui ne part donc jamais dans un test (SEC-007).
+    env: { VITE_GOOGLE_MAPS_API_KEY: "cle-factice-e2e" },
     timeout: 60_000,
   },
 });
