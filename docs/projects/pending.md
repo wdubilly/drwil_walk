@@ -32,7 +32,6 @@ otherwise.
   are needed, otherwise the topic fits here.
 - [x] topic delivered (YYYY-MM-DD).
 -->
-- [ ] [AI] [P1] Marcher dans la Vieille ville de Pune (Shaniwar Wada → Dagdusheth), câble le choix d'itinéraire — `docs/projects/pune-vieille-ville.md`
 - [ ] [AI] [P1] Marcher sur la Corniche de Doha (Musée d'art islamique → West Bay) — `docs/projects/doha-corniche.md`
 - [ ] [AI] [P1] Marcher sur FC Road à Pune — `docs/projects/pune-fc-road.md`
 - [ ] [AI] [P2] Mode d'emploi pour installer et utiliser l'app avec un Quest 3 — `docs/projects/guide-installation.md`

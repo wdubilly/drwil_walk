@@ -1,8 +1,8 @@
-// Assemblage de l'expérience : accueil → session immersive-ar → marche dans le souk.
+// Assemblage de l'expérience : accueil → session immersive-ar → marche sur l'itinéraire choisi.
 // Le rendu three.js est injecté (classe du renderer) : les tests le remplacent par une doublure.
 import type { WebGLRenderer } from "three";
 import { createSouqScene, placeOnRoute, setCityOpacity } from "../city/souq.ts";
-import { souqData } from "../city/souq-data.ts";
+import { cityFor } from "../city/cities.ts";
 import { pointAt } from "../route/path.ts";
 import { headPitchDownDeg } from "../safety/visibility.ts";
 import { renderHome, type HomeView } from "../ui/home.ts";
@@ -48,7 +48,7 @@ async function enter(deps: ExperienceDeps, home: HomeView): Promise<void> {
 
 async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession): Promise<void> {
   // La scène d'abord : si elle ne se construit pas, aucun renderer ni canevas n'est laissé derrière.
-  const souq = souqData();
+  const souq = cityFor(home.readRouteId());
   const { scene, camera, world, city, buildingCount } = createSouqScene(deps.document, souq);
   const renderer = new deps.Renderer({ antialias: true, alpha: true });
   renderer.xr.enabled = true;

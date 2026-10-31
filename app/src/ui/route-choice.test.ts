@@ -30,7 +30,6 @@ describe("choix de l'itinéraire", () => {
     const { choice, cards, radio } = setup();
     const soon = cards.filter((c) => c.textContent.includes(SOON_LABEL));
     expect(soon.map((c) => c.querySelector(".card-name")?.textContent)).toEqual([
-      "Pune Vieille ville",
       "Pune FC Road",
       "Doha Corniche",
     ]);
@@ -38,6 +37,13 @@ describe("choix de l'itinéraire", () => {
     expect(radio("Doha Souq Waqif").disabled).toBe(false);
     radio("Doha Corniche").click();
     expect(choice.readId()).toBe(DEFAULT_ITINERARY_ID);
+  });
+
+  it("laisse choisir la Vieille ville de Pune, qui a sa ville", () => {
+    const { choice, radio } = setup();
+    expect(radio("Pune Vieille ville").disabled).toBe(false);
+    radio("Pune Vieille ville").click();
+    expect(choice.readId()).toBe("pune-vieille-ville");
   });
 
   it("garde l'itinéraire par défaut si plus aucune carte n'est cochée", () => {

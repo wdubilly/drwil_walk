@@ -12,7 +12,8 @@
     "lint": "eslint . --max-warnings 0",
     "licenses": "license-checker-rseidelsohn --summary --excludePrivatePackages --onlyAllow 'MIT;ISC;Apache-2.0;BSD-2-Clause;BSD-3-Clause;0BSD;BlueOak-1.0.0;CC0-1.0;CC-BY-3.0;CC-BY-4.0;MPL-2.0;Unlicense;Python-2.0'",
     "e2e": "playwright test",
-    "extract": "node -e \"import('./scripts/extract-souq.ts').then(m=>m.extract(fetch)).then(t=>require('node:fs').writeFileSync('data/souq-waqif.json',t))\""
+    "extract": "node -e \"import('./scripts/extract-souq.ts').then(m=>m.extract(fetch)).then(t=>require('node:fs').writeFileSync('data/souq-waqif.json',t))\"",
+    "extract:pune": "node -e \"import('./scripts/extract-pune.ts').then(m=>m.extractPune(fetch)).then(t=>require('node:fs').writeFileSync('data/pune-vieille-ville.json',t))\""
   },
   "devDependencies": {
     "@eslint-community/eslint-plugin-eslint-comments": "^4.8.1",

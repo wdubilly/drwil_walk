@@ -1,6 +1,6 @@
 // e2e des chemins critiques (QUA-020), dans Chromium avec un Meta Quest 3 émulé (IWER) :
 // (1) accueil → réalité mixte immersive-ar ; (2) choix de l'itinéraire à l'accueil ; (3) marche à la vitesse réglée, joystick ±0,1 km/h ;
-// (4) APP-001 : tête baissée au-delà de 25°, la ville devient transparente.
+// (4) APP-001 : tête baissée au-delà de 25°, la ville devient transparente ; (5) le souk de Doha ; (6) la Vieille ville de Pune.
 import { createRequire } from "node:module";
 import { expect, test, type Page } from "@playwright/test";
 
@@ -39,6 +39,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 const panel = (page: Page) => page.getByRole("region", { name: "Marche" });
+const card = (page: Page, name: string) => page.locator("label.card", { hasText: name });
 const field = (page: Page, name: string) => panel(page).locator(`[data-field='${name}']`);
 
 async function enter(page: Page, speed = "4.0") {
@@ -91,7 +92,6 @@ test("chemin 1 : de l'accueil à la réalité mixte, en session immersive-ar", a
 // Captures de l'accueil, pour le demandeur qui n'a pas de casque : hors de la couche (dist/ est ignoré par Git),
 // publiées en pièce jointe par la CI.
 const CAPTURES = "../dist/e2e-captures";
-const card = (page: Page, name: string) => page.locator("label.card", { hasText: name });
 
 test("chemin 2 : l'accueil propose quatre itinéraires, le choisi est celui qui démarre", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 1100 });
@@ -100,12 +100,12 @@ test("chemin 2 : l'accueil propose quatre itinéraires, le choisi est celui qui 
   await expect(page.getByRole("radio", { name: /Doha Souq Waqif/ })).toBeChecked();
   await page.screenshot({ path: `${CAPTURES}/accueil-defaut.png`, fullPage: true });
 
-  const soon = page.getByRole("radio", { name: /Pune Vieille ville/ });
+  const soon = page.getByRole("radio", { name: /Pune FC Road/ });
   await expect(soon).toBeDisabled();
-  await expect(card(page, "Pune Vieille ville")).toContainText("Bientôt");
-  await card(page, "Pune Vieille ville").click({ force: true });
+  await expect(card(page, "Pune FC Road")).toContainText("Bientôt");
+  await card(page, "Pune FC Road").click({ force: true });
   await expect(page.getByRole("radio", { name: /Doha Souq Waqif/ })).toBeChecked();
-  await card(page, "Pune Vieille ville").screenshot({ path: `${CAPTURES}/carte-bientot.png` });
+  await card(page, "Pune FC Road").screenshot({ path: `${CAPTURES}/carte-bientot.png` });
 
   await card(page, "Doha Souq Waqif").click();
   await card(page, "Doha Souq Waqif").screenshot({ path: `${CAPTURES}/carte-choisie.png` });
@@ -170,4 +170,30 @@ test("chemin 5 : le souk de Doha, ses bâtiments OpenStreetMap et sa mention, le
   // APP-001 dans le souk : tête baissée, la ville s'efface.
   await tiltHead(page, -45);
   await expect(field(page, "opacity")).toHaveText("0 %");
+});
+
+test("chemin 6 : la Vieille ville de Pune, ses bâtiments OpenStreetMap et sa mention, le long de la boucle", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 1100 });
+  await page.goto("/");
+  await expect(page.getByRole("radio", { name: /Pune Vieille ville/ })).toBeEnabled();
+  await card(page, "Pune Vieille ville").click();
+  await page.screenshot({ path: `${CAPTURES}/pune-accueil.png`, fullPage: true });
+  await page.getByLabel("Vitesse de départ (km/h)").fill("7.2");
+  await page.getByRole("button", { name: "Entrer en réalité mixte" }).click();
+  await expect(page.getByRole("status")).toHaveText("Réalité mixte active (immersive-ar)");
+  await expect(page.locator("#app")).toHaveAttribute("data-route", "pune-vieille-ville");
+  await expect(panel(page).getByText("© contributeurs OpenStreetMap")).toBeVisible();
+  expect(Number(await panel(page).getAttribute("data-building-count"))).toBeGreaterThan(1000);
+  await expect.poll(async () => Number(await panel(page).getAttribute("data-distance-m"))).toBeGreaterThan(8);
+  const walked = await panel(page).evaluate((el) => ({
+    distance: Number(el.getAttribute("data-distance-m")),
+    crow: Math.hypot(Number(el.getAttribute("data-position-x")), Number(el.getAttribute("data-position-z"))),
+  }));
+  expect(walked.crow).toBeGreaterThan(1);
+  expect(walked.crow).toBeLessThanOrEqual(walked.distance + 1e-6);
+  await page.screenshot({ path: `${CAPTURES}/pune-marche.png` });
+  // APP-001 dans la Vieille ville : tête baissée, la ville s'efface.
+  await tiltHead(page, -45);
+  await expect(field(page, "opacity")).toHaveText("0 %");
+  await page.screenshot({ path: `${CAPTURES}/pune-tete-baissee.png` });
 });

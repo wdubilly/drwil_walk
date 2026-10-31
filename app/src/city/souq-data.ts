@@ -1,7 +1,5 @@
-// Le souk de Doha tel que le casque le lit : l'extrait OpenStreetMap figé dans le dépôt (app/data/), converti
+// La ville d'un itinéraire (le souk de Doha, la Vieille ville de Pune…) telle que le casque le lit : l'extrait OpenStreetMap figé dans le dépôt (app/data/), converti
 // en mètres locaux. Aucun appel réseau (le script app/scripts/extract-souq.ts produit le fichier, hors casque).
-import extractFile from "../../data/souq-waqif.json" with { type: "json" };
-import loopFile from "../../data/souq-waqif-boucle.json" with { type: "json" };
 import { toLocalMetres, type LonLat, type Vec2 } from "../route/geo.ts";
 import { createPath, type Path } from "../route/path.ts";
 
@@ -37,5 +35,3 @@ export function loadSouq(extract: FeatureFile, loop: LoopFile): Souq {
     }));
   return { route: createPath(loop.geometry.coordinates.map(local)), buildings };
 }
-
-export const souqData = (): Souq => loadSouq(extractFile, loopFile);

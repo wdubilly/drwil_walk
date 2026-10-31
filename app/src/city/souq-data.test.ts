@@ -1,7 +1,8 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { OSM_ATTRIBUTION } from "./licence.ts";
-import { loadSouq, souqData } from "./souq-data.ts";
+import { cityFor } from "./cities.ts";
+import { loadSouq } from "./souq-data.ts";
 
 const read = (name: string): unknown => JSON.parse(readFileSync(new URL(`../../data/${name}`, import.meta.url), "utf8"));
 const extractFile = read("souq-waqif.json") as {
@@ -13,7 +14,7 @@ const loopFile = read("souq-waqif-boucle.json") as { geometry: { coordinates: nu
 describe("données du souk", () => {
   it("APP-003: les bâtiments sont ceux de l'extrait OpenStreetMap versionné", () => {
     const inFile = extractFile.features.filter((f) => f.properties.kind === "building");
-    const { buildings } = souqData();
+    const { buildings } = cityFor("doha-souq-waqif");
     expect(inFile.length).toBeGreaterThan(100);
     expect(buildings).toHaveLength(inFile.length);
     expect(buildings.every((b) => b.footprint.length >= 4 && b.heightM > 0)).toBe(true);
@@ -25,7 +26,7 @@ describe("données du souk", () => {
   });
 
   it("APP-002: la boucle du souk fait environ 1,5 km et revient à son départ", () => {
-    const { route } = souqData();
+    const { route } = cityFor("doha-souq-waqif");
     expect(route.lengthM).toBeGreaterThan(1200);
     expect(route.lengthM).toBeLessThan(1800);
     expect(route.points[0]).toEqual({ x: 0, z: -0 });
