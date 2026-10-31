@@ -32,4 +32,3 @@ otherwise.
   are needed, otherwise the topic fits here.
 - [x] topic delivered (YYYY-MM-DD).
 -->
-- [ ] [AI] [P2] Un rendu OpenStreetMap plus riche (couleurs, arbres, ombrage), après fournisseurs-ouverts — `docs/projects/osm-enrichi.md`

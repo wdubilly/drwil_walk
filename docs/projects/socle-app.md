@@ -27,6 +27,7 @@ files:
   - app/scripts/extract-fc-road.ts
   - app/scripts/extract-pune.ts
   - app/scripts/extract-souq.ts
+  - app/scripts/osm-tags.ts
   - app/src/city/attribution.test.ts
   - app/src/city/attribution.ts
   - app/src/city/buildings.test.ts
@@ -43,12 +44,16 @@ files:
   - app/src/city/google-tiles.test.ts
   - app/src/city/google-tiles.ts
   - app/src/city/licence.ts
+  - app/src/city/props.test.ts
+  - app/src/city/props.ts
   - app/src/city/roads.test.ts
   - app/src/city/roads.ts
   - app/src/city/souq-data.test.ts
   - app/src/city/souq-data.ts
   - app/src/city/souq.test.ts
   - app/src/city/souq.ts
+  - app/src/city/tint.test.ts
+  - app/src/city/tint.ts
   - app/src/main.test.ts
   - app/src/main.ts
   - app/src/route/create-providers.test.ts
