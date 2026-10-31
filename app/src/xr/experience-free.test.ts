@@ -3,20 +3,21 @@ import { describe, expect, it, vi } from "vitest";
 import { ACTIVE_STATUS } from "./experience.ts";
 import { poseFrame, setup } from "./experience-double.ts";
 
-const POINTS = [[73.8567, 18.5204], [73.858, 18.521], [73.86, 18.522]];
+/** Le tracé (73.8567 18.5204) (73.858 18.521) (73.86 18.522), encodé comme Valhalla. */
+const SHAPE = "_tkib@wjzzkCod@gpAo}@_|B";
 const way = { type: "way", id: 1, tags: { building: "yes" }, geometry: [{ lat: 18.52, lon: 73.857 }, { lat: 18.5201, lon: 73.857 }, { lat: 18.5201, lon: 73.8571 }, { lat: 18.52, lon: 73.857 }] };
 
-/** Les trois services de Google et Overpass, factices : aucun réseau. */
+/** Routage, adresses et Overpass, factices : aucun réseau. */
 const network = () =>
   vi.fn((url: string) => {
     const host = new URL(url).host;
-    if (host === "routes.googleapis.com") {
-      return Promise.resolve(Response.json({ routes: [{ distanceMeters: 450, polyline: { geoJsonLinestring: { coordinates: POINTS } } }] }));
+    if (host === "valhalla1.openstreetmap.de") {
+      return Promise.resolve(Response.json({ trip: { summary: { length: 0.45 }, legs: [{ shape: SHAPE }] } }));
     }
-    if (host === "maps.googleapis.com") {
-      const near = url.includes("address=arriv");
-      const location = near ? { lat: 18.522, lng: 73.86 } : { lat: 18.5204, lng: 73.8567 };
-      return Promise.resolve(Response.json({ status: "OK", results: [{ formatted_address: near ? "Arrivée" : "Départ", geometry: { location } }] }));
+    if (host === "photon.komoot.io") {
+      const near = url.includes("q=arriv");
+      const coordinates = near ? [73.86, 18.522] : [73.8567, 18.5204];
+      return Promise.resolve(Response.json({ features: [{ geometry: { coordinates }, properties: { name: near ? "Arrivée" : "Départ" } }] }));
     }
     return Promise.resolve(Response.json({ elements: [way] }));
   }) as unknown as typeof fetch;
@@ -46,10 +47,13 @@ describe("itinéraire libre en marche (QUA-020, services factices)", () => {
     expect(t.xr.requestSession).not.toHaveBeenCalled();
   });
 
-  it("QUA-002: sans clé Routes, dit la raison à l'écran et laisse les quatre itinéraires figés utilisables", async () => {
-    const t = setup({ routesKey: undefined });
-    t.root.querySelector<HTMLInputElement>("input[value='libre']")?.click();
-    expect(t.root.querySelector(".free-message")?.textContent).toContain("VITE_GOOGLE_ROUTES_API_KEY");
+  it("QUA-020: sans aucune clé, l'itinéraire libre est proposé et les services ouverts sont ceux interrogés", async () => {
+    const fetchFn = network();
+    const t = await prepared({ fetch: fetchFn });
+    const hosts = (fetchFn as unknown as { mock: { calls: [string][] } }).mock.calls.map(([url]) => new URL(url).host);
+    expect(hosts).toContain("valhalla1.openstreetmap.de");
+    expect(hosts).toContain("photon.komoot.io");
+    expect(hosts.some((host) => host.endsWith("googleapis.com"))).toBe(false);
     t.root.querySelector<HTMLInputElement>("input[value='pune-fc-road']")?.click();
     await t.enter();
     expect(t.status()).toBe(ACTIVE_STATUS);

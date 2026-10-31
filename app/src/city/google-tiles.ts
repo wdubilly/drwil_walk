@@ -55,6 +55,10 @@ const redact = (message: string, apiKey: string): string => message.replaceAll(a
 /** Les tuiles, et le moteur qui les charge (les tests lui envoient ses événements, sans réseau). */
 export type GoogleTilesEngine = GoogleTiles & { tiles: TilesRenderer };
 
+/** Un refus 403 vient souvent de cette restriction de Google : le rendu OpenStreetMap, lui, marche partout. */
+export const EEA_NOTICE =
+  "(Google n'offre pas ce rendu aux comptes de facturation de l'Espace économique européen ; le rendu OpenStreetMap n'a pas cette limite.)";
+
 export const createGoogleTiles = ({ apiKey, origin, onFailure }: GoogleTilesOptions): GoogleTilesEngine => {
   const draco = new DRACOLoader().setDecoderPath(DRACO_DECODER_PATH);
   const tiles = new TilesRenderer();
@@ -82,7 +86,8 @@ export const createGoogleTiles = ({ apiKey, origin, onFailure }: GoogleTilesOpti
     failed = true;
     // La bibliothèque ne garde pas le code HTTP : on nomme les causes probables, puis le détail technique.
     const cause = tile === null ? "jeu de tuiles refusé ou injoignable (clé invalide, restreinte, API non activée ?)" : "tuile illisible";
-    onFailure(`${cause} : ${redact(error.message, apiKey)}`);
+    const detail = redact(error.message, apiKey);
+    onFailure(`${cause} : ${detail}${detail.includes("403") ? ` ${EEA_NOTICE}` : ""}`);
   });
 
   return {

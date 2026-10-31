@@ -4,7 +4,6 @@ import type { TripPlanner } from "../city/free-route.ts";
 import { ENTER_LABEL, renderHome } from "./home.ts";
 
 export const planner: TripPlanner = {
-  unavailable: "Itinéraire libre indisponible : aucune clé Routes",
   find: () => Promise.reject(new Error("jamais")),
   describe: () => Promise.reject(new Error("jamais")),
   plan: () => Promise.reject(new Error("jamais")),
@@ -49,7 +48,7 @@ describe("écran d'accueil", () => {
     expect(section?.hidden).toBe(true);
     root.querySelector<HTMLInputElement>("input[value='libre']")?.click();
     expect(section?.hidden).toBe(false);
-    expect(section?.textContent).toContain("aucune clé Routes");
+    expect(section?.textContent).toContain("Touchez la carte pour poser le départ");
     expect(view.readTrip()).toBeNull();
     root.querySelector<HTMLInputElement>("input[value='pune-fc-road']")?.click();
     expect(section?.hidden).toBe(true);

@@ -32,5 +32,4 @@ otherwise.
   are needed, otherwise the topic fits here.
 - [x] topic delivered (YYYY-MM-DD).
 -->
-- [ ] [AI] [P1] Fournisseurs ouverts à la place de Google : Valhalla, Photon, sans clé — `docs/projects/fournisseurs-ouverts.md`
 - [ ] [AI] [P2] Un rendu OpenStreetMap plus riche (couleurs, arbres, ombrage), après fournisseurs-ouverts — `docs/projects/osm-enrichi.md`

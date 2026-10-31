@@ -1,11 +1,10 @@
 // La ville d'un trajet libre (APP-003) : pas d'extrait versionné, mais les bâtiments et voies OpenStreetMap proches du
 // tracé, demandés à Overpass à l'accueil quand le trajet se prépare (jamais pendant la marche). Le trajet part au service
-// de routage Google ; rien n'est enregistré. Les droits (ODbL) sont les mêmes que pour les extraits figés.
+// de routage choisi (Valhalla par défaut) ; rien n'est enregistré. Les droits (ODbL) sont les mêmes que pour les extraits figés.
 import { OVERPASS_URL, toGeoJsonText, type OverpassResponse } from "../../scripts/extract-souq.ts";
-import { geocode, reverseGeocode, type Place } from "../route/geocoding.ts";
 import { toLocalMetres, type LonLat } from "../route/geo.ts";
 import { createPath } from "../route/path.ts";
-import { NO_ROUTES_KEY_NOTICE, computeWalkingRoute, type RoutesConfig } from "../route/routes-api.ts";
+import type { Place, Providers } from "../route/providers.ts";
 import { formatKm } from "../route/walk.ts";
 import { loadSouq, type Palette, type Souq } from "./souq-data.ts";
 
@@ -57,23 +56,20 @@ export interface PlannedTrip {
 }
 
 export interface TripPlanner {
-  /** La raison pour laquelle le trajet libre est indisponible (pas de clé), ou rien. */
-  unavailable: string | undefined;
   find(text: string): Promise<Place>;
   describe(point: LonLat): Promise<string>;
   plan(from: LonLat, to: LonLat): Promise<PlannedTrip>;
 }
 
-export function createTripPlanner(config: RoutesConfig): TripPlanner {
+export function createTripPlanner({ router, geocoder, fetch: fetchFn }: Providers): TripPlanner {
   return {
-    unavailable: config.apiKey === undefined ? NO_ROUTES_KEY_NOTICE : undefined,
-    find: (text) => geocode(text, config),
-    describe: (point) => reverseGeocode(point, config),
+    find: (text) => geocoder.find(text),
+    describe: (point) => geocoder.describe(point),
     async plan(from, to) {
-      const points = await computeWalkingRoute(from, to, config);
+      const points = await router.walk(from, to);
       const length = `Trajet prêt : ${formatKm(bareSouq(points).route.lengthM)}.`;
       try {
-        return { souq: await loadFreeCity(points, config.fetch), summary: length };
+        return { souq: await loadFreeCity(points, fetchFn), summary: length };
       } catch (error) {
         const why = error instanceof Error ? error.message : String(error);
         return { souq: bareSouq(points), summary: `${length} Bâtiments OpenStreetMap indisponibles (${why}) : marche sans bâtiments.` };

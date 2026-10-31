@@ -2,7 +2,7 @@
 
 **Statut** : proposée le 2026-10-30 (reportée : décision du demandeur, pas de Google en v0.1).
 
-**Revue le 2026-10-31 (EEA)** : Google n'offre pas les Photorealistic 3D Tiles aux projets créés après le 8 juillet 2025 liés à une facturation de l'EEA (403). Le rendu reste livré mais inaccessible depuis la France ; voir `docs/intentions/fournisseurs-ouverts.md`.
+**Revue le 2026-10-31 (EEA)** : Google n'offre pas les Photorealistic 3D Tiles aux projets créés après le 8 juillet 2025 liés à une facturation de l'EEA (403). Le rendu reste livré mais inaccessible depuis la France.
 
 **Revue le 2026-10-31** : le premier essai sur un vrai Quest 3 juge le rendu OSM « mono-orange, formes plates ». Le demandeur
 lève le report : accès réseau pendant la marche et clé Google acceptés. Cadré dans la fiche google-3d-tiles (résumée au journal)

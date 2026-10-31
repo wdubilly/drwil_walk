@@ -14,7 +14,6 @@ function setup(over: Partial<TripPlanner> = {}) {
   const find = vi.fn((text: string) => Promise.resolve({ point: POINTS[text === "arrivée" ? 1 : 0] as LonLat, label: `Adresse de ${text}` }));
   const plan = vi.fn<TripPlanner["plan"]>(() => Promise.resolve(TRIP));
   const planner: TripPlanner = {
-    unavailable: undefined,
     find,
     describe: vi.fn((p: LonLat) => Promise.resolve(`Près de ${p[1].toFixed(2)}`)),
     plan,
@@ -35,16 +34,6 @@ function setup(over: Partial<TripPlanner> = {}) {
 }
 
 describe("itinéraire libre à l'accueil (QUA-020, services factices)", () => {
-  it("QUA-002: sans clé, dit la raison, ne charge aucune carte et ne propose rien d'autre", () => {
-    const { el, trip, message } = setup({ unavailable: "Itinéraire libre indisponible : aucune clé" });
-    expect(message()).toBe("Itinéraire libre indisponible : aucune clé");
-    expect(el.querySelector("img")).toBeNull();
-    expect(el.querySelector("input")).toBeNull();
-    expect(trip.readTrip()).toBeNull();
-    trip.setVisible(false);
-    expect(el.hidden).toBe(true);
-  });
-
   it("deux touches posent le départ puis l'arrivée, et inscrivent l'adresse trouvée dans les champs", async () => {
     const { tap, input, message, settle, el } = setup();
     expect(message()).toContain("poser le départ");

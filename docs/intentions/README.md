@@ -33,9 +33,11 @@ removes it when fully covered.
 | `docs/intentions/mise-a-jour-drwil.md` | Mettre drwil à jour pour clore les trois chantiers de garantie |
 | `docs/intentions/relecture-guide-casque.md` | Relire `docs/guide-utilisateur.md` sur un vrai Quest 3 |
 | `docs/intentions/rendu-ville.md` | Une ville moins austère dans le casque (teintes, voies, palette par itinéraire) |
-| `docs/intentions/fournisseurs-ouverts.md` | Valhalla, Photon et OSM à la place de Google, sans clé |
 | `docs/intentions/osm-enrichi.md` | Un rendu OSM plus riche : couleurs, arbres, ombrage, relief |
-| `docs/intentions/essai-casque-itineraire-libre.md` | Essayer un trajet libre au casque, avec une vraie clé Routes |
+| `docs/intentions/essai-casque-itineraire-libre.md` | Essayer un trajet libre au casque (carte, adresse, cadence, arrivée) |
+| `docs/intentions/essai-fournisseurs-ouverts.md` | Essayer un trajet libre sur les instances publiques de Valhalla et de Photon |
+| `docs/intentions/auto-heberger-valhalla-photon.md` | Auto-héberger Valhalla et Photon |
+| `docs/intentions/relais-cles-google.md` | Ne pas exposer les clés Google restantes dans le navigateur |
 
 A one-line idea, too light for a brief, is noted with one command:
 `node .githooks/note.mjs "<text>"` appends a dated line to

@@ -42,7 +42,7 @@ riche possible, sans dépendance commerciale : couleurs et matériaux des toits,
 - **Relief du sol** : question ouverte de `docs/intentions/osm-enrichi.md` (source d'élévation à trancher).
 - Texture de façade et photogrammétrie : aucune source ouverte trouvée pour Pune et Doha.
 - Les hauteurs par niveaux : déjà faites (`building:levels` sert à calculer la hauteur depuis le chantier souk).
-- Les fournisseurs : `docs/projects/fournisseurs-ouverts.md`.
+- Les fournisseurs : `docs/projects/journal.md`.
 
 ## 3. Contraintes
 

@@ -1,6 +1,6 @@
 import { type Material, Mesh, MeshStandardMaterial, MeshBasicMaterial, PerspectiveCamera, PlaneGeometry, Scene, Texture } from "three";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { createGoogleTiles, googleCredit, readApiKey } from "./google-tiles.ts";
+import { EEA_NOTICE, createGoogleTiles, googleCredit, readApiKey } from "./google-tiles.ts";
 
 // Aucun test n'appelle Google : fetch est remplacé, et la clé est fictive.
 const KEY = "cle-fictive-pour-les-tests";
@@ -75,7 +75,7 @@ describe("tuiles Google 3D", () => {
   it("QUA-002: une tuile qui échoue avant tout modèle chargé condamne le rendu, pas après", () => {
     const first = setup();
     first.google.tiles.dispatchEvent({ type: "load-error", tile: {} as never, error: new Error("403"), url: "x" });
-    expect(first.onFailure).toHaveBeenCalledWith("tuile illisible : 403");
+    expect(first.onFailure).toHaveBeenCalledWith(`tuile illisible : 403 ${EEA_NOTICE}`);
     first.google.dispose();
 
     const later = setup();
@@ -84,6 +84,7 @@ describe("tuiles Google 3D", () => {
     expect(later.onFailure).not.toHaveBeenCalled();
     later.google.tiles.dispatchEvent({ type: "load-error", tile: null, error: new Error("jeu racine"), url: "x" });
     expect(later.onFailure).toHaveBeenCalledWith(expect.stringContaining("jeu racine"));
+    expect(later.onFailure).not.toHaveBeenCalledWith(expect.stringContaining("Espace économique"));
     later.google.dispose();
   });
 

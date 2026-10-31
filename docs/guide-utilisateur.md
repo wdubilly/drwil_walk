@@ -84,14 +84,14 @@ L'opacité de la ville se règle à l'accueil (30 à 100 %) : baissez-la si vous
    Choisissez aussi le **rendu de la ville** : « OpenStreetMap » (par défaut, sans réseau) ou « Google 3D »
    (photoréaliste, demande une clé Google dans `.env.local` (dans `app/`), voir `INSTALL.md`). Sans clé, ou si les tuiles ne se
    chargent pas, la marche se fait en OpenStreetMap et la raison s'affiche sur l'accueil, sous le bouton.
-   **Itinéraire libre** (demande une clé Google « Routes » dans `.env.local`, voir `INSTALL.md`) : une carte apparaît.
+   **Itinéraire libre** (sans clé : routage et adresses d'OpenStreetMap, voir `INSTALL.md`) : une carte apparaît.
    Posez le **départ** puis l'**arrivée** en touchant la carte (boutons « + », « − » et flèches pour zoomer et la déplacer),
    ou tapez un lieu ou une adresse dans les champs « Départ » et « Arrivée » puis « Chercher » : les deux modes se
    remplissent mutuellement (l'adresse trouvée s'inscrit dans le champ, et le point se place sur la carte ; si plusieurs
    lieux correspondent, le premier est retenu et affiché). Un troisième toucher recommence ; « Effacer » vide tout. Appuyez sur
    « Calculer le trajet » : le chemin à pied et la ville autour sont chargés, et la longueur s'affiche (5 km au plus, sinon
-   un message le dit). Sans clé, ou si le service refuse, la raison s'affiche et les quatre autres itinéraires restent utilisables.
-   Aucun lieu ni adresse n'est enregistré : ils ne partent qu'aux services de Google (adresses, chemin).
+   un message le dit). Si un service public refuse ou limite les demandes, la raison s'affiche et les quatre autres itinéraires restent utilisables.
+   Aucun lieu ni adresse n'est enregistré : ils ne partent qu'aux services d'adresses (Photon) et de routage (Valhalla) d'OpenStreetMap.
 2. Réglez la **vitesse de départ** (1 à 8 km/h, par pas de 0,1) et l'**opacité de la ville**.
 3. Appuyez sur « Entrer en réalité mixte » et acceptez la demande d'autorisation du navigateur. Si le bouton est
    grisé ou affiche un message, voir la section 6.

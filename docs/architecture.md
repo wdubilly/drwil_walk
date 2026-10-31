@@ -38,8 +38,8 @@ Décidée le 2026-10-30 par le demandeur :
     (`app/src/route/geo.ts` : GPS vers mètres locaux ; `app/src/route/path.ts` : position et direction à une distance,
     boucle qui reprend au départ, contrat APP-002) et les quatre itinéraires de l'accueil
     (`app/src/route/itineraries.ts` : données, dont l'indicateur « disponible »).
-  - Itinéraire libre (chantier itineraire-libre) : `app/src/route/routes-api.ts` (chemin à pied par l'API Google Routes, mode piéton, clé `VITE_GOOGLE_ROUTES_API_KEY`, 5 km au plus),
-    `app/src/route/geocoding.ts` (recherche d'adresse et géocodage inverse, même clé), `app/src/route/reject-double.ts` (doublure de test),
+  - Itinéraire libre (chantier itineraire-libre) : `app/src/route/providers.ts` (interfaces `Router` et `Geocoder`, limite de 5 km), `app/src/route/valhalla.ts` (chemin à pied, profil piéton) et `app/src/route/photon.ts` (recherche d'adresse et géocodage inverse), par défaut et sans clé,
+    `app/src/route/create-providers.ts` (choix des services, adresses `VITE_ROUTING_URL` et `VITE_GEOCODING_URL`), `app/src/route/routes-api.ts` et `app/src/route/geocoding.ts` (option Google Routes et Geocoding, clé `VITE_GOOGLE_ROUTES_API_KEY`), `app/src/route/reject-double.ts` (doublure de test),
     `app/src/city/free-route.ts` (bâtiments OpenStreetMap proches du tracé demandés à Overpass, préparation du trajet, contrats APP-002 et APP-003),
     `app/src/ui/free-trip.ts` (départ et arrivée : carte et adresses qui se remplissent mutuellement), `app/src/ui/map-picker.ts` et `app/src/ui/map-math.ts`
     (carte légère à tuiles OpenStreetMap, sans bibliothèque), illustration `app/src/ui/libre.svg` ; un tracé non bouclé (`Path.loop` faux) s'arrête à l'arrivée (`app/src/xr/frame.ts`).
