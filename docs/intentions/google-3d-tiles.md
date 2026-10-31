@@ -2,6 +2,10 @@
 
 **Statut** : proposée le 2026-10-30 (reportée : décision du demandeur, pas de Google en v0.1).
 
+**Revue le 2026-10-31** : le premier essai sur un vrai Quest 3 juge le rendu OSM « mono-orange, formes plates ». Le demandeur
+lève le report : accès réseau pendant la marche et clé Google acceptés. Cadré dans `docs/projects/google-3d-tiles.md`
+(rendu Google en option, OSM conservé en plan B). Reste vivant : Unity + Cesium, non retenu pour l'instant (la pile reste TypeScript).
+
 ## Besoin
 
 `MISSION.md` prévoyait les Google Photorealistic 3D Tiles comme ville principale. Le demandeur a choisi
