@@ -12,8 +12,8 @@ describe("itinéraires", () => {
     expect(ITINERARIES.find((i) => i.id === DEFAULT_ITINERARY_ID)?.available).toBe(true);
   });
 
-  it("le souk et la Corniche de Doha, la Vieille ville de Pune peuvent démarrer, Pune FC Road est « bientôt »", () => {
-    expect(ITINERARIES.filter((i) => i.available).map((i) => i.id)).toEqual(["pune-vieille-ville", "doha-corniche", DEFAULT_ITINERARY_ID]);
+  it("les quatre itinéraires peuvent démarrer : chacun a sa ville dans le dépôt", () => {
+    expect(ITINERARIES.filter((i) => i.available).map((i) => i.id)).toEqual(["pune-vieille-ville", "pune-fc-road", "doha-corniche", DEFAULT_ITINERARY_ID]);
   });
 
   it("chaque itinéraire a un identifiant unique", () => {

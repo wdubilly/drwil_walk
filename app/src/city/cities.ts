@@ -2,6 +2,8 @@
 // et une boucle versionnés dans app/data/ (APP-003, APP-002). Un itinéraire « bientôt » n'y figure pas encore.
 import cornicheExtract from "../../data/doha-corniche.json" with { type: "json" };
 import cornicheLoop from "../../data/doha-corniche-boucle.json" with { type: "json" };
+import fcRoadExtract from "../../data/pune-fc-road.json" with { type: "json" };
+import fcRoadLoop from "../../data/pune-fc-road-boucle.json" with { type: "json" };
 import puneExtract from "../../data/pune-vieille-ville.json" with { type: "json" };
 import puneLoop from "../../data/pune-vieille-ville-boucle.json" with { type: "json" };
 import souqExtract from "../../data/souq-waqif.json" with { type: "json" };
@@ -11,6 +13,7 @@ import { loadSouq, type Souq } from "./souq-data.ts";
 const CITIES: Record<string, () => Souq> = {
   "doha-corniche": () => loadSouq(cornicheExtract, cornicheLoop),
   "doha-souq-waqif": () => loadSouq(souqExtract, souqLoop),
+  "pune-fc-road": () => loadSouq(fcRoadExtract, fcRoadLoop),
   "pune-vieille-ville": () => loadSouq(puneExtract, puneLoop),
 };
 

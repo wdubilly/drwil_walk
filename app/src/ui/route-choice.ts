@@ -36,12 +36,13 @@ function card(doc: Document, itinerary: Itinerary): HTMLLabelElement {
   return label;
 }
 
-export function renderRouteChoice(doc: Document): RouteChoice {
+/** `itineraries` : les cartes ; par défaut celles de la mission (le paramètre sert à montrer une carte « bientôt », qu'aucun itinéraire livré n'est plus). */
+export function renderRouteChoice(doc: Document, itineraries: readonly Itinerary[] = ITINERARIES): RouteChoice {
   const element = doc.createElement("fieldset");
   element.className = "routes";
   const legend = doc.createElement("legend");
   legend.textContent = "Itinéraire";
-  element.append(legend, ...ITINERARIES.map((itinerary) => card(doc, itinerary)));
+  element.append(legend, ...itineraries.map((itinerary) => card(doc, itinerary)));
   return {
     element,
     readId: () => element.querySelector<HTMLInputElement>("input:checked")?.value ?? DEFAULT_ITINERARY_ID,

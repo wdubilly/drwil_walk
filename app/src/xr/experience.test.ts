@@ -110,6 +110,20 @@ describe("expérience en réalité mixte", () => {
     expect(Number(corniche.panel()?.getAttribute("data-distance-m"))).toBeCloseTo(40 / 3.6);
   });
 
+  it("APP-002: FC Road se choisit et la marche suit sa propre boucle", async () => {
+    const souk = setup();
+    await souk.enter();
+    const soukCount = Number(souk.panel()?.getAttribute("data-building-count"));
+    const fcRoad = setup();
+    fcRoad.root.querySelector<HTMLInputElement>("input[value='pune-fc-road']")?.click();
+    await fcRoad.enter();
+    fcRoad.frame(0, poseFrame(0));
+    fcRoad.frame(10_000, poseFrame(0));
+    expect(fcRoad.panel()?.getAttribute("data-building-count")).not.toBe(String(soukCount));
+    expect(Number(fcRoad.panel()?.getAttribute("data-building-count"))).toBeGreaterThan(500);
+    expect(Number(fcRoad.panel()?.getAttribute("data-distance-m"))).toBeCloseTo(40 / 3.6);
+  });
+
   it("change la vitesse au joystick droit", async () => {
     const t = setup();
     await t.enter();

@@ -10,6 +10,11 @@ const extractFile = read("pune-vieille-ville.json") as {
 };
 const loopFile = read("pune-vieille-ville-boucle.json") as { geometry: { coordinates: number[][] } };
 
+const fcRoad = {
+  extract: read("pune-fc-road.json") as typeof extractFile,
+  loop: read("pune-fc-road-boucle.json") as typeof loopFile,
+};
+
 const corniche = {
   extract: read("doha-corniche.json") as typeof extractFile,
   loop: read("doha-corniche-boucle.json") as typeof loopFile,
@@ -64,12 +69,36 @@ describe("villes des itinéraires", () => {
     expect(corniche.loop.geometry.coordinates.filter((p) => !vertices.has(p.join(",")))).toEqual([]);
   });
 
+  it("APP-003: FC Road affiche les bâtiments de son extrait OpenStreetMap versionné", () => {
+    const inFile = fcRoad.extract.features.filter((f) => f.properties.kind === "building");
+    const { buildings } = cityFor("pune-fc-road");
+    expect(inFile.length).toBeGreaterThan(500);
+    expect(buildings).toHaveLength(inFile.length);
+    expect(buildings.every((b) => b.footprint.length >= 4 && b.heightM > 0)).toBe(true);
+    expect(fcRoad.extract.attribution).toContain(OSM_ATTRIBUTION);
+  });
+
+  it("APP-002: la boucle de FC Road est un aller-retour d'environ 3,5 km qui revient au départ et suit les voies de l'extrait", () => {
+    const { route } = cityFor("pune-fc-road");
+    expect(route.lengthM).toBeGreaterThan(3000);
+    expect(route.lengthM).toBeLessThan(4000);
+    const last = route.points[route.points.length - 1];
+    expect(last?.x).toBeCloseTo(0);
+    expect(last?.z).toBeCloseTo(0);
+    const vertices = new Set(
+      fcRoad.extract.features
+        .filter((f) => f.properties.kind === "highway")
+        .flatMap((f) => (f.geometry.coordinates as number[][]).map((p) => p.join(","))),
+    );
+    expect(fcRoad.loop.geometry.coordinates.filter((p) => !vertices.has(p.join(",")))).toEqual([]);
+  });
+
   it("chaque itinéraire a sa ville : celle de Pune n'est pas celle du souk", () => {
-    const counts = ["doha-souq-waqif", "pune-vieille-ville", "doha-corniche"].map((id) => cityFor(id).buildings.length);
-    expect(new Set(counts).size).toBe(3);
+    const counts = ["doha-souq-waqif", "pune-vieille-ville", "doha-corniche", "pune-fc-road"].map((id) => cityFor(id).buildings.length);
+    expect(new Set(counts).size).toBe(4);
   });
 
   it("QUA-002: un itinéraire sans ville dans le dépôt est une erreur dite, pas un repli muet", () => {
-    expect(() => cityFor("pune-fc-road")).toThrow("aucune ville dans le dépôt");
+    expect(() => cityFor("inconnu")).toThrow("aucune ville dans le dépôt");
   });
 });
