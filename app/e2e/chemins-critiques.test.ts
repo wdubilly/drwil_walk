@@ -1,6 +1,6 @@
 // e2e des chemins critiques (QUA-020), dans Chromium avec un Meta Quest 3 émulé (IWER) :
 // (1) accueil → réalité mixte immersive-ar ; (2) choix de l'itinéraire à l'accueil ; (3) marche à la vitesse réglée, joystick ±0,1 km/h ;
-// (4) APP-001 : tête baissée au-delà de 25°, la ville devient transparente ; (5) le souk de Doha ; (6) la Vieille ville de Pune.
+// (4) APP-001 : tête baissée au-delà de 25°, la ville devient transparente ; (5) le souk de Doha ; (6) la Vieille ville de Pune ; (7) la Corniche de Doha.
 import { createRequire } from "node:module";
 import { expect, test, type Page } from "@playwright/test";
 
@@ -196,4 +196,30 @@ test("chemin 6 : la Vieille ville de Pune, ses bâtiments OpenStreetMap et sa me
   await tiltHead(page, -45);
   await expect(field(page, "opacity")).toHaveText("0 %");
   await page.screenshot({ path: `${CAPTURES}/pune-tete-baissee.png` });
+});
+
+test("chemin 7 : la Corniche de Doha, ses bâtiments OpenStreetMap et sa mention, le long de la boucle", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 1100 });
+  await page.goto("/");
+  await expect(page.getByRole("radio", { name: /Doha Corniche/ })).toBeEnabled();
+  await card(page, "Doha Corniche").click();
+  await page.screenshot({ path: `${CAPTURES}/corniche-accueil.png`, fullPage: true });
+  await page.getByLabel("Vitesse de départ (km/h)").fill("7.2");
+  await page.getByRole("button", { name: "Entrer en réalité mixte" }).click();
+  await expect(page.getByRole("status")).toHaveText("Réalité mixte active (immersive-ar)");
+  await expect(page.locator("#app")).toHaveAttribute("data-route", "doha-corniche");
+  await expect(panel(page).getByText("© contributeurs OpenStreetMap")).toBeVisible();
+  expect(Number(await panel(page).getAttribute("data-building-count"))).toBeGreaterThan(500);
+  await expect.poll(async () => Number(await panel(page).getAttribute("data-distance-m"))).toBeGreaterThan(8);
+  const walked = await panel(page).evaluate((el) => ({
+    distance: Number(el.getAttribute("data-distance-m")),
+    crow: Math.hypot(Number(el.getAttribute("data-position-x")), Number(el.getAttribute("data-position-z"))),
+  }));
+  expect(walked.crow).toBeGreaterThan(1);
+  expect(walked.crow).toBeLessThanOrEqual(walked.distance + 1e-6);
+  await page.screenshot({ path: `${CAPTURES}/corniche-marche.png` });
+  // APP-001 sur la Corniche : tête baissée, la ville s'efface.
+  await tiltHead(page, -45);
+  await expect(field(page, "opacity")).toHaveText("0 %");
+  await page.screenshot({ path: `${CAPTURES}/corniche-tete-baissee.png` });
 });

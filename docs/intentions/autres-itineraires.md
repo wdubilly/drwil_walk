@@ -28,3 +28,8 @@ extrait dans `app/src/xr/experience.ts`.
 (`app/src/city/cities.ts` : identifiant → extrait et boucle). La Vieille ville de Pune est disponible ; restent **Pune FC
 Road** et **Doha Corniche**, à ajouter chacun dans `app/src/city/cities.ts` avec son extrait. Couverture OSM de Pune : 2 079 bâtiments, dont 2 041 sans
 hauteur (7 m par défaut) : le relief de la ville est donc plat, à juger sur un vrai Quest 3.
+
+**Mis à jour le 2026-10-31** (chantier doha-corniche) : la Corniche de Doha est disponible (extrait `app/data/doha-corniche.json`,
+756 bâtiments dont 310 sans hauteur, aller-retour d'environ 4 km). Le réseau de voies du Musée d'art islamique n'est pas relié à
+celui de la Corniche dans l'extrait (174 m d'écart) : le départ est le point relié le plus proche ; le tronçon de 2 km n'atteint
+pas West Bay. Reste **Pune FC Road**, à ajouter dans `app/src/city/cities.ts` avec son extrait.

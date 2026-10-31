@@ -28,7 +28,7 @@ export const ITINERARIES: readonly Itinerary[] = [
     id: "doha-corniche",
     name: "Doha Corniche",
     place: "Musée d'art islamique, West Bay",
-    available: false,
+    available: true,
   },
   {
     id: DEFAULT_ITINERARY_ID,
