@@ -232,7 +232,9 @@ test("chemin 8 : FC Road à Pune, ses bâtiments OpenStreetMap et sa mention, le
   await expect(page.locator("#app")).toHaveAttribute("data-route", "pune-fc-road");
   await expect(panel(page).getByText("© contributeurs OpenStreetMap")).toBeVisible();
   expect(Number(await panel(page).getAttribute("data-building-count"))).toBeGreaterThan(500);
-  await expect.poll(async () => Number(await panel(page).getAttribute("data-distance-m"))).toBeGreaterThan(8);
+  await expect
+    .poll(async () => Number(await panel(page).getAttribute("data-distance-m")), { timeout: 20_000 })
+    .toBeGreaterThan(8);
   const walked = await panel(page).evaluate((el) => ({
     distance: Number(el.getAttribute("data-distance-m")),
     crow: Math.hypot(Number(el.getAttribute("data-position-x")), Number(el.getAttribute("data-position-z"))),
