@@ -32,15 +32,24 @@ Décidée le 2026-10-30 par le demandeur :
     safety (visibilité du réel), ui (accueil et panneau d'infos).
   - `app/src/main.ts` : point d'entrée ; il monte l'accueil et branche le renderer three.js (`WebGLRenderer`).
   - `app/src/route/` : la vitesse de marche (`app/src/route/speed.ts` : bornage 1 à 8 km/h, pas de 0,1, conversion en m/s) et le
-    déplacement (`app/src/route/walk.ts` : distance à la vitesse réglée, rue qui boucle, affichage distance et temps) et
-    les quatre itinéraires de l'accueil (`app/src/route/itineraries.ts` : données, dont l'indicateur « disponible »).
+    déplacement (`app/src/route/walk.ts` : distance à la vitesse réglée, affichage distance et temps), le parcours GPS
+    (`app/src/route/geo.ts` : GPS vers mètres locaux ; `app/src/route/path.ts` : position et direction à une distance,
+    boucle qui reprend au départ, contrat APP-002) et les quatre itinéraires de l'accueil
+    (`app/src/route/itineraries.ts` : données, dont l'indicateur « disponible »).
   - `app/src/safety/` : la sécurité-visibilité (`app/src/safety/visibility.ts`, contrat APP-001) : inclinaison de la tête lue dans la
     pose WebXR, fondu de la ville au-delà de 25°, opacité globale bornée 30 à 100 %. Zone tapis et vignette : à écrire.
   - `app/src/xr/` : la session `immersive-ar` (`app/src/xr/session.ts`), le joystick droit (`app/src/xr/joystick.ts`, un cran de 0,1 km/h
     par poussée), l'image de marche en logique pure (`app/src/xr/frame.ts`) et l'assemblage accueil → session → boucle de rendu
     (`app/src/xr/experience.ts`, renderer injecté pour être testé avec une doublure).
-  - `app/src/city/` : la rue simple (`app/src/city/street.ts` : sol et blocs three.js, opacité appliquée aux matériaux, scène sans
-    fond pour le passthrough). Les bâtiments OpenStreetMap la remplaceront (fiche `docs/projects/doha-souq-waqif.md`).
+  - `app/src/city/` : le souk de Doha (chantier doha-souq-waqif, `docs/projects/journal.md`) : lecture de l'extrait
+    (`app/src/city/souq-data.ts`), bâtiments extrudés et fusionnés en un maillage (`app/src/city/buildings.ts`), scène,
+    placement de la ville sur le parcours et opacité (`app/src/city/souq.ts` : scène sans fond pour le passthrough),
+    mention OpenStreetMap dans la scène (`app/src/city/attribution.ts`) et son texte (`app/src/city/licence.ts`,
+    contrat APP-003). `app/src/city/canvas-double.ts` est une doublure de test, importée par les seuls tests.
+  - `app/data/` : l'extrait OpenStreetMap du quartier, bâtiments et voies (`app/data/souq-waqif.json`, GeoJSON versionné, ©
+    contributeurs OpenStreetMap, ODbL) et le tracé de la boucle du souk (`app/data/souq-waqif-boucle.json`).
+  - `app/scripts/extract-souq.ts` : l'extraction Overpass qui produit l'extrait (`npm run extract`) ; elle n'est jamais
+    exécutée dans le casque, qui ne fait aucun appel réseau. Son test est `app/src/city/extract-souq.test.ts`.
   - `app/src/ui/` : l'écran d'accueil (`app/src/ui/home.ts` : vitesse, opacité, rappel de sécurité, bouton « Entrer en réalité
     mixte » ; `app/src/ui/route-choice.ts` : cartes d'itinéraire en boutons radio ; `app/src/ui/home.css` : thème sombre et
     couleurs ; `app/src/ui/contrast.ts` : mesure du contraste, contrat QUA-014), les illustrations des cartes

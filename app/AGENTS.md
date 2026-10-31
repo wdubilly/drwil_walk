@@ -9,7 +9,7 @@ do not copy it here.
 Couche unique : l'application WebXR entière (TypeScript strict, Vite, three.js), cadrée le 2026-10-30.
 Socle posé le 2026-10-30 (configuration, point d'entrée, vitesse), puis une première tranche verticale : accueil,
 session `immersive-ar`, rue simple, marche en ligne droite, joystick, fondu tête baissée (carte :
-`docs/architecture.md`). Accueil sombre à cartes d'itinéraire (`app/src/ui/home.css`, `app/src/ui/route-choice.ts`, `app/src/route/itineraries.ts`, illustrations `app/src/ui/<id>.svg`) posé le 2026-10-31. Restent à écrire : la vraie ville (city/), les itinéraires GPS, la zone tapis et la vignette.
+`docs/architecture.md`). Souk de Doha (bâtiments OpenStreetMap extrudés, boucle GPS d'environ 1,5 km, mention d'attribution) posé le 2026-10-31. Accueil sombre à cartes d'itinéraire (`app/src/ui/home.css`, `app/src/ui/route-choice.ts`, `app/src/route/itineraries.ts`, illustrations `app/src/ui/<id>.svg`) posé le 2026-10-31. Restent à écrire : les trois autres itinéraires, la zone tapis et la vignette.
 
 - Code dans src/, un dossier par module : xr/ (session `immersive-ar`, manettes), city/ (3d-tiles-renderer,
   repli OSM), route/ (itinéraires, déplacement à vitesse réglée), safety/ (fondu tête baissée, zone tapis,
@@ -26,6 +26,8 @@ session `immersive-ar`, rue simple, marche en ligne droite, joystick, fondu têt
 - Le DOM se teste avec happy-dom (`new Window().document`) passé en paramètre, sans environnement global de test.
 - Le rendu three.js est injecté (classe `Renderer` passée à `startExperience`) : les tests passent une doublure,
   seul `src/main.ts` branche le vrai `WebGLRenderer`.
+- Les fichiers de `data/` sont importés comme JSON (attribut d'import de type JSON) : l'extrait est du GeoJSON dans un fichier d'extension json, que Vite et Node lisent sans configuration.
+- Le script `scripts/extract-souq.ts` n'a pas de point d'entrée à lui (il ne serait pas couvert) : `npm run extract` l'appelle en ligne, et son test vit dans `src/city/` (Vitest ne lit que `src/` et la racine).
 - Aucune clé ni appel réseau en v0.1 : la ville vient d'un extrait OpenStreetMap figé dans le dépôt (Google 3D Tiles
   reporté : `docs/intentions/google-3d-tiles.md`).
 
@@ -48,6 +50,8 @@ session `immersive-ar`, rue simple, marche en ligne droite, joystick, fondu têt
 | ID | Subject | Reference file |
 |---|---|---|
 | APP-001 | Sécurité-visibilité : le réel reste visible (tête baissée, zone tapis) | `src/safety/visibility.ts` |
+| APP-002 | La marche suit le parcours GPS du souk, en boucle | `src/route/path.ts` |
+| APP-003 | Bâtiments de l'extrait OpenStreetMap et attribution | `src/city/licence.ts` |
 
 ## Style guide and recipes
 
@@ -69,7 +73,8 @@ Depuis `app/`, après `npm ci` :
 - `npm run build` : typecheck puis build Vite, hors de la couche, dans le dossier dist/app de la racine (ignoré par
   Git) : sous app/, c8 compterait le bundle généré comme du code non couvert.
 
-- `npm test -- -t "APP-001"` : les seuls tests du contrat APP-001 (contrôle `app-001`).
+- `npm test -- -t "APP-001"` : les seuls tests du contrat APP-001 (contrôle `app-001`) ; de même `APP-002` (`app-002`) et `APP-003` (`app-003`).
+- `npm run extract` : relance l'extraction Overpass du souk et réécrit `data/souq-waqif.json` (réseau, hors casque) ; le tracé `data/souq-waqif-boucle.json` est versionné à part (voir sa description) et un test vérifie que chacun de ses points est un sommet d'une voie de l'extrait.
 - `npm run e2e` : Playwright (contrôle `e2e`, QUA-020) ; il lance lui-même Vite sur le port 5174 et injecte le Quest 3
   émulé (IWER) dans la page ; premier lancement : `npx playwright install chromium`. Résultats d'échec dans le
   dossier dist/e2e-results de la racine, hors de la couche. Les captures de l'accueil (état par défaut, carte « Bientôt », carte choisie) sont écrites dans

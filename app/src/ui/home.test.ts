@@ -28,11 +28,16 @@ describe("écran d'accueil", () => {
 
   it("propose le choix d'itinéraire et transmet celui qui démarre", () => {
     const { root, view, button } = setup();
-    expect(view.readRouteId()).toBe("pune-vieille-ville");
+    expect(view.readRouteId()).toBe("doha-souq-waqif");
     const handler = vi.fn(() => root.getAttribute("data-route"));
     view.onEnter(handler);
     button.click();
-    expect(handler).toHaveReturnedWith("pune-vieille-ville");
+    expect(handler).toHaveReturnedWith("doha-souq-waqif");
+  });
+
+  it("APP-003: montre la mention des contributeurs OpenStreetMap", () => {
+    const { root } = setup();
+    expect(root.querySelector(".attribution")?.textContent).toBe("© contributeurs OpenStreetMap");
   });
 
   it("propose 4,0 km/h par défaut, réglable de 1 à 8 km/h par pas de 0,1", () => {

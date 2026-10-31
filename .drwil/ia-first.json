@@ -89,6 +89,26 @@
       "degradable": false
     },
     {
+      "id": "app-002",
+      "name": "APP-002 la marche suit le parcours GPS du souk : tests nommés par l'ID (Vitest)",
+      "run": "npm test -- -t \"APP-002\"",
+      "cwd": "app",
+      "paths": [
+        "app/**"
+      ],
+      "degradable": false
+    },
+    {
+      "id": "app-003",
+      "name": "APP-003 bâtiments OpenStreetMap et attribution : tests nommés par l'ID (Vitest)",
+      "run": "npm test -- -t \"APP-003\"",
+      "cwd": "app",
+      "paths": [
+        "app/**"
+      ],
+      "degradable": false
+    },
+    {
       "id": "e2e",
       "name": "e2e des chemins critiques (Playwright, Quest 3 émulé par IWER, QUA-020)",
       "run": "npm run e2e",

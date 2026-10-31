@@ -1,9 +1,6 @@
-// Marche le long de la rue : logique pure du déplacement à la vitesse réglée.
-// L'utilisateur reste sur place (il est sur le tapis) : c'est la rue qui recule vers lui.
+// Marche le long du parcours : logique pure du déplacement à la vitesse réglée.
+// L'utilisateur reste sur place (il est sur le tapis) : c'est la ville qui défile sous ses pieds.
 import { clampSpeedKmh, kmhToMs } from "./speed.ts";
-
-/** Longueur de la rue simple avant qu'elle reprenne à son début (pas encore d'itinéraire GPS). */
-export const STREET_LENGTH_M = 240;
 
 /**
  * Distance après `dtS` secondes à la vitesse réglée.
@@ -12,11 +9,6 @@ export const STREET_LENGTH_M = 240;
 export function advanceDistanceM(distanceM: number, speedKmh: number, dtS: number): number {
   if (!Number.isFinite(dtS) || dtS <= 0) return distanceM;
   return distanceM + kmhToMs(clampSpeedKmh(speedKmh)) * dtS;
-}
-
-/** Décalage de la rue pour une distance parcourue : la rue boucle sur elle-même. */
-export function streetOffsetM(distanceM: number): number {
-  return distanceM % STREET_LENGTH_M;
 }
 
 /** Affichage français : « 12,3 m ». */

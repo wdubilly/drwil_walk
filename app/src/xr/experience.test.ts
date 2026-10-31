@@ -1,5 +1,6 @@
 import { Window } from "happy-dom";
 import { describe, expect, it, vi } from "vitest";
+import { withCanvasContext } from "../city/canvas-double.ts";
 import { ACTIVE_STATUS, ENDED_STATUS, startExperience, type RendererClass } from "./experience.ts";
 import type { XrSystemLike } from "./session.ts";
 
@@ -13,7 +14,7 @@ function poseFrame(deg: number | null): XRFrame {
 }
 
 function setup(options: { supported?: boolean; space?: boolean; xr?: boolean; sessionFails?: boolean } = {}) {
-  const doc = new Window().document as unknown as Document;
+  const doc = withCanvasContext(new Window().document as unknown as Document);
   const root = doc.createElement("main");
   doc.body.append(root);
   const listeners: Record<string, () => void> = {};
@@ -55,7 +56,7 @@ function setup(options: { supported?: boolean; space?: boolean; xr?: boolean; se
 }
 
 describe("expérience en réalité mixte", () => {
-  it("APP-001: entre en session immersive-ar et lance la marche dans la rue", async () => {
+  it("APP-001: entre en session immersive-ar et lance la marche dans le souk", async () => {
     const t = setup();
     await t.enter();
     expect(t.xr.requestSession).toHaveBeenCalledWith("immersive-ar", expect.anything());
@@ -65,6 +66,20 @@ describe("expérience en réalité mixte", () => {
     t.frame(1000, poseFrame(0));
     expect(Number(t.panel()?.getAttribute("data-distance-m"))).toBeCloseTo(4 / 3.6);
     expect(t.fake.render).toHaveBeenCalledTimes(2);
+  });
+
+  it("APP-002: la position suit le parcours du souk à la distance marchée", async () => {
+    const t = setup();
+    await t.enter();
+    t.frame(0, poseFrame(0));
+    t.frame(10_000, poseFrame(0));
+    const at = (name: string) => Number(t.panel()?.getAttribute(name));
+    const crow = Math.hypot(at("data-position-x"), at("data-position-z"));
+    // 10 s à 4 km/h : 11,1 m le long de la ruelle, donc à moins de 11,1 m du départ à vol d'oiseau.
+    expect(at("data-distance-m")).toBeCloseTo(40 / 3.6);
+    expect(crow).toBeGreaterThan(5);
+    expect(crow).toBeLessThanOrEqual(at("data-distance-m") + 1e-6);
+    expect(at("data-building-count")).toBeGreaterThan(100);
   });
 
   it("change la vitesse au joystick droit", async () => {

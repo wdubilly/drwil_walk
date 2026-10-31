@@ -4,7 +4,7 @@
 
 ## Besoin
 
-Après le souk de Doha (`docs/projects/doha-souq-waqif.md`), ajouter les autres balades de `MISSION.md` : **Pune
+Après le souk de Doha (`docs/projects/journal.md`), ajouter les autres balades de `MISSION.md` : **Pune
 Vieille ville** (Shaniwar Wada → temple Dagdusheth Ganpati, itinéraire par défaut prévu), **Pune FC Road** et **Doha
 Corniche** (Musée d'art islamique → West Bay), avec la même méthode (extrait OpenStreetMap figé, boucle ou aller simple).
 

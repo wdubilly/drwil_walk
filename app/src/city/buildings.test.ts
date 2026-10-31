@@ -1,0 +1,34 @@
+import { describe, expect, it } from "vitest";
+import { buildBuildingsGeometry } from "./buildings.ts";
+import type { Building } from "./souq-data.ts";
+
+const square = (x: number, z: number, heightM: number): Building => ({
+  heightM,
+  footprint: [
+    { x, z },
+    { x: x + 10, z },
+    { x: x + 10, z: z + 10 },
+    { x, z: z + 10 },
+    { x, z },
+  ],
+});
+
+describe("bâtiments extrudés", () => {
+  it("fusionne les bâtiments en un seul maillage, debout sur le sol", () => {
+    const geometry = buildBuildingsGeometry([square(0, 0, 8), square(20, 0, 12)]);
+    geometry.computeBoundingBox();
+    expect(geometry.boundingBox?.min.y).toBeCloseTo(0);
+    expect(geometry.boundingBox?.max.y).toBeCloseTo(12);
+    // z du monde = z local : le sud reste du côté +Z.
+    expect(geometry.boundingBox?.min.z).toBeCloseTo(0);
+    expect(geometry.boundingBox?.max.z).toBeCloseTo(10);
+    expect(geometry.boundingBox?.max.x).toBeCloseTo(30);
+  });
+
+  it("ignore un contour dégénéré ou sans hauteur, et rend un maillage vide sans bâtiment", () => {
+    const flat = square(0, 0, 0);
+    const line: Building = { heightM: 5, footprint: [{ x: 0, z: 0 }, { x: 1, z: 1 }] };
+    expect(buildBuildingsGeometry([flat, line]).getAttribute("position")).toBeUndefined();
+    expect(buildBuildingsGeometry([flat, square(0, 0, 3)]).getAttribute("position").count).toBeGreaterThan(0);
+  });
+});

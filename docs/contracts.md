@@ -184,7 +184,7 @@ contracts » section).
 **Manual** : a bypass rarely leaves a machine-checkable trace.
 
 ## QUA-020 — Les chemins critiques sont testés de bout en bout
-**Rule** : les chemins critiques nommés par le demandeur sont rejoués de bout en bout dans Chromium avec un Meta Quest 3 émulé (IWER) : (1) de l'accueil à l'entrée en réalité mixte, session `immersive-ar` ; (2) à l'accueil, quatre cartes d'itinéraire, un itinéraire « bientôt » non sélectionnable, et l'itinéraire choisi est celui qui démarre ; (3) la marche avance à la vitesse réglée et le joystick droit change la vitesse de ±0,1 km/h ; (4) tête baissée au-delà de 25°, la ville devient transparente (APP-001).
+**Rule** : les chemins critiques nommés par le demandeur sont rejoués de bout en bout dans Chromium avec un Meta Quest 3 émulé (IWER) : (1) de l'accueil à l'entrée en réalité mixte, session `immersive-ar` ; (2) à l'accueil, quatre cartes d'itinéraire, un itinéraire « bientôt » non sélectionnable, et l'itinéraire choisi est celui qui démarre ; (3) la marche avance à la vitesse réglée et le joystick droit change la vitesse de ±0,1 km/h ; (4) tête baissée au-delà de 25°, la ville devient transparente (APP-001) ; (5) le souk de Doha est le parcours par défaut, démarre depuis l'accueil, montre ses bâtiments OpenStreetMap et la mention d'attribution (APP-003), et la position avance le long de la boucle (APP-002).
 **Scope** : l'application de `app/`, servie par Vite, vue comme l'utilisateur la voit (page, boutons, panneau de marche)
 **Source of truth** : `app/e2e/chemins-critiques.test.ts`, configuré par `app/playwright.config.ts`
 **Proof** : Playwright, au commit, en CI (navigateur Chromium installé par le job) et par `drwil verify` ; un chemin qui ne s'exécute pas fait échouer le contrôle, jamais un « passé »
@@ -214,12 +214,32 @@ contracts » section).
 ## APP-001 — Sécurité-visibilité : le réel reste visible
 **Rule** : en réalité mixte, la ville ne masque jamais le tapis réel : (1) tête baissée au-delà de 25° sous l'horizontale, l'opacité de la ville décroît jusqu'à 0 ; (2) le volume « zone tapis » défini par l'utilisateur est toujours rendu transparent ; (3) l'opacité globale réglée par l'utilisateur reste bornée entre 30 % et 100 % ; (4) la session XR est `immersive-ar` (passthrough), jamais `immersive-vr`.
 **Scope** : le module safety de la couche `app/` et tout code qui fixe l'opacité ou le mode de la session XR
-**Source of truth** : `app/src/safety/visibility.ts` (fondu, opacité), `app/src/xr/session.ts` (mode de session), appliqués par `app/src/xr/frame.ts` et `app/src/city/street.ts`
+**Source of truth** : `app/src/safety/visibility.ts` (fondu, opacité), `app/src/xr/session.ts` (mode de session), appliqués par `app/src/xr/frame.ts` et `app/src/city/souq.ts`
 **Proof** : des tests de cette règle, nommés par son ID, déclarés comme contrôle propre (`.drwil/ia-first.json` → `checks`, avec un `id`, filtrant les tests par l'ID : `npm test -- -t "APP-001"`), rejoués par `drwil verify` à chaque chantier ; les points (1) et (4) sont aussi rejoués de bout en bout par l'e2e des chemins critiques (QUA-020)
 **Reason** : l'utilisateur marche sur un tapis en mouvement avec un casque : s'il ne voit plus le tapis, la rampe ou le bouton d'arrêt, il risque de chuter (risque du projet : élevé)
 **Check** : `app-001`
-**Tests** : `app/src/safety/visibility.test.ts`, `app/src/xr/session.test.ts`, `app/src/xr/frame.test.ts`, `app/src/xr/experience.test.ts`, `app/src/city/street.test.ts`, `app/src/ui/home.test.ts`
+**Tests** : `app/src/safety/visibility.test.ts`, `app/src/xr/session.test.ts`, `app/src/xr/frame.test.ts`, `app/src/xr/experience.test.ts`, `app/src/city/souq.test.ts`, `app/src/ui/home.test.ts`
 **Manual** : le point (2), zone tapis, n'est pas encore codé (chantier suivant) : il n'est prouvé par aucun test. D'ici là, vérification humaine sur le Quest 3 que le tapis reste visible ; une fois la zone tapis codée et testée sous cet ID, retirer ce champ. Les points (1), (3) et (4) sont prouvés par le contrôle ci-dessus, dans un Quest 3 émulé : jamais encore sur un vrai casque.
+
+## APP-002 — La marche suit le parcours GPS du souk, en boucle
+**Rule** : la position de marche suit le parcours GPS de la boucle du souk de Doha (`app/data/souq-waqif-boucle.json`, converti en mètres locaux) : la distance parcourue est égale à la vitesse réglée multipliée par le temps de marche, la position est celle du tracé à cette distance, et la boucle reprend au départ à la fin de sa longueur.
+**Scope** : le déplacement de la couche `app/` : `app/src/route/` (parcours, conversion GPS), `app/src/city/souq.ts` (placement de la ville), `app/src/xr/experience.ts` (assemblage)
+**Source of truth** : `app/src/route/path.ts` (position, direction, reprise de la boucle), `app/src/route/walk.ts` (distance à la vitesse réglée), `app/data/souq-waqif-boucle.json` (tracé)
+**Proof** : des tests nommés par l'ID (contrôle `app-002`, `npm test -- -t "APP-002"`), dont la longueur du tracé (entre 1,2 et 1,8 km), son retour au départ et le fait que chacun de ses points est un sommet d'une voie de l'extrait OpenStreetMap ; la distance égale au temps marché est aussi rejouée de bout en bout (QUA-020)
+**Reason** : le demandeur veut marcher dans un vrai quartier, à la vitesse de son tapis. Limite : le tracé est relu par le demandeur (lot 1 de la fiche doha-souq-waqif) mais jamais encore essayé sur un vrai Quest 3 ; quelques dizaines de mètres de la boucle traversent des passages couverts que l'extrait OpenStreetMap dessine comme des bâtiments.
+**Origin** : doha-souq-waqif — « La position de marche suit le parcours GPS de la boucle du souk : la distance parcourue est égale à la vitesse réglée multipliée par le temps, et la boucle reprend au départ à la fin »
+**Check** : `app-002`
+**Tests** : `app/src/route/path.test.ts`, `app/src/city/souq.test.ts`, `app/src/city/souq-data.test.ts`, `app/src/xr/experience.test.ts`
+
+## APP-003 — Les bâtiments viennent de l'extrait OpenStreetMap, avec leur attribution
+**Rule** : les bâtiments affichés sont ceux de l'extrait OpenStreetMap versionné (`app/data/souq-waqif.json`, aucun appel réseau dans le casque) ; la mention « © contributeurs OpenStreetMap » est visible à l'accueil, dans le panneau de marche de la page et dans le casque (panneau de la scène, effacé avec la ville).
+**Scope** : `app/src/city/` (ville, mention), `app/src/ui/` (accueil, panneau), `app/data/` et `app/scripts/` (extrait et script d'extraction)
+**Source of truth** : `app/src/city/licence.ts` (texte de la mention), `app/src/city/souq-data.ts` (lecture de l'extrait), `app/scripts/extract-souq.ts` (production de l'extrait)
+**Proof** : des tests nommés par l'ID (contrôle `app-003`, `npm test -- -t "APP-003"`) : autant de bâtiments lus que dans le fichier, mention présente à l'accueil, dans le panneau et dessinée sur le panneau de la scène, extrait qui porte l'attribution ODbL ; la mention de l'accueil et du panneau est aussi rejouée de bout en bout (QUA-020)
+**Reason** : les données OpenStreetMap sont sous licence ODbL, dont l'attribution est une obligation. Limite : la mention dessinée dans le casque n'a jamais été regardée sur un vrai Quest 3 (taille, lisibilité).
+**Origin** : doha-souq-waqif — « Les bâtiments affichés sont ceux de l'extrait OpenStreetMap versionné, et la mention « © contributeurs OpenStreetMap » est visible dans l'accueil et dans le casque »
+**Check** : `app-003`
+**Tests** : `app/src/city/souq-data.test.ts`, `app/src/city/attribution.test.ts`, `app/src/city/extract-souq.test.ts`, `app/src/ui/home.test.ts`, `app/src/ui/panel.test.ts`
 
 ## QUA-014 — Contraste du texte et de son fond (RGAA 4.1 / WCAG AA)
 **Rule** : tout texte de l'accueil du casque a un rapport de contraste d'au moins 4,5:1 avec son fond (3:1 pour le grand texte : 24 px, ou 18,5 px gras) ; les couleurs sont déclarées une seule fois, dans les variables de `app/src/ui/home.css`, jamais en dur ailleurs dans la feuille.
