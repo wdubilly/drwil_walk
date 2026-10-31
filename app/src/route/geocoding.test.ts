@@ -1,16 +1,19 @@
 import { describe, expect, it, vi } from "vitest";
 import { rejectWith } from "./reject-double.ts";
-import { geocode, reverseGeocode, roundedCoordinates } from "./geocoding.ts";
+import { createGoogleGeocoder } from "./geocoding.ts";
+import { roundedCoordinates } from "./providers.ts";
 
 const KEY = "cle-fictive-routes";
 const answer = (body: unknown, status = 200) => vi.fn(() => Promise.resolve(Response.json(body, { status })));
-const cfg = (fetchFn: typeof fetch, ...noKey: [] | [undefined]) => ({ apiKey: noKey.length > 0 ? undefined : KEY, fetch: fetchFn });
+const cfg = (fetchFn: typeof fetch) => ({ apiKey: KEY, fetch: fetchFn });
+const geocode = (text: string, config: ReturnType<typeof cfg>) => createGoogleGeocoder(config).find(text);
+const reverseGeocode = (point: readonly [number, number], config: ReturnType<typeof cfg>) => createGoogleGeocoder(config).describe(point);
 const found = (n = 1) => ({
   status: "OK",
   results: Array.from({ length: n }, (_, i) => ({ formatted_address: `Lieu ${String(i + 1)}`, geometry: { location: { lat: 18.52 + i, lng: 73.85 } } })),
 });
 
-describe("recherche d'adresse (QUA-020, géocodage factice)", () => {
+describe("APP-003: recherche d'adresse par Google, option derrière l'interface Geocoder (QUA-020, géocodage factice)", () => {
   it("retient le premier de plusieurs résultats et rend son libellé", async () => {
     const fetchFn = answer(found(3));
     const place = await geocode("  Shaniwar Wada ", cfg(fetchFn));
@@ -37,12 +40,6 @@ describe("recherche d'adresse (QUA-020, géocodage factice)", () => {
     }
   });
 
-  it("QUA-002: sans clé, dit laquelle manque et n'appelle rien", async () => {
-    const fetchFn = answer(found());
-    await expect(geocode("a", cfg(fetchFn as unknown as typeof fetch, undefined))).rejects.toThrow("VITE_GOOGLE_ROUTES_API_KEY");
-    expect(fetchFn).not.toHaveBeenCalled();
-  });
-
   it("QUA-002: dit la clé refusée ou la panne, sans jamais montrer la clé", async () => {
     const denied = answer({ status: "REQUEST_DENIED", error_message: `clé ${KEY} refusée` });
     const e1 = await geocode("a", cfg(denied as unknown as typeof fetch)).then(() => new Error("non rejeté"), (e: unknown) => e as Error);
@@ -65,6 +62,5 @@ describe("recherche d'adresse (QUA-020, géocodage factice)", () => {
     expect(roundedCoordinates(point)).toBe("18.5204, 73.8568");
     const bad = [answer({ status: "ZERO_RESULTS" }), answer({ status: "OK", results: [{}] }), answer({}, 403)];
     for (const f of bad) expect(await reverseGeocode(point, cfg(f as unknown as typeof fetch))).toBe("18.5204, 73.8568");
-    expect(await reverseGeocode(point, cfg(answer(found()) as unknown as typeof fetch, undefined))).toBe("18.5204, 73.8568");
   });
 });

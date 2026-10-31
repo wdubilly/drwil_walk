@@ -33,11 +33,13 @@ session `immersive-ar`, rue simple, marche en ligne droite, joystick, fondu têt
   commitée, SEC-007), tuiles par `3d-tiles-renderer` dans `src/city/google-tiles.ts`, injectées dans `startExperience`
   (`ExperienceDeps.google`) pour que les tests n'appellent jamais Google ; l'e2e (`e2e/google-3d.test.ts`) sert un jeu de
   tuiles factice par `page.route`, avec une clé fictive donnée au serveur de test.
-- Itinéraire libre (chantier itineraire-libre) : clé `VITE_GOOGLE_ROUTES_API_KEY` (distincte de celle des tuiles ; Routes et Geocoding à activer sur elle) lue de `.env.local`
-  par `src/main.ts`, `fetch` injecté dans `startExperience` (`ExperienceDeps.routes`) pour que les tests n'appellent jamais Google ; le trajet se prépare à l'accueil
+- Itinéraire libre (chantiers itineraire-libre, fournisseurs-ouverts) : routage et adresses derrière les interfaces `Router` et `Geocoder` (`app/src/route/providers.ts`) ; par défaut Valhalla
+  (`app/src/route/valhalla.ts`) et Photon (`app/src/route/photon.ts`), sans clé, aux adresses réglables par `VITE_ROUTING_URL` et `VITE_GEOCODING_URL` (non secrètes, instance auto-hébergée possible) ; Google Routes et Geocoding
+  (`app/src/route/routes-api.ts`, `app/src/route/geocoding.ts`) les remplacent si `VITE_GOOGLE_ROUTES_API_KEY` (distincte de celle des tuiles, lue de `.env.local`) est fournie ; `createProviders` (`app/src/route/create-providers.ts`) choisit,
+  appelé par `src/main.ts`, et les services avec `fetch` sont injectés dans `startExperience` (`ExperienceDeps.routes`) pour que les tests n'appellent jamais un service réel ; le trajet se prépare à l'accueil
   (`src/ui/free-trip.ts` : carte `src/ui/map-picker.ts` ou adresse, puis `src/city/free-route.ts` : chemin, bâtiments Overpass), la marche ne fait aucun appel. Carte sans
   bibliothèque (Leaflet exige `window` à l'import et une vraie mise en page, ce que l'injection et les tests happy-dom évitent) ; l'e2e (`e2e/itineraire-libre.test.ts`) sert routage,
-  géocodage, Overpass et tuiles par `page.route`. Aucune adresse ni point conservé.
+  adresses, Overpass et tuiles par `page.route`, sans aucune clé (la clé Routes du serveur de test est vidée). Aucune adresse ni point conservé.
 
 ## Test pitfalls
 

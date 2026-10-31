@@ -20,16 +20,16 @@ de Doha, la Vieille ville de Pune, la Corniche de Doha et FC Road à Pune ; le c
 ## Itinéraire libre
 
 Choisir son propre trajet : à l'accueil, la carte « Itinéraire libre » ouvre une carte légère (tuiles OpenStreetMap avec leur mention,
-zoom et déplacement par boutons). Le départ et l'arrivée se posent en touchant la carte ou en cherchant un lieu ou une adresse (API Google
-Geocoding) ; les deux modes se remplissent mutuellement (géocodage inverse pour une touche, point placé pour une adresse), le premier résultat
-d'une adresse est retenu et affiché. « Calculer le trajet » demande le chemin à pied à l'API Google Routes (mode piéton), puis charge les
+zoom et déplacement par boutons). Le départ et l'arrivée se posent en touchant la carte ou en cherchant un lieu ou une adresse (Photon,
+OpenStreetMap) ; les deux modes se remplissent mutuellement (géocodage inverse pour une touche, point placé pour une adresse), le premier résultat
+d'une adresse est retenu et affiché. « Calculer le trajet » demande le chemin à pied à Valhalla (profil piéton), puis charge les
 bâtiments OpenStreetMap proches du tracé ; la marche suit ce tracé à la vitesse réglée et **s'arrête à l'arrivée en le disant** (page et casque), sans
 boucle (contrat APP-002). La ville vient du rendu Google 3D si on l'a choisi, ou des bâtiments OpenStreetMap chargés pour le trajet
-(contrat APP-003). Aller simple, 5 km au plus. Clé : `VITE_GOOGLE_ROUTES_API_KEY` (Routes et Geocoding à activer, `INSTALL.md`) ; sans
-elle, la raison est dite et les quatre itinéraires figés restent utilisables. Aucun point ni adresse n'est conservé.
+(contrat APP-003). Aller simple, 5 km au plus. Aucune clé : routage et adresses viennent des instances publiques d'OpenStreetMap (réglables pour une instance auto-hébergée, `INSTALL.md`) ; si un service refuse
+ou limite les demandes, la raison est dite et les quatre itinéraires figés restent utilisables. Une clé Google Routes remplace ces deux services (option). Aucun point ni adresse n'est conservé.
 
-Codé et vérifié dans Chromium avec un Quest 3 émulé, services factices (jamais d'appel à Google). Limites : jamais essayé avec une vraie clé ni sur un
-vrai Quest 3 (cadence avec des milliers de bâtiments en bande de 150 m, couverture de Geocoding et de Routes dans les rues de Pune et de Doha) ;
+Codé et vérifié dans Chromium avec un Quest 3 émulé, services factices (jamais d'appel à un service réel). Limites : jamais essayé avec les instances publiques ni sur un
+vrai Quest 3 (cadence avec des milliers de bâtiments en bande de 150 m, profil piéton et justesse des adresses de Valhalla et de Photon dans les rues de Pune et de Doha) ;
 `docs/intentions/essai-casque-itineraire-libre.md`.
 
 ## Marche dans la ville

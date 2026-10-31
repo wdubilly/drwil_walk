@@ -8,7 +8,7 @@ import { createSouqScene, placeOnRoute, setCityOpacity } from "../city/souq.ts";
 import type { Souq } from "../city/souq-data.ts";
 import { FREE_ITINERARY_ID } from "../route/itineraries.ts";
 import { pointAt } from "../route/path.ts";
-import type { RoutesConfig } from "../route/routes-api.ts";
+import type { Providers } from "../route/providers.ts";
 import { ARRIVAL_TEXT } from "../route/walk.ts";
 import { headPitchDownDeg } from "../safety/visibility.ts";
 import { renderHome, type HomeView } from "../ui/home.ts";
@@ -28,8 +28,8 @@ export interface ExperienceDeps {
   Renderer: RendererClass;
   /** La clé Google et la fabrique de tuiles (injectée : les tests ne rappellent jamais Google). */
   google: GoogleConfig;
-  /** La clé Routes et le réseau pour l'itinéraire libre (injectés : les tests n'appellent jamais Google). */
-  routes: RoutesConfig;
+  /** Les services de routage, d'adresses et le réseau de l'itinéraire libre (injectés : les tests n'appellent jamais un service réel). */
+  routes: Providers;
 }
 
 export const ACTIVE_STATUS = `Réalité mixte active (${SESSION_MODE})`;

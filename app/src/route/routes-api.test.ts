@@ -1,14 +1,17 @@
 import { describe, expect, it, vi } from "vitest";
 import { rejectWith } from "./reject-double.ts";
-import { MAX_ROUTE_M, NO_ROUTES_KEY_NOTICE, ROUTES_URL, computeWalkingRoute, readRoutesKey } from "./routes-api.ts";
+import { MAX_ROUTE_M } from "./providers.ts";
+import { ROUTES_URL, createGoogleRouter, readRoutesKey } from "./routes-api.ts";
 
 const KEY = "cle-fictive-routes";
 const FROM = [73.8567, 18.5204] as const;
 const TO = [73.86, 18.522] as const;
+const computeWalkingRoute = (from: readonly [number, number], to: readonly [number, number], config: { apiKey: string; fetch: typeof fetch }) =>
+  createGoogleRouter(config).walk(from, to);
 const ok = (body: unknown) => vi.fn(() => Promise.resolve(Response.json(body)));
 const good = { routes: [{ distanceMeters: 450, polyline: { geoJsonLinestring: { coordinates: [[73.8567, 18.5204], [73.858, 18.521], [73.86, 18.522]] } } }] };
 
-describe("calcul du chemin à pied (QUA-020, fournisseur factice)", () => {
+describe("APP-002: calcul du chemin à pied par Google, option derrière l'interface Router (QUA-020, fournisseur factice)", () => {
   it("demande un chemin piéton avec la clé en en-tête et rend le tracé", async () => {
     const fetchFn = ok(good);
     const route = await computeWalkingRoute(FROM, TO, { apiKey: KEY, fetch: fetchFn });
@@ -19,12 +22,6 @@ describe("calcul du chemin à pied (QUA-020, fournisseur factice)", () => {
     const body = JSON.parse(init.body as string) as { travelMode: string; origin: { location: { latLng: { latitude: number } } } };
     expect(body.travelMode).toBe("WALK");
     expect(body.origin.location.latLng.latitude).toBe(18.5204);
-  });
-
-  it("QUA-002: sans clé, dit laquelle manque et n'appelle rien", async () => {
-    const fetchFn = ok(good);
-    await expect(computeWalkingRoute(FROM, TO, { apiKey: undefined, fetch: fetchFn })).rejects.toThrow(NO_ROUTES_KEY_NOTICE);
-    expect(fetchFn).not.toHaveBeenCalled();
   });
 
   it("refuse avant tout appel un trajet de plus de 5 km à vol d'oiseau", async () => {

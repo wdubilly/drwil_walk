@@ -22,7 +22,7 @@ describe("point d'entrée", () => {
     vi.stubGlobal("document", doc);
     vi.stubGlobal("navigator", { xr: undefined });
     await import("./main.ts");
-    expect(doc.querySelector("#app button")?.textContent).toBe("Entrer en réalité mixte");
+    expect(doc.querySelector("#app button.enter")?.textContent).toBe("Entrer en réalité mixte");
   });
 
   it("signale une page sans élément #app au lieu de rester muette", async () => {

@@ -1,9 +1,9 @@
 // L'itinéraire libre à l'accueil : départ et arrivée posés en touchant la carte ou en cherchant une adresse (les deux se
 // remplissent mutuellement), puis le calcul du chemin à pied. Aucun point ni aucune adresse n'est gardé : tout vit dans cette
-// page, jusqu'à la fermeture, et ne part qu'aux services de géocodage et de routage (aucune donnée personnelle conservée).
+// page, jusqu'à la fermeture, et ne part qu'aux services de géocodage et de routage choisis (aucune donnée personnelle conservée).
 import type { PlannedTrip, TripPlanner } from "../city/free-route.ts";
-import { roundedCoordinates } from "../route/geocoding.ts";
 import type { LonLat } from "../route/geo.ts";
+import { roundedCoordinates } from "../route/providers.ts";
 import { createMapPicker, type MarkerKind } from "./map-picker.ts";
 
 export interface FreeTrip {
@@ -31,13 +31,6 @@ export function renderFreeTrip(doc: Document, planner: TripPlanner): FreeTrip {
   const say = (text: string): void => {
     message.textContent = text;
   };
-  if (planner.unavailable !== undefined) {
-    // Sans clé, la raison est dite et rien d'autre ne se charge : les quatre itinéraires figés restent utilisables.
-    say(planner.unavailable);
-    element.append(message);
-    return { element, setVisible: (visible) => { element.hidden = !visible; }, readTrip: () => null };
-  }
-
   const points: Record<MarkerKind, LonLat | null> = { from: null, to: null };
   let trip: PlannedTrip | null = null;
   const map = createMapPicker(doc, (point) => { pick(point); });

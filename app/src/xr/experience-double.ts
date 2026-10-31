@@ -3,6 +3,7 @@ import { Window } from "happy-dom";
 import { Group, Mesh, MeshBasicMaterial, PlaneGeometry } from "three";
 import { expect, vi } from "vitest";
 import { withCanvasContext } from "../city/canvas-double.ts";
+import { createProviders } from "../route/create-providers.ts";
 import { startExperience, type RendererClass } from "./experience.ts";
 import type { GoogleTiles, GoogleTilesOptions } from "../city/google-tiles.ts";
 import type { XrSystemLike } from "./session.ts";
@@ -19,7 +20,7 @@ export function poseFrame(deg: number | null): XRFrame {
 export const KEY = "cle-fictive-pour-les-tests";
 
 export function setup(
-  options: { supported?: boolean; space?: boolean; xr?: boolean; sessionFails?: boolean; apiKey?: string | undefined; routesKey?: string | undefined; fetch?: typeof fetch } = {},
+  options: { supported?: boolean; space?: boolean; xr?: boolean; sessionFails?: boolean; apiKey?: string | undefined; fetch?: typeof fetch } = {},
 ) {
   const doc = withCanvasContext(new Window().document as unknown as Document);
   const root = doc.createElement("main");
@@ -62,7 +63,7 @@ export function setup(
     xr: options.xr === false ? undefined : xr,
     Renderer,
     google: { apiKey, create },
-    routes: { apiKey: "routesKey" in options ? options.routesKey : KEY, fetch: options.fetch ?? (() => Promise.reject(new Error("réseau interdit aux tests"))) },
+    routes: createProviders({}, options.fetch ?? (() => Promise.reject(new Error("réseau interdit aux tests")))),
   });
   const status = () => root.querySelector("[role='status']")?.textContent;
   const panel = () => root.querySelector("[aria-label='Marche']");

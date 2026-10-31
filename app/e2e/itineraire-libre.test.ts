@@ -1,13 +1,12 @@
-// e2e de l'itinéraire libre (QUA-020, chemin 10), dans Chromium avec un Meta Quest 3 émulé (IWER). Google et Overpass ne sont JAMAIS
-// appelés : routage, géocodage, bâtiments et tuiles de la carte sont servis ici ; toute autre requête hors de la machine est refusée
-// et fait échouer le test. Les clés du serveur de test sont fictives.
+// e2e de l'itinéraire libre (QUA-020, chemin 10), dans Chromium avec un Meta Quest 3 émulé (IWER), SANS AUCUNE CLÉ. Valhalla, Photon,
+// Overpass et les tuiles de la carte ne sont JAMAIS appelés pour de vrai : ils sont servis ici ; toute autre requête hors de la machine
+// (Google compris) est refusée et fait échouer le test.
 import { createRequire } from "node:module";
 import { expect, test, type Page, type Route } from "@playwright/test";
 
 const iwerBuild = createRequire(import.meta.url).resolve("iwer/build/iwer.min.js");
-const ROUTES_KEY = "cle-routes-factice-e2e";
 const PNG = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==", "base64");
-const cors = { "access-control-allow-origin": "*", "access-control-allow-headers": "content-type,x-goog-api-key,x-goog-fieldmask" };
+const cors = { "access-control-allow-origin": "*" };
 /** Deux lieux factices à environ 60 m l'un de l'autre. */
 const PLACES: Record<string, { lat: number; lng: number }> = {
   "Départ factice": { lat: 18.5204, lng: 73.8567 },
@@ -17,8 +16,27 @@ const PLACES: Record<string, { lat: number; lng: number }> = {
 interface Seen {
   leaks: string[];
   tileHosts: number;
-  routeKeys: string[];
-  routeBodies: { origin: { location: { latLng: { latitude: number } } }; destination: { location: { latLng: { latitude: number } } }; travelMode: string }[];
+  routeBodies: { locations: { lat: number; lon: number }[]; costing: string }[];
+}
+
+/** Un tracé de deux points, encodé en polyligne à 6 décimales comme le fait Valhalla. */
+function encode(points: { lat: number; lon: number }[]): string {
+  let [lat, lon, out] = [0, 0, ""];
+  const put = (value: number): void => {
+    let v = value < 0 ? ~(value << 1) : value << 1;
+    while (v >= 0x20) {
+      out += String.fromCharCode((0x20 | (v & 0x1f)) + 63);
+      v >>= 5;
+    }
+    out += String.fromCharCode(v + 63);
+  };
+  for (const p of points) {
+    const [nlat, nlon] = [Math.round(p.lat * 1e6), Math.round(p.lon * 1e6)];
+    put(nlat - lat);
+    put(nlon - lon);
+    [lat, lon] = [nlat, nlon];
+  }
+  return out;
 }
 
 const way = (id: number, tags: Record<string, string>, lat: number) => ({
@@ -28,7 +46,7 @@ const way = (id: number, tags: Record<string, string>, lat: number) => ({
 
 /** Les services factices ; `routesStatus` : le code que renvoie le routage, `geocode` : la réponse du géocodage. */
 async function fakeServices(page: Page, options: { routesStatus?: number; zeroResults?: boolean } = {}): Promise<Seen> {
-  const seen: Seen = { leaks: [], tileHosts: 0, routeKeys: [], routeBodies: [] };
+  const seen: Seen = { leaks: [], tileHosts: 0, routeBodies: [] };
   await page.route(/^https?:\/\/(?!localhost)/, async (route: Route) => {
     const request = route.request();
     const url = new URL(request.url());
@@ -37,22 +55,20 @@ async function fakeServices(page: Page, options: { routesStatus?: number; zeroRe
       seen.tileHosts++;
       return route.fulfill({ body: PNG, contentType: "image/png" });
     }
-    if (url.host === "routes.googleapis.com") {
-      seen.routeKeys.push(request.headers()["x-goog-api-key"] ?? "");
+    if (url.host === "valhalla1.openstreetmap.de") {
       if (options.routesStatus) return route.fulfill({ status: options.routesStatus, headers: cors, json: { error: "refusé" } });
-      const body = request.postDataJSON() as Seen["routeBodies"][number];
+      const body = JSON.parse(url.searchParams.get("json") ?? "{}") as Seen["routeBodies"][number];
       seen.routeBodies.push(body);
-      const [a, b] = [body.origin.location.latLng, body.destination.location.latLng] as unknown as { latitude: number; longitude: number }[];
-      const coordinates = [[a?.longitude, a?.latitude], [b?.longitude, b?.latitude]];
-      return route.fulfill({ headers: cors, json: { routes: [{ distanceMeters: 60, polyline: { geoJsonLinestring: { coordinates } } }] } });
+      return route.fulfill({ headers: cors, json: { trip: { summary: { length: 0.06 }, legs: [{ shape: encode(body.locations) }] } } });
     }
-    if (url.host === "maps.googleapis.com") {
-      expect(url.searchParams.get("key")).toBe(ROUTES_KEY);
-      if (options.zeroResults) return route.fulfill({ headers: cors, json: { status: "ZERO_RESULTS", results: [] } });
-      const place = PLACES[url.searchParams.get("address") ?? ""];
+    if (url.host === "photon.komoot.io") {
+      const query = url.searchParams.get("q") ?? "";
+      if (options.zeroResults) return route.fulfill({ headers: cors, json: { features: [] } });
+      const place = PLACES[query];
       const location = place ?? { lat: 18.5204, lng: 73.8567 };
-      const label = place ? `${url.searchParams.get("address") ?? ""}, Pune` : "Rue factice, Pune";
-      return route.fulfill({ headers: cors, json: { status: "OK", results: [{ formatted_address: label, geometry: { location } }] } });
+      const name = place ? query : "Rue factice";
+      const properties = { name, city: "Pune" };
+      return route.fulfill({ headers: cors, json: { features: [{ geometry: { coordinates: [location.lng, location.lat] }, properties }] } });
     }
     if (url.host === "overpass-api.de") {
       return route.fulfill({ headers: cors, json: { elements: [way(1, { building: "yes", height: "15" }, 18.5206), way(2, { highway: "residential" }, 18.5204)] } });
@@ -105,11 +121,11 @@ test("chemin 10 : une adresse de départ et d'arrivée, le chemin calculé, la m
   await expect(message(page)).toContainText("Départ et arrivée posés");
   await page.getByRole("button", { name: "Calculer le trajet" }).click();
   await expect(message(page)).toContainText("Trajet prêt : 0,1 km");
-  // Le routage reçoit la clé Routes, le mode piéton, et les points trouvés par l'adresse.
-  expect(seen.routeKeys).toEqual([ROUTES_KEY]);
-  expect(seen.routeBodies[0]?.travelMode).toBe("WALK");
-  expect(seen.routeBodies[0]?.origin.location.latLng.latitude).toBe(18.5204);
-  expect(seen.routeBodies[0]?.destination.location.latLng.latitude).toBe(18.5209);
+  // Le routage reçoit le profil piéton et les points trouvés par l'adresse, sans aucune clé.
+  expect(seen.routeBodies).toHaveLength(1);
+  expect(seen.routeBodies[0]?.costing).toBe("pedestrian");
+  expect(seen.routeBodies[0]?.locations[0]?.lat).toBe(18.5204);
+  expect(seen.routeBodies[0]?.locations[1]?.lat).toBe(18.5209);
 
   await page.getByLabel("Vitesse de départ (km/h)").fill("8");
   await enter(page);
@@ -137,10 +153,10 @@ test("chemin 10 : deux touches sur la carte posent le départ et l'arrivée, les
   await expect(page.locator(".marker")).toHaveCount(2);
   await page.getByRole("button", { name: "Calculer le trajet" }).click();
   await expect(message(page)).toContainText("Trajet prêt");
-  const { origin, destination } = seen.routeBodies[0] as Seen["routeBodies"][number];
+  const lats = seen.routeBodies[0]?.locations.map((l) => l.lat) ?? [];
   // Le centre de la carte est la Vieille ville de Pune ; l'arrivée est au nord du départ.
-  expect(origin.location.latLng.latitude).toBeCloseTo(18.5204, 3);
-  expect(destination.location.latLng.latitude).toBeGreaterThan(origin.location.latLng.latitude);
+  expect(lats[0]).toBeCloseTo(18.5204, 3);
+  expect(lats[1]).toBeGreaterThan(lats[0] ?? Infinity);
   await enter(page);
   expect(seen.leaks).toEqual([]);
 });
@@ -160,13 +176,12 @@ test("chemin 10 : adresse introuvable, trajet non préparé : la raison est dite
   await enter(page);
 });
 
-test("chemin 10 : le service de routage refuse la clé, la raison est dite sans la clé", async ({ page }) => {
-  await fakeServices(page, { routesStatus: 403 });
+test("chemin 10 : le service public de routage refuse la demande, la raison est dite et les itinéraires figés restent utilisables", async ({ page }) => {
+  await fakeServices(page, { routesStatus: 429 });
   await openFree(page);
   await searchBoth(page);
   await page.getByRole("button", { name: "Calculer le trajet" }).click();
-  await expect(message(page)).toContainText("Calcul du trajet impossible : le service a répondu 403");
-  await expect(message(page)).not.toContainText(ROUTES_KEY);
+  await expect(message(page)).toContainText("Calcul du trajet impossible : le service de routage public limite les demandes");
   await page.locator("label.card", { hasText: "Doha Souq Waqif" }).click();
   await enter(page);
 });
