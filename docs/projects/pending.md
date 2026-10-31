@@ -32,5 +32,4 @@ otherwise.
   are needed, otherwise the topic fits here.
 - [x] topic delivered (YYYY-MM-DD).
 -->
-- [ ] [AI] [P1] Rendu photoréaliste Google 3D Tiles en option, clé à créer [human] — `docs/projects/google-3d-tiles.md`
 - [ ] [decision] [P2] Choisir son propre itinéraire, après google-3d-tiles — `docs/projects/itineraire-libre.md`

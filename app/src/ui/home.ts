@@ -1,7 +1,8 @@
 // Écran d'accueil (MISSION.md, « Écran d'accueil ») : vitesse de départ, opacité de la ville,
 // choix de l'itinéraire, rappel de sécurité et bouton d'entrée en réalité mixte. Construit en DOM simple, sans framework.
 import { DEFAULT_SPEED_KMH, MAX_SPEED_KMH, MIN_SPEED_KMH, SPEED_STEP_KMH, clampSpeedKmh } from "../route/speed.ts";
-import { OSM_ATTRIBUTION } from "../city/licence.ts";
+import { GOOGLE_ATTRIBUTION, OSM_ATTRIBUTION } from "../city/licence.ts";
+import { renderRenderChoice, type Rendering } from "./render-choice.ts";
 import { renderRouteChoice } from "./route-choice.ts";
 import {
   DEFAULT_GLOBAL_OPACITY_PCT,
@@ -25,6 +26,10 @@ export interface HomeView {
   readOpacityPct(): number;
   /** L'itinéraire choisi (jamais un itinéraire « bientôt »). */
   readRouteId(): string;
+  /** Le rendu choisi : OpenStreetMap par défaut, ou Google 3D. */
+  readRendering: () => Rendering;
+  /** Une raison qui reste lisible pendant la marche (ex. repli sur OpenStreetMap) ; vide l'efface. */
+  showNotice: (text: string) => void;
   onEnter(handler: () => void): void;
   setEntering(entering: boolean): void;
   showStatus(text: string): void;
@@ -50,6 +55,7 @@ function numberInput(doc: Document, type: string, min: number, max: number, step
 
 export function renderHome(doc: Document, root: HTMLElement): HomeView {
   const routes = renderRouteChoice(doc);
+  const rendering = renderRenderChoice(doc);
   const title = doc.createElement("h1");
   title.textContent = "drwil_walk";
   const reminder = doc.createElement("ul");
@@ -77,14 +83,29 @@ export function renderHome(doc: Document, root: HTMLElement): HomeView {
   const credit = doc.createElement("p");
   credit.className = "attribution";
   credit.textContent = OSM_ATTRIBUTION;
+  // La mention de Google s'ajoute à celle d'OpenStreetMap dès que son rendu est choisi (APP-003).
+  const googleCredit = doc.createElement("span");
+  googleCredit.className = "attribution-google";
+  googleCredit.textContent = ` · ${GOOGLE_ATTRIBUTION}`;
+  googleCredit.hidden = true;
+  credit.append(googleCredit);
+  rendering.onChange(() => {
+    googleCredit.hidden = rendering.readRendering() !== "google";
+  });
+  // Une alerte à part du statut : l'ouverture de la session réécrit le statut, pas ce repli.
+  const notice = doc.createElement("p");
+  notice.setAttribute("role", "alert");
+  notice.className = "notice";
   root.replaceChildren(
     title,
     routes.element,
+    rendering.element,
     reminder,
     field(doc, "Vitesse de départ (km/h)", speed),
     field(doc, "Opacité de la ville (%)", opacity),
     button,
     status,
+    notice,
     credit,
   );
   return {
@@ -92,6 +113,10 @@ export function renderHome(doc: Document, root: HTMLElement): HomeView {
     readSpeedKmh: () => clampSpeedKmh(Number(speed.value.replace(",", "."))),
     readOpacityPct: () => clampGlobalOpacityPct(Number(opacity.value)),
     readRouteId: () => routes.readId(),
+    readRendering: rendering.readRendering,
+    showNotice: (text) => {
+      notice.textContent = text;
+    },
     onEnter: (handler) => {
       button.addEventListener("click", () => {
         // L'itinéraire qui démarre est lisible sur la page, comme le panneau de marche.

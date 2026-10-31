@@ -14,6 +14,7 @@ const route = createPath([
 ]);
 const palette = { ground: 0x808080, road: 0x202020, buildings: [0xff0000, 0x00ff00] };
 const souq: Souq = {
+  origin: [51.5, 25.3],
   route,
   palette,
   roads: [{ highway: "primary", points: [{ x: 0, z: 0 }, { x: 0, z: -100 }] }],
@@ -52,7 +53,7 @@ describe("scène du souk", () => {
     expect(world.children).toContain(city);
     expect(city.getObjectByName("batiments")).toBeInstanceOf(Mesh);
     expect(city.getObjectByName("voies")).toBeInstanceOf(Mesh);
-    expect(world.getObjectByName("attribution-osm")).toBeInstanceOf(Mesh);
+    expect(world.getObjectByName("attribution")).toBeInstanceOf(Mesh);
     expect(buildingCount).toBe(1);
     expect(camera.near).toBeGreaterThan(0);
   });
@@ -72,11 +73,18 @@ describe("scène du souk", () => {
   it("APP-003: le sol, les voies et les bâtiments ont chacun leur teinte, ceux-ci par sommet", () => {
     const { city } = setup();
     const color = (name: string) => (city.getObjectByName(name) as Mesh).material as MeshLambertMaterial;
-    const [ground] = city.children as Mesh[];
+    const [ground] = (city.getObjectByName("osm") as Group).children as Mesh[];
     expect((ground?.material as MeshLambertMaterial).color.getHex()).toBe(palette.ground);
     expect(color("voies").color.getHex()).toBe(palette.road);
     expect(color("batiments").vertexColors).toBe(true);
     expect((city.getObjectByName("batiments") as Mesh).geometry.getAttribute("color").count).toBeGreaterThan(0);
+  });
+
+  it("range le sol, les voies et les bâtiments OpenStreetMap dans un groupe que le rendu Google peut masquer", () => {
+    const { city, osm, label } = setup();
+    expect(city.children).toContain(osm);
+    expect(osm.children.map((c) => c.name)).toContain("batiments");
+    label.setText("autre mention");
   });
 
   it("ignore ce qui n'est pas un maillage", () => {

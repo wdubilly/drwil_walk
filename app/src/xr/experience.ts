@@ -6,6 +6,7 @@ import { cityFor } from "../city/cities.ts";
 import { pointAt } from "../route/path.ts";
 import { headPitchDownDeg } from "../safety/visibility.ts";
 import { renderHome, type HomeView } from "../ui/home.ts";
+import { chooseRendering, type GoogleConfig } from "./google-mode.ts";
 import { renderWalkPanel } from "../ui/panel.ts";
 import { initialWalkState, nextWalkState } from "./frame.ts";
 import { rightThumbstickY } from "./joystick.ts";
@@ -19,6 +20,8 @@ export interface ExperienceDeps {
   root: HTMLElement;
   xr: XrSystemLike | undefined;
   Renderer: RendererClass;
+  /** La clé Google et la fabrique de tuiles (injectée : les tests ne rappellent jamais Google). */
+  google: GoogleConfig;
 }
 
 export const ACTIVE_STATUS = `Réalité mixte active (${SESSION_MODE})`;
@@ -49,7 +52,16 @@ async function enter(deps: ExperienceDeps, home: HomeView): Promise<void> {
 async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession): Promise<void> {
   // La scène d'abord : si elle ne se construit pas, aucun renderer ni canevas n'est laissé derrière.
   const souq = cityFor(home.readRouteId());
-  const { scene, camera, world, city, buildingCount } = createSouqScene(deps.document, souq);
+  const souqScene = createSouqScene(deps.document, souq);
+  const { scene, camera, world, city, buildingCount } = souqScene;
+  home.showNotice("");
+  const mode = chooseRendering({
+    wanted: home.readRendering(),
+    config: deps.google,
+    souq,
+    scene: souqScene,
+    notice: home.showNotice,
+  });
   const renderer = new deps.Renderer({ antialias: true, alpha: true });
   renderer.xr.enabled = true;
   renderer.xr.setReferenceSpaceType(REFERENCE_SPACE);
@@ -72,7 +84,15 @@ async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession): P
     });
     placeOnRoute(city, souq.route, state.distanceM);
     setCityOpacity(world, state.cityOpacity);
-    panel.update({ ...state, position: pointAt(souq.route, state.distanceM), buildingCount });
+    mode.update(camera, renderer.xr.getCamera());
+    panel.update({
+      ...state,
+      position: pointAt(souq.route, state.distanceM),
+      buildingCount,
+      rendering: mode.rendering(),
+      tileCount: mode.tileCount(),
+      attribution: mode.attribution(),
+    });
     renderer.render(scene, camera);
   });
   const stop = () => {
@@ -80,6 +100,7 @@ async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession): P
     renderer.domElement.remove();
     renderer.dispose();
     panel.remove();
+    mode.dispose();
   };
   try {
     await renderer.xr.setSession(session);

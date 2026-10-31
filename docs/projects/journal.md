@@ -87,3 +87,13 @@ One entry per closed project, most recent last.
 - Fiche : le critère « Aucun ciel ni fond opaque » a reçu `[humain]` pour que `verify` l'accepte (`APP-001` est attesté par l'humain) ; aucun autre critère modifié.
 - Limites : rendu jamais vu au casque (teintes et largeurs choisies par l'agent, 72 images par seconde non mesurées), l'e2e émulé ne juge pas l'apparence ; voies de classe inconnue tracées à 2 m ; les palettes sont des choix de l'agent, à corriger par le demandeur (lot 3).
 - Branche `workstream/rendu-ville`. Preuve de clôture : docs/preuves/rendu-ville.md (écrite par la clôture).
+
+## 2026-10-31 — Le rendu photoréaliste Google 3D Tiles, en option
+
+- L'accueil propose le rendu « OpenStreetMap » (par défaut, sans réseau) ou « Google 3D » (`app/src/ui/render-choice.ts`). Les tuiles viennent de `3d-tiles-renderer` 0.5.3 (Apache-2.0, aucune vulnérabilité propre ; les 32 avis `npm audit` visent l'outillage de développement, déjà présent), calées sur l'origine de la boucle (`app/src/city/google-tiles.ts`, `app/src/xr/google-mode.ts`).
+- La clé vient de `VITE_GOOGLE_MAPS_API_KEY` (`.env.local` dans `app/`, jamais commitée ; `.env.example` ne porte qu'une valeur fictive). Sans clé, ou si le jeu de tuiles est refusé, la marche se fait en OpenStreetMap et la raison est dite à l'accueil (alerte à part du statut, clé masquée) : `QUA-002`.
+- Le fondu efface les tuiles comme la ville OpenStreetMap, la scène garde `scene.background` nul (`APP-001`) ; la mention de Google s'ajoute à celle d'OpenStreetMap à l'accueil, dans le panneau et dans le casque (`APP-003`, texte du contrat adapté dans les termes de la fiche : plus de « aucun appel réseau » en rendu Google).
+- Aucun test n'appelle Google : les tests unitaires remplacent `fetch` et injectent la fabrique de tuiles ; l'e2e (chemin 9, `app/e2e/google-3d.test.ts`, `QUA-020`) sert un jeu de tuiles factice par `page.route`, refuse tout autre hôte, et le serveur de test reçoit une clé fictive.
+- Critères de la fiche : aucun ajusté. Le chemin 2 de l'e2e compte désormais les radios de l'itinéraire seulement (le choix du rendu en ajoute deux).
+- Limites : jamais essayé avec une vraie clé ni au casque (couverture de Pune et de Doha, netteté, 72 images par seconde, hauteur du sol des tuiles, décodeur Draco chargé depuis le CDN de Google, conformité des mentions sans logo) ; l'e2e émulé ne juge pas l'apparence. Lots 1 et 4 laissés aux humains : intentions `docs/intentions/cle-google-couverture.md` et `docs/intentions/essai-casque-google.md`.
+- Branche `workstream/google-3d-tiles`. Preuve de clôture : docs/preuves/google-3d-tiles.md (écrite par la clôture).

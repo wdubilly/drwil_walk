@@ -1,0 +1,85 @@
+// Doublures des tests de l'expérience : un renderer, une session et des tuiles Google factices (jamais d'appel à Google).
+import { Window } from "happy-dom";
+import { Group, Mesh, MeshBasicMaterial, PlaneGeometry } from "three";
+import { expect, vi } from "vitest";
+import { withCanvasContext } from "../city/canvas-double.ts";
+import { startExperience, type RendererClass } from "./experience.ts";
+import type { GoogleTiles, GoogleTilesOptions } from "../city/google-tiles.ts";
+import type { XrSystemLike } from "./session.ts";
+
+type Loop = ((timeMs: number, frame?: XRFrame) => void) | null;
+
+/** Pose de tête inclinée de `deg` degrés (négatif : tête baissée). */
+export function poseFrame(deg: number | null): XRFrame {
+  const a = ((deg ?? 0) * Math.PI) / 360;
+  const pose = deg === null ? undefined : { transform: { orientation: { x: Math.sin(a), y: 0, z: 0, w: Math.cos(a) } } };
+  return { getViewerPose: () => pose } as unknown as XRFrame;
+}
+
+export const KEY = "cle-fictive-pour-les-tests";
+
+export function setup(
+  options: { supported?: boolean; space?: boolean; xr?: boolean; sessionFails?: boolean; apiKey?: string | undefined } = {},
+) {
+  const doc = withCanvasContext(new Window().document as unknown as Document);
+  const root = doc.createElement("main");
+  doc.body.append(root);
+  const listeners: Record<string, () => void> = {};
+  const inputSources = [{ handedness: "right", gamepad: { axes: [0, 0, 0, 0] } }];
+  const session = {
+    inputSources,
+    addEventListener: (type: string, cb: () => void) => (listeners[type] = cb),
+  } as unknown as XRSession;
+  const xr = {
+    isSessionSupported: () => Promise.resolve(options.supported ?? true),
+    requestSession: vi.fn(() => Promise.resolve(session)),
+  } satisfies XrSystemLike;
+  const fake = { loop: null as Loop, render: vi.fn(), dispose: vi.fn(), canvas: doc.createElement("canvas") };
+  const space = options.space === false ? null : ({} as XRReferenceSpace);
+  class FakeRenderer {
+    domElement = fake.canvas;
+    xr = { enabled: false, getCamera: () => ({ cameras: [] }), setReferenceSpaceType: vi.fn(), setSession: vi.fn(() =>
+        options.sessionFails ? Promise.reject(new Error("contexte WebGL refusé")) : Promise.resolve(),
+      ), getReferenceSpace: () => space };
+    setAnimationLoop = (cb: Loop) => (fake.loop = cb);
+    render = fake.render;
+    dispose = fake.dispose;
+  }
+  const Renderer = FakeRenderer as unknown as RendererClass;
+  // Aucune tuile réelle : un maillage factice tient lieu de jeu de tuiles Google.
+  const tileMesh = new Mesh(new PlaneGeometry(1, 1), new MeshBasicMaterial());
+  const tiles = { root: new Group(), update: vi.fn(), copyright: () => "Landsat", visibleTileCount: () => 3, dispose: vi.fn() };
+  tiles.root.add(tileMesh);
+  const failures: GoogleTilesOptions["onFailure"][] = [];
+  const create = vi.fn((o: GoogleTilesOptions): GoogleTiles => {
+    failures.push(o.onFailure);
+    return tiles;
+  });
+  const apiKey = "apiKey" in options ? options.apiKey : KEY;
+  const home = startExperience({
+    document: doc,
+    root,
+    xr: options.xr === false ? undefined : xr,
+    Renderer,
+    google: { apiKey, create },
+  });
+  const status = () => root.querySelector("[role='status']")?.textContent;
+  const panel = () => root.querySelector("[aria-label='Marche']");
+  const enter = async () => {
+    root.querySelector("button")?.click();
+    await vi.waitFor(() => {
+      expect(status()).not.toBe("Ouverture de la réalité mixte…");
+    });
+  };
+  const frame = (timeMs: number, f?: XRFrame) => {
+    if (!fake.loop) throw new Error("boucle de rendu non lancée");
+    fake.loop(timeMs, f);
+  };
+  const notice = () => root.querySelector("[role='alert']")?.textContent;
+  const chooseGoogle = () => root.querySelector<HTMLInputElement>("input[value='google']")?.click();
+  const fail = (reason: string) => {
+    for (const failure of failures) failure(reason);
+  };
+  return { root, home, xr, fake, inputSources, listeners, status, panel, enter, frame, notice, chooseGoogle, create, tiles, tileMesh, fail };
+}
+

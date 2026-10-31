@@ -1,59 +1,6 @@
-import { Window } from "happy-dom";
-import { describe, expect, it, vi } from "vitest";
-import { withCanvasContext } from "../city/canvas-double.ts";
-import { ACTIVE_STATUS, ENDED_STATUS, startExperience, type RendererClass } from "./experience.ts";
-import type { XrSystemLike } from "./session.ts";
-
-type Loop = ((timeMs: number, frame?: XRFrame) => void) | null;
-
-/** Pose de tête inclinée de `deg` degrés (négatif : tête baissée). */
-function poseFrame(deg: number | null): XRFrame {
-  const a = ((deg ?? 0) * Math.PI) / 360;
-  const pose = deg === null ? undefined : { transform: { orientation: { x: Math.sin(a), y: 0, z: 0, w: Math.cos(a) } } };
-  return { getViewerPose: () => pose } as unknown as XRFrame;
-}
-
-function setup(options: { supported?: boolean; space?: boolean; xr?: boolean; sessionFails?: boolean } = {}) {
-  const doc = withCanvasContext(new Window().document as unknown as Document);
-  const root = doc.createElement("main");
-  doc.body.append(root);
-  const listeners: Record<string, () => void> = {};
-  const inputSources = [{ handedness: "right", gamepad: { axes: [0, 0, 0, 0] } }];
-  const session = {
-    inputSources,
-    addEventListener: (type: string, cb: () => void) => (listeners[type] = cb),
-  } as unknown as XRSession;
-  const xr = {
-    isSessionSupported: () => Promise.resolve(options.supported ?? true),
-    requestSession: vi.fn(() => Promise.resolve(session)),
-  } satisfies XrSystemLike;
-  const fake = { loop: null as Loop, render: vi.fn(), dispose: vi.fn(), canvas: doc.createElement("canvas") };
-  const space = options.space === false ? null : ({} as XRReferenceSpace);
-  class FakeRenderer {
-    domElement = fake.canvas;
-    xr = { enabled: false, setReferenceSpaceType: vi.fn(), setSession: vi.fn(() =>
-        options.sessionFails ? Promise.reject(new Error("contexte WebGL refusé")) : Promise.resolve(),
-      ), getReferenceSpace: () => space };
-    setAnimationLoop = (cb: Loop) => (fake.loop = cb);
-    render = fake.render;
-    dispose = fake.dispose;
-  }
-  const Renderer = FakeRenderer as unknown as RendererClass;
-  const home = startExperience({ document: doc, root, xr: options.xr === false ? undefined : xr, Renderer });
-  const status = () => root.querySelector("[role='status']")?.textContent;
-  const panel = () => root.querySelector("[aria-label='Marche']");
-  const enter = async () => {
-    root.querySelector("button")?.click();
-    await vi.waitFor(() => {
-      expect(status()).not.toBe("Ouverture de la réalité mixte…");
-    });
-  };
-  const frame = (timeMs: number, f?: XRFrame) => {
-    if (!fake.loop) throw new Error("boucle de rendu non lancée");
-    fake.loop(timeMs, f);
-  };
-  return { root, home, xr, fake, inputSources, listeners, status, panel, enter, frame };
-}
+import { describe, expect, it } from "vitest";
+import { ACTIVE_STATUS, ENDED_STATUS } from "./experience.ts";
+import { poseFrame, setup } from "./experience-double.ts";
 
 describe("expérience en réalité mixte", () => {
   it("APP-001: entre en session immersive-ar et lance la marche dans le souk", async () => {
@@ -145,6 +92,12 @@ describe("expérience en réalité mixte", () => {
     await noSpace.enter();
     noSpace.frame(0, poseFrame(0));
     expect(noSpace.panel()?.getAttribute("data-city-opacity")).toBe("0");
+  });
+
+  it("signale un test qui pousse une image avant l'entrée en session", () => {
+    expect(() => {
+      setup().frame(0);
+    }).toThrow("boucle de rendu non lancée");
   });
 
   it("ignore une image hors session, sans pose possible", async () => {

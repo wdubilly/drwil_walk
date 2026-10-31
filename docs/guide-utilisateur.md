@@ -81,6 +81,9 @@ L'opacité de la ville se règle à l'accueil (30 à 100 %) : baissez-la si vous
 
 1. Sur l'accueil, choisissez l'**itinéraire** en cliquant sur une carte (à la manette, pointez-la). Disponibles :
    Doha Souq Waqif (par défaut), Pune Vieille ville, Pune FC Road, Doha Corniche.
+   Choisissez aussi le **rendu de la ville** : « OpenStreetMap » (par défaut, sans réseau) ou « Google 3D »
+   (photoréaliste, demande une clé Google dans `.env.local` (dans `app/`), voir `INSTALL.md`). Sans clé, ou si les tuiles ne se
+   chargent pas, la marche se fait en OpenStreetMap et la raison s'affiche sur l'accueil, sous le bouton.
 2. Réglez la **vitesse de départ** (1 à 8 km/h, par pas de 0,1) et l'**opacité de la ville**.
 3. Appuyez sur « Entrer en réalité mixte » et acceptez la demande d'autorisation du navigateur. Si le bouton est
    grisé ou affiche un message, voir la section 6.
@@ -89,7 +92,7 @@ L'opacité de la ville se règle à l'accueil (30 à 100 %) : baissez-la si vous
    s'affiche sur la page et dans la scène. À la fin de la boucle, la marche reprend au départ.
 
 Les autres commandes de manette décrites dans `docs/features.md` (pause, recalibrage, panneau d'infos) sont à venir.
-Les données de la ville sont © contributeurs OpenStreetMap.
+Les données de la ville sont © contributeurs OpenStreetMap (et © Google en rendu Google 3D).
 
 ## 6. Ennuis connus et remèdes
 

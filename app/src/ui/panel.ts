@@ -14,6 +14,12 @@ export interface WalkInfo {
   /** Position sur le parcours, en mètres depuis le départ (x est, z sud). */
   position: Vec2;
   buildingCount: number;
+  /** Le rendu affiché : le repli sur OpenStreetMap se lit ici. */
+  rendering: "osm" | "google";
+  /** Tuiles Google affichées (0 en rendu OpenStreetMap). */
+  tileCount: number;
+  /** Les mentions de données de ce qui est affiché (APP-003). */
+  attribution: string;
 }
 
 export interface WalkPanel {
@@ -56,6 +62,7 @@ export function renderWalkPanel(doc: Document, root: HTMLElement): WalkPanel {
       show(distance, formatDistanceM(info.distanceM));
       show(time, formatDurationS(info.timeS));
       show(opacity, formatOpacity(info.cityOpacity));
+      show(credit, info.attribution);
       panel.dataset.speedKmh = String(info.speedKmh);
       panel.dataset.distanceM = String(info.distanceM);
       panel.dataset.timeS = String(info.timeS);
@@ -63,6 +70,8 @@ export function renderWalkPanel(doc: Document, root: HTMLElement): WalkPanel {
       panel.dataset.positionX = String(info.position.x);
       panel.dataset.positionZ = String(info.position.z);
       panel.dataset.buildingCount = String(info.buildingCount);
+      panel.dataset.rendering = info.rendering;
+      panel.dataset.tileCount = String(info.tileCount);
     },
   };
 }

@@ -28,6 +28,8 @@ removes it when fully covered.
 | `docs/intentions/autres-itineraires.md` | Pune Vieille ville, Pune FC Road et Doha Corniche |
 | `docs/intentions/corniche-west-bay.md` | La Corniche de Doha jusqu'à West Bay, départ au musée |
 | `docs/intentions/google-3d-tiles.md` | Google Photorealistic 3D Tiles, en option (report levé le 2026-10-31) |
+| `docs/intentions/cle-google-couverture.md` | Créer la clé Google, la restreindre, vérifier la couverture de Pune et de Doha |
+| `docs/intentions/essai-casque-google.md` | Essayer le rendu Google 3D au casque (netteté, fondu, 72 images par seconde) |
 | `docs/intentions/mise-a-jour-drwil.md` | Mettre drwil à jour pour clore les trois chantiers de garantie |
 | `docs/intentions/relecture-guide-casque.md` | Relire `docs/guide-utilisateur.md` sur un vrai Quest 3 |
 | `docs/intentions/rendu-ville.md` | Une ville moins austère dans le casque (teintes, voies, palette par itinéraire) |

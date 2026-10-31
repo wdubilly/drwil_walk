@@ -30,7 +30,7 @@ describe("point d'entrée", () => {
     vi.stubGlobal("navigator", { xr: undefined });
     const { mount } = await import("./main.ts");
     expect(() => {
-      mount(pageWithApp(false), undefined);
+      mount(pageWithApp(false), undefined, undefined);
     }).toThrow("élément #app introuvable");
   });
 });

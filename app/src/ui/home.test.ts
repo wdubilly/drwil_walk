@@ -37,7 +37,37 @@ describe("écran d'accueil", () => {
 
   it("APP-003: montre la mention des contributeurs OpenStreetMap", () => {
     const { root } = setup();
-    expect(root.querySelector(".attribution")?.textContent).toBe("© contributeurs OpenStreetMap");
+    expect(root.querySelector(".attribution")?.textContent).toBe("© contributeurs OpenStreetMap · Google");
+  });
+
+  it("APP-003: ajoute la mention de Google à celle d'OpenStreetMap quand le rendu Google est choisi", () => {
+    const { root } = setup();
+    const google = root.querySelector<HTMLElement>(".attribution-google");
+    expect(google?.hidden).toBe(true);
+    const radio = (value: string) => root.querySelector<HTMLInputElement>(`input[name='rendu'][value='${value}']`);
+    const choose = (value: string) => {
+      radio(value)?.click();
+    };
+    choose("google");
+    expect(google?.hidden).toBe(false);
+    expect(root.querySelector(".attribution")?.textContent).toBe("© contributeurs OpenStreetMap · Google");
+    choose("osm");
+    expect(google?.hidden).toBe(true);
+  });
+
+  it("QUA-002: garde un message à part du statut, effaçable", () => {
+    const { root, view } = setup();
+    view.showNotice("Rendu Google 3D indisponible");
+    view.showStatus("Réalité mixte active");
+    expect(root.querySelector("[role='alert']")?.textContent).toBe("Rendu Google 3D indisponible");
+    view.showNotice("");
+    expect(root.querySelector("[role='alert']")?.textContent).toBe("");
+  });
+
+  it("propose le rendu OpenStreetMap par défaut, et Google 3D en option", () => {
+    const { root, view } = setup();
+    expect(view.readRendering()).toBe("osm");
+    expect([...root.querySelectorAll(".rendering label")].map((l) => l.textContent.trim())).toEqual(["OpenStreetMap", "Google 3D"]);
   });
 
   it("propose 4,0 km/h par défaut, réglable de 1 à 8 km/h par pas de 0,1", () => {

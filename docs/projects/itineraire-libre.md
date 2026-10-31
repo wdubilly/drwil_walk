@@ -45,7 +45,7 @@ chemin à pied et charge la ville autour.
 
 ## 2. Hors périmètre
 
-- Le rendu photoréaliste lui-même : `docs/projects/google-3d-tiles.md`, à livrer avant ce chantier.
+- Le rendu photoréaliste lui-même : `docs/projects/journal.md`, à livrer avant ce chantier.
 - Enregistrer ou partager des trajets, comptes, historique : aucune donnée personnelle conservée.
 - Navigation guidée, virages annoncés, pause et recalibrage (`docs/intentions/commandes-panneau.md`).
 

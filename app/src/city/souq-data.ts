@@ -23,6 +23,8 @@ export interface Road {
 }
 
 export interface Souq {
+  /** Le départ de la boucle : l'origine du repère local, en longitude et latitude (aligne les tuiles Google). */
+  origin: LonLat;
   route: Path;
   buildings: Building[];
   roads: Road[];
@@ -54,5 +56,5 @@ export function loadSouq(extract: FeatureFile, loop: LoopFile, palette: Palette)
       highway: f.properties.highway as string,
       points: (f.geometry.coordinates as number[][]).map(local),
     }));
-  return { route: createPath(loop.geometry.coordinates.map(local)), buildings, roads, palette };
+  return { origin, route: createPath(loop.geometry.coordinates.map(local)), buildings, roads, palette };
 }
