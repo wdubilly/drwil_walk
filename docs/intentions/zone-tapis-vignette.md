@@ -1,6 +1,6 @@
 # Intention : zone tapis toujours transparente et vignette réelle
 
-**Statut** : proposée le 2026-10-30.
+**Statut** : proposée le 2026-10-30. Cadrée le 2026-10-31 : `docs/projects/zone-tapis-vignette.md`.
 
 ## Besoin
 
@@ -15,6 +15,6 @@ Lu le 2026-10-30 : `app/src/safety/visibility.ts` couvre le fondu tête baissée
 
 ## Questions à trancher
 
-- [decision] Définir la zone : deux coins pointés à la manette, ou une boîte posée puis ajustée ?
-- [decision] Vignette : activée par défaut ou en option ?
-- [decision] Une fois la zone codée, retirer le champ Manual d'`APP-001` (contrat entièrement prouvé par ses tests).
+- Tranché le 2026-10-31 : une boîte posée puis ajustée à la manette ; sans zone enregistrée, une boîte par défaut autour de soi.
+- Tranché le 2026-10-31 : vignette activée par défaut, désactivable.
+- Au chantier : une fois la zone codée et testée, le champ Manual d'`APP-001` est retiré.

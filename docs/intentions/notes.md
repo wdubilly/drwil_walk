@@ -19,4 +19,3 @@ Relevé le 2026-10-31 : les notes sont ci-dessous, une ligne datée chacune, hor
 ## Notes
 
 - 2026-10-31 — Souk de Doha, après essai réel : mesurer les 72 images par seconde et la lisibilité de la mention OSM sur le Quest 3, relire le tracé de la boucle (environ 20 m traversent des passages couverts dessinés comme des bâtiments par OSM), et aligner MISSION.md (Pune par défaut) avec le souk seul itinéraire disponible.
-- 2026-10-31 — Maquette HUD complète à cadrer : tableau de bord de marche (vitesse, durée, distance, calories, dénivelé), défi longue distance (Vidauban → Paris, progression, autres défis, objectif annuel), boussole, étape en cours et prochaine étape, mini-globe avec tracé, barre de commandes (Carte, Itinéraire, Voyage guidé, Paramètres, Pause). Points à trancher : visibilité APP-001, calories et dénivelé estimés sans Bluetooth, progression gardée en local, sens de « Voyage guidé ».
