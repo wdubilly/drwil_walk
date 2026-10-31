@@ -22,7 +22,7 @@ export const ITINERARIES: readonly Itinerary[] = [
     id: "pune-fc-road",
     name: "Pune FC Road",
     place: "Ferguson College Road",
-    available: false,
+    available: true,
   },
   {
     id: "doha-corniche",

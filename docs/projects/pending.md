@@ -32,5 +32,4 @@ otherwise.
   are needed, otherwise the topic fits here.
 - [x] topic delivered (YYYY-MM-DD).
 -->
-- [ ] [AI] [P1] Marcher sur FC Road à Pune — `docs/projects/pune-fc-road.md`
 - [ ] [AI] [P2] Mode d'emploi pour installer et utiliser l'app avec un Quest 3 — `docs/projects/guide-installation.md`

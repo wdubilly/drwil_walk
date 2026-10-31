@@ -33,3 +33,7 @@ hauteur (7 m par défaut) : le relief de la ville est donc plat, à juger sur un
 756 bâtiments dont 310 sans hauteur, aller-retour d'environ 4 km). Le réseau de voies du Musée d'art islamique n'est pas relié à
 celui de la Corniche dans l'extrait (174 m d'écart) : le départ est le point relié le plus proche ; le tronçon de 2 km n'atteint
 pas West Bay. Reste **Pune FC Road**, à ajouter dans `app/src/city/cities.ts` avec son extrait.
+
+**Mis à jour le 2026-10-31** (chantier pune-fc-road) : FC Road est disponible (extrait `app/data/pune-fc-road.json`, 1 427
+bâtiments dont 1 410 sans hauteur, aller-retour d'environ 3,5 km) : les quatre itinéraires de `MISSION.md` sont livrés, plus
+aucun n'est « Bientôt ». Reste à les relire (lot 1) et à les essayer sur un vrai Quest 3 (lot 4).

@@ -5,6 +5,12 @@
 
 <!-- scope
 files:
+  - app/data/doha-corniche-boucle.json
+  - app/data/doha-corniche.json
+  - app/data/pune-fc-road-boucle.json
+  - app/data/pune-fc-road.json
+  - app/data/pune-vieille-ville-boucle.json
+  - app/data/pune-vieille-ville.json
   - app/data/souq-waqif-boucle.json
   - app/data/souq-waqif.json
   - app/e2e/chemins-critiques.test.ts
@@ -15,12 +21,20 @@ files:
   - app/package.json
   - app/playwright.config.test.ts
   - app/playwright.config.ts
+  - app/scripts/extract-corniche.ts
+  - app/scripts/extract-fc-road.ts
+  - app/scripts/extract-pune.ts
   - app/scripts/extract-souq.ts
   - app/src/city/attribution.test.ts
   - app/src/city/attribution.ts
   - app/src/city/buildings.test.ts
   - app/src/city/buildings.ts
   - app/src/city/canvas-double.ts
+  - app/src/city/cities.test.ts
+  - app/src/city/cities.ts
+  - app/src/city/extract-corniche.test.ts
+  - app/src/city/extract-fc-road.test.ts
+  - app/src/city/extract-pune.test.ts
   - app/src/city/extract-souq.test.ts
   - app/src/city/licence.ts
   - app/src/city/souq-data.test.ts

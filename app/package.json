@@ -14,7 +14,8 @@
     "e2e": "playwright test",
     "extract": "node -e \"import('./scripts/extract-souq.ts').then(m=>m.extract(fetch)).then(t=>require('node:fs').writeFileSync('data/souq-waqif.json',t))\"",
     "extract:pune": "node -e \"import('./scripts/extract-pune.ts').then(m=>m.extractPune(fetch)).then(t=>require('node:fs').writeFileSync('data/pune-vieille-ville.json',t))\"",
-    "extract:corniche": "node -e \"import('./scripts/extract-corniche.ts').then(m=>m.extractCorniche(fetch)).then(t=>require('node:fs').writeFileSync('data/doha-corniche.json',t))\""
+    "extract:corniche": "node -e \"import('./scripts/extract-corniche.ts').then(m=>m.extractCorniche(fetch)).then(t=>require('node:fs').writeFileSync('data/doha-corniche.json',t))\"",
+    "extract:fc-road": "node -e \"import('./scripts/extract-fc-road.ts').then(m=>m.extractFcRoad(fetch)).then(t=>require('node:fs').writeFileSync('data/pune-fc-road.json',t))\""
   },
   "devDependencies": {
     "@eslint-community/eslint-plugin-eslint-comments": "^4.8.1",
