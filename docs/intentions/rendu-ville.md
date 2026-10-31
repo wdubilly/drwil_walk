@@ -1,6 +1,6 @@
 # Intention : une ville moins austère dans le casque
 
-**Statut** : proposée le 2026-10-31.
+**Statut** : proposée le 2026-10-31 ; traitée en partie le 2026-10-31 (chantier rendu-ville : voies, tons de bâtiments, palette par itinéraire, passthrough conservé) ; reste l'essai au casque et les deux décisions ci-dessous.
 
 ## Besoin
 
@@ -20,6 +20,10 @@ Lu le 2026-10-31 (`app/src/city/souq.ts`, `app/src/city/buildings.ts`, `app/src/
 - Pas de fond de scène (`scene.background = null`) : le passthrough montre le réel. Le ciel absent et le bureau
   visible sont donc le comportement voulu (mode `immersive-ar`, `MISSION.md`), pas un défaut.
 - Le fondu de sécurité (`APP-001`) agit sur l'opacité de tous les matériaux de la scène (`setCityOpacity`).
+
+## Traité (chantier rendu-ville, hypothèses de l'agent à confirmer)
+
+- Voies dessinées sur le sol, largeur selon la classe ; bâtiments en quatre tons déterministes ; palette par itinéraire ; pas de ciel (passthrough conservé). Jamais vu sur un vrai Quest 3 : teintes, largeurs et 72 images par seconde sont à juger au casque.
 
 ## Questions à trancher
 
