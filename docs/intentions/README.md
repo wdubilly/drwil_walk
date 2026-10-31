@@ -27,10 +27,11 @@ removes it when fully covered.
 | `docs/intentions/commandes-panneau.md` | Pause, recalibrage et panneau d'infos dans le casque |
 | `docs/intentions/autres-itineraires.md` | Pune Vieille ville, Pune FC Road et Doha Corniche |
 | `docs/intentions/corniche-west-bay.md` | La Corniche de Doha jusqu'à West Bay, départ au musée |
-| `docs/intentions/google-3d-tiles.md` | Google Photorealistic 3D Tiles, reportées après la v0.1 |
+| `docs/intentions/google-3d-tiles.md` | Google Photorealistic 3D Tiles, en option (report levé le 2026-10-31) |
 | `docs/intentions/mise-a-jour-drwil.md` | Mettre drwil à jour pour clore les trois chantiers de garantie |
 | `docs/intentions/relecture-guide-casque.md` | Relire `docs/guide-utilisateur.md` sur un vrai Quest 3 |
 | `docs/intentions/rendu-ville.md` | Une ville moins austère dans le casque (teintes, voies, palette par itinéraire) |
+| `docs/intentions/itineraire-libre.md` | Choisir son propre trajet, calculé par un service de routage |
 
 A one-line idea, too light for a brief, is noted with one command:
 `node .githooks/note.mjs "<text>"` appends a dated line to
