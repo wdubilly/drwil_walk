@@ -1,5 +1,5 @@
 import { Window } from "happy-dom";
-import { Group, HemisphereLight, Mesh, type Material } from "three";
+import { Group, HemisphereLight, Mesh, type Material, type MeshLambertMaterial } from "three";
 import { describe, expect, it } from "vitest";
 import { withCanvasContext } from "./canvas-double.ts";
 import { createPath } from "../route/path.ts";
@@ -12,8 +12,11 @@ const route = createPath([
   { x: 100, z: -100 },
   { x: 0, z: 0 },
 ]);
+const palette = { ground: 0x808080, road: 0x202020, buildings: [0xff0000, 0x00ff00] };
 const souq: Souq = {
   route,
+  palette,
+  roads: [{ highway: "primary", points: [{ x: 0, z: 0 }, { x: 0, z: -100 }] }],
   buildings: [
     {
       heightM: 8,
@@ -48,6 +51,7 @@ describe("scène du souk", () => {
     expect(scene.children).toContain(world);
     expect(world.children).toContain(city);
     expect(city.getObjectByName("batiments")).toBeInstanceOf(Mesh);
+    expect(city.getObjectByName("voies")).toBeInstanceOf(Mesh);
     expect(world.getObjectByName("attribution-osm")).toBeInstanceOf(Mesh);
     expect(buildingCount).toBe(1);
     expect(camera.near).toBeGreaterThan(0);
@@ -63,6 +67,16 @@ describe("scène du souk", () => {
     setCityOpacity(world, 1);
     expect(world.visible).toBe(true);
     expect(materials(world).every((m) => !m.transparent && m.opacity === 1)).toBe(true);
+  });
+
+  it("APP-003: le sol, les voies et les bâtiments ont chacun leur teinte, ceux-ci par sommet", () => {
+    const { city } = setup();
+    const color = (name: string) => (city.getObjectByName(name) as Mesh).material as MeshLambertMaterial;
+    const [ground] = city.children as Mesh[];
+    expect((ground?.material as MeshLambertMaterial).color.getHex()).toBe(palette.ground);
+    expect(color("voies").color.getHex()).toBe(palette.road);
+    expect(color("batiments").vertexColors).toBe(true);
+    expect((city.getObjectByName("batiments") as Mesh).geometry.getAttribute("color").count).toBeGreaterThan(0);
   });
 
   it("ignore ce qui n'est pas un maillage", () => {

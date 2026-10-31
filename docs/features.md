@@ -7,7 +7,7 @@ reste est marqué « à venir ».
 
 ## Écran d'accueil
 
-Ouvert dans le navigateur du Quest 3 : choix de l'itinéraire (Doha Souq Waqif par défaut ; Pune Vieille ville, Pune FC Road et Doha Corniche disponibles) et de la vitesse de départ, rappel de sécurité (clé de sécurité du tapis attachée, main près
+Ouvert dans le navigateur du Quest 3 : choix de l'itinéraire (Doha Souq Waqif par défaut ; Pune Vieille ville, Pune FC Road et Doha Corniche disponibles) et de la vitesse de départ, ville aux voies dessinées sur le sol et aux bâtiments de plusieurs tons, palette propre à chaque itinéraire (à juger au casque), rappel de sécurité (clé de sécurité du tapis attachée, main près
 de la rampe), bouton « Entrer en réalité mixte ». Une seule personne utilise l'application : pas de compte ni de rôle.
 
 Codé : accueil sombre à grandes cibles (48 px au moins, contraste prouvé par QUA-014, contraste du texte et de son

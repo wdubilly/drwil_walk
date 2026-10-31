@@ -42,7 +42,7 @@ Décidée le 2026-10-30 par le demandeur :
     par poussée), l'image de marche en logique pure (`app/src/xr/frame.ts`) et l'assemblage accueil → session → boucle de rendu
     (`app/src/xr/experience.ts`, renderer injecté pour être testé avec une doublure).
   - `app/src/city/` : les villes des itinéraires, le souk de Doha, la Vieille ville de Pune, la Corniche de Doha et FC Road (chantiers doha-souq-waqif, pune-vieille-ville, doha-corniche et pune-fc-road, `docs/projects/journal.md`) : lecture de l'extrait
-    (`app/src/city/souq-data.ts`), choix de la ville et de la boucle par identifiant d'itinéraire (`app/src/city/cities.ts`, lu par `app/src/xr/experience.ts`), bâtiments extrudés et fusionnés en un maillage (`app/src/city/buildings.ts`), scène,
+    (`app/src/city/souq-data.ts`), choix de la ville et de la boucle par identifiant d'itinéraire (`app/src/city/cities.ts`, lu par `app/src/xr/experience.ts`), bâtiments extrudés et fusionnés en un maillage à couleurs par sommet, un ton de la palette par bâtiment (`app/src/city/buildings.ts`), voies posées à plat sur le sol et fusionnées en un maillage, largeur selon leur classe (`app/src/city/roads.ts`), palette par itinéraire (`app/src/city/cities.ts`), scène,
     placement de la ville sur le parcours et opacité (`app/src/city/souq.ts` : scène sans fond pour le passthrough),
     mention OpenStreetMap dans la scène (`app/src/city/attribution.ts`) et son texte (`app/src/city/licence.ts`,
     contrat APP-003). `app/src/city/canvas-double.ts` est une doublure de test, importée par les seuls tests.

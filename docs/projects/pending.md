@@ -32,4 +32,3 @@ otherwise.
   are needed, otherwise the topic fits here.
 - [x] topic delivered (YYYY-MM-DD).
 -->
-- [ ] [AI] [P1] Une ville plus lisible et moins austère dans le casque (voies, teintes, palettes) — `docs/projects/rendu-ville.md`

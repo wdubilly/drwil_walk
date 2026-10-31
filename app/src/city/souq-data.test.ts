@@ -11,6 +11,8 @@ const extractFile = read("souq-waqif.json") as {
 };
 const loopFile = read("souq-waqif-boucle.json") as { geometry: { coordinates: number[][] } };
 
+const palette = { ground: 1, road: 2, buildings: [3] };
+
 describe("données du souk", () => {
   it("APP-003: les bâtiments sont ceux de l'extrait OpenStreetMap versionné", () => {
     const inFile = extractFile.features.filter((f) => f.properties.kind === "building");
@@ -18,6 +20,14 @@ describe("données du souk", () => {
     expect(inFile.length).toBeGreaterThan(100);
     expect(buildings).toHaveLength(inFile.length);
     expect(buildings.every((b) => b.footprint.length >= 4 && b.heightM > 0)).toBe(true);
+  });
+
+  it("APP-003: les voies sont celles de l'extrait OpenStreetMap versionné, avec leur classe", () => {
+    const inFile = extractFile.features.filter((f) => f.properties.kind === "highway");
+    const { roads } = cityFor("doha-souq-waqif");
+    expect(inFile.length).toBeGreaterThan(100);
+    expect(roads).toHaveLength(inFile.length);
+    expect(roads.every((r) => r.highway.length > 0 && r.points.length >= 2)).toBe(true);
   });
 
   it("APP-003: l'extrait porte la mention d'attribution de la licence ODbL", () => {
@@ -51,7 +61,15 @@ describe("données du souk", () => {
     const souq = loadSouq(
       {
         features: [
-          { properties: { kind: "highway" }, geometry: { coordinates: [] } },
+          {
+            properties: { kind: "highway", highway: "primary" },
+            geometry: {
+              coordinates: [
+                [51.5, 25.3],
+                [51.5, 25.301],
+              ],
+            },
+          },
           {
             properties: { kind: "building", heightM: 9 },
             geometry: {
@@ -75,8 +93,13 @@ describe("données du souk", () => {
           ],
         },
       },
+      palette,
     );
     expect(souq.buildings).toHaveLength(1);
+    expect(souq.palette).toBe(palette);
+    expect(souq.roads).toHaveLength(1);
+    expect(souq.roads[0]?.highway).toBe("primary");
+    expect(souq.roads[0]?.points[1]?.z).toBeCloseTo(-111.2, 0);
     expect(souq.buildings[0]?.heightM).toBe(9);
     expect(souq.route.lengthM).toBeCloseTo(111.2, 0);
   });
