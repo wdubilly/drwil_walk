@@ -128,3 +128,11 @@ One entry per closed project, most recent last.
 
 - Les quatre itinéraires de `MISSION.md` sont livrés : le souk de Doha, la Vieille ville de Pune, la Corniche de Doha et FC Road, chacun avec son extrait OpenStreetMap figé (`app/data/`) ; aucun n'est plus « Bientôt ».
 - Reste de l'intention, sans objet propre : la relecture des itinéraires et leur essai sur un vrai Quest 3, déjà portés par `docs/intentions/essai-casque-itineraire-libre.md` et `docs/intentions/essai-casque-osm-enrichi.md`. Le parcours de la Corniche jusqu'à West Bay : `docs/intentions/corniche-west-bay.md`.
+
+## 2026-10-31 — Dire la limite de vitesse
+
+- Accueil : la plage « De 1 à 8 km/h, par sécurité sur le tapis. » est écrite sous le champ de vitesse ; une saisie hors plage (50) est ramenée à la borne et le message nomme la limite et la raison (`speedLimitMessage`, `app/src/route/speed.ts`), puis le champ se corrige à la sortie. La plage et le pas ne changent pas (`APP-002`, parcours GPS suivi à la vitesse réglée).
+- Panneau de marche (page) : une ligne dit « Vitesse au maximum : 8 km/h, limite de sécurité sur le tapis. » (ou au minimum) tant que la vitesse est à une borne (`speedBoundMessage`). Choix de l'agent : texte exact, emplacement, affichage sans durée (`aria-live`, pas `role=status`, que les doublures de test prennent pour le statut d'entrée).
+- Contrats : `QUA-002` (aucune erreur avalée en silence) respecté, aucune modification de `docs/contracts.md` ; `QUA-020` reçoit le chemin 11 (`app/e2e/vitesse-limite.test.ts` : 50 saisi, 8 retenu, limite annoncée).
+- Limites : le message n'est pas dans la scène du casque et ne distingue pas une tentative du joystick d'une simple vitesse à la borne (état de marche hors périmètre) : intention `docs/intentions/limite-vitesse-casque.md`. Jamais vu au casque.
+- Branche `workstream/vitesse-limite-dite`. Preuve de clôture : docs/preuves/vitesse-limite-dite.md (écrite par la clôture).
