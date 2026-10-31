@@ -34,16 +34,16 @@ Waqif. Périmètre : l'accueil dans le casque seulement, pas de page vitrine web
 ## Critères d'acceptation
 
 - L'accueil affiche quatre cartes d'itinéraire avec image ; Pune Vieille ville est sélectionnée par défaut ; une
-  carte se choisit d'un clic ou à la manette, et l'itinéraire choisi est celui qui démarre.
+  carte se choisit d'un clic ou à la manette, et l'itinéraire choisi est celui qui démarre — `QUA-020`
 - Un itinéraire dont la ville n'est pas encore disponible est visible mais non sélectionnable, avec la mention
-  « bientôt » ; il ne peut pas démarrer.
+  « bientôt » ; il ne peut pas démarrer — `QUA-020`
 - Le rappel de sécurité, la vitesse de départ, le curseur d'opacité et le bouton « Entrer en réalité mixte » restent
-  présents et lisibles ; les cibles à viser font au moins 48 px de haut.
-- Le texte et son fond respectent un contraste d'au moins 4,5:1 (3:1 pour le grand texte) — `catalog:QUA-014` (adopté ici,
+  présents et lisibles ; les cibles à viser font au moins 48 px de haut — `QUA-020`
+- Le texte et son fond respectent un contraste d'au moins 4,5:1 (3:1 pour le grand texte) — `QUA-014` (adopté ici,
   contraste RGAA 4.1 / WCAG AA)
-- Le fondu de sécurité n'est pas modifié — `APP-001`
+- Le fondu de sécurité n'est pas modifié — `APP-001` [humain]
 - Le demandeur n'a pas de casque : l'e2e enregistre des **captures d'écran** de l'accueil (état par défaut, carte
-  « bientôt », carte choisie) dans un dossier « captures » de l'e2e, et la CI les publie en pièce jointe téléchargeable.
+  « bientôt », carte choisie) dans un dossier « captures » de l'e2e, et la CI les publie en pièce jointe téléchargeable — `QUA-020`
 - Le parcours accueil → choix → entrée en réalité mixte est rejoué dans le Quest 3 émulé — `QUA-020`
 
 ## 2. Hors périmètre
@@ -67,6 +67,10 @@ Waqif. Périmètre : l'accueil dans le casque seulement, pas de page vitrine web
   affichés « bientôt » et non sélectionnables ; les images sont des illustrations SVG simples.
 - Contrats concernés : `catalog:QUA-014` (à adopter depuis `docs/contracts-catalog.md`), `APP-001` et `QUA-020` (repris).
 
+## Contrats modifiés
+
+- `QUA-020` — étendu au choix d'itinéraire à l'accueil et aux captures de l'accueil (décidé au cadrage du 2026-10-31 : « Le parcours accueil → choix → entrée en réalité mixte est rejoué dans le Quest 3 émulé »)
+
 ## 5. Points à trancher
 
 *(aucun : décisions prises le 2026-10-31)*
@@ -83,6 +87,9 @@ Waqif. Périmètre : l'accueil dans le casque seulement, pas de page vitrine web
 
 ## 7. Reprise
 
-- **Dernier état** (2026-10-31) : fiche cadrée, rien de codé.
-- **Travail non commité** : aucun.
-- **Prochaine étape** : [AI] lancer le chantier (`/drwil-start`).
+- **Dernier état** (2026-10-31) : lots 1 à 3 codés et commités sur `workstream/accueil-casque` ; captures écrites par
+  l'e2e dans `dist/e2e-captures/` (hors de la couche, ignoré par Git : le périmètre `app/e2e/*` ne couvre pas un
+  sous-dossier) et publiées par la CI. `QUA-014` adopté, prouvé par un test (scripts du kit : intention
+  `docs/intentions/controles-couleurs-kit.md`).
+- **Travail non commité** : la clôture (journal, retrait de l'intention couverte).
+- **Prochaine étape** : [AI] clôture puis PR ; [human] lot 4, juger le rendu sur les captures.
