@@ -41,22 +41,23 @@ Décidée le 2026-10-30 par le demandeur :
   - `app/src/xr/` : la session `immersive-ar` (`app/src/xr/session.ts`), le joystick droit (`app/src/xr/joystick.ts`, un cran de 0,1 km/h
     par poussée), l'image de marche en logique pure (`app/src/xr/frame.ts`) et l'assemblage accueil → session → boucle de rendu
     (`app/src/xr/experience.ts`, renderer injecté pour être testé avec une doublure).
-  - `app/src/city/` : le souk de Doha (chantier doha-souq-waqif, `docs/projects/journal.md`) : lecture de l'extrait
-    (`app/src/city/souq-data.ts`), bâtiments extrudés et fusionnés en un maillage (`app/src/city/buildings.ts`), scène,
+  - `app/src/city/` : les villes des itinéraires, le souk de Doha et la Vieille ville de Pune (chantiers doha-souq-waqif et pune-vieille-ville, `docs/projects/journal.md`) : lecture de l'extrait
+    (`app/src/city/souq-data.ts`), choix de la ville et de la boucle par identifiant d'itinéraire (`app/src/city/cities.ts`, lu par `app/src/xr/experience.ts`), bâtiments extrudés et fusionnés en un maillage (`app/src/city/buildings.ts`), scène,
     placement de la ville sur le parcours et opacité (`app/src/city/souq.ts` : scène sans fond pour le passthrough),
     mention OpenStreetMap dans la scène (`app/src/city/attribution.ts`) et son texte (`app/src/city/licence.ts`,
     contrat APP-003). `app/src/city/canvas-double.ts` est une doublure de test, importée par les seuls tests.
-  - `app/data/` : l'extrait OpenStreetMap du quartier, bâtiments et voies (`app/data/souq-waqif.json`, GeoJSON versionné, ©
-    contributeurs OpenStreetMap, ODbL) et le tracé de la boucle du souk (`app/data/souq-waqif-boucle.json`).
-  - `app/scripts/extract-souq.ts` : l'extraction Overpass qui produit l'extrait (`npm run extract`) ; elle n'est jamais
-    exécutée dans le casque, qui ne fait aucun appel réseau. Son test est `app/src/city/extract-souq.test.ts`.
+  - `app/data/` : l'extrait OpenStreetMap du quartier, bâtiments et voies (`app/data/souq-waqif.json`, `app/data/pune-vieille-ville.json`, GeoJSON versionnés, ©
+    contributeurs OpenStreetMap, ODbL) et le tracé de chaque boucle (`app/data/souq-waqif-boucle.json`, `app/data/pune-vieille-ville-boucle.json`).
+  - `app/scripts/extract-souq.ts` : l'extraction Overpass qui produit l'extrait (`npm run extract`), et `app/scripts/extract-pune.ts`
+    (`npm run extract:pune`, même fonction sur un autre cadre) ; elles ne sont jamais exécutées dans le casque, qui ne fait
+    aucun appel réseau. Leurs tests sont `app/src/city/extract-souq.test.ts` et `app/src/city/extract-pune.test.ts`.
   - `app/src/ui/` : l'écran d'accueil (`app/src/ui/home.ts` : vitesse, opacité, rappel de sécurité, bouton « Entrer en réalité
     mixte » ; `app/src/ui/route-choice.ts` : cartes d'itinéraire en boutons radio ; `app/src/ui/home.css` : thème sombre et
     couleurs ; `app/src/ui/contrast.ts` : mesure du contraste, contrat QUA-014), les illustrations des cartes
     (`app/src/ui/*.svg`, une par itinéraire, livrées par Vite avec l'application, sans réseau) et le panneau de marche sur la page (`app/src/ui/panel.ts` : vitesse, distance, temps, opacité de la ville).
   - `app/e2e/` : l'e2e des chemins critiques (`app/e2e/chemins-critiques.test.ts`, contrat QUA-020), Playwright sur
     Chromium avec un Quest 3 émulé par IWER, injecté par le test (jamais livré dans l'application). Il prend aussi les
-    captures de l'accueil dans `dist/e2e-captures/` (ignoré par Git), publiées par la CI sous le nom `captures-accueil`.
+    captures de l'accueil et de la marche à Pune dans `dist/e2e-captures/` (ignoré par Git), publiées par la CI sous le nom `captures-accueil`.
   - Configuration, chacune testée comme le code : `app/playwright.config.ts` (e2e contre Vite sur le port 5174, en
     HTTPS, résultats hors de la couche), `app/vite.config.ts` (Vite en HTTPS sur le réseau local, build
     dans le dossier dist/app de la racine, hors de la mesure de couverture, et

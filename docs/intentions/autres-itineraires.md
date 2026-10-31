@@ -23,3 +23,8 @@ extrait dans `app/src/xr/experience.ts`.
 - [decision] Ordre : Pune Vieille ville d'abord (itinéraire par défaut de `MISSION.md`) ?
 - [decision] Boucle ou aller simple pour chacun ?
 - [decision] La couverture OpenStreetMap des bâtiments de Pune (hauteurs, densité) suffit-elle ? À vérifier sur l'extrait.
+
+**Mis à jour le 2026-10-31** (chantier pune-vieille-ville) : `app/src/xr/experience.ts` lit enfin l'itinéraire choisi
+(`app/src/city/cities.ts` : identifiant → extrait et boucle). La Vieille ville de Pune est disponible ; restent **Pune FC
+Road** et **Doha Corniche**, à ajouter chacun dans `app/src/city/cities.ts` avec son extrait. Couverture OSM de Pune : 2 079 bâtiments, dont 2 041 sans
+hauteur (7 m par défaut) : le relief de la ville est donc plat, à juger sur un vrai Quest 3.

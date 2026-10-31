@@ -82,6 +82,20 @@ describe("expérience en réalité mixte", () => {
     expect(at("data-building-count")).toBeGreaterThan(100);
   });
 
+  it("APP-002: l'itinéraire choisi à l'accueil détermine la ville et le tracé de la marche", async () => {
+    const souk = setup();
+    await souk.enter();
+    const soukCount = Number(souk.panel()?.getAttribute("data-building-count"));
+    const pune = setup();
+    pune.root.querySelector<HTMLInputElement>("input[value='pune-vieille-ville']")?.click();
+    await pune.enter();
+    pune.frame(0, poseFrame(0));
+    pune.frame(10_000, poseFrame(0));
+    expect(pune.panel()?.getAttribute("data-building-count")).not.toBe(String(soukCount));
+    expect(Number(pune.panel()?.getAttribute("data-building-count"))).toBeGreaterThan(1000);
+    expect(Number(pune.panel()?.getAttribute("data-distance-m"))).toBeCloseTo(40 / 3.6);
+  });
+
   it("change la vitesse au joystick droit", async () => {
     const t = setup();
     await t.enter();

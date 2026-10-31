@@ -7,7 +7,7 @@ sur son environnement réel.
 
 - Une page WebXR en réalité mixte, ouverte dans le navigateur du Quest 3, sans rien installer.
 - 4 itinéraires proposés : Pune Vieille ville, Pune FC Road, Doha Corniche (du Musée d'art islamique vers West Bay)
-  et Doha Souq Waqif. Seul le souk de Doha se parcourt pour l'instant (par défaut) ; les autres sont marqués « Bientôt ».
+  et Doha Souq Waqif. Le souk de Doha (par défaut) et la Vieille ville de Pune se parcourent pour l'instant ; les autres sont marqués « Bientôt ».
 - La vitesse se règle à la manette pour correspondre à celle du tapis (pas de Bluetooth dans la v0.1).
 - Sécurité : la ville s'efface quand on baisse la tête, la zone du tapis reste toujours transparente et l'opacité de la
   ville est réglable.
@@ -16,9 +16,9 @@ Le détail de la v0.1 est dans `MISSION.md`.
 
 ## Démarrer
 
-Une première tranche est codée : accueil, entrée en réalité mixte, marche dans le souk de Doha (bâtiments
+Une première tranche est codée : accueil, entrée en réalité mixte, marche dans le souk de Doha ou la Vieille ville de Pune (bâtiments
 OpenStreetMap extrudés, boucle d'environ 1,5 km) à la vitesse réglée (joystick droit : ±0,1 km/h), ville qui s'efface
-tête baissée. Les autres itinéraires et la zone tapis arrivent chantier par chantier. Les données de la ville sont ©
+tête baissée. Les deux autres itinéraires et la zone tapis arrivent chantier par chantier. Les données de la ville sont ©
 contributeurs OpenStreetMap (licence ODbL). Avec Node.js 24 :
 
 ```bash
@@ -27,8 +27,9 @@ npm ci
 npm run dev    # serveur HTTPS sur le réseau local, à ouvrir depuis le navigateur du Quest 3
 npm test       # tests unitaires
 npm run extract # relance l'extraction du souk depuis OpenStreetMap (Overpass) et réécrit app/data/souq-waqif.json
+npm run extract:pune # de même pour la Vieille ville de Pune (app/data/pune-vieille-ville.json)
 npm run e2e    # chemins critiques de bout en bout, Quest 3 émulé (après npx playwright install chromium) ;
-               # les captures de l'accueil sont écrites dans dist/e2e-captures/
+               # les captures de l'accueil et de la marche à Pune sont écrites dans dist/e2e-captures/
 ```
 
 Installation complète et contrôles : `INSTALL.md`.

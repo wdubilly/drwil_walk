@@ -1,4 +1,4 @@
-// Extraction du quartier de Souq Waqif depuis OpenStreetMap (Overpass) : bâtiments et voies, en GeoJSON.
+// Extraction du quartier de Souq Waqif (et, via `extract`, de tout autre quartier : voir extract-pune.ts) depuis OpenStreetMap (Overpass) : bâtiments et voies, en GeoJSON.
 // Relançable : `npm run extract` réécrit data/souq-waqif.json. Le casque, lui, ne fait aucun appel réseau :
 // il ne lit que ce fichier versionné. Données © contributeurs OpenStreetMap, licence ODbL.
 export const BBOX = { south: 25.284, west: 51.529, north: 25.29, east: 51.538 };
@@ -76,11 +76,11 @@ export function toGeoJsonText(osm: OverpassResponse): string {
 }
 
 /** Interroge Overpass et rend le texte du fichier d'extrait. */
-export async function extract(fetchFn: typeof fetch): Promise<string> {
+export async function extract(fetchFn: typeof fetch, bbox = BBOX, userAgent = USER_AGENT): Promise<string> {
   const response = await fetchFn(OVERPASS_URL, {
     method: "POST",
-    headers: { "User-Agent": USER_AGENT, "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({ data: buildQuery() }),
+    headers: { "User-Agent": userAgent, "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ data: buildQuery(bbox) }),
   });
   if (!response.ok) throw new Error(`Overpass a répondu ${String(response.status)} : extraction impossible.`);
   return toGeoJsonText((await response.json()) as OverpassResponse);
