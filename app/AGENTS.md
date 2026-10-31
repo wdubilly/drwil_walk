@@ -33,6 +33,11 @@ session `immersive-ar`, rue simple, marche en ligne droite, joystick, fondu têt
   commitée, SEC-007), tuiles par `3d-tiles-renderer` dans `src/city/google-tiles.ts`, injectées dans `startExperience`
   (`ExperienceDeps.google`) pour que les tests n'appellent jamais Google ; l'e2e (`e2e/google-3d.test.ts`) sert un jeu de
   tuiles factice par `page.route`, avec une clé fictive donnée au serveur de test.
+- Itinéraire libre (chantier itineraire-libre) : clé `VITE_GOOGLE_ROUTES_API_KEY` (distincte de celle des tuiles ; Routes et Geocoding à activer sur elle) lue de `.env.local`
+  par `src/main.ts`, `fetch` injecté dans `startExperience` (`ExperienceDeps.routes`) pour que les tests n'appellent jamais Google ; le trajet se prépare à l'accueil
+  (`src/ui/free-trip.ts` : carte `src/ui/map-picker.ts` ou adresse, puis `src/city/free-route.ts` : chemin, bâtiments Overpass), la marche ne fait aucun appel. Carte sans
+  bibliothèque (Leaflet exige `window` à l'import et une vraie mise en page, ce que l'injection et les tests happy-dom évitent) ; l'e2e (`e2e/itineraire-libre.test.ts`) sert routage,
+  géocodage, Overpass et tuiles par `page.route`. Aucune adresse ni point conservé.
 
 ## Test pitfalls
 
@@ -56,8 +61,8 @@ session `immersive-ar`, rue simple, marche en ligne droite, joystick, fondu têt
 | ID | Subject | Reference file |
 |---|---|---|
 | APP-001 | Sécurité-visibilité : le réel reste visible (tête baissée, zone tapis) | `src/safety/visibility.ts` |
-| APP-002 | La marche suit le parcours GPS de l'itinéraire choisi, en boucle | `src/route/path.ts` |
-| APP-003 | Bâtiments de l'extrait OpenStreetMap et attribution | `src/city/licence.ts` |
+| APP-002 | La marche suit le parcours GPS de l'itinéraire choisi : en boucle pour les quatre figés, jusqu'à l'arrivée pour un trajet libre | `src/route/path.ts` |
+| APP-003 | Bâtiments (extrait OpenStreetMap figé, ou chargés pour un trajet libre) et attribution | `src/city/licence.ts` |
 
 ## Style guide and recipes
 

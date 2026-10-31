@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { toLocalMetres } from "./geo.ts";
+import { distanceM, toLocalMetres } from "./geo.ts";
 
 describe("GPS vers mètres locaux", () => {
   const origin = [51.5, 25.3] as const;
@@ -16,5 +16,12 @@ describe("GPS vers mètres locaux", () => {
     const east = toLocalMetres(origin, [51.501, 25.3]);
     expect(east.x).toBeCloseTo(100.5, 0);
     expect(east.z).toBeCloseTo(0);
+  });
+});
+
+describe("distance à vol d'oiseau", () => {
+  it("compte environ 111 m par millième de degré de latitude, et 0 entre deux points identiques", () => {
+    expect(distanceM([51.5, 25.3], [51.5, 25.301])).toBeCloseTo(111.2, 0);
+    expect(distanceM([51.5, 25.3], [51.5, 25.3])).toBe(0);
   });
 });

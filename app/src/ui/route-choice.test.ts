@@ -17,10 +17,10 @@ function setup(itineraries?: readonly Itinerary[]) {
 }
 
 describe("choix de l'itinéraire", () => {
-  it("montre quatre cartes avec une image, Doha Souq Waqif choisi par défaut", () => {
+  it("montre cinq cartes avec une image, Doha Souq Waqif choisi par défaut", () => {
     const { choice, cards, radio } = setup();
     expect(choice.element.querySelector("legend")?.textContent).toBe("Itinéraire");
-    expect(cards).toHaveLength(4);
+    expect(cards).toHaveLength(5);
     for (const card of cards) expect(card.querySelector("img")?.getAttribute("src")).toMatch(/\.svg$/);
     expect(radio("Doha Souq Waqif").checked).toBe(true);
     expect(choice.readId()).toBe(DEFAULT_ITINERARY_ID);
@@ -37,7 +37,7 @@ describe("choix de l'itinéraire", () => {
     expect(choice.readId()).toBe(DEFAULT_ITINERARY_ID);
   });
 
-  it("aucun itinéraire livré n'est « Bientôt » : les quatre cartes se choisissent", () => {
+  it("aucun itinéraire livré n'est « Bientôt » : les cinq cartes se choisissent", () => {
     const { cards, radio } = setup();
     expect(cards.filter((c) => c.textContent.includes(SOON_LABEL))).toEqual([]);
     expect(radio("Pune FC Road").disabled).toBe(false);

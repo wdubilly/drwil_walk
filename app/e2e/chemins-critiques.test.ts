@@ -1,6 +1,6 @@
 // e2e des chemins critiques (QUA-020), dans Chromium avec un Meta Quest 3 émulé (IWER) :
 // (1) accueil → réalité mixte immersive-ar ; (2) choix de l'itinéraire à l'accueil ; (3) marche à la vitesse réglée, joystick ±0,1 km/h ;
-// (4) APP-001 : tête baissée au-delà de 25°, la ville devient transparente ; (5) le souk de Doha ; (6) la Vieille ville de Pune ; (7) la Corniche de Doha ; (8) FC Road à Pune.
+// (4) APP-001 : tête baissée au-delà de 25°, la ville devient transparente ; (5) le souk de Doha ; (6) la Vieille ville de Pune ; (7) la Corniche de Doha ; (8) FC Road à Pune ; (10) l'itinéraire libre : e2e/itineraire-libre.test.ts.
 import { createRequire } from "node:module";
 import { expect, test, type Page } from "@playwright/test";
 
@@ -93,10 +93,10 @@ test("chemin 1 : de l'accueil à la réalité mixte, en session immersive-ar", a
 // publiées en pièce jointe par la CI.
 const CAPTURES = "../dist/e2e-captures";
 
-test("chemin 2 : l'accueil propose quatre itinéraires, le choisi est celui qui démarre", async ({ page }) => {
+test("chemin 2 : l'accueil propose quatre itinéraires figés et l'itinéraire libre, le choisi est celui qui démarre", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 1100 });
   await page.goto("/");
-  await expect(page.locator(".routes").getByRole("radio")).toHaveCount(4);
+  await expect(page.locator(".routes").getByRole("radio")).toHaveCount(5);
   await expect(page.getByRole("radio", { name: /Doha Souq Waqif/ })).toBeChecked();
   await page.screenshot({ path: `${CAPTURES}/accueil-defaut.png`, fullPage: true });
 

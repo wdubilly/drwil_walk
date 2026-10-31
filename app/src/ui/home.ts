@@ -2,6 +2,9 @@
 // choix de l'itinéraire, rappel de sécurité et bouton d'entrée en réalité mixte. Construit en DOM simple, sans framework.
 import { DEFAULT_SPEED_KMH, MAX_SPEED_KMH, MIN_SPEED_KMH, SPEED_STEP_KMH, clampSpeedKmh } from "../route/speed.ts";
 import { GOOGLE_ATTRIBUTION, OSM_ATTRIBUTION } from "../city/licence.ts";
+import type { TripPlanner, PlannedTrip } from "../city/free-route.ts";
+import { FREE_ITINERARY_ID } from "../route/itineraries.ts";
+import { renderFreeTrip } from "./free-trip.ts";
 import { renderRenderChoice, type Rendering } from "./render-choice.ts";
 import { renderRouteChoice } from "./route-choice.ts";
 import {
@@ -26,6 +29,8 @@ export interface HomeView {
   readOpacityPct(): number;
   /** L'itinéraire choisi (jamais un itinéraire « bientôt »). */
   readRouteId(): string;
+  /** Le trajet libre prêt (chemin calculé, ville chargée), ou rien tant que l'accueil ne l'a pas préparé. */
+  readTrip(): PlannedTrip | null;
   /** Le rendu choisi : OpenStreetMap par défaut, ou Google 3D. */
   readRendering: () => Rendering;
   /** Une raison qui reste lisible pendant la marche (ex. repli sur OpenStreetMap) ; vide l'efface. */
@@ -53,8 +58,13 @@ function numberInput(doc: Document, type: string, min: number, max: number, step
   return input;
 }
 
-export function renderHome(doc: Document, root: HTMLElement): HomeView {
+export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanner): HomeView {
   const routes = renderRouteChoice(doc);
+  const freeTrip = renderFreeTrip(doc, planner);
+  const syncFree = (): void => {
+    freeTrip.setVisible(routes.readId() === FREE_ITINERARY_ID);
+  };
+  routes.onChange(syncFree);
   const rendering = renderRenderChoice(doc);
   const title = doc.createElement("h1");
   title.textContent = "drwil_walk";
@@ -99,6 +109,7 @@ export function renderHome(doc: Document, root: HTMLElement): HomeView {
   root.replaceChildren(
     title,
     routes.element,
+    freeTrip.element,
     rendering.element,
     reminder,
     field(doc, "Vitesse de départ (km/h)", speed),
@@ -113,6 +124,7 @@ export function renderHome(doc: Document, root: HTMLElement): HomeView {
     readSpeedKmh: () => clampSpeedKmh(Number(speed.value.replace(",", "."))),
     readOpacityPct: () => clampGlobalOpacityPct(Number(opacity.value)),
     readRouteId: () => routes.readId(),
+    readTrip: () => freeTrip.readTrip(),
     readRendering: rendering.readRendering,
     showNotice: (text) => {
       notice.textContent = text;

@@ -22,6 +22,8 @@ quelconque. `MISSION.md` prévoyait des itinéraires configurables (un fichier d
 - Départ et arrivée : deux touches sur une carte à l'accueil.
 - Longueur maximale : 5 km.
 
+- Recherche d'adresse en plus de la carte touchée (2026-10-31) : tranchée, faite dans le chantier (API Google Geocoding, même clé que Routes).
+
 ## Questions à trancher
 
-- [decision] Recherche d'adresse en plus de la carte touchée, ou plus tard ?
+*(aucune : la recherche d'adresse est tranchée ; l'essai réel est dans `docs/intentions/essai-casque-itineraire-libre.md`)*

@@ -8,7 +8,7 @@ describe("panneau de marche", () => {
     const root = doc.createElement("main");
     const panel = renderWalkPanel(doc, root);
     const info = { speedKmh: 4.1, distanceM: 12.34, timeS: 65, cityOpacity: 0.5, position: { x: 3, z: -4 }, buildingCount: 253,
-      rendering: "google" as const, tileCount: 7, attribution: "© contributeurs OpenStreetMap · Google" };
+      rendering: "google" as const, tileCount: 7, attribution: "© contributeurs OpenStreetMap · Google", arrived: false };
     panel.update(info);
     panel.update(info);
     const section = root.querySelector("[aria-label='Marche']");
@@ -26,6 +26,11 @@ describe("panneau de marche", () => {
     expect(section?.getAttribute("data-rendering")).toBe("google");
     expect(section?.getAttribute("data-tile-count")).toBe("7");
     expect(section?.querySelector(".attribution")?.textContent).toBe("© contributeurs OpenStreetMap · Google");
+    expect(section?.querySelector<HTMLElement>(".arrival")?.hidden).toBe(true);
+    expect(section?.getAttribute("data-arrived")).toBe("false");
+    panel.update({ ...info, arrived: true });
+    expect(section?.querySelector<HTMLElement>(".arrival")?.hidden).toBe(false);
+    expect(section?.querySelector(".arrival")?.textContent).toContain("Arrivée");
     panel.remove();
     expect(root.querySelector("[aria-label='Marche']")).toBeNull();
   });

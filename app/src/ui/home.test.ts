@@ -1,20 +1,28 @@
 import { Window } from "happy-dom";
 import { describe, expect, it, vi } from "vitest";
+import type { TripPlanner } from "../city/free-route.ts";
 import { ENTER_LABEL, renderHome } from "./home.ts";
+
+export const planner: TripPlanner = {
+  unavailable: "Itinéraire libre indisponible : aucune clé Routes",
+  find: () => Promise.reject(new Error("jamais")),
+  describe: () => Promise.reject(new Error("jamais")),
+  plan: () => Promise.reject(new Error("jamais")),
+};
 
 function setup() {
   const window = new Window();
   const doc = window.document as unknown as Document;
   const root = doc.createElement("main");
   doc.body.append(root);
-  const view = renderHome(doc, root);
+  const view = renderHome(doc, root, planner);
   const input = (label: string) => {
     const found = [...root.querySelectorAll("label")].find((l) => l.textContent.includes(label));
     const el = found?.querySelector("input");
     if (!el) throw new Error(`champ « ${label} » introuvable`);
     return el;
   };
-  const button = root.querySelector("button");
+  const button = root.querySelector<HTMLButtonElement>("button.enter");
   if (!button) throw new Error("bouton introuvable");
   return { root, view, input, button };
 }
@@ -33,6 +41,18 @@ describe("écran d'accueil", () => {
     view.onEnter(handler);
     button.click();
     expect(handler).toHaveReturnedWith("doha-souq-waqif");
+  });
+
+  it("QUA-020: la carte de l'itinéraire libre n'apparaît qu'avec la carte « Itinéraire libre »", () => {
+    const { root, view } = setup();
+    const section = root.querySelector<HTMLElement>(".free-trip");
+    expect(section?.hidden).toBe(true);
+    root.querySelector<HTMLInputElement>("input[value='libre']")?.click();
+    expect(section?.hidden).toBe(false);
+    expect(section?.textContent).toContain("aucune clé Routes");
+    expect(view.readTrip()).toBeNull();
+    root.querySelector<HTMLInputElement>("input[value='pune-fc-road']")?.click();
+    expect(section?.hidden).toBe(true);
   });
 
   it("APP-003: montre la mention des contributeurs OpenStreetMap", () => {

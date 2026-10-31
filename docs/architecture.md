@@ -38,6 +38,11 @@ Décidée le 2026-10-30 par le demandeur :
     (`app/src/route/geo.ts` : GPS vers mètres locaux ; `app/src/route/path.ts` : position et direction à une distance,
     boucle qui reprend au départ, contrat APP-002) et les quatre itinéraires de l'accueil
     (`app/src/route/itineraries.ts` : données, dont l'indicateur « disponible »).
+  - Itinéraire libre (chantier itineraire-libre) : `app/src/route/routes-api.ts` (chemin à pied par l'API Google Routes, mode piéton, clé `VITE_GOOGLE_ROUTES_API_KEY`, 5 km au plus),
+    `app/src/route/geocoding.ts` (recherche d'adresse et géocodage inverse, même clé), `app/src/route/reject-double.ts` (doublure de test),
+    `app/src/city/free-route.ts` (bâtiments OpenStreetMap proches du tracé demandés à Overpass, préparation du trajet, contrats APP-002 et APP-003),
+    `app/src/ui/free-trip.ts` (départ et arrivée : carte et adresses qui se remplissent mutuellement), `app/src/ui/map-picker.ts` et `app/src/ui/map-math.ts`
+    (carte légère à tuiles OpenStreetMap, sans bibliothèque), illustration `app/src/ui/libre.svg` ; un tracé non bouclé (`Path.loop` faux) s'arrête à l'arrivée (`app/src/xr/frame.ts`).
   - `app/src/safety/` : la sécurité-visibilité (`app/src/safety/visibility.ts`, contrat APP-001) : inclinaison de la tête lue dans la
     pose WebXR, fondu de la ville au-delà de 25°, opacité globale bornée 30 à 100 %. Zone tapis et vignette : à écrire.
   - `app/src/xr/` : la session `immersive-ar` (`app/src/xr/session.ts`), le joystick droit (`app/src/xr/joystick.ts`, un cran de 0,1 km/h
@@ -58,7 +63,7 @@ Décidée le 2026-10-30 par le demandeur :
     mixte » ; `app/src/ui/route-choice.ts` : cartes d'itinéraire en boutons radio ; `app/src/ui/render-choice.ts` : rendu OpenStreetMap ou Google 3D ; `app/src/ui/home.css` : thème sombre et
     couleurs ; `app/src/ui/contrast.ts` : mesure du contraste, contrat QUA-014), les illustrations des cartes
     (`app/src/ui/*.svg`, une par itinéraire, livrées par Vite avec l'application, sans réseau) et le panneau de marche sur la page (`app/src/ui/panel.ts` : vitesse, distance, temps, opacité de la ville).
-  - `app/e2e/` : l'e2e des chemins critiques (`app/e2e/chemins-critiques.test.ts` et `app/e2e/google-3d.test.ts` pour le rendu Google, servi par des tuiles factices sans appel à Google, contrat QUA-020), Playwright sur
+  - `app/e2e/` : l'e2e des chemins critiques (`app/e2e/chemins-critiques.test.ts`, `app/e2e/itineraire-libre.test.ts` pour l'itinéraire libre, servi par des services factices, et `app/e2e/google-3d.test.ts` pour le rendu Google, servi par des tuiles factices sans appel à Google, contrat QUA-020), Playwright sur
     Chromium avec un Quest 3 émulé par IWER, injecté par le test (jamais livré dans l'application). Il prend aussi les
     captures de l'accueil et de la marche à Pune, sur la Corniche et sur FC Road dans `dist/e2e-captures/` (ignoré par Git), publiées par la CI sous le nom `captures-accueil`.
   - Configuration, chacune testée comme le code : `app/playwright.config.ts` (e2e contre Vite sur le port 5174, en

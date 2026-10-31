@@ -23,3 +23,9 @@ export function formatDurationS(timeS: number): string {
   const seconds = String(total % 60).padStart(2, "0");
   return `${String(minutes)} min ${seconds} s`;
 }
+
+/** Dit à l'arrivée d'un trajet libre (page et casque) : la marche s'arrête, le tapis reste à arrêter à la main. */
+export const ARRIVAL_TEXT = "Arrivée : la marche est terminée. Arrêtez le tapis.";
+
+/** Affichage français d'une longueur de trajet : « 2,3 km ». */
+export const formatKm = (distanceM: number): string => `${(distanceM / 1000).toFixed(1).replace(".", ",")} km`;

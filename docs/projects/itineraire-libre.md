@@ -16,6 +16,10 @@ files:
   - app/src/main.ts
   - app/src/main.test.ts
   - app/e2e/*
+  - app/playwright.config.ts
+  - app/playwright.config.test.ts
+  - .env.example
+  - INSTALL.md
   - app/package.json
   - app/package-lock.json
   - app/AGENTS.md
@@ -34,7 +38,10 @@ chemin à pied et charge la ville autour.
 
 ## Critères d'acceptation
 
-- L'accueil propose « Itinéraire libre » en plus des quatre cartes ; le demandeur y choisit un départ et une arrivée — `QUA-020`
+- L'accueil propose « Itinéraire libre » en plus des quatre cartes ; le demandeur y choisit un départ et une arrivée en
+  touchant une carte ou en cherchant un lieu ou une adresse (les deux modes se remplissent mutuellement) — `QUA-020`
+- Une adresse introuvable, une saisie vide, une clé absente ou refusée, un trajet de plus de 5 km : la raison est dite à
+  l'écran, les quatre itinéraires figés restent utilisables — `QUA-002`
 - Le chemin à pied entre les deux points est calculé par un service de routage, puis la marche le suit à la vitesse
   réglée ; en cas d'échec du calcul, une raison est dite à l'écran (jamais silencieux) — `QUA-002`
 - Un trajet libre ne boucle pas : à l'arrivée la marche s'arrête et le dit — `APP-002`
@@ -67,12 +74,24 @@ chemin à pied et charge la ville autour.
 - 2026-10-31, hypothèses de cadrage de l'agent, à corriger au lancement : la carte de l'accueil est une carte légère
   (tuiles OpenStreetMap, avec leur attribution) dont la bibliothèque est choisie au lot 1 ; le testeur utilise les
   clés de `.env.local` (jamais dans le dépôt), `.env.example` n'a que des valeurs fictives (`SEC-007`).
+- 2026-10-31, décision humaine du demandeur : recherche d'adresse en plus de la carte touchée (hypothèse de l'agent :
+  API Google Geocoding avec la même clé `VITE_GOOGLE_ROUTES_API_KEY`, sur laquelle Routes et Geocoding doivent tous deux être
+  activés et autorisés ; pas de troisième variable). Le premier résultat est retenu et affiché ; une touche sur la carte inscrit
+  l'adresse trouvée (géocodage inverse, à défaut les coordonnées arrondies).
+- 2026-10-31, choix de l'agent au lot 1 : carte de l'accueil sans bibliothèque (tuiles OpenStreetMap, zoom et déplacement par
+  boutons, ~150 lignes), car Leaflet lit `window` dès l'import et suppose une vraie mise en page, ce qui contredit la
+  conception par injection testée sous happy-dom ; aucune dépendance ajoutée (SEC-006, SEC-012 inchangés). Ville d'un trajet
+  libre : bâtiments OpenStreetMap proches du tracé (bande de 150 m, Overpass) chargés à l'accueil quand le trajet se prépare,
+  jamais pendant la marche ; si Overpass échoue, la marche reste possible sans bâtiments et le dit.
+- Le périmètre (bloc scope) s'étend à `app/playwright.config.ts` et son test (clé Routes fictive des e2e), `.env.example` et
+  `INSTALL.md` (documentation de la clé), à la demande de la coordination.
 - Contrats concernés : `APP-001`, `APP-002`, `APP-003`, `QUA-002`, `QUA-004`, `QUA-020`.
 
 ## Contrats modifiés
 
 - `APP-002` — un itinéraire libre ne boucle pas : la marche s'arrête à l'arrivée ; les quatre itinéraires figés gardent leur boucle.
 - `APP-003` — la ville d'un trajet libre ne vient pas d'un extrait versionné, mais du rendu Google ou d'un chargement OpenStreetMap.
+- `QUA-020` — le chemin 10 (itinéraire libre, services factices) s'ajoute aux chemins critiques ; le chemin 2 compte cinq cartes.
 
 ## 5. Points à trancher
 
@@ -89,6 +108,7 @@ chemin à pied et charge la ville autour.
 
 ## 7. Reprise
 
-- **Dernier état** (2026-10-31) : cadrage seul, aucun code.
-- **Travail non commité** : aucun.
-- **Prochaine étape** : [AI] lot 1 (`google-3d-tiles` est livré).
+- **Dernier état** (2026-10-31) : lots 1 à 3 codés (carte, adresses, routage, marche jusqu'à l'arrivée, e2e, docs), vérifiés sans
+  clé avec des services factices. Lot 4 (essai réel, vraie clé, Quest 3) : humain, intention `docs/intentions/essai-casque-itineraire-libre.md`.
+- **Travail non commité** : voir `git status`.
+- **Prochaine étape** : [human] lot 4.

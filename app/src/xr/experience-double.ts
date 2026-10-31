@@ -19,7 +19,7 @@ export function poseFrame(deg: number | null): XRFrame {
 export const KEY = "cle-fictive-pour-les-tests";
 
 export function setup(
-  options: { supported?: boolean; space?: boolean; xr?: boolean; sessionFails?: boolean; apiKey?: string | undefined } = {},
+  options: { supported?: boolean; space?: boolean; xr?: boolean; sessionFails?: boolean; apiKey?: string | undefined; routesKey?: string | undefined; fetch?: typeof fetch } = {},
 ) {
   const doc = withCanvasContext(new Window().document as unknown as Document);
   const root = doc.createElement("main");
@@ -62,11 +62,12 @@ export function setup(
     xr: options.xr === false ? undefined : xr,
     Renderer,
     google: { apiKey, create },
+    routes: { apiKey: "routesKey" in options ? options.routesKey : KEY, fetch: options.fetch ?? (() => Promise.reject(new Error("réseau interdit aux tests"))) },
   });
   const status = () => root.querySelector("[role='status']")?.textContent;
   const panel = () => root.querySelector("[aria-label='Marche']");
   const enter = async () => {
-    root.querySelector("button")?.click();
+    root.querySelector<HTMLButtonElement>("button.enter")?.click();
     await vi.waitFor(() => {
       expect(status()).not.toBe("Ouverture de la réalité mixte…");
     });

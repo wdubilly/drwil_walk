@@ -1,6 +1,7 @@
 // Point d'entrée chargé par index.html : monte l'accueil et branche le vrai renderer three.js.
 import { WebGLRenderer } from "three";
 import { createGoogleTiles, readApiKey } from "./city/google-tiles.ts";
+import { readRoutesKey } from "./route/routes-api.ts";
 import { startExperience } from "./xr/experience.ts";
 import type { XrSystemLike } from "./xr/session.ts";
 
@@ -14,6 +15,7 @@ export function mount(doc: Document, xr: XrSystemLike | undefined, env: Record<s
     xr,
     Renderer: WebGLRenderer,
     google: { apiKey: readApiKey(env), create: createGoogleTiles },
+    routes: { apiKey: readRoutesKey(env), fetch: fetch.bind(globalThis) },
   });
 }
 
