@@ -80,16 +80,25 @@ L'opacité de la ville se règle à l'accueil (30 à 100 %) : baissez-la si vous
 ## 5. Marcher
 
 1. Sur l'accueil, choisissez l'**itinéraire** en cliquant sur une carte (à la manette, pointez-la). Disponibles :
-   Doha Souq Waqif (par défaut), Pune Vieille ville, Pune FC Road, Doha Corniche.
+   Doha Souq Waqif (par défaut), Pune Vieille ville, Pune FC Road, Doha Corniche, et **Itinéraire libre** (voir ci-dessous).
    Choisissez aussi le **rendu de la ville** : « OpenStreetMap » (par défaut, sans réseau) ou « Google 3D »
    (photoréaliste, demande une clé Google dans `.env.local` (dans `app/`), voir `INSTALL.md`). Sans clé, ou si les tuiles ne se
    chargent pas, la marche se fait en OpenStreetMap et la raison s'affiche sur l'accueil, sous le bouton.
+   **Itinéraire libre** (demande une clé Google « Routes » dans `.env.local`, voir `INSTALL.md`) : une carte apparaît.
+   Posez le **départ** puis l'**arrivée** en touchant la carte (boutons « + », « − » et flèches pour zoomer et la déplacer),
+   ou tapez un lieu ou une adresse dans les champs « Départ » et « Arrivée » puis « Chercher » : les deux modes se
+   remplissent mutuellement (l'adresse trouvée s'inscrit dans le champ, et le point se place sur la carte ; si plusieurs
+   lieux correspondent, le premier est retenu et affiché). Un troisième toucher recommence ; « Effacer » vide tout. Appuyez sur
+   « Calculer le trajet » : le chemin à pied et la ville autour sont chargés, et la longueur s'affiche (5 km au plus, sinon
+   un message le dit). Sans clé, ou si le service refuse, la raison s'affiche et les quatre autres itinéraires restent utilisables.
+   Aucun lieu ni adresse n'est enregistré : ils ne partent qu'aux services de Google (adresses, chemin).
 2. Réglez la **vitesse de départ** (1 à 8 km/h, par pas de 0,1) et l'**opacité de la ville**.
 3. Appuyez sur « Entrer en réalité mixte » et acceptez la demande d'autorisation du navigateur. Si le bouton est
    grisé ou affiche un message, voir la section 6.
 4. La ville défile le long de l'itinéraire à la vitesse réglée. Lancez ou ajustez le tapis à la même vitesse.
 5. Pendant la marche, **joystick droit haut / bas** : +0,1 / −0,1 km/h. Un panneau (vitesse, distance, temps)
-   s'affiche sur la page et dans la scène. À la fin de la boucle, la marche reprend au départ.
+   s'affiche sur la page et dans la scène. À la fin d'une boucle, la marche reprend au départ ; sur un itinéraire libre,
+   elle s'arrête à l'arrivée et le dit (page et casque) : arrêtez alors le tapis.
 
 Les autres commandes de manette décrites dans `docs/features.md` (pause, recalibrage, panneau d'infos) sont à venir.
 Les données de la ville sont © contributeurs OpenStreetMap (et © Google en rendu Google 3D).

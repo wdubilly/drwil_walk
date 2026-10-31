@@ -15,6 +15,8 @@ export interface WalkState {
   joystick: JoystickState;
   /** Opacité de la ville à appliquer (0 à 1, APP-001). */
   cityOpacity: number;
+  /** Vrai à l'arrivée d'un trajet libre : la marche est arrêtée (APP-002). */
+  arrived: boolean;
 }
 
 export interface FrameInput {
@@ -24,6 +26,8 @@ export interface FrameInput {
   /** Inclinaison de la tête sous l'horizontale, `null` si la pose n'est pas connue. */
   pitchDownDeg: number | null;
   globalOpacityPct: number;
+  /** Longueur d'un trajet libre : la marche s'y arrête. Absente pour une boucle, qui reprend au départ. */
+  endM?: number | undefined;
 }
 
 export function initialWalkState(speedKmh: number, globalOpacityPct: number): WalkState {
@@ -34,6 +38,7 @@ export function initialWalkState(speedKmh: number, globalOpacityPct: number): Wa
     lastTimeMs: null,
     joystick: JOYSTICK_RELEASED,
     cityOpacity: cityOpacity(0, globalOpacityPct),
+    arrived: false,
   };
 }
 
@@ -41,10 +46,14 @@ export function nextWalkState(state: WalkState, input: FrameInput): WalkState {
   const dtS = state.lastTimeMs === null ? 0 : Math.max(0, (input.timeMs - state.lastTimeMs) / 1000);
   const { steps, state: joystick } = readSpeedSteps(input.axisY, state.joystick);
   const speedKmh = stepSpeedKmh(state.speedKmh, steps);
+  // Arrivé, on ne bouge plus : la distance reste celle de l'arrivée et le temps ne court plus.
+  const moved = state.arrived ? state.distanceM : advanceDistanceM(state.distanceM, speedKmh, dtS);
+  const arrived = input.endM !== undefined && moved >= input.endM;
   return {
     speedKmh,
-    distanceM: advanceDistanceM(state.distanceM, speedKmh, dtS),
-    timeS: state.timeS + dtS,
+    distanceM: arrived ? (input.endM as number) : moved,
+    timeS: state.arrived ? state.timeS : state.timeS + dtS,
+    arrived,
     lastTimeMs: input.timeMs,
     joystick,
     // Pose inconnue (suivi perdu) : on montre le réel, la ville disparaît (APP-001).

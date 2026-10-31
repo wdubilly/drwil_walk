@@ -7,7 +7,7 @@ reste est marqué « à venir ».
 
 ## Écran d'accueil
 
-Ouvert dans le navigateur du Quest 3 : choix de l'itinéraire (Doha Souq Waqif par défaut ; Pune Vieille ville, Pune FC Road et Doha Corniche disponibles), du rendu de la ville (OpenStreetMap par défaut, ou Google 3D photoréaliste avec une clé) et de la vitesse de départ, ville aux voies dessinées sur le sol et aux bâtiments de plusieurs tons, palette propre à chaque itinéraire (à juger au casque), rappel de sécurité (clé de sécurité du tapis attachée, main près
+Ouvert dans le navigateur du Quest 3 : choix de l'itinéraire (Doha Souq Waqif par défaut ; Pune Vieille ville, Pune FC Road et Doha Corniche disponibles ; « Itinéraire libre » : voir la section dédiée), du rendu de la ville (OpenStreetMap par défaut, ou Google 3D photoréaliste avec une clé) et de la vitesse de départ, ville aux voies dessinées sur le sol et aux bâtiments de plusieurs tons, palette propre à chaque itinéraire (à juger au casque), rappel de sécurité (clé de sécurité du tapis attachée, main près
 de la rampe), bouton « Entrer en réalité mixte ». Une seule personne utilise l'application : pas de compte ni de rôle.
 
 Codé : accueil sombre à grandes cibles (48 px au moins, contraste prouvé par QUA-014, contraste du texte et de son
@@ -16,6 +16,21 @@ manette ; un itinéraire sans ville dans le dépôt serait marqué « Bientôt �
 vitesse de départ (1 à 8 km/h, défaut 4,0), opacité de la ville (30 à 100 %), rappel de sécurité, mention « © contributeurs OpenStreetMap » (suivie de « Google » quand ce rendu est choisi), bouton d'entrée ; rendu OpenStreetMap par défaut, Google 3D en option : sans clé, ou si les tuiles ne se chargent pas, la marche se fait en OpenStreetMap et la raison s'affiche sur l'accueil ; un
 échec (navigateur sans WebXR, réalité mixte non prise en charge) s'affiche sur la page. Les itinéraires qui démarrent sont le souk
 de Doha, la Vieille ville de Pune, la Corniche de Doha et FC Road à Pune ; le choisi est inscrit sur la page (`data-route`) ; les autres villes : `docs/intentions/autres-itineraires.md`.
+
+## Itinéraire libre
+
+Choisir son propre trajet : à l'accueil, la carte « Itinéraire libre » ouvre une carte légère (tuiles OpenStreetMap avec leur mention,
+zoom et déplacement par boutons). Le départ et l'arrivée se posent en touchant la carte ou en cherchant un lieu ou une adresse (API Google
+Geocoding) ; les deux modes se remplissent mutuellement (géocodage inverse pour une touche, point placé pour une adresse), le premier résultat
+d'une adresse est retenu et affiché. « Calculer le trajet » demande le chemin à pied à l'API Google Routes (mode piéton), puis charge les
+bâtiments OpenStreetMap proches du tracé ; la marche suit ce tracé à la vitesse réglée et **s'arrête à l'arrivée en le disant** (page et casque), sans
+boucle (contrat APP-002). La ville vient du rendu Google 3D si on l'a choisi, ou des bâtiments OpenStreetMap chargés pour le trajet
+(contrat APP-003). Aller simple, 5 km au plus. Clé : `VITE_GOOGLE_ROUTES_API_KEY` (Routes et Geocoding à activer, `INSTALL.md`) ; sans
+elle, la raison est dite et les quatre itinéraires figés restent utilisables. Aucun point ni adresse n'est conservé.
+
+Codé et vérifié dans Chromium avec un Quest 3 émulé, services factices (jamais d'appel à Google). Limites : jamais essayé avec une vraie clé ni sur un
+vrai Quest 3 (cadence avec des milliers de bâtiments en bande de 150 m, couverture de Geocoding et de Routes dans les rues de Pune et de Doha) ;
+`docs/intentions/essai-casque-itineraire-libre.md`.
 
 ## Marche dans la ville
 

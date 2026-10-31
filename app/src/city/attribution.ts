@@ -14,7 +14,11 @@ export interface AttributionLabel {
 }
 
 /** Panneau posé devant l'utilisateur, un peu sous l'horizon, hors de la zone du tapis. */
-export function createAttributionLabel(doc: Document, text: string = OSM_ATTRIBUTION): AttributionLabel {
+export function createAttributionLabel(
+  doc: Document,
+  text: string = OSM_ATTRIBUTION,
+  { name = "attribution", y = 1.0 }: { name?: string; y?: number } = {},
+): AttributionLabel {
   const canvas = doc.createElement("canvas");
   canvas.width = WIDTH_PX;
   canvas.height = HEIGHT_PX;
@@ -34,7 +38,7 @@ export function createAttributionLabel(doc: Document, text: string = OSM_ATTRIBU
   };
   draw(text);
   const mesh = new Mesh(new PlaneGeometry(1.2, 0.15), new MeshBasicMaterial({ map: texture }));
-  mesh.name = "attribution";
-  mesh.position.set(0, 1.0, -2.5);
+  mesh.name = name;
+  mesh.position.set(0, y, -2.5);
   return { mesh, setText: draw };
 }

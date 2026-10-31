@@ -1,9 +1,15 @@
 // Assemblage de l'expérience : accueil → session immersive-ar → marche sur l'itinéraire choisi.
 // Le rendu three.js est injecté (classe du renderer) : les tests le remplacent par une doublure.
 import type { WebGLRenderer } from "three";
-import { createSouqScene, placeOnRoute, setCityOpacity } from "../city/souq.ts";
+import { createAttributionLabel } from "../city/attribution.ts";
 import { cityFor } from "../city/cities.ts";
+import { createTripPlanner } from "../city/free-route.ts";
+import { createSouqScene, placeOnRoute, setCityOpacity } from "../city/souq.ts";
+import type { Souq } from "../city/souq-data.ts";
+import { FREE_ITINERARY_ID } from "../route/itineraries.ts";
 import { pointAt } from "../route/path.ts";
+import type { RoutesConfig } from "../route/routes-api.ts";
+import { ARRIVAL_TEXT } from "../route/walk.ts";
 import { headPitchDownDeg } from "../safety/visibility.ts";
 import { renderHome, type HomeView } from "../ui/home.ts";
 import { chooseRendering, type GoogleConfig } from "./google-mode.ts";
@@ -22,6 +28,8 @@ export interface ExperienceDeps {
   Renderer: RendererClass;
   /** La clé Google et la fabrique de tuiles (injectée : les tests ne rappellent jamais Google). */
   google: GoogleConfig;
+  /** La clé Routes et le réseau pour l'itinéraire libre (injectés : les tests n'appellent jamais Google). */
+  routes: RoutesConfig;
 }
 
 export const ACTIVE_STATUS = `Réalité mixte active (${SESSION_MODE})`;
@@ -29,19 +37,31 @@ export const ENDED_STATUS = "Session terminée : vous pouvez y revenir.";
 
 /** Monte l'accueil ; le bouton ouvre la session et lance la marche. */
 export function startExperience(deps: ExperienceDeps): HomeView {
-  const home = renderHome(deps.document, deps.root);
+  const planner = createTripPlanner(deps.routes);
+  const home = renderHome(deps.document, deps.root, planner);
   home.onEnter(() => {
     void enter(deps, home);
   });
   return home;
 }
 
+/** La ville de l'itinéraire choisi ; un trajet libre non préparé est une erreur dite, pas une marche dans le vide (QUA-002). */
+function chosenCity(home: HomeView): Souq {
+  const id = home.readRouteId();
+  if (id !== FREE_ITINERARY_ID) return cityFor(id);
+  const trip = home.readTrip();
+  if (!trip) throw new Error("Itinéraire libre : posez un départ et une arrivée, puis calculez le trajet.");
+  return trip.souq;
+}
+
 async function enter(deps: ExperienceDeps, home: HomeView): Promise<void> {
   home.setEntering(true);
   home.showStatus("Ouverture de la réalité mixte…");
   try {
+    // La ville d'abord : sans elle, aucune session n'est ouverte pour rien.
+    const souq = chosenCity(home);
     const session = await requestMixedRealitySession(deps.xr);
-    await walk(deps, home, session);
+    await walk(deps, home, session, souq);
   } catch (error) {
     // L'échec se lit sur la page (QUA-002) et le bouton redevient utilisable.
     home.setEntering(false);
@@ -49,11 +69,14 @@ async function enter(deps: ExperienceDeps, home: HomeView): Promise<void> {
   }
 }
 
-async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession): Promise<void> {
+async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession, souq: Souq): Promise<void> {
   // La scène d'abord : si elle ne se construit pas, aucun renderer ni canevas n'est laissé derrière.
-  const souq = cityFor(home.readRouteId());
   const souqScene = createSouqScene(deps.document, souq);
   const { scene, camera, world, city, buildingCount } = souqScene;
+  // Le message d'arrivée d'un trajet libre, dans le casque : il s'efface avec la ville (APP-001).
+  const arrival = createAttributionLabel(deps.document, ARRIVAL_TEXT, { name: "arrivee", y: 1.4 });
+  arrival.mesh.visible = false;
+  world.add(arrival.mesh);
   home.showNotice("");
   const mode = chooseRendering({
     wanted: home.readRendering(),
@@ -81,7 +104,10 @@ async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession): P
       axisY: rightThumbstickY(session.inputSources),
       pitchDownDeg: pose ? headPitchDownDeg(pose.transform.orientation) : null,
       globalOpacityPct,
+      // Un trajet libre s'arrête à l'arrivée ; une boucle reprend au départ (APP-002).
+      endM: souq.route.loop ? undefined : souq.route.lengthM,
     });
+    arrival.mesh.visible = state.arrived;
     placeOnRoute(city, souq.route, state.distanceM);
     setCityOpacity(world, state.cityOpacity);
     mode.update(camera, renderer.xr.getCamera());

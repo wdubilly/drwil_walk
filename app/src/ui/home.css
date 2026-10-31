@@ -210,3 +210,73 @@ input:focus-visible {
   outline: 4px solid var(--focus);
   outline-offset: 2px;
 }
+
+/* Itinéraire libre : carte, champs d'adresse et boutons, aux mêmes grandes cibles que le reste de l'accueil. */
+.free-trip {
+  margin: 0 0 1.5rem;
+  padding: 1rem;
+  background: var(--surface);
+  border: 3px solid var(--bordure);
+  border-radius: 1rem;
+}
+
+.free-trip input[type="text"] {
+  flex: 1;
+  min-height: 3rem;
+  padding: 0 0.75rem;
+  background: var(--fond);
+  color: var(--texte);
+  border: 2px solid var(--bordure);
+  border-radius: 0.5rem;
+  font-size: 1.25rem;
+}
+
+.free-trip button {
+  min-height: 3rem;
+  min-width: 3rem;
+  margin: 0 0.5rem 0.5rem 0;
+  padding: 0 1rem;
+  background: var(--fond);
+  color: var(--texte);
+  border: 2px solid var(--bordure);
+  border-radius: 0.5rem;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.map-view {
+  position: relative;
+  width: 640px;
+  height: 400px;
+  overflow: hidden;
+  background: var(--fond);
+  cursor: crosshair;
+}
+
+.map-view img {
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.marker {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  margin: -1rem 0 0 -1rem;
+  background: var(--accent);
+  color: var(--sur-accent);
+  border-radius: 50%;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.map-controls {
+  margin: 0.5rem 0;
+}
+
+.free-message {
+  color: var(--texte);
+  font-weight: 600;
+}

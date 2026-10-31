@@ -33,7 +33,7 @@ removes it when fully covered.
 | `docs/intentions/mise-a-jour-drwil.md` | Mettre drwil à jour pour clore les trois chantiers de garantie |
 | `docs/intentions/relecture-guide-casque.md` | Relire `docs/guide-utilisateur.md` sur un vrai Quest 3 |
 | `docs/intentions/rendu-ville.md` | Une ville moins austère dans le casque (teintes, voies, palette par itinéraire) |
-| `docs/intentions/itineraire-libre.md` | Choisir son propre trajet, calculé par un service de routage |
+| `docs/intentions/essai-casque-itineraire-libre.md` | Essayer un trajet libre au casque, avec une vraie clé Routes |
 
 A one-line idea, too light for a brief, is noted with one command:
 `node .githooks/note.mjs "<text>"` appends a dated line to

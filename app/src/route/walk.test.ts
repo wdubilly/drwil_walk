@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { advanceDistanceM, formatDistanceM, formatDurationS } from "./walk.ts";
+import { ARRIVAL_TEXT, advanceDistanceM, formatDistanceM, formatDurationS, formatKm } from "./walk.ts";
 
 describe("marche à la vitesse réglée", () => {
   it("avance de la vitesse multipliée par le temps", () => {
@@ -22,5 +22,10 @@ describe("marche à la vitesse réglée", () => {
     expect(formatDistanceM(12.345)).toBe("12,3 m");
     expect(formatDurationS(65.9)).toBe("1 min 05 s");
     expect(formatDurationS(0)).toBe("0 min 00 s");
+  });
+
+  it("affiche la longueur d'un trajet et dit l'arrivée en français", () => {
+    expect(formatKm(2345)).toBe("2,3 km");
+    expect(ARRIVAL_TEXT).toContain("Arrivée");
   });
 });

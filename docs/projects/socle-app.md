@@ -14,6 +14,8 @@ files:
   - app/data/souq-waqif-boucle.json
   - app/data/souq-waqif.json
   - app/e2e/chemins-critiques.test.ts
+  - app/e2e/google-3d.test.ts
+  - app/e2e/itineraire-libre.test.ts
   - app/eslint.config.js
   - app/eslint.config.test.ts
   - app/index.html
@@ -36,6 +38,10 @@ files:
   - app/src/city/extract-fc-road.test.ts
   - app/src/city/extract-pune.test.ts
   - app/src/city/extract-souq.test.ts
+  - app/src/city/free-route.test.ts
+  - app/src/city/free-route.ts
+  - app/src/city/google-tiles.test.ts
+  - app/src/city/google-tiles.ts
   - app/src/city/licence.ts
   - app/src/city/roads.test.ts
   - app/src/city/roads.ts
@@ -47,10 +53,15 @@ files:
   - app/src/main.ts
   - app/src/route/geo.test.ts
   - app/src/route/geo.ts
+  - app/src/route/geocoding.test.ts
+  - app/src/route/geocoding.ts
   - app/src/route/itineraries.test.ts
   - app/src/route/itineraries.ts
   - app/src/route/path.test.ts
   - app/src/route/path.ts
+  - app/src/route/reject-double.ts
+  - app/src/route/routes-api.test.ts
+  - app/src/route/routes-api.ts
   - app/src/route/speed.test.ts
   - app/src/route/speed.ts
   - app/src/route/walk.test.ts
@@ -61,19 +72,33 @@ files:
   - app/src/ui/contrast.ts
   - app/src/ui/doha-corniche.svg
   - app/src/ui/doha-souq-waqif.svg
+  - app/src/ui/free-trip.test.ts
+  - app/src/ui/free-trip.ts
   - app/src/ui/home.css
   - app/src/ui/home.test.ts
   - app/src/ui/home.ts
+  - app/src/ui/libre.svg
+  - app/src/ui/map-math.test.ts
+  - app/src/ui/map-math.ts
+  - app/src/ui/map-picker.test.ts
+  - app/src/ui/map-picker.ts
   - app/src/ui/panel.test.ts
   - app/src/ui/panel.ts
   - app/src/ui/pune-fc-road.svg
   - app/src/ui/pune-vieille-ville.svg
+  - app/src/ui/render-choice.test.ts
+  - app/src/ui/render-choice.ts
   - app/src/ui/route-choice.test.ts
   - app/src/ui/route-choice.ts
+  - app/src/xr/experience-double.ts
+  - app/src/xr/experience-free.test.ts
+  - app/src/xr/experience-google.test.ts
   - app/src/xr/experience.test.ts
   - app/src/xr/experience.ts
   - app/src/xr/frame.test.ts
   - app/src/xr/frame.ts
+  - app/src/xr/google-mode.test.ts
+  - app/src/xr/google-mode.ts
   - app/src/xr/joystick.test.ts
   - app/src/xr/joystick.ts
   - app/src/xr/session.test.ts
@@ -112,3 +137,5 @@ Toute modification de ces fichiers : elle passe par un chantier dont le bloc
   chantier s'ajoute ici à sa clôture.
 - 2026-10-31 : clôture du chantier doha-souq-waqif (souk de Doha, voir le journal) : ses fichiers de code, de test et
   d'e2e s'ajoutent au périmètre ci-dessus, comme le demande la ligne précédente.
+- 2026-10-31 : clôture du chantier itineraire-libre (voir le journal) : ses fichiers de code, de test et d'e2e rejoignent le périmètre
+  ci-dessus, avec ceux du rendu Google 3D (chantier google-3d-tiles, déjà clos) que la clôture avait laissés sans fiche.

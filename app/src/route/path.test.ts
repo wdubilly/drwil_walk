@@ -61,3 +61,22 @@ describe("parcours", () => {
     ).toThrow("points distincts");
   });
 });
+
+describe("APP-002: un trajet libre ne boucle pas", () => {
+  const line = createPath([{ x: 0, z: 0 }, { x: 0, z: -100 }], false);
+  it("APP-002: s'arrête à l'arrivée au lieu de reprendre au départ", () => {
+    expect(line.loop).toBe(false);
+    expect(pointAt(line, 100)).toEqual({ x: 0, z: -100 });
+    expect(pointAt(line, 5000)).toEqual({ x: 0, z: -100 });
+  });
+  it("APP-002: reste au départ avant le départ, et suit le tracé entre les deux", () => {
+    expect(pointAt(line, -20)).toEqual({ x: 0, z: 0 });
+    expect(pointAt(line, 25)).toEqual({ x: 0, z: -25 });
+  });
+  it("APP-002: garde le cap de la marche jusqu'au bout", () => {
+    expect(headingAt(line, 100)).toEqual({ x: 0, z: -1 });
+  });
+  it("APP-002: les itinéraires figés gardent leur boucle", () => {
+    expect(createPath([{ x: 0, z: 0 }, { x: 0, z: -100 }]).loop).toBe(true);
+  });
+});

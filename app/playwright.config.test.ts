@@ -13,6 +13,7 @@ describe("configuration Playwright", () => {
   it("SEC-007: le serveur des e2e reçoit une clé fictive, jamais une vraie", () => {
     const server = Array.isArray(config.webServer) ? config.webServer[0] : config.webServer;
     expect(server?.env?.["VITE_GOOGLE_MAPS_API_KEY"]).toBe("cle-factice-e2e");
+    expect(server?.env?.["VITE_GOOGLE_ROUTES_API_KEY"]).toBe("cle-routes-factice-e2e");
   });
 
   it("refuse un test isolé par .only, qui ferait passer les autres pour verts", () => {

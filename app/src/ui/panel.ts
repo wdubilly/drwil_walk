@@ -3,7 +3,7 @@
 import type { Vec2 } from "../route/geo.ts";
 import { OSM_ATTRIBUTION } from "../city/licence.ts";
 import { formatSpeedKmh } from "../route/speed.ts";
-import { formatDistanceM, formatDurationS } from "../route/walk.ts";
+import { ARRIVAL_TEXT, formatDistanceM, formatDurationS } from "../route/walk.ts";
 import { formatOpacity } from "../safety/visibility.ts";
 
 export interface WalkInfo {
@@ -20,6 +20,8 @@ export interface WalkInfo {
   tileCount: number;
   /** Les mentions de données de ce qui est affiché (APP-003). */
   attribution: string;
+  /** Trajet libre arrivé : le panneau le dit. */
+  arrived: boolean;
 }
 
 export interface WalkPanel {
@@ -51,7 +53,11 @@ export function renderWalkPanel(doc: Document, root: HTMLElement): WalkPanel {
   const credit = doc.createElement("p");
   credit.className = "attribution";
   credit.textContent = OSM_ATTRIBUTION;
-  panel.append(list, credit);
+  const arrival = doc.createElement("p");
+  arrival.className = "arrival";
+  arrival.textContent = ARRIVAL_TEXT;
+  arrival.hidden = true;
+  panel.append(list, arrival, credit);
   root.append(panel);
   return {
     remove: () => {
@@ -63,6 +69,8 @@ export function renderWalkPanel(doc: Document, root: HTMLElement): WalkPanel {
       show(time, formatDurationS(info.timeS));
       show(opacity, formatOpacity(info.cityOpacity));
       show(credit, info.attribution);
+      arrival.hidden = !info.arrived;
+      panel.dataset.arrived = String(info.arrived);
       panel.dataset.speedKmh = String(info.speedKmh);
       panel.dataset.distanceM = String(info.distanceM);
       panel.dataset.timeS = String(info.timeS);

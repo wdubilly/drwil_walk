@@ -29,6 +29,14 @@ HTTP, « Map Tiles API » seule) : elle est lisible dans la page. À l'accueil, 
 les tuiles ne se chargent pas, la marche se fait en OpenStreetMap et la raison s'affiche sur l'accueil. Ce rendu appelle le
 réseau (`tile.googleapis.com`, `www.gstatic.com`) pendant la marche ; les tests, eux, n'appellent jamais Google.
 
+Itinéraire libre (facultatif, avec une **deuxième** clé Google, distincte de la précédente) : mettez
+`VITE_GOOGLE_ROUTES_API_KEY=<votre clé>` dans `.env.local` (dans `app/`, même fichier ignoré par Git ; modèle fictif dans `.env.example`).
+Cette clé sert à deux API, qu'il faut **activer toutes les deux** dans la console Google et autoriser dans sa restriction : « Routes API »
+(chemin à pied) et « Geocoding API » (recherche d'adresse) ; restreignez-la aux référents HTTP, elle est lisible dans la page. Sans elle,
+la carte « Itinéraire libre » de l'accueil dit pourquoi elle est indisponible et les quatre itinéraires figés restent utilisables. Ce mode appelle
+le réseau à l'accueil (`routes.googleapis.com`, `maps.googleapis.com`, `overpass-api.de` pour les bâtiments, `tile.openstreetmap.org` pour la carte) ;
+les tests, eux, n'appellent jamais ces services.
+
 Once per clone, enable the governance hooks (checks at commit and push):
 
 ```bash

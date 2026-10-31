@@ -16,3 +16,10 @@ export function toLocalMetres(origin: LonLat, point: LonLat): Vec2 {
     z: -(point[1] - origin[1]) * RAD * EARTH_RADIUS_M,
   };
 }
+
+/** Distance à vol d'oiseau en mètres (haversine). */
+export function distanceM(a: LonLat, b: LonLat): number {
+  const [dLat, dLon] = [(b[1] - a[1]) * RAD, (b[0] - a[0]) * RAD];
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(a[1] * RAD) * Math.cos(b[1] * RAD) * Math.sin(dLon / 2) ** 2;
+  return 2 * EARTH_RADIUS_M * Math.asin(Math.sqrt(h));
+}

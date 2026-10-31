@@ -8,6 +8,8 @@ sur son environnement réel.
 - Une page WebXR en réalité mixte, ouverte dans le navigateur du Quest 3, sans rien installer.
 - 4 itinéraires proposés : Pune Vieille ville, Pune FC Road, Doha Corniche (du Musée d'art islamique vers West Bay)
   et Doha Souq Waqif. Le souk de Doha (par défaut), la Vieille ville de Pune, la Corniche de Doha et Pune FC Road se parcourent.
+- Un itinéraire libre (départ et arrivée sur une carte ou par une adresse, chemin à pied calculé par Google Routes, 5 km au plus,
+  arrêt à l'arrivée), avec une deuxième clé Google (`INSTALL.md`) ; sans elle, la raison est dite et les quatre itinéraires restent.
 - Deux rendus de la ville, au choix à l'accueil : bâtiments OpenStreetMap (par défaut, sans réseau) ou, avec une clé
   Google (`INSTALL.md`), les tuiles photoréalistes Google 3D, avec repli sur OpenStreetMap et raison dite à l'écran.
 - La vitesse se règle à la manette pour correspondre à celle du tapis (pas de Bluetooth dans la v0.1).

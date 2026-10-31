@@ -32,4 +32,3 @@ otherwise.
   are needed, otherwise the topic fits here.
 - [x] topic delivered (YYYY-MM-DD).
 -->
-- [ ] [AI] [P1] Choisir son propre itinéraire (carte touchée, Google Routes) — `docs/projects/itineraire-libre.md`

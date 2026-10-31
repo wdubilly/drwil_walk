@@ -39,4 +39,23 @@ describe("image de la marche", () => {
     expect(nextWalkState(s, { ...still, timeMs: 0, pitchDownDeg: null }).cityOpacity).toBe(0);
     expect(nextWalkState(s, { ...still, timeMs: 0, globalOpacityPct: 10 }).cityOpacity).toBeCloseTo(0.3);
   });
+
+  it("APP-002: à l'arrivée d'un trajet libre, s'arrête pile au bout et fige le temps", () => {
+    let s = nextWalkState(initialWalkState(3.6, 100), { ...still, timeMs: 0, endM: 10 });
+    expect(s.arrived).toBe(false);
+    s = nextWalkState(s, { ...still, timeMs: 8000, endM: 10 });
+    expect(s).toMatchObject({ arrived: false });
+    s = nextWalkState(s, { ...still, timeMs: 12000, endM: 10 });
+    expect(s).toMatchObject({ arrived: true, distanceM: 10 });
+    const timeS = s.timeS;
+    s = nextWalkState(s, { ...still, timeMs: 20000, endM: 10 });
+    expect(s).toMatchObject({ arrived: true, distanceM: 10, timeS });
+  });
+
+  it("APP-002: une boucle n'arrive jamais", () => {
+    let s = nextWalkState(initialWalkState(8, 100), { ...still, timeMs: 0 });
+    s = nextWalkState(s, { ...still, timeMs: 1_000_000 });
+    expect(s.arrived).toBe(false);
+    expect(s.distanceM).toBeGreaterThan(1000);
+  });
 });

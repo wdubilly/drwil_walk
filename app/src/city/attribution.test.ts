@@ -27,3 +27,11 @@ describe("mentions de données dans le casque", () => {
     expect(() => createAttributionLabel(docWithContext(null))).toThrow("Canvas 2D indisponible");
   });
 });
+
+describe("panneau secondaire", () => {
+  it("se nomme et se place à la hauteur demandée (message d'arrivée)", () => {
+    const { mesh } = createAttributionLabel(docWithContext({ fillRect: vi.fn(), fillText: vi.fn() }), "Arrivée", { name: "arrivee", y: 1.6 });
+    expect(mesh.name).toBe("arrivee");
+    expect(mesh.position.y).toBe(1.6);
+  });
+});

@@ -10,6 +10,8 @@ export interface Itinerary {
 }
 
 export const DEFAULT_ITINERARY_ID = "doha-souq-waqif";
+/** L'itinéraire libre : pas de ville dans le dépôt, le trajet se choisit sur la carte de l'accueil (APP-002, APP-003). */
+export const FREE_ITINERARY_ID = "libre";
 
 export const ITINERARIES: readonly Itinerary[] = [
   {
@@ -34,6 +36,12 @@ export const ITINERARIES: readonly Itinerary[] = [
     id: DEFAULT_ITINERARY_ID,
     name: "Doha Souq Waqif",
     place: "Le souk et ses ruelles, de la place Al Koot aux écuries",
+    available: true,
+  },
+  {
+    id: FREE_ITINERARY_ID,
+    name: "Itinéraire libre",
+    place: "Votre départ et votre arrivée, sur la carte ou par une adresse",
     available: true,
   },
 ];
