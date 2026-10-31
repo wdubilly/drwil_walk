@@ -33,3 +33,27 @@ export function kmhToMs(kmh: number): number {
 export function formatSpeedKmh(kmh: number): string {
   return `${clampSpeedKmh(kmh).toFixed(1).replace(".", ",")} km/h`;
 }
+
+const frenchNumber = (n: number): string => String(n).replace(".", ",");
+
+/** La plage, lisible avant toute saisie. */
+export const SPEED_RANGE_TEXT = `De ${frenchNumber(MIN_SPEED_KMH)} à ${frenchNumber(MAX_SPEED_KMH)} km/h, par sécurité sur le tapis.`;
+
+/** Ce que l'écran dit quand une saisie est ramenée dans la plage (QUA-002) ; vide si elle est valide. */
+export function speedLimitMessage(raw: number): string {
+  if (!Number.isFinite(raw)) return `Vitesse illisible : ${formatSpeedKmh(DEFAULT_SPEED_KMH)} retenus.`;
+  if (raw > MAX_SPEED_KMH) {
+    return `${frenchNumber(raw)} km/h dépasse la limite : ${formatSpeedKmh(MAX_SPEED_KMH)} retenus, par sécurité sur le tapis.`;
+  }
+  if (raw < MIN_SPEED_KMH) {
+    return `${frenchNumber(raw)} km/h est sous la limite : ${formatSpeedKmh(MIN_SPEED_KMH)} retenus, plage de ${frenchNumber(MIN_SPEED_KMH)} à ${frenchNumber(MAX_SPEED_KMH)} km/h.`;
+  }
+  return "";
+}
+
+/** Ce que le panneau dit quand la vitesse est à une borne, où le joystick ne peut plus aller plus loin. */
+export function speedBoundMessage(kmh: number): string {
+  if (kmh >= MAX_SPEED_KMH) return `Vitesse au maximum : ${frenchNumber(MAX_SPEED_KMH)} km/h, limite de sécurité sur le tapis.`;
+  if (kmh <= MIN_SPEED_KMH) return `Vitesse au minimum : ${frenchNumber(MIN_SPEED_KMH)} km/h.`;
+  return "";
+}

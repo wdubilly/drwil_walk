@@ -2,7 +2,7 @@
 // Les valeurs exactes sont aussi en attributs data-*, lues par l'e2e (texte arrondi à l'affichage).
 import type { Vec2 } from "../route/geo.ts";
 import { OSM_ATTRIBUTION } from "../city/licence.ts";
-import { formatSpeedKmh } from "../route/speed.ts";
+import { formatSpeedKmh, speedBoundMessage } from "../route/speed.ts";
 import { ARRIVAL_TEXT, formatDistanceM, formatDurationS } from "../route/walk.ts";
 import { formatOpacity } from "../safety/visibility.ts";
 
@@ -57,7 +57,11 @@ export function renderWalkPanel(doc: Document, root: HTMLElement): WalkPanel {
   arrival.className = "arrival";
   arrival.textContent = ARRIVAL_TEXT;
   arrival.hidden = true;
-  panel.append(list, arrival, credit);
+  const limit = doc.createElement("p");
+  limit.className = "speed-limit";
+  limit.setAttribute("aria-live", "polite");
+  limit.hidden = true;
+  panel.append(list, limit, arrival, credit);
   root.append(panel);
   return {
     remove: () => {
@@ -69,6 +73,9 @@ export function renderWalkPanel(doc: Document, root: HTMLElement): WalkPanel {
       show(time, formatDurationS(info.timeS));
       show(opacity, formatOpacity(info.cityOpacity));
       show(credit, info.attribution);
+      const bound = speedBoundMessage(info.speedKmh);
+      show(limit, bound);
+      limit.hidden = bound === "";
       arrival.hidden = !info.arrived;
       panel.dataset.arrived = String(info.arrived);
       panel.dataset.speedKmh = String(info.speedKmh);

@@ -1,6 +1,6 @@
 // Écran d'accueil (MISSION.md, « Écran d'accueil ») : vitesse de départ, opacité de la ville,
 // choix de l'itinéraire, rappel de sécurité et bouton d'entrée en réalité mixte. Construit en DOM simple, sans framework.
-import { DEFAULT_SPEED_KMH, MAX_SPEED_KMH, MIN_SPEED_KMH, SPEED_STEP_KMH, clampSpeedKmh } from "../route/speed.ts";
+import { DEFAULT_SPEED_KMH, MAX_SPEED_KMH, MIN_SPEED_KMH, SPEED_RANGE_TEXT, SPEED_STEP_KMH, clampSpeedKmh, speedLimitMessage, formatSpeedKmh } from "../route/speed.ts";
 import { GOOGLE_ATTRIBUTION, OSM_ATTRIBUTION } from "../city/licence.ts";
 import type { TripPlanner, PlannedTrip } from "../city/free-route.ts";
 import { FREE_ITINERARY_ID } from "../route/itineraries.ts";
@@ -76,6 +76,21 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
     reminder.append(item);
   }
   const speed = numberInput(doc, "number", MIN_SPEED_KMH, MAX_SPEED_KMH, SPEED_STEP_KMH, DEFAULT_SPEED_KMH.toFixed(1));
+  const speedHint = doc.createElement("p");
+  speedHint.className = "speed-hint";
+  speedHint.textContent = SPEED_RANGE_TEXT;
+  const speedLimit = doc.createElement("p");
+  speedLimit.className = "speed-limit";
+  speedLimit.setAttribute("aria-live", "polite");
+  const rawSpeed = (): number => Number(speed.value.replace(",", "."));
+  const announce = (): number => {
+    speedLimit.textContent = speedLimitMessage(rawSpeed());
+    return clampSpeedKmh(rawSpeed());
+  };
+  speed.addEventListener("input", announce);
+  speed.addEventListener("change", () => {
+    speed.value = formatSpeedKmh(announce()).replace(" km/h", "").replace(",", ".");
+  });
   const opacity = numberInput(
     doc,
     "range",
@@ -113,6 +128,8 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
     rendering.element,
     reminder,
     field(doc, "Vitesse de départ (km/h)", speed),
+    speedHint,
+    speedLimit,
     field(doc, "Opacité de la ville (%)", opacity),
     button,
     status,
@@ -121,7 +138,7 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
   );
   return {
     root,
-    readSpeedKmh: () => clampSpeedKmh(Number(speed.value.replace(",", "."))),
+    readSpeedKmh: announce,
     readOpacityPct: () => clampGlobalOpacityPct(Number(opacity.value)),
     readRouteId: () => routes.readId(),
     readTrip: () => freeTrip.readTrip(),

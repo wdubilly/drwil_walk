@@ -12,7 +12,7 @@ sur son environnement réel.
   arrêt à l'arrivée), sans clé (instances publiques d'OpenStreetMap, `INSTALL.md`) ; si un service refuse, la raison est dite et les quatre itinéraires restent.
 - Deux rendus de la ville, au choix à l'accueil : bâtiments OpenStreetMap (par défaut, sans réseau) ou, avec une clé
   Google (`INSTALL.md`), les tuiles photoréalistes Google 3D, avec repli sur OpenStreetMap et raison dite à l'écran.
-- La vitesse se règle à la manette pour correspondre à celle du tapis (pas de Bluetooth dans la v0.1).
+- La vitesse se règle à la manette pour correspondre à celle du tapis (pas de Bluetooth dans la v0.1), de 1 à 8 km/h : une saisie hors plage est ramenée à la borne et l'écran le dit.
 - Sécurité : la ville s'efface quand on baisse la tête, la zone du tapis reste toujours transparente et l'opacité de la
   ville est réglable.
 

@@ -1,4 +1,4 @@
-import { Window } from "happy-dom";
+import { Event as DomEvent, Window } from "happy-dom";
 import { describe, expect, it, vi } from "vitest";
 import type { TripPlanner } from "../city/free-route.ts";
 import { ENTER_LABEL, renderHome } from "./home.ts";
@@ -96,6 +96,25 @@ describe("écran d'accueil", () => {
     expect(view.readSpeedKmh()).toBe(4);
     speed.value = "5,5";
     expect(view.readSpeedKmh()).toBe(5.5);
+  });
+
+  it("QUA-002: lit la plage de vitesse avant la saisie et dit la limite quand 50 est saisi", () => {
+    const { root, view, input } = setup();
+    const speed = input("Vitesse de départ");
+    expect(root.querySelector(".speed-hint")?.textContent).toBe("De 1 à 8 km/h, par sécurité sur le tapis.");
+    const limit = root.querySelector<HTMLElement>(".speed-limit");
+    expect(limit?.textContent).toBe("");
+    speed.value = "50";
+    speed.dispatchEvent(new DomEvent("input") as unknown as Event);
+    expect(limit?.textContent).toBe("50 km/h dépasse la limite : 8,0 km/h retenus, par sécurité sur le tapis.");
+    speed.dispatchEvent(new DomEvent("change") as unknown as Event);
+    expect(speed.value).toBe("8.0");
+    speed.value = "6";
+    speed.dispatchEvent(new DomEvent("input") as unknown as Event);
+    expect(limit?.textContent).toBe("");
+    speed.value = "0,2";
+    expect(view.readSpeedKmh()).toBe(1);
+    expect(limit?.textContent).toContain("0,2 km/h est sous la limite");
   });
 
   it("APP-001: borne l'opacité de la ville saisie entre 30 et 100 %", () => {
