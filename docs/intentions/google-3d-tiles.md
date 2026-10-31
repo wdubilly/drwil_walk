@@ -3,8 +3,13 @@
 **Statut** : proposée le 2026-10-30 (reportée : décision du demandeur, pas de Google en v0.1).
 
 **Revue le 2026-10-31** : le premier essai sur un vrai Quest 3 juge le rendu OSM « mono-orange, formes plates ». Le demandeur
-lève le report : accès réseau pendant la marche et clé Google acceptés. Cadré dans `docs/projects/google-3d-tiles.md`
+lève le report : accès réseau pendant la marche et clé Google acceptés. Cadré dans la fiche google-3d-tiles (résumée au journal)
 (rendu Google en option, OSM conservé en plan B). Reste vivant : Unity + Cesium, non retenu pour l'instant (la pile reste TypeScript).
+
+**Traité le 2026-10-31** (chantier google-3d-tiles, lots 2 et 3) : rendu Google 3D en option à l'accueil, repli OpenStreetMap avec
+raison dite à l'écran, fondu de sécurité sur les tuiles, mentions de Google, e2e sur tuiles factices (journal `docs/projects/journal.md`).
+Reste aux humains : la clé et la couverture (`docs/intentions/cle-google-couverture.md`) et l'essai au casque
+(`docs/intentions/essai-casque-google.md`).
 
 ## Besoin
 

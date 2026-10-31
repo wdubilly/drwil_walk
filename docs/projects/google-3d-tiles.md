@@ -91,6 +91,6 @@ Le rendu OpenStreetMap est jugé « moche », mono-couleur et plat, sur un vrai 
 
 ## 7. Reprise
 
-- **Dernier état** (2026-10-31) : cadrage seul, aucun code.
-- **Travail non commité** : aucun.
-- **Prochaine étape** : [human] lot 1 (clé), puis [AI] lot 2.
+- **Dernier état** (2026-10-31) : lots 2 et 3 faits côté agent (rendu Google en option, repli OpenStreetMap avec message, fondu, mentions, e2e sur tuiles factices, docs) ; lots 1 et 4 restent humains (intentions créées).
+- **Travail non commité** : aucun une fois la clôture poussée.
+- **Prochaine étape** : [human] `docs/intentions/cle-google-couverture.md`, puis `docs/intentions/essai-casque-google.md`.
