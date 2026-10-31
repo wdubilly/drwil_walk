@@ -10,7 +10,7 @@ peut-être un parcours qui relie vraiment le musée aux tours de West Bay.
 
 ## Existant
 
-Lu le 2026-10-31 (chantier doha-corniche) : dans l'extrait `app/data/doha-corniche.json`, le réseau de voies du musée
+Lu le 2026-10-31 (chantier doha-corniche) : dans l'extrait OpenStreetMap de la Corniche, le réseau de voies du musée
 n'est pas relié à celui de la Corniche (174 m d'écart) ; le départ de `app/data/doha-corniche-boucle.json` est donc le
 point relié le plus proche. West Bay est à environ 3,5 km du départ : hors du tronçon de 2 km cadré.
 
