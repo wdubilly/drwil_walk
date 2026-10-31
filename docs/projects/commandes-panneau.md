@@ -81,6 +81,8 @@ casque** et non plus seulement sur la page web.
   (le parcours se recale sans changer la distance parcourue) — raison : décisions de `MISSION.md` § 4.2 (approuvé le
   2026-10-31).
 
+- `APP-001` — sécurité-visibilité : ajout du point 5 (le panneau d'infos du casque suit le même fondu que la ville) — raison : critère d'acceptation « le panneau ne masque jamais le tapis » ; ajout déclaré à la clôture par l'agent (non prévu au cadrage), le texte modifié est celui que l'humain a attesté après l'essai au casque.
+
 ## 5. Points à trancher
 
 *(aucun : le panneau attaché au poignet et la maquette complète sont hors de ce chantier)*
