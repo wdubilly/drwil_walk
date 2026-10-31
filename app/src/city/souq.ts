@@ -1,7 +1,8 @@
-// La scène du souk : sol, bâtiments OpenStreetMap, mention d'attribution. L'utilisateur reste sur son tapis, à
+// La scène du souk : sol, voies et bâtiments OpenStreetMap, mention d'attribution. L'utilisateur reste sur son tapis, à
 // l'origine : c'est la ville qui glisse et pivote pour amener le point courant du parcours sous ses pieds.
 import {
   Color,
+  DoubleSide,
   Group,
   HemisphereLight,
   Mesh,
@@ -14,6 +15,7 @@ import {
 import { headingAt, pointAt, type Path } from "../route/path.ts";
 import { createAttributionLabel } from "./attribution.ts";
 import { buildBuildingsGeometry } from "./buildings.ts";
+import { buildRoadsGeometry } from "./roads.ts";
 import type { Souq } from "./souq-data.ts";
 
 const GROUND_SIZE_M = 3000;
@@ -36,11 +38,17 @@ export interface SouqScene {
 export function createSouqScene(doc: Document, souq: Souq): SouqScene {
   const city = new Group();
   city.name = "ville";
-  const ground = new Mesh(new PlaneGeometry(GROUND_SIZE_M, GROUND_SIZE_M), material(0xb59b73));
+  const ground = new Mesh(new PlaneGeometry(GROUND_SIZE_M, GROUND_SIZE_M), material(souq.palette.ground));
   ground.rotation.x = -Math.PI / 2;
-  const buildings = new Mesh(buildBuildingsGeometry(souq.buildings), material(0xe3cfa5));
+  const roads = new Mesh(buildRoadsGeometry(souq.roads), new MeshLambertMaterial({ color: souq.palette.road, side: DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }));
+  roads.name = "voies";
+  // Couleurs par sommet : la teinte de chaque bâtiment vient de la géométrie, le matériau reste blanc.
+  const buildings = new Mesh(
+    buildBuildingsGeometry(souq.buildings, souq.palette.buildings),
+    new MeshLambertMaterial({ vertexColors: true }),
+  );
   buildings.name = "batiments";
-  city.add(ground, buildings);
+  city.add(ground, roads, buildings);
   const world = new Group();
   world.add(city, createAttributionLabel(doc));
   const scene = new Scene();

@@ -34,7 +34,7 @@ veut un rendu plus lisible, sans perdre le passthrough ni la sécurité-visibili
 - Chaque itinéraire a sa palette (sol, voies, bâtiments) ; l'accueil et la mention restent lisibles — `APP-003`
 - Le fondu de sécurité agit sur la ville entière, voies et bâtiments teintés compris : tête baissée, tout s'efface
   [humain] — `APP-001`
-- Aucun ciel ni fond opaque : `scene.background` reste nul, le réel reste visible — `APP-001`
+- Aucun ciel ni fond opaque : `scene.background` reste nul, le réel reste visible [humain] — `APP-001`
 - Les chemins de marche existants restent verts dans le Quest 3 émulé — `QUA-020`
 
 ## 2. Hors périmètre

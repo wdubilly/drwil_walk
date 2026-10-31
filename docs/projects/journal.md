@@ -79,3 +79,11 @@ One entry per closed project, most recent last.
 - `README.md`, `INSTALL.md` et `docs/recipes/run-locally.md` renvoient au guide sans en copier le contenu.
 - Limite : tout ce qui se passe dans le casque (certificat, autorisation, manettes, réseau, pare-feu) est signalé « non vérifié » dans le guide ; relecture sur le vrai poste et le vrai Quest 3 par l'humain (lot 2 de la fiche), repris par l'intention `docs/intentions/relecture-guide-casque.md`. Le critère de sécurité reste attesté par l'humain (`APP-001`, sécurité-visibilité : le réel reste visible).
 - Branche `workstream/guide-installation`. Preuve de clôture : docs/preuves/guide-installation.md (écrite par la clôture).
+
+## 2026-10-31 — Une ville plus lisible et moins austère dans le casque
+
+- Les voies de l'extrait OpenStreetMap (déjà versionnées, aucun nouvel appel réseau) sont dessinées à plat sur le sol (`app/src/city/roads.ts`) : un seul maillage, largeur selon la classe (grands axes 8 à 10 m, rues 4 à 5 m, sentiers 2 m, bretelles comme leur voie). Les bâtiments gardent un seul maillage mais en couleurs par sommet : un ton parmi quatre de la palette, choisi de façon déterministe par la position du premier sommet (`app/src/city/buildings.ts`). Une palette par itinéraire (sol, voies, tons de bâtiments) dans `app/src/city/cities.ts` ; `Souq` porte désormais `roads` et `palette`.
+- `setCityOpacity` est inchangé et rend toujours toute la scène transparente (test sur les trois maillages) ; `scene.background` reste nul.
+- Fiche : le critère « Aucun ciel ni fond opaque » a reçu `[humain]` pour que `verify` l'accepte (`APP-001` est attesté par l'humain) ; aucun autre critère modifié.
+- Limites : rendu jamais vu au casque (teintes et largeurs choisies par l'agent, 72 images par seconde non mesurées), l'e2e émulé ne juge pas l'apparence ; voies de classe inconnue tracées à 2 m ; les palettes sont des choix de l'agent, à corriger par le demandeur (lot 3).
+- Branche `workstream/rendu-ville`. Preuve de clôture : docs/preuves/rendu-ville.md (écrite par la clôture).
