@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 import { withCanvasContext } from "../city/canvas-double.ts";
 import { contrastRatio } from "../ui/contrast.ts";
 import { HUD_BACKGROUND_ALPHA, HUD_BACKGROUND_RGB, HUD_TEXT, createHudPanel, type HudInfo } from "./hud-panel.ts";
+import { pointInView } from "./fov.ts";
 import { DEFAULT_ZONE, zonePlanes, type Zone } from "../safety/zone.ts";
 import type { PanelSide } from "../ui/panel-side.ts";
 
@@ -169,6 +170,33 @@ describe("panneau d'infos dans le casque", () => {
     panel.update(info, view());
     expect(panel.mesh.visible).toBe(true);
   });
+
+  /** Tête de cap `yawDeg` et d'inclinaison `pitchDeg` (négatif : tête baissée), même convention que pose.test.ts. */
+  const tilted = (yawDeg: number, pitchDeg: number) => {
+    const y = (yawDeg * Math.PI) / 360;
+    const p = (pitchDeg * Math.PI) / 360;
+    return { x: Math.cos(y) * Math.sin(p), y: Math.sin(y) * Math.cos(p), z: -Math.sin(y) * Math.sin(p), w: Math.cos(y) * Math.cos(p) };
+  };
+  // Tête baissée au-delà de 30° la ville, le panneau avec elle, est presque effacé (fondu de 25° à 40°).
+  const headings = [0, 37, -80].flatMap((yaw) => [10, 0, -20, -30].map((pitch) => [yaw, pitch] as const));
+  it.each(headings.flatMap(([yaw, pitch]) => (["left", "right"] as const).map((side) => [yaw, pitch, side] as const)))(
+    "APP-005: le panneau, heure comprise, reste dans le champ de vision du casque (cap %i°, inclinaison %i°, côté %s)",
+    (yaw, pitch, side) => {
+      const { panel } = setup();
+      const pose = { position: { x: 0.3, y: 1.6, z: -0.2 }, orientation: tilted(yaw, pitch) };
+      for (const zone of [{ ...DEFAULT_ZONE, x: 50 }, DEFAULT_ZONE]) {
+        panel.update(info, view({ side, pose, zone }));
+        expect(panel.mesh.visible).toBe(true);
+        const { width, height } = (panel.mesh.geometry as unknown as { parameters: { width: number; height: number } }).parameters;
+        panel.mesh.updateMatrixWorld();
+        // Les quatre coins du panneau : chaque cellule de texte, l'heure en haut à droite comprise, est à l'intérieur.
+        for (const [cx, cy] of [[-1, -1], [1, -1], [1, 1], [-1, 1]] as const) {
+          const corner = panel.mesh.localToWorld(new Vector3((cx * width) / 2, (cy * height) / 2, 0));
+          expect(pointInView(pose, corner)).toBe(true);
+        }
+      }
+    },
+  );
 
   it("dit pourquoi il ne peut pas se dessiner sans contexte canvas", () => {
     const doc = withCanvasContext(new Window().document as unknown as Document, null);

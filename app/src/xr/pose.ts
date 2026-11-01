@@ -19,14 +19,15 @@ export interface Calibration {
 export const NO_CALIBRATION: Calibration = { x: 0, z: 0, yawRad: 0 };
 
 /**
- * Le panneau d'infos : un rectangle de 0,5 m sur 0,25 m, posé à 1,1 m, à 40° du regard côté choisi et 0,35 m sous les
- * yeux (en bas du champ de vision, à l'horizontale). Loin du centre : il ne gêne pas la vue de la ville ni du tapis.
+ * Le panneau d'infos : un rectangle de 0,5 m sur 0,25 m, posé à 1,1 m, à 28° du regard côté choisi et 0,3 m sous les
+ * yeux (en bas du champ de vision, à l'horizontale). Loin du centre, mais tout entier dans le champ de vision du casque (APP-005) :
+ * à 40° son bord extérieur sortait de la vue, et l'heure avec lui.
  */
 export const PANEL_WIDTH_M = 0.5;
 export const PANEL_HEIGHT_M = PANEL_WIDTH_M / 2;
 export const PANEL_DISTANCE_M = 1.1;
-export const PANEL_DROP_M = 0.35;
-export const PANEL_SIDE_RAD = (40 * Math.PI) / 180;
+export const PANEL_DROP_M = 0.31;
+export const PANEL_SIDE_RAD = (28 * Math.PI) / 180;
 /** Le panneau s'écarte de la zone tapis d'au moins cette marge, et ne s'éloigne jamais au-delà de MAX : il se cache alors. */
 const ZONE_MARGIN_M = 0.05;
 const PUSH_STEP_M = 0.02;

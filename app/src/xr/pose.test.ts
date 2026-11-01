@@ -36,7 +36,7 @@ describe("pose de la tête", () => {
     expect(right.y).toBeCloseTo(eyes.y - PANEL_DROP_M);
     expect(left.y).toBeCloseTo(eyes.y - PANEL_DROP_M);
     expect(right.scale).toBe(1);
-    // À 40° du regard, à PANEL_DISTANCE_M : à droite, +X ; à gauche, -X ; sans suivre l'inclinaison de la tête.
+    // À PANEL_SIDE_RAD du regard, à PANEL_DISTANCE_M : à droite, +X ; à gauche, -X ; sans suivre l'inclinaison de la tête.
     expect(right.x - eyes.x).toBeCloseTo(Math.sin(PANEL_SIDE_RAD) * PANEL_DISTANCE_M);
     expect(left.x - eyes.x).toBeCloseTo(-Math.sin(PANEL_SIDE_RAD) * PANEL_DISTANCE_M);
     expect(right.z - eyes.z).toBeCloseTo(-Math.cos(PANEL_SIDE_RAD) * PANEL_DISTANCE_M);

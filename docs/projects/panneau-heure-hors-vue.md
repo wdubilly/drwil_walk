@@ -40,7 +40,7 @@ règle la place et le contenu du panneau sur cette simulation, pour que tout son
   où le panneau est affiché ; le test a été vu échouer sur le code actuel (l'heure hors vue à droite) avant la correction
   — `APP-005`
 - Le panneau reste hors de la zone tapis, fondu tête baissée, masqué par le bouton B et caché sans pose de la tête, comme avant
-  — `APP-001`
+  [humain] — `APP-001`
 - La lisibilité du texte, le confort de la place et l'heure bien visible sans tourner la tête sont jugés sur un vrai Quest 3
   [humain] — `APP-001`
 - Le parcours est rejoué de bout en bout dans le Quest 3 émulé avec le masque de champ de vision, les deux côtés — `QUA-020`
