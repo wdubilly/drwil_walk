@@ -42,7 +42,7 @@ test("chemin 12 : la gâchette met en pause et reprend, A recale le parcours, B 
   await page.getByLabel("Vitesse de départ (km/h)").fill("7.2");
   await page.getByRole("button", { name: "Entrer en réalité mixte" }).click();
   await expect(page.getByRole("status")).toHaveText("Réalité mixte active (immersive-ar)");
-  await expect.poll(() => read(page, "data-distance-m")).toBeGreaterThan(1);
+  await expect.poll(() => read(page, "data-distance-m"), { timeout: 20_000 }).toBeGreaterThan(1);
 
   // Gâchette : l'avancée s'arrête, la vitesse réglée reste, puis la marche repart.
   await press(page, "trigger", () => expect(panel(page)).toHaveAttribute("data-paused", "true"));
@@ -59,7 +59,7 @@ test("chemin 12 : la gâchette met en pause et reprend, A recale le parcours, B 
     // Tête tournée de 90° vers la gauche.
     quest.quaternion.set(0, Math.SQRT1_2, 0, Math.SQRT1_2);
   });
-  await press(page, "a-button", () => expect.poll(() => read(page, "data-calibration-yaw")).toBeCloseTo(Math.PI / 2, 2));
+  await press(page, "a-button", () => expect.poll(() => read(page, "data-calibration-yaw"), { timeout: 20_000 }).toBeCloseTo(Math.PI / 2, 2));
   expect(await read(page, "data-calibration-x")).toBeCloseTo(0.3, 2);
   expect(await read(page, "data-calibration-z")).toBeCloseTo(-0.5, 2);
   expect(await read(page, "data-distance-m")).toBe(frozen);
@@ -71,6 +71,6 @@ test("chemin 12 : la gâchette met en pause et reprend, A recale le parcours, B 
 
   // Gâchette encore : la marche reprend à la vitesse conservée.
   await press(page, "trigger", () => expect(panel(page)).toHaveAttribute("data-paused", "false"));
-  await expect.poll(() => read(page, "data-distance-m")).toBeGreaterThan(frozen + 1);
+  await expect.poll(() => read(page, "data-distance-m"), { timeout: 20_000 }).toBeGreaterThan(frozen + 1);
   await expect(panel(page).locator("[data-field='speed']")).toHaveText("7,2 km/h");
 });

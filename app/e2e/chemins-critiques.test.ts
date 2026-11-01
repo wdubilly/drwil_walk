@@ -68,7 +68,7 @@ async function pushRightStick(page: Page, y: number) {
 async function letFramesPass(page: Page) {
   const timeS = async () => Number(await panel(page).getAttribute("data-time-s"));
   const start = await timeS();
-  await expect.poll(timeS).toBeGreaterThan(start + 0.1);
+  await expect.poll(timeS, { timeout: 20_000 }).toBeGreaterThan(start + 0.1);
 }
 
 async function releaseRightStick(page: Page) {

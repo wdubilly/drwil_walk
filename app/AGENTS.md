@@ -58,7 +58,7 @@ session `immersive-ar`, rue simple, marche en ligne droite, joystick, fondu têt
   construire avec `autoDispose: false` et libérer le chargeur Draco soi-même. Le plugin Google est dans `3d-tiles-renderer/core/plugins`
   (absent de `three/plugins`). Un test du moteur de tuiles remplace `fetch` (jamais de réseau) et lui envoie ses événements directement.
 
-- 2026-11-01 : les e2e qui attendent une marche (`data-distance-m`, `data-time-s`) comptent en temps réel, et le rendu logiciel de la CI (SwiftShader) tient le tiers de la cadence du casque avec les arbres du pack : ces attentes ont 20 s (`{ timeout: 20_000 }`), non les 5 s par défaut, qui laissaient moins d'une seconde de marge pour 4 s de marche.
+- 2026-11-01 : les attentes `expect.poll` des e2e dépendent des images de la session (marche en temps réel, axes et boutons pris à l'image suivante), et le rendu logiciel de la CI (SwiftShader) tient environ 30 images par 5 s sur la Vieille ville avec les arbres du pack : elles ont 20 s (`{ timeout: 20_000 }`), non les 5 s par défaut, qui laissaient moins d'une seconde de marge pour 4 s de marche (trois contrôles rouges différents avant ce réglage, aucun en isolé).
 
 ## Layer contracts
 
