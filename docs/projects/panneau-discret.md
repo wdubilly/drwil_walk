@@ -40,12 +40,12 @@ ou à droite**, plutôt qu'au milieu du champ de vision. Le côté se règle à 
 ## Critères d'acceptation
 
 - Le fond du panneau est légèrement transparent : la réalité se devine derrière, et le texte reste lisible (contraste
-  minimal testé) — `APP-001`
+  minimal testé) [human] — `APP-001`
 - Le panneau se place en bas du champ de vision, décalé sur le côté choisi, à l'horizontale, tourné vers soi, et il suit le
-  cap du regard — `APP-001`
+  cap du regard [human] — `APP-001`
 - Le panneau tout entier reste hors de la zone tapis, avec la boîte par défaut comme avec une zone réglée plus haute ou plus
-  large ; sans pose de la tête, il reste caché — `APP-001`
-- Le panneau garde son fondu tête baissée et son masquage par le bouton B — `APP-001`
+  large ; sans pose de la tête, il reste caché [human] — `APP-001`
+- Le panneau garde son fondu tête baissée et son masquage par le bouton B [human] — `APP-001`
 - Le côté (gauche ou droite) se choisit à l'accueil, est gardé dans ce navigateur seulement, a un côté par défaut, et une
   valeur illisible est remplacée par ce défaut — `APP-002`
 - Le parcours est rejoué de bout en bout dans le Quest 3 émulé avec le panneau de chaque côté — `QUA-020`
@@ -105,5 +105,5 @@ ou à droite**, plutôt qu'au milieu du champ de vision. Le côté se règle à 
 - **Dernier état** (2026-11-01) : lots 1 à 3 codés et testés en local (Vitest 100 % de couverture, tsc, taille des fichiers, e2e
   `app/e2e/panneau-discret.test.ts` vert) : fond à 70 % d'opacité, place hors de la zone tapis (`app/src/xr/pose.ts`), côté choisi
   à l'accueil (`app/src/ui/panel-side.ts`), docs et contrats à jour. Lot 4 (essai réel) : [human].
-- **Travail non commité** : tout, sur la branche `workstream/panneau-discret` (un seul commit de code prévu, puis la clôture).
-- **Prochaine étape** : commit de code, `npx drwil verify --agent`, journal, `node .githooks/close.mjs`, PR.
+- **Travail non commité** : rien ; code commité (3637c0a) et poussé sur `workstream/panneau-discret`.
+- **Prochaine étape** : `npx drwil verify --agent` (les quatre critères automatiques citant `APP-001` sont marqués [human] sur décision de l'humain), puis journal, `node .githooks/close.mjs`, PR.
