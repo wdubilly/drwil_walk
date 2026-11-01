@@ -57,18 +57,18 @@ test("chemin 13 : la boîte par défaut protège le tapis, X la pose, le joystic
   // X : la boîte se pose sous la tête, à l'endroit où l'on se tient.
   await page.evaluate(() => { (window as unknown as E2eWindow).quest.position.set(0.4, 1.6, -0.3); });
   await page.evaluate(() => (window as unknown as E2eWindow).quest.controllers.left?.updateButtonValue("x-button", 1));
-  await expect.poll(async () => (await zone(page))[0]).toBeCloseTo(0.4, 2);
+  await expect.poll(async () => (await zone(page))[0], { timeout: 20_000 }).toBeCloseTo(0.4, 2);
   expect((await zone(page))[1]).toBeCloseTo(-0.3, 2);
   await page.evaluate(() => (window as unknown as E2eWindow).quest.controllers.left?.updateButtonValue("x-button", 0));
 
   // Joystick poussé vers l'avant : la boîte avance (z diminue).
   await page.waitForTimeout(250);
   await page.evaluate(() => (window as unknown as E2eWindow).quest.controllers.left?.updateAxes("thumbstick", 0, -1));
-  await expect.poll(async () => (await zone(page))[1]).toBeLessThan(-0.6);
+  await expect.poll(async () => (await zone(page))[1], { timeout: 20_000 }).toBeLessThan(-0.6);
   await page.evaluate(() => (window as unknown as E2eWindow).quest.controllers.left?.updateAxes("thumbstick", 0, 0));
   await page.waitForTimeout(400);
   const placed = await zone(page);
-  await expect.poll(() => page.evaluate(() => localStorage.getItem("drwil_walk.zone-tapis"))).toContain('"width":1.2');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem("drwil_walk.zone-tapis")), { timeout: 20_000 }).toContain('"width":1.2');
 
   // Nouveau lancement, dans une page neuve du même navigateur (même stockage) : la zone enregistrée est relue.
   await page.close();

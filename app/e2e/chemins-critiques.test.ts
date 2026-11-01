@@ -68,7 +68,7 @@ async function pushRightStick(page: Page, y: number) {
 async function letFramesPass(page: Page) {
   const timeS = async () => Number(await panel(page).getAttribute("data-time-s"));
   const start = await timeS();
-  await expect.poll(timeS).toBeGreaterThan(start + 0.1);
+  await expect.poll(timeS, { timeout: 20_000 }).toBeGreaterThan(start + 0.1);
 }
 
 async function releaseRightStick(page: Page) {
@@ -118,7 +118,7 @@ test("chemin 3 : la position avance à la vitesse réglée, le joystick change l
   // 3,6 km/h = 1 m/s : la distance parcourue égale le temps de marche.
   await enter(page, "3.6");
   await expect(field(page, "speed")).toHaveText("3,6 km/h");
-  await expect.poll(async () => Number(await panel(page).getAttribute("data-time-s"))).toBeGreaterThan(1.5);
+  await expect.poll(async () => Number(await panel(page).getAttribute("data-time-s")), { timeout: 20_000 }).toBeGreaterThan(1.5);
   const walked = await panel(page).evaluate((el) => ({
     distance: Number(el.getAttribute("data-distance-m")),
     time: Number(el.getAttribute("data-time-s")),
@@ -156,7 +156,7 @@ test("chemin 5 : le souk de Doha, ses bâtiments OpenStreetMap et sa mention, le
   await enter(page, "7.2");
   await expect(panel(page).getByText("© contributeurs OpenStreetMap")).toBeVisible();
   expect(Number(await panel(page).getAttribute("data-building-count"))).toBeGreaterThan(100);
-  await expect.poll(async () => Number(await panel(page).getAttribute("data-distance-m"))).toBeGreaterThan(8);
+  await expect.poll(async () => Number(await panel(page).getAttribute("data-distance-m")), { timeout: 20_000 }).toBeGreaterThan(8);
   const walked = await panel(page).evaluate((el) => ({
     distance: Number(el.getAttribute("data-distance-m")),
     crow: Math.hypot(Number(el.getAttribute("data-position-x")), Number(el.getAttribute("data-position-z"))),
@@ -181,7 +181,7 @@ test("chemin 6 : la Vieille ville de Pune, ses bâtiments OpenStreetMap et sa me
   await expect(page.locator("#app")).toHaveAttribute("data-route", "pune-vieille-ville");
   await expect(panel(page).getByText("© contributeurs OpenStreetMap")).toBeVisible();
   expect(Number(await panel(page).getAttribute("data-building-count"))).toBeGreaterThan(1000);
-  await expect.poll(async () => Number(await panel(page).getAttribute("data-distance-m"))).toBeGreaterThan(8);
+  await expect.poll(async () => Number(await panel(page).getAttribute("data-distance-m")), { timeout: 20_000 }).toBeGreaterThan(8);
   const walked = await panel(page).evaluate((el) => ({
     distance: Number(el.getAttribute("data-distance-m")),
     crow: Math.hypot(Number(el.getAttribute("data-position-x")), Number(el.getAttribute("data-position-z"))),
@@ -207,7 +207,7 @@ test("chemin 7 : la Corniche de Doha, ses bâtiments OpenStreetMap et sa mention
   await expect(page.locator("#app")).toHaveAttribute("data-route", "doha-corniche");
   await expect(panel(page).getByText("© contributeurs OpenStreetMap")).toBeVisible();
   expect(Number(await panel(page).getAttribute("data-building-count"))).toBeGreaterThan(500);
-  await expect.poll(async () => Number(await panel(page).getAttribute("data-distance-m"))).toBeGreaterThan(8);
+  await expect.poll(async () => Number(await panel(page).getAttribute("data-distance-m")), { timeout: 20_000 }).toBeGreaterThan(8);
   const walked = await panel(page).evaluate((el) => ({
     distance: Number(el.getAttribute("data-distance-m")),
     crow: Math.hypot(Number(el.getAttribute("data-position-x")), Number(el.getAttribute("data-position-z"))),

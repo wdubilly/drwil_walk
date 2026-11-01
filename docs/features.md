@@ -68,7 +68,7 @@ relié le plus proche du musée et n'atteint pas West Bay (environ 3,5 km plus l
 Rendu enrichi (chantier osm-enrichi) : les bâtiments prennent la couleur, la couleur de toit ou le matériau de leurs balises
 OpenStreetMap, sinon un ton de la palette de l'itinéraire ; les murs s'assombrissent vers le pied (ombrage par sommet) ; les
 arbres, lampadaires et bancs de l'extrait s'affichent (300 arbres et 400 éléments de mobilier au plus, les plus proches du
-parcours). Constaté sur les extraits du 2026-10-31 : arbres 155 (souk), 285 (Vieille ville), 513 (Corniche), 105 (FC Road) ;
+parcours ; les arbres sont ceux du pack Quaternius, voir l'ambiance cartoon ci-dessous). Constaté sur les extraits du 2026-10-31 : arbres 155 (souk), 285 (Vieille ville), 513 (Corniche), 105 (FC Road) ;
 bancs 19 (souk) et 8 (Corniche) ; aucun lampadaire ; très peu de bâtiments portent une couleur ou un matériau (7 matériaux
 au total, un seul toit coloré hors bâtiment), donc la plupart gardent le ton de la palette. À juger au casque, cadence
 comprise (lot 5 du chantier, humain) ; le relief du sol n'est pas fait (`docs/intentions/osm-enrichi.md`).
@@ -94,8 +94,12 @@ Non essayé sur un vrai Quest 3 (lot 6 de la fiche).
 Ambiance cartoon (lots 2, 3 et 5 de `docs/projects/journal.md`) : le sol, les voies et les bâtiments ont un matériau
 toon à quatre paliers de lumière ; chaque classe de voie a sa couleur, une bordure plus claire et, dès 7 m de large, une ligne
 centrale ; les façades portent un motif de fenêtres dessiné par le shader. Option d'accueil « Contours des bâtiments »,
-décochée par défaut : un trait autour des bâtiments à moins de 120 m du parcours. Les arbres du pack Quaternius ne sont pas
-encore posés (`docs/intentions/arbres-pack-quaternius.md`). Non essayé sur un vrai Quest 3.
+décochée par défaut : un trait autour des bâtiments à moins de 120 m du parcours. Les arbres sont ceux du pack Quaternius
+« Stylized Nature MegaKit » (version Standard, CC0), embarqués dans `app/assets/` (provenance dans `app/assets/PROVENANCE.md`) : quatre
+variantes d'arbre commun retenues parmi les 15 arbres de l'archive (non les 40 du kit complet), allégées à 413-454 triangles,
+une variante, un cap et une taille par arbre tirés de sa position (donc la même forêt à chaque marche), 300 arbres au plus,
+aucun appel réseau. Si le modèle ne se charge pas, l'écran le dit (« Arbres stylisés indisponibles… ») et la marche continue avec
+l'arbre simple. Non essayé sur un vrai Quest 3 (`docs/intentions/essai-casque-ambiance-cartoon.md`).
 
 ## Vérifié en conditions réelles
 

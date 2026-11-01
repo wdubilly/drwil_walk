@@ -2,3 +2,4 @@
 {"workstream":"google-3d-tiles","increment":"all","tokens":200974,"input":6,"output":11889,"cache_read":34671,"cache_write":110445,"requests":3,"model":"claude-haiku-5-5","duration_min":2,"date":"2026-10-31","source":"claude-code-logs"}
 {"workstream":"osm-enrichi","increment":"all","tokens":325522,"input":10,"output":18400,"cache_read":55240,"cache_write":182390,"requests":5,"model":"claude-haiku-5-5","duration_min":15,"date":"2026-10-31","source":"claude-code-logs"}
 {"workstream":"ambiance-cartoon","increment":"all","tokens":67697,"input":2,"output":4163,"cache_read":9012,"cache_write":36783,"requests":1,"model":"claude-haiku-5-5","duration_min":0,"date":"2026-11-01","source":"claude-code-logs"}
+{"workstream":"arbres-pack-quaternius","increment":"all","tokens":998051,"input":32,"output":50387,"cache_read":182367,"cache_write":582278,"requests":16,"model":"claude-haiku-5-5","duration_min":38,"date":"2026-11-01","source":"claude-code-logs"}
