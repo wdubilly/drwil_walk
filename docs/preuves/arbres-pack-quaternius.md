@@ -1,7 +1,7 @@
 # Preuve de clôture — arbres-pack-quaternius
 
 **Clos le** : 2026-11-01
-**Commit vérifié** : `3f48b2efb3` — verdict `drwil verify` : PASS
+**Commit vérifié** : `d58c656062` — verdict `drwil verify` : PASS
 
 critères de ce chantier, et ce qui les prouve aujourd'hui encore (rejoués par `drwil verify` après la clôture) :
 
