@@ -91,6 +91,12 @@ une zone illisible est remplacée par la boîte par défaut. Vignette réelle : 
 passthrough (fondu entre 60 % et 125 % du rayon de l'image) ; activée par défaut, case à décocher à l'accueil.
 Non essayé sur un vrai Quest 3 (lot 6 de la fiche).
 
+Ambiance cartoon (lots 2, 3 et 5 de `docs/projects/ambiance-cartoon.md`) : le sol, les voies et les bâtiments ont un matériau
+toon à quatre paliers de lumière ; chaque classe de voie a sa couleur, une bordure plus claire et, dès 7 m de large, une ligne
+centrale ; les façades portent un motif de fenêtres dessiné par le shader. Option d'accueil « Contours des bâtiments »,
+décochée par défaut : un trait autour des bâtiments à moins de 120 m du parcours. Les arbres du pack Quaternius ne sont pas
+encore posés (`docs/intentions/arbres-pack-quaternius.md`). Non essayé sur un vrai Quest 3.
+
 ## Vérifié en conditions réelles
 
 Rien pour l'instant : aucune fonctionnalité n'a encore été essayée sur le Quest 3 et le tapis. La tranche codée est

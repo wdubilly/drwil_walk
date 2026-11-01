@@ -123,6 +123,14 @@ describe("écran d'accueil", () => {
     expect(limit?.textContent).toContain("0,2 km/h est sous la limite");
   });
 
+  it("QUA-020: les contours des bâtiments sont décochés par défaut et se cochent", () => {
+    const { view, input } = setup();
+    const outlines = input("Contours des bâtiments");
+    expect(view.readOutlines()).toBe(false);
+    outlines.checked = true;
+    expect(view.readOutlines()).toBe(true);
+  });
+
   it("APP-001: la vignette réelle est cochée par défaut et se décoche", () => {
     const { view, input } = setup();
     const vignette = input("Vignette réelle");

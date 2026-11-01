@@ -175,3 +175,12 @@ One entry per closed project, most recent last.
 - Intention ajoutée sans fiche : la mention OpenStreetMap plus discrète dans le casque (`docs/intentions/mention-osm-discrete.md`), à trancher.
 - Reportés à l'intention `docs/intentions/course-reelle-entrainement.md` : reprise de séance, allure ou temps cible, dénivelé.
 - Fiches ajoutées après une maquette reçue le même jour : `tableau-allure-progression` (allure, distance restante, progression) et `comparer-marche-reelle` (historique local des séances, saisie de la vraie marche à la main, comparaison du temps, de la distance et de l'allure). La vitesse maximale reste 8 km/h et la minicarte reste en tracé seul (décisions du demandeur).
+
+## 2026-11-01 — ambiance-cartoon (lots 2, 3 et 5 ; lots 1, 4 et 6 reportés, lot 7 humain)
+
+- Livré : matériau toon à quatre paliers sur le sol, les voies et les bâtiments (`app/src/city/toon.ts`, soleil fixe dans la scène) ; voies de couleur propre à chaque classe, bordure plus claire, ligne centrale dès 7 m, ruban inchangé (`app/src/city/roads.ts`) ; fenêtres dessinées par le shader, sans texture ni maillage en plus ; contours des bâtiments à moins de 120 m du parcours, case d'accueil décochée par défaut (`app/src/city/outlines.ts`, `app/src/ui/home.ts`). Tout est dans le groupe de la ville : le fondu tête baissée et la découpe de la zone tapis s'appliquent aussi aux traits (`APP-001`, sécurité-visibilité).
+- Choix techniques de l'agent (pas des décisions de produit) : quatre paliers (0,5 / 0,7 / 0,88 / 1), contours par arêtes vives (traits d'un pixel, pas de coque inversée), cases de fenêtres de 3 m, motif calculé dans le repère local du bâtiment pour qu'il suive la ville.
+- Pas de téléchargement : le pack Quaternius est derrière une vérification anti-robot, non contournée (`docs/intentions/telechargement-pack-quaternius.md`). Lots reportés : 1 (pack), 4 (`docs/intentions/arbres-pack-quaternius.md`), 6 (`docs/intentions/e2e-doc-arbres-pack.md`) ; lot 7 humain (`docs/intentions/essai-casque-ambiance-cartoon.md`). `APP-003` (bâtiments, arbres et attribution) n'est pas modifié : aucun arbre du pack dans le dépôt.
+- Contrats : `QUA-020` (chemins testés de bout en bout) complété du chemin (14), `app/e2e/ambiance-cartoon.test.ts`, avec et sans contours.
+- Limites : jamais vu au casque (style, cadence de 72 images par seconde, contours d'un pixel) ; l'e2e émulé ne juge pas le rendu.
+- Branche `workstream/ambiance-cartoon`. Preuve de clôture : docs/preuves/ambiance-cartoon.md (écrite par la clôture).

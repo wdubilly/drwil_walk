@@ -21,4 +21,6 @@ navigateur manipulé par une personne. Contourner la vérification n'est pas per
 - [decision] Le demandeur télécharge-t-il lui-même l'archive glTF Standard depuis son navigateur, pour la déposer hors dépôt
   (par exemple dans `/tmp`) et laisser l'agent retenir et alléger les arbres, écrire la provenance (adresse, version, date,
   licence, fichiers) ?
-- [decision] Ou le chantier commence-t-il par les lots 2, 3 et 5 (sans pack), les arbres du pack venant ensuite ?
+- Tranché le 2026-11-01 : le chantier a commencé par les lots 2, 3 et 5 (sans pack) ; ils sont livrés. Reste la première
+  question, qui bloque le lot 1 puis `docs/intentions/arbres-pack-quaternius.md` (lot 4) et
+  `docs/intentions/e2e-doc-arbres-pack.md` (lot 6).

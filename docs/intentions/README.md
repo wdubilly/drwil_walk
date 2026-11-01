@@ -45,6 +45,10 @@ removes it when fully covered.
 | `docs/intentions/essai-casque-tableau-de-bord.md` | Juger le tableau de bord de marche (lisibilité, place, tapis visible) sur un vrai Quest 3 |
 | `docs/intentions/noms-de-rues-extrait.md` | Le nom de la rue courante dans le tableau de bord (les extraits n'en portent pas) |
 | `docs/intentions/texte-agents-donnee-personnelle.md` | Ajuster le texte de `AGENTS.md` : le poids facultatif est une donnée personnelle |
+| `docs/intentions/telechargement-pack-quaternius.md` | Télécharger le pack Quaternius (derrière une vérification anti-robot) : lot 1 d'ambiance-cartoon |
+| `docs/intentions/arbres-pack-quaternius.md` | Les arbres du pack Quaternius dans la ville cartoon (lot 4) |
+| `docs/intentions/e2e-doc-arbres-pack.md` | e2e, provenance et contrat `APP-003` une fois les arbres du pack posés (lot 6) |
+| `docs/intentions/essai-casque-ambiance-cartoon.md` | Juger l'ambiance cartoon (style, 72 images par seconde, contours) sur un vrai Quest 3 (lot 7) |
 
 A one-line idea, too light for a brief, is noted with one command:
 `node .githooks/note.mjs "<text>"` appends a dated line to
