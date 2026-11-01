@@ -23,7 +23,6 @@ removes it when fully covered.
 | `docs/intentions/test-voisin-module-pur.md` | Outiller `QUA-006` : un module de logique pure a son test à côté |
 | `docs/intentions/test-desactive-cite-fiche.md` | Outiller `QUA-009` : un test désactivé cite la fiche qui le justifie |
 | `docs/intentions/controles-couleurs-kit.md` | Installer les contrôles de couleurs et de contraste du kit (`QUA-014`) |
-| `docs/intentions/zone-tapis-vignette.md` | Zone tapis toujours transparente et vignette réelle |
 | `docs/intentions/hud-casque.md` | Le tableau de bord de marche dans le casque (maquette : statistiques, défis, boussole, étapes) |
 | `docs/intentions/commandes-panneau.md` | Pause, recalibrage et panneau d'infos dans le casque |
 | `docs/intentions/corniche-west-bay.md` | La Corniche de Doha jusqu'à West Bay, départ au musée |
