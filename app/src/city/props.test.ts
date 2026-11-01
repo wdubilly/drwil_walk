@@ -1,8 +1,9 @@
-import { InstancedMesh } from "three";
+import { Group, InstancedMesh } from "three";
 import { describe, expect, it } from "vitest";
 import { createPath } from "../route/path.ts";
-import { MAX_FURNITURE, MAX_TREES, buildFurniture, buildTrees, nearest } from "./props.ts";
+import { MAX_FURNITURE, MAX_TREES, MAX_TREE_TRIANGLES, buildFurniture, buildTrees, nearest } from "./props.ts";
 import type { Prop } from "./souq-data.ts";
+import { testPack } from "./tree-pack-double.ts";
 
 const route = createPath([{ x: 0, z: 0 }, { x: 0, z: -100 }]);
 const at = (kind: Prop["kind"], x: number): Prop => ({ kind, at: { x, z: -50 } });
@@ -33,5 +34,20 @@ describe("arbres et mobilier urbain", () => {
     const capped = buildFurniture(Array.from({ length: MAX_FURNITURE + 20 }, (_, i) => at("bench", i)), route);
     expect(capped.geometry.getAttribute("position").count).toBe(MAX_FURNITURE * 36);
     expect(buildFurniture([at("tree", 1)], route).geometry.getAttribute("position")).toBeUndefined();
+  });
+
+  it("APP-003: avec le pack, les arbres sont ceux du pack, dans le plafond d'arbres et le plafond de triangles", async () => {
+    const pack = await testPack();
+    const many = Array.from({ length: MAX_TREES + 50 }, (_, i) => at("tree", i + 1));
+    const trees = buildTrees(many, route, pack);
+    expect(trees).toBeInstanceOf(Group);
+    const placed = (trees as Group).children.filter((m) => m.name.startsWith("arbres-ecorce")) as InstancedMesh[];
+    expect(placed.reduce((sum, m) => sum + m.count, 0)).toBe(MAX_TREES);
+    const triangles = (trees as Group).children.reduce((sum, m) => {
+      const mesh = m as InstancedMesh;
+      return sum + mesh.count * ((mesh.geometry.getIndex()?.count ?? 0) / 3);
+    }, 0);
+    expect(triangles).toBeLessThanOrEqual(MAX_TREE_TRIANGLES);
+    expect(buildTrees(many, route)).toBeInstanceOf(InstancedMesh);
   });
 });

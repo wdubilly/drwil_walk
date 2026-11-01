@@ -4,6 +4,7 @@ import type { WebGLRenderer } from "three";
 import { createAttributionLabel } from "../city/attribution.ts";
 import { cityFor } from "../city/cities.ts";
 import { createTripPlanner } from "../city/free-route.ts";
+import type { TreePack } from "../city/tree-pack.ts";
 import { createSouqScene, placeOnRoute, setCityOpacity } from "../city/souq.ts";
 import type { Souq } from "../city/souq-data.ts";
 import { FREE_ITINERARY_ID, ITINERARIES, type Itinerary } from "../route/itineraries.ts";
@@ -22,6 +23,7 @@ import { rightButtons } from "./buttons.ts";
 import { createHudPanel } from "./hud-panel.ts";
 import { rightThumbstickY } from "./joystick.ts";
 import { NO_CALIBRATION, calibrationFrom, type HeadPose } from "./pose.ts";
+import { preloadTrees, withTreeNotice, type TreeLoad } from "./trees-load.ts";
 import { REFERENCE_SPACE, SESSION_MODE, requestMixedRealitySession, type XrSystemLike } from "./session.ts";
 
 export type RendererLike = Pick<WebGLRenderer, "xr" | "setAnimationLoop" | "render" | "domElement" | "dispose" | "localClippingEnabled">;
@@ -40,6 +42,8 @@ export interface ExperienceDeps {
   storage?: WeightStorage | undefined;
   /** L'horloge du tableau de bord (absente : l'heure du casque) ; injectée pour que les tests fixent l'heure. */
   now?: (() => Date) | undefined;
+  /** Le chargement des arbres du pack Quaternius (absent : l'arbre procédural, sans message). */
+  trees?: (() => Promise<TreePack>) | undefined;
 }
 
 export const ACTIVE_STATUS = `Réalité mixte active (${SESSION_MODE})`;
@@ -49,8 +53,9 @@ export const ENDED_STATUS = "Session terminée : vous pouvez y revenir.";
 export function startExperience(deps: ExperienceDeps): HomeView {
   const planner = createTripPlanner(deps.routes);
   const home = renderHome(deps.document, deps.root, planner, deps.storage);
+  const trees = preloadTrees(deps.trees);
   home.onEnter(() => {
-    void enter(deps, home);
+    void enter(deps, home, trees);
   });
   return home;
 }
@@ -64,14 +69,14 @@ function chosenCity(home: HomeView): Souq {
   return trip.souq;
 }
 
-async function enter(deps: ExperienceDeps, home: HomeView): Promise<void> {
+async function enter(deps: ExperienceDeps, home: HomeView, trees: Promise<TreeLoad>): Promise<void> {
   home.setEntering(true);
   home.showStatus("Ouverture de la réalité mixte…");
   try {
     // La ville d'abord : sans elle, aucune session n'est ouverte pour rien.
     const souq = chosenCity(home);
     const session = await requestMixedRealitySession(deps.xr);
-    await walk(deps, home, session, souq);
+    await walk(deps, home, session, souq, await trees);
   } catch (error) {
     // L'échec se lit sur la page (QUA-002) et le bouton redevient utilisable.
     home.setEntering(false);
@@ -79,21 +84,21 @@ async function enter(deps: ExperienceDeps, home: HomeView): Promise<void> {
   }
 }
 
-async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession, souq: Souq): Promise<void> {
+async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession, souq: Souq, trees: TreeLoad): Promise<void> {
   // La scène d'abord : si elle ne se construit pas, aucun renderer ni canevas n'est laissé derrière.
-  const souqScene = createSouqScene(deps.document, souq, { outlines: home.readOutlines() });
+  const souqScene = createSouqScene(deps.document, souq, { outlines: home.readOutlines(), ...(trees.pack && { trees: trees.pack }) });
   const { scene, camera, world, city, buildingCount } = souqScene;
   // Le message d'arrivée d'un trajet libre, dans le casque : il s'efface avec la ville (APP-001).
   const arrival = createAttributionLabel(deps.document, ARRIVAL_TEXT, { name: "arrivee", y: 1.4 });
   arrival.mesh.visible = false;
   world.add(arrival.mesh);
-  home.showNotice("");
+  home.showNotice(trees.notice);
   const mode = chooseRendering({
     wanted: home.readRendering(),
     config: deps.google,
     souq,
     scene: souqScene,
-    notice: home.showNotice,
+    notice: withTreeNotice(trees, home.showNotice),
   });
   const renderer = new deps.Renderer({ antialias: true, alpha: true });
   renderer.xr.enabled = true;

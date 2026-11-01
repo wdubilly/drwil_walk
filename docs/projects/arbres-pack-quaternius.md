@@ -3,7 +3,7 @@
 **Statut** : cadré le 2026-11-01.
 **Risque** : HIGH
 **Maturité** : prêt
-**Intention** : `docs/intentions/telechargement-pack-quaternius.md`, `docs/intentions/arbres-pack-quaternius.md`, `docs/intentions/e2e-doc-arbres-pack.md`
+**Intention** : `docs/intentions/essai-casque-ambiance-cartoon.md` (les trois intentions d'origine, téléchargement du pack, arbres du pack et e2e-doc, sont couvertes par ce chantier et retirées)
 
 <!-- scope
 files:
@@ -101,7 +101,11 @@ pas franchir : le demandeur a téléchargé l'archive lui-même et l'a déposée
 
 ## 7. Reprise
 
-- **Dernier état** (2026-11-01) : cadré ; archive reçue dans `/tmp/quaternius/`, contenu vérifié (15 arbres glTF, CC0) ;
-  aucun code.
-- **Travail non commité** : aucun.
-- **Prochaine étape** : [AI] lot 1.
+- **Dernier état** (2026-11-01) : lots 1, 2 et 3 réalisés. Archive lue en mémoire (15 arbres glTF CC0, non les 40 du kit complet) ;
+  4 variantes retenues (`CommonTree_1`, `_2`, `_3`, `_5`), allégées à 413-454 triangles, embarquées dans `app/assets/`
+  (provenance dans `app/assets/PROVENANCE.md`) ; chargement dès l'accueil, repli sur l'arbre procédural avec le motif dit à
+  l'écran, instances dans `MAX_TREES`, plafonds de triangles testés ; e2e avec et sans contours, et avec modèle abîmé.
+  `APP-003` et `QUA-020` à jour (modification d'`APP-003` approuvée le 2026-11-01).
+- **Travail non commité** : voir `git status` ; rien d'autre que ce chantier.
+- **Prochaine étape** : clôture (journal, `node .githooks/close.mjs`), PR, fusion automatique ; le jugement du style et de la
+  cadence au casque reste à l'humain (`docs/intentions/essai-casque-ambiance-cartoon.md`).

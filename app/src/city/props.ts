@@ -6,6 +6,7 @@ import {
   Color,
   CylinderGeometry,
   Float32BufferAttribute,
+  Group,
   IcosahedronGeometry,
   InstancedMesh,
   Matrix4,
@@ -16,9 +17,13 @@ import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import type { Vec2 } from "../route/geo.ts";
 import type { Path } from "../route/path.ts";
 import type { Prop } from "./souq-data.ts";
+import { buildPackTrees } from "./tree-instances.ts";
+import { MAX_MODEL_TRIANGLES, type TreePack } from "./tree-pack.ts";
 
 /** Plafond des arbres dessinés : les plus proches du parcours d'abord. */
 export const MAX_TREES = 300;
+/** Plafond de triangles de tous les arbres du pack ensemble : MAX_TREES arbres de la taille maximale d'un modèle. */
+export const MAX_TREE_TRIANGLES = MAX_TREES * MAX_MODEL_TRIANGLES;
 /** Plafond du mobilier (lampadaires et bancs) fusionné dans un maillage. */
 export const MAX_FURNITURE = 400;
 
@@ -42,9 +47,13 @@ export function nearest(props: readonly Prop[], route: Path, max: number): Prop[
   return props.map((p) => ({ p, d: distance(p.at) })).sort((a, b) => a.d - b.d).slice(0, max).map((e) => e.p);
 }
 
-/** Les arbres : un seul maillage instancié. */
-export function buildTrees(props: readonly Prop[], route: Path): InstancedMesh {
+/**
+ * Les arbres, dans le plafond MAX_TREES : ceux du pack Quaternius s'il est chargé (instances par variante), sinon l'arbre
+ * procédural, un seul maillage instancié.
+ */
+export function buildTrees(props: readonly Prop[], route: Path, pack?: TreePack): InstancedMesh | Group {
   const trees = nearest(props.filter((p) => p.kind === "tree"), route, MAX_TREES);
+  if (pack) return buildPackTrees(trees, pack);
   const mesh = new InstancedMesh(treeModel(), new MeshLambertMaterial({ vertexColors: true }), trees.length);
   for (const [i, tree] of trees.entries()) mesh.setMatrixAt(i, new Matrix4().makeTranslation(tree.at.x, 0, tree.at.z));
   mesh.name = "arbres";

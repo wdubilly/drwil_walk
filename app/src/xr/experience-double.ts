@@ -6,6 +6,7 @@ import { withCanvasContext } from "../city/canvas-double.ts";
 import { createProviders } from "../route/create-providers.ts";
 import { startExperience, type RendererClass } from "./experience.ts";
 import type { GoogleTiles, GoogleTilesOptions } from "../city/google-tiles.ts";
+import type { TreePack } from "../city/tree-pack.ts";
 import type { WeightStorage } from "../route/stats.ts";
 import type { XrSystemLike } from "./session.ts";
 
@@ -23,7 +24,7 @@ export function poseFrame(deg: number | null, { yawDeg = 0, at = { x: 0, y: 1.6,
 export const KEY = "cle-fictive-pour-les-tests";
 
 export function setup(
-  options: { supported?: boolean; space?: boolean; xr?: boolean; sessionFails?: boolean; apiKey?: string | undefined; fetch?: typeof fetch; storage?: WeightStorage; now?: () => Date } = {},
+  options: { supported?: boolean; space?: boolean; xr?: boolean; sessionFails?: boolean; apiKey?: string | undefined; fetch?: typeof fetch; storage?: WeightStorage; now?: () => Date; trees?: () => Promise<TreePack> } = {},
 ) {
   const doc = withCanvasContext(new Window().document as unknown as Document);
   const root = doc.createElement("main");
@@ -80,6 +81,7 @@ export function setup(
     google: { apiKey, create },
     storage: options.storage,
     now: options.now,
+    trees: options.trees,
     routes: createProviders({}, options.fetch ?? (() => Promise.reject(new Error("réseau interdit aux tests")))),
   });
   const status = () => root.querySelector("[role='status']")?.textContent;

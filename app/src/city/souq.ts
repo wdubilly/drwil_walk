@@ -24,6 +24,7 @@ import { buildOutlinesGeometry } from "./outlines.ts";
 import { buildRoadsGeometry } from "./roads.ts";
 import type { Souq } from "./souq-data.ts";
 import { buildingMaterial, toonMaterial } from "./toon.ts";
+import type { TreePack } from "./tree-pack.ts";
 
 const GROUND_SIZE_M = 3000;
 
@@ -33,6 +34,8 @@ const OUTLINE_COLOR = 0x1b1b2f;
 export interface SceneOptions {
   /** Les contours des bâtiments proches du parcours : désactivés par défaut (QUA-020). */
   outlines?: boolean;
+  /** Les arbres du pack Quaternius, chargés d'avance : absents, la ville garde l'arbre procédural (APP-003). */
+  trees?: TreePack;
 }
 
 export interface SouqScene {
@@ -61,7 +64,7 @@ export function createSouqScene(doc: Document, souq: Souq, options: SceneOptions
   buildings.name = "batiments";
   const osm = new Group();
   osm.name = "osm";
-  osm.add(ground, roads, buildings, buildTrees(souq.props, souq.route), buildFurniture(souq.props, souq.route));
+  osm.add(ground, roads, buildings, buildTrees(souq.props, souq.route, options.trees), buildFurniture(souq.props, souq.route));
   if (options.outlines === true) {
     const outlines = new LineSegments(buildOutlinesGeometry(souq.buildings, souq.route), new LineBasicMaterial({ color: OUTLINE_COLOR }));
     outlines.name = "contours";

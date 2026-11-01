@@ -4,7 +4,7 @@
 **Reviewed on 2026-10-31** : le passthrough sans ciel virtuel est gardé, la palette est par itinéraire et le rendu enrichi est livré ; ne reste que la question des types de bâtiments et le jugement au casque.
 **Repris le 2026-11-01** : l'ambiance cartoon (matériau toon, routes, arbres du pack Quaternius) est cadrée par `docs/projects/journal.md`.
 
-**Livré partiellement le 2026-11-01** par le chantier ambiance-cartoon : matériau toon, voies bordées, fenêtres et contours en option sont posés, à juger au casque (`docs/intentions/essai-casque-ambiance-cartoon.md`) ; les arbres du pack attendent son téléchargement (`docs/intentions/telechargement-pack-quaternius.md`). Reste ici la question des types de bâtiments.
+**Livré partiellement le 2026-11-01** par le chantier ambiance-cartoon : matériau toon, voies bordées, fenêtres et contours en option sont posés, à juger au casque (`docs/intentions/essai-casque-ambiance-cartoon.md`) ; les arbres du pack Quaternius sont posés le 2026-11-01 (fiche arbres-pack-quaternius, `docs/projects/journal.md`). Reste ici la question des types de bâtiments.
 
 ## Besoin
 
