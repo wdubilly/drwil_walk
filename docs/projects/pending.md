@@ -27,9 +27,12 @@ otherwise.
 
 Ordre de lancement : par priorité (`[P0]` d'abord), puis par ordre alphabétique du chemin à priorité égale (limite de l'outil
 de sondage : quatre niveaux). Les dépendances sont respectées : `ambiance-cartoon` avant `rendu-ville-riche`, `panneau-discret`
-avant les fiches qui touchent le panneau d'infos, `tableau-allure-progression` et `hud-defis-progression` avant
+avant les fiches qui touchent le panneau d'infos, `champ-de-vision-casque` puis `panneau-heure-hors-vue` avant elles aussi
+(le panneau doit tenir dans la vue avant d'y ajouter du contenu), `tableau-allure-progression` et `hud-defis-progression` avant
 `comparer-marche-reelle`, les fiches de la ville avant `course-reelle-gpx`. La Corniche est reportée le 2026-11-01 : à annuler si `course-reelle-gpx` couvre le besoin.
 
+- [ ] [P0] [AI] Simuler le champ de vision du casque pour juger ce qui reste dans la vue — `docs/projects/champ-de-vision-casque.md`
+- [ ] [P0] [AI] Corriger le panneau d'infos dont l'heure sort de la vue (après `champ-de-vision-casque`) — `docs/projects/panneau-heure-hors-vue.md`
 - [ ] [P0] [AI] Une ville plus riche : sol, végétation, toits, noms de rues — `docs/projects/rendu-ville-riche.md`
 - [ ] [P1] [AI] Minicarte dans le casque, avec le point qui avance sur le tracé — `docs/projects/carte-position-casque.md`
 - [ ] [P1] [AI] Allure et progression dans le tableau de bord — `docs/projects/tableau-allure-progression.md`
