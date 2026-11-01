@@ -73,3 +73,4 @@ and its line is then removed.
 
 - [decision] ...
 ```
+| `docs/intentions/entree-npm-pack-arbres.md` | Une entrée npm pour préparer les arbres du pack Quaternius |

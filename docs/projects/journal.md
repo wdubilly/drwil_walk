@@ -184,3 +184,14 @@ One entry per closed project, most recent last.
 - Contrats : `QUA-020` (chemins testés de bout en bout) complété du chemin (14), `app/e2e/ambiance-cartoon.test.ts`, avec et sans contours.
 - Limites : jamais vu au casque (style, cadence de 72 images par seconde, contours d'un pixel) ; l'e2e émulé ne juge pas le rendu.
 - Branche `workstream/ambiance-cartoon`. Preuve de clôture : docs/preuves/ambiance-cartoon.md (écrite par la clôture).
+
+## 2026-11-01 — arbres-pack-quaternius (lots 1, 2 et 3)
+
+- Livré : les arbres de la ville cartoon sont ceux du pack Quaternius « Stylized Nature MegaKit » (Standard, CC0), embarqués dans `app/assets/` : quatre variantes d'arbre commun (`CommonTree_1`, `_2`, `_3`, `_5`) de 413 à 454 triangles, texture des feuilles en base64 dans `app/assets/quaternius-trees.json` (environ 290 Ko), licence de l'archive et provenance écrite (`app/assets/PROVENANCE.md`). Le script `app/scripts/prepare-nature-pack.ts` relit l'archive hors du dépôt, en mémoire (rien d'extrait ni d'exécuté).
+- Écart noté : l'archive Standard contient 15 arbres (`CommonTree`, `DeadTree`, `TwistedTree`, 5 chacun), non les 40 du kit complet.
+- Ville : chargement validé dès l'accueil (`app/src/city/tree-pack.ts`, `app/src/xr/trees-load.ts`), instances par variante dans `MAX_TREES` (variante, cap et taille tirés de la position : même forêt à chaque marche, `app/src/city/tree-instances.ts`), plafonds de 500 triangles par arbre et 150 000 au total testés. Un modèle qui ne se charge pas est dit à l'écran et la marche continue avec l'arbre procédural (`QUA-002`, aucune erreur avalée). Les arbres sont dans le groupe de la ville : fondu tête baissée et découpe de la zone tapis inchangés (`APP-001`, sécurité-visibilité).
+- Choix techniques de l'agent (pas des décisions de produit) : format JSON compact importé dans le paquet (aucune requête, pas de chargeur glTF dans le casque), écorce en couleur unie fois l'ombrage par sommet du pack (sans texture ni normal map), feuillage éclairci en cartes agrandies, texture des feuilles gardée telle quelle, arbres morts et tordus écartés.
+- Contrats : `APP-003` modifié (arbres du pack embarqués, provenance écrite ; approuvé par le demandeur le 2026-11-01), `QUA-020` complété (chemin 14 avec les arbres, sans requête hors page, et repli sur modèle abîmé, `app/e2e/ambiance-cartoon.test.ts`).
+- Intentions couvertes et retirées : télécharger le pack, arbres du pack, e2e et provenance. `docs/intentions/essai-casque-ambiance-cartoon.md` mis à jour (look et cadence des arbres à juger).
+- Limites : jamais vu au casque (look des arbres, 72 images par seconde avec 300 arbres) ; l'e2e émulé ne juge pas le rendu ; le script de préparation n'a pas d'entrée npm (`app/package.json` hors du périmètre), sa commande est dans `app/AGENTS.md`.
+- Branche `workstream/arbres-pack-quaternius`. Preuve de clôture : docs/preuves/arbres-pack-quaternius.md (écrite par la clôture).

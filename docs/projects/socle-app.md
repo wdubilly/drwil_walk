@@ -5,6 +5,8 @@
 
 <!-- scope
 files:
+  - app/assets/quaternius-licence.txt
+  - app/assets/quaternius-trees.json
   - app/data/doha-corniche-boucle.json
   - app/data/doha-corniche.json
   - app/data/pune-fc-road-boucle.json
@@ -28,6 +30,7 @@ files:
   - app/scripts/extract-pune.ts
   - app/scripts/extract-souq.ts
   - app/scripts/osm-tags.ts
+  - app/scripts/prepare-nature-pack.ts
   - app/src/city/attribution.test.ts
   - app/src/city/attribution.ts
   - app/src/city/buildings.test.ts
