@@ -1,6 +1,6 @@
 # Intention : e2e, provenance et contrats une fois les arbres du pack posés (lot 6 d'ambiance-cartoon)
 
-**Statut** : proposée le 2026-11-01 ; dépend de `docs/intentions/arbres-pack-quaternius.md`.
+**Statut** : cadrée le 2026-11-01 dans `docs/projects/arbres-pack-quaternius.md` (proposée le 2026-11-01) ; dépend de `docs/intentions/arbres-pack-quaternius.md`.
 
 ## Besoin
 

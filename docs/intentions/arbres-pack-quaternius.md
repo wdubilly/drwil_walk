@@ -1,6 +1,6 @@
 # Intention : les arbres du pack Quaternius dans la ville cartoon (lot 4 d'ambiance-cartoon)
 
-**Statut** : proposée le 2026-11-01 ; dépend de `docs/intentions/telechargement-pack-quaternius.md`.
+**Statut** : cadrée le 2026-11-01 dans `docs/projects/arbres-pack-quaternius.md` (proposée le 2026-11-01) ; dépend de `docs/intentions/telechargement-pack-quaternius.md`.
 
 ## Besoin
 
