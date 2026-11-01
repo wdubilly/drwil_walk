@@ -1,0 +1,24 @@
+{
+  "version": 3,
+  "contract": "APP-004",
+  "status": "ATTESTED",
+  "attestedAt": "2026-11-01T19:57:02.593Z",
+  "actor": {
+    "name": "Wilfried Dubilly",
+    "source": "git config user.name, déclaratif"
+  },
+  "note": null,
+  "fingerprint": "40497da753010985335c6df19912be7386b06ccf96624114ba9d4657acff749f",
+  "proof": {
+    "app-004": "7c90f9cb8333aee17b7fa44f146cfbeefc0f92f9bb96bb7f6799af1d5f572f26"
+  },
+  "covers": null,
+  "coverage": {},
+  "commit": "7522e14f7277233c9e24f30ff312394c010f3889",
+  "automated": [
+    {
+      "id": "app-004",
+      "status": "ok"
+    }
+  ]
+}
