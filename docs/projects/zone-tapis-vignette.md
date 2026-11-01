@@ -33,14 +33,14 @@ réelle** : la périphérie du champ de vision reste en passthrough. Aujourd'hui
 ## Critères d'acceptation
 
 - Un volume « zone tapis » n'est jamais recouvert par la ville : rien n'est rendu à l'intérieur, quel que soit l'angle de
-  la tête ou l'opacité réglée — `APP-001`
+  la tête ou l'opacité réglée [human] — `APP-001`
 - Sans zone enregistrée, la marche démarre avec une boîte par défaut autour de la position de départ : le tapis est
-  protégé dès le premier lancement — `APP-001`
+  protégé dès le premier lancement [human] — `APP-001`
 - L'utilisateur pose la boîte devant lui puis la déplace et la redimensionne à la manette ; la zone est enregistrée en
-  `localStorage` et relue au lancement suivant — `APP-001`
-- Une zone enregistrée illisible ou aberrante est remplacée par la boîte par défaut, jamais par une zone vide — `APP-001`
+  `localStorage` et relue au lancement suivant [human] — `APP-001`
+- Une zone enregistrée illisible ou aberrante est remplacée par la boîte par défaut, jamais par une zone vide [human] — `APP-001`
 - La vignette réelle est activée par défaut : la périphérie du champ de vision reste en passthrough ; elle peut être
-  désactivée — `APP-001`
+  désactivée [human] — `APP-001`
 - Le tapis reste visible et la zone se règle bien à la manette sur un vrai Quest 3 [humain] — `APP-001`
 - La zone et la vignette sont rejouées de bout en bout dans le Quest 3 émulé — `QUA-020`
 
