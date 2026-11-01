@@ -14,6 +14,8 @@ const souq: Souq = {
   palette: { ground: 1, road: 2, buildings: [3] },
   roads: [],
   buildings: [],
+  areas: [],
+  hedges: [],
   props: [],
 };
 const KEY = "cle-fictive-pour-les-tests";

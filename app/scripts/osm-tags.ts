@@ -35,3 +35,46 @@ export function buildingLook(tags: Record<string, string>): { colour?: string; r
     ...(material ? { material } : {}),
   };
 }
+
+/** Les surfaces de sol et les haies demandées à Overpass avec les bâtiments : occupation du sol, parcs, jardins et haies. */
+export const LAND_WAYS = [
+  'way["landuse"~"^(grass|meadow|forest|recreation_ground|village_green|orchard|cemetery|flowerbed)$"]',
+  'way["leisure"~"^(park|garden|playground|pitch|common)$"]',
+  'way["natural"~"^(wood|scrub|grassland)$"]',
+  'way["barrier"="hedge"]',
+] as const;
+
+export type AreaKind = "grass" | "park" | "garden" | "wood";
+
+/** La famille d'une surface verte (balises exactes) : de quoi choisir sa teinte au sol. */
+export function areaKind(tags: Record<string, string>): AreaKind | undefined {
+  const landuse = tags["landuse"];
+  const leisure = tags["leisure"];
+  const natural = tags["natural"];
+  if (leisure === "park" || leisure === "common" || landuse === "recreation_ground" || landuse === "village_green") return "park";
+  if (leisure === "garden" || landuse === "flowerbed" || landuse === "orchard") return "garden";
+  if (landuse === "forest" || natural === "wood" || natural === "scrub") return "wood";
+  if (landuse === "grass" || landuse === "meadow" || landuse === "cemetery" || natural === "grassland" || leisure === "playground" || leisure === "pitch") return "grass";
+  return undefined;
+}
+
+export type Sidewalk = "both" | "left" | "right";
+
+/** Les trottoirs d'une voie : `sidewalk=both|left|right` (ou `yes`, des deux côtés) ; `no` et le reste : aucun. */
+export function sidewalkSides(tags: Record<string, string>): Sidewalk | undefined {
+  const value = tags["sidewalk"];
+  if (value === "both" || value === "yes") return "both";
+  return value === "left" || value === "right" ? value : undefined;
+}
+
+/** Un chemin piéton tracé à part : trottoir ou passage piéton (`footway=sidewalk|crossing`). */
+export function footwayKind(tags: Record<string, string>): "sidewalk" | "crossing" | undefined {
+  const value = tags["footway"] ?? (tags["highway"] === "crossing" ? "crossing" : undefined);
+  return value === "sidewalk" || value === "crossing" ? value : undefined;
+}
+
+/** La toiture à deux pans : `roof:shape=gabled` (ou `hipped`, dessiné de même). */
+export function roofShape(tags: Record<string, string>): "gabled" | undefined {
+  const shape = tags["roof:shape"];
+  return shape === "gabled" || shape === "hipped" ? "gabled" : undefined;
+}

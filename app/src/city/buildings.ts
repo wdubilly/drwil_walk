@@ -2,6 +2,11 @@
 // pour tenir 72 images par seconde sur le Quest 3.
 import { BufferGeometry, Color, ExtrudeGeometry, Float32BufferAttribute, Shape, Vector2 } from "three";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
+import type { Vec2 } from "../route/geo.ts";
+import type { Path } from "../route/path.ts";
+import { closest } from "./near-route.ts";
+import { AWNING_COLOUR_COUNT, MAX_AWNINGS, MAX_GABLED_ROOFS, addAwning, addGabledRoof } from "./roofs.ts";
+import { newSoup, soupGeometry } from "./soup.ts";
 import type { Building } from "./souq-data.ts";
 
 /** Le ton d'un bâtiment, déterministe : il ne dépend que de la position de son premier sommet (aucune donnée en plus). */
@@ -17,7 +22,7 @@ export const FOOT_LIGHT = 0.55;
 const isRoof = (normalY: number): boolean => normalY > 0.5;
 
 /** Un bâtiment debout : le contour (x, z) du repère local, tiré vers le haut sur sa hauteur. */
-function extrude(building: Building, tone: Color): BufferGeometry {
+function extrude(building: Building, tone: Color): { geometry: BufferGeometry; wall: Color; roof: Color } {
   // ExtrudeGeometry pousse le contour (x, y) le long de +Z ; la rotation couche cet axe sur +Y.
   // Le contour est donc posé en (x, -z), pour que le monde garde son z vers le sud.
   const shape = new Shape(building.footprint.map((p) => new Vector2(p.x, -p.z)));
@@ -35,15 +40,31 @@ function extrude(building: Building, tone: Color): BufferGeometry {
     colors.push(color.r * light, color.g * light, color.b * light);
   }
   geometry.setAttribute("color", new Float32BufferAttribute(colors, 3));
-  return geometry;
+  // Tous les morceaux fusionnés portent les mêmes attributs : celui-ci n'a pas de texture.
+  geometry.deleteAttribute("uv");
+  return { geometry, wall, roof };
 }
 
 /** Un contour d'au moins trois sommets distincts (le dernier répète le premier) a un volume. */
 const hasVolume = (building: Building): boolean => building.footprint.length >= 4 && building.heightM > 0;
 
-export function buildBuildingsGeometry(buildings: readonly Building[], tones: readonly number[]): BufferGeometry {
+/**
+ * Tous les bâtiments en un seul maillage : murs et toits plats extrudés, puis, pour les plus proches du parcours, les toits à
+ * deux pans (`roof:shape`) et les auvents (budgets de roofs.ts).
+ */
+export function buildBuildingsGeometry(buildings: readonly Building[], tones: readonly number[], route: Path): BufferGeometry {
   const colors = tones.map((hex) => new Color(hex));
-  const solids = buildings.filter(hasVolume).map((b) => extrude(b, colors[toneIndex(b, colors.length)] as Color));
+  const solid = buildings.filter(hasVolume);
+  const gabled = new Set(closest(solid.filter((b) => b.roofShape === "gabled"), route, MAX_GABLED_ROOFS, (b) => b.footprint[0] as Vec2));
+  const awned = new Set(closest(solid, route, MAX_AWNINGS, (b) => b.footprint[0] as Vec2));
+  const extra = newSoup();
+  const parts = solid.map((b) => {
+    const { geometry, wall, roof } = extrude(b, colors[toneIndex(b, colors.length)] as Color);
+    if (gabled.has(b)) addGabledRoof(extra, b, roof, wall);
+    if (awned.has(b)) addAwning(extra, b, route, toneIndex(b, AWNING_COLOUR_COUNT));
+    return geometry;
+  });
+  if (extra.positions.length > 0) parts.push(soupGeometry(extra));
   // mergeGeometries échoue sur une liste vide : sans bâtiment, un maillage vide.
-  return (solids.length > 0 ? mergeGeometries(solids) : null) ?? new BufferGeometry();
+  return (parts.length > 0 ? mergeGeometries(parts) : null) ?? new BufferGeometry();
 }

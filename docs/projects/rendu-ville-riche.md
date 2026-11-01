@@ -100,6 +100,6 @@ propose sept familles ; le demandeur retient quatre : sol et route, végétation
 
 ## 7. Reprise
 
-- **Dernier état** (2026-10-31) : cadrage seul, aucun code.
-- **Travail non commité** : la fiche, sur la branche `cadrage/commandes-panneau`.
-- **Prochaine étape** : [AI] lot 1.
+- **Dernier état** (2026-11-01) : lots 1 à 6 faits par l'agent (extraits, sol et route, verdure, toits, noms de rues, e2e et docs) ; lot 7 (essai réel au Quest 3) à faire par l'humain.
+- **Travail non commité** : aucun une fois la clôture faite (branche `workstream/rendu-ville-riche`).
+- **Prochaine étape** : [human] lot 7, voir `docs/intentions/essai-casque-ville-riche.md`.

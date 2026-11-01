@@ -5,7 +5,7 @@ import { withCanvasContext } from "./canvas-double.ts";
 import { createPath } from "../route/path.ts";
 import { DEFAULT_ZONE } from "../safety/zone.ts";
 import { createZoneClip } from "./zone-clip.ts";
-import { createSouqScene, placeOnRoute, setCityOpacity } from "./souq.ts";
+import { MAX_CITY_MESHES, createSouqScene, placeOnRoute, setCityOpacity } from "./souq.ts";
 import type { Souq } from "./souq-data.ts";
 
 const route = createPath([
@@ -19,7 +19,12 @@ const souq: Souq = {
   origin: [51.5, 25.3],
   route,
   palette,
-  roads: [{ highway: "primary", points: [{ x: 0, z: 0 }, { x: 0, z: -100 }] }],
+  roads: [
+    { highway: "primary", name: "Corniche", sidewalk: "both", points: [{ x: 0, z: 0 }, { x: 0, z: -100 }] },
+    { highway: "footway", footway: "crossing", points: [{ x: -4, z: -40 }, { x: 4, z: -40 }] },
+  ],
+  areas: [{ kind: "park", ring: [{ x: -20, z: -10 }, { x: -10, z: -10 }, { x: -10, z: -20 }, { x: -20, z: -20 }, { x: -20, z: -10 }] }],
+  hedges: [{ points: [{ x: -8, z: -10 }, { x: -8, z: -30 }] }],
   props: [
     { kind: "tree", at: { x: 3, z: -10 } },
     { kind: "lamp", at: { x: -3, z: -20 } },
@@ -167,5 +172,39 @@ describe("ambiance cartoon", () => {
     const material = outlines.material as Material;
     expect(material.transparent && material.opacity === 0.4).toBe(true);
     expect(material.clippingPlanes).toBe(planes);
+  });
+});
+
+describe("ville riche", () => {
+  it("APP-003: la verdure et les noms des rues sont dans le groupe OpenStreetMap, sans dépasser le budget de maillages", () => {
+    const { osm } = setup(true);
+    expect((osm.getObjectByName("verdure") as Mesh).geometry.getAttribute("position").count).toBeGreaterThan(0);
+    const plates = osm.getObjectByName("noms-de-rues") as Group;
+    expect(plates.children.map((c) => c.name)).toEqual(["rue-Corniche"]);
+    let meshes = 0;
+    osm.traverse((o) => {
+      if (o instanceof Mesh || o instanceof LineSegments) meshes++;
+    });
+    expect(meshes).toBeLessThanOrEqual(MAX_CITY_MESHES);
+  });
+
+  it("APP-003: le chemin suivi est dans les voies, jaune sur la route", () => {
+    const { osm } = setup();
+    const colors = (osm.getObjectByName("voies") as Mesh).geometry.getAttribute("color");
+    const yellow = Array.from({ length: colors.count }, (_, i) => i).filter((i) => colors.getX(i) === Math.fround(1) && colors.getZ(i) < 0.5);
+    expect(yellow.length).toBeGreaterThan(0);
+  });
+
+  it("APP-001: le fondu efface verdure et noms des rues, la zone tapis les découpe, et sans ville rien n'est rendu", () => {
+    const { world, osm } = setup();
+    const planes = createZoneClip(DEFAULT_ZONE).planes;
+    setCityOpacity(world, 0.3, planes);
+    const plate = (osm.getObjectByName("noms-de-rues") as Group).children[0] as Mesh;
+    for (const mesh of [osm.getObjectByName("verdure") as Mesh, plate]) {
+      const material = mesh.material as Material;
+      expect([mesh.name, material.transparent, material.opacity, material.clippingPlanes === planes]).toEqual([mesh.name, true, 0.3, true]);
+    }
+    setCityOpacity(world, 0, planes);
+    expect(world.visible).toBe(false);
   });
 });

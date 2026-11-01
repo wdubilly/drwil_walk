@@ -1,7 +1,7 @@
 // Extraction du quartier de Souq Waqif (et, via `extract`, de tout autre quartier : voir extract-pune.ts) depuis OpenStreetMap (Overpass) : bâtiments et voies, en GeoJSON.
 // Relançable : `npm run extract` réécrit data/souq-waqif.json. Le casque, lui, ne fait aucun appel réseau :
 // il ne lit que ce fichier versionné. Données © contributeurs OpenStreetMap, licence ODbL.
-import { buildingLook, propKind } from "./osm-tags.ts";
+import { LAND_WAYS, areaKind, buildingLook, footwayKind, propKind, roofShape, sidewalkSides, type AreaKind, type Sidewalk } from "./osm-tags.ts";
 
 export const BBOX = { south: 25.284, west: 51.529, north: 25.29, east: 51.538 };
 export const OVERPASS_URL = "https://overpass-api.de/api/interpreter";
@@ -28,8 +28,10 @@ export interface ExtractFeature {
   type: "Feature";
   id: number;
   properties:
-    | { kind: "building"; heightM: number; colour?: string; roofColour?: string; material?: string }
-    | { kind: "highway"; highway: string }
+    | { kind: "building"; heightM: number; colour?: string; roofColour?: string; material?: string; roofShape?: "gabled" }
+    | { kind: "highway"; highway: string; name?: string; sidewalk?: Sidewalk; footway?: "sidewalk" | "crossing" }
+    | { kind: "area"; area: AreaKind }
+    | { kind: "hedge" }
     | { kind: "tree" | "lamp" | "bench" };
   geometry: { type: "Polygon"; coordinates: number[][][] } | { type: "LineString"; coordinates: number[][] } | { type: "Point"; coordinates: number[] };
 }
@@ -39,7 +41,7 @@ export const PROP_NODES = ['node["natural"="tree"]', 'node["highway"="street_lam
 
 export function buildQuery(bbox = BBOX): string {
   const area = `(${String(bbox.south)},${String(bbox.west)},${String(bbox.north)},${String(bbox.east)})`;
-  return `[out:json][timeout:90];(way["building"]${area};way["highway"]${area};${PROP_NODES.map((n) => `${n}${area};`).join("")});out geom;`;
+  return `[out:json][timeout:90];(way["building"]${area};way["highway"]${area};${LAND_WAYS.map((w) => `${w}${area};`).join("")}${PROP_NODES.map((n) => `${n}${area};`).join("")});out geom;`;
 }
 
 /** Hauteur en mètres : `height` si lisible, sinon les niveaux, sinon la valeur par défaut. */
@@ -52,6 +54,11 @@ export function buildingHeightM(tags: Record<string, string>): number {
 }
 
 const round6 = (n: number): number => Math.round(n * 1e6) / 1e6;
+
+const roofOf = (tags: Record<string, string>): { roofShape?: "gabled" } => {
+  const shape = roofShape(tags);
+  return shape ? { roofShape: shape } : {};
+};
 
 function feature(way: OverpassWay): ExtractFeature | undefined {
   const tags = way.tags ?? {};
@@ -67,15 +74,30 @@ function feature(way: OverpassWay): ExtractFeature | undefined {
     return {
       type: "Feature",
       id: way.id,
-      properties: { kind: "building", heightM: buildingHeightM(tags), ...buildingLook(tags) },
+      properties: { kind: "building", heightM: buildingHeightM(tags), ...buildingLook(tags), ...roofOf(tags) },
       geometry: { type: "Polygon", coordinates: [line] },
     };
   }
+  const area = areaKind(tags);
+  if (tags["highway"] === undefined && area !== undefined) {
+    return line.length < 4 ? undefined : { type: "Feature", id: way.id, properties: { kind: "area", area }, geometry: { type: "Polygon", coordinates: [line] } };
+  }
+  if (tags["highway"] === undefined) {
+    return line.length < 2 || tags["barrier"] !== "hedge" ? undefined : { type: "Feature", id: way.id, properties: { kind: "hedge" }, geometry: { type: "LineString", coordinates: line } };
+  }
   if (line.length < 2) return undefined;
+  const sidewalk = sidewalkSides(tags);
+  const footway = footwayKind(tags);
   return {
     type: "Feature",
     id: way.id,
-    properties: { kind: "highway", highway: tags["highway"] ?? "" },
+    properties: {
+      kind: "highway",
+      highway: tags["highway"],
+      ...(tags["name"] ? { name: tags["name"] } : {}),
+      ...(sidewalk ? { sidewalk } : {}),
+      ...(footway ? { footway } : {}),
+    },
     geometry: { type: "LineString", coordinates: line },
   };
 }

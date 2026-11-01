@@ -133,4 +133,38 @@ describe("données du souk", () => {
     expect(souq.buildings[0]?.heightM).toBe(9);
     expect(souq.route.lengthM).toBeCloseTo(111.2, 0);
   });
+
+  it("APP-003: lit les surfaces vertes, les haies, les noms, les trottoirs, les passages piétons et les toits à deux pans", () => {
+    const at = (x: number, z: number): number[] => [51.5 + x, 25.3 + z];
+    const ring = [at(0, 0), at(0.001, 0), at(0.001, 0.001), at(0, 0)];
+    const souq = loadSouq(
+      {
+        features: [
+          { properties: { kind: "area", area: "park" }, geometry: { coordinates: [ring] } },
+          { properties: { kind: "hedge" }, geometry: { coordinates: [at(0, 0), at(0, 0.001)] } },
+          { properties: { kind: "highway", highway: "residential", name: "Rue A", sidewalk: "left" }, geometry: { coordinates: [at(0, 0), at(0, 0.001)] } },
+          { properties: { kind: "highway", highway: "footway", footway: "crossing" }, geometry: { coordinates: [at(0, 0), at(0, 0.001)] } },
+          { properties: { kind: "building", heightM: 8, roofShape: "gabled" }, geometry: { coordinates: [ring] } },
+          { properties: { kind: "building", heightM: 8, roofShape: "dome" }, geometry: { coordinates: [ring] } },
+        ],
+      },
+      { geometry: { coordinates: [at(0, 0), at(0, 0.001)] } },
+      palette,
+    );
+    expect(souq.areas).toHaveLength(1);
+    expect(souq.areas[0]?.kind).toBe("park");
+    expect(souq.areas[0]?.ring).toHaveLength(4);
+    expect(souq.hedges[0]?.points).toHaveLength(2);
+    expect(souq.roads[0]).toMatchObject({ name: "Rue A", sidewalk: "left" });
+    expect(souq.roads[1]?.footway).toBe("crossing");
+    expect(souq.roads[1]?.name).toBeUndefined();
+    expect(souq.buildings.map((b) => b.roofShape)).toEqual(["gabled", undefined]);
+  });
+
+  it.each(["doha-souq-waqif", "pune-vieille-ville", "doha-corniche", "pune-fc-road"])("APP-003: l'extrait de %s porte les balises du rendu riche", (id) => {
+    const { areas, roads } = cityFor(id);
+    expect(areas.length).toBeGreaterThan(0);
+    expect(roads.filter((r) => r.name !== undefined).length).toBeGreaterThan(10);
+    expect(roads.some((r) => r.footway === "crossing")).toBe(true);
+  });
 });

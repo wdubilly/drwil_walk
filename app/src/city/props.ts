@@ -14,8 +14,8 @@ import {
   MeshLambertMaterial,
 } from "three";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
-import type { Vec2 } from "../route/geo.ts";
 import type { Path } from "../route/path.ts";
+import { closest } from "./near-route.ts";
 import type { Prop } from "./souq-data.ts";
 import { buildPackTrees } from "./tree-instances.ts";
 import { MAX_MODEL_TRIANGLES, type TreePack } from "./tree-pack.ts";
@@ -42,10 +42,7 @@ export const treeModel = (): BufferGeometry =>
   mergeGeometries([colored(new CylinderGeometry(0.15, 0.2, 2.4, 6), 0x6b4a2b, 0, 1.2, 0), colored(new IcosahedronGeometry(1.7, 0), 0x3f7a3a, 0, 3.4, 0)]);
 
 /** Les `max` éléments les plus proches du parcours (les autres ne se verront pas pendant la marche). */
-export function nearest(props: readonly Prop[], route: Path, max: number): Prop[] {
-  const distance = (at: Vec2): number => Math.min(...route.points.map((p) => Math.hypot(p.x - at.x, p.z - at.z)));
-  return props.map((p) => ({ p, d: distance(p.at) })).sort((a, b) => a.d - b.d).slice(0, max).map((e) => e.p);
-}
+export const nearest = (props: readonly Prop[], route: Path, max: number): Prop[] => closest(props, route, max, (p) => p.at);
 
 /**
  * Les arbres, dans le plafond MAX_TREES : ceux du pack Quaternius s'il est chargé (instances par variante), sinon l'arbre

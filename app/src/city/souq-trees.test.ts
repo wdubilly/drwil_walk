@@ -15,6 +15,8 @@ const souq: Souq = {
   route: createPath([{ x: 0, z: 0 }, { x: 0, z: -100 }]),
   palette: { ground: 0x808080, road: 0x202020, buildings: [0xff0000] },
   roads: [],
+  areas: [],
+  hedges: [],
   props: Array.from({ length: MAX_TREES + 40 }, (_, i) => ({ kind: "tree", at: { x: 3 + i, z: -(i % 90) } })),
   buildings: [],
 };

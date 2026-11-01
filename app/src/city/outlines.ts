@@ -26,7 +26,7 @@ export function nearRoute(buildings: readonly Building[], route: Path): Building
 }
 
 export function buildOutlinesGeometry(buildings: readonly Building[], route: Path): BufferGeometry {
-  const near = buildBuildingsGeometry(nearRoute(buildings, route), [0]);
+  const near = buildBuildingsGeometry(nearRoute(buildings, route), [0], route);
   // Sans bâtiment proche, le maillage est vide et n'a pas de position à parcourir.
   return near.hasAttribute("position") ? new EdgesGeometry(near, EDGE_ANGLE_DEG) : near;
 }
