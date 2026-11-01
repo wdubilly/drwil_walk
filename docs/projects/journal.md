@@ -168,3 +168,10 @@ One entry per closed project, most recent last.
 - Décisions du demandeur : ambiance cartoon ; pack Quaternius « Stylized Nature MegaKit » (version Standard, CC0) pour les arbres ; bâtiments et routes générés par le code avec un matériau toon.
 - La fiche `rendu-textures-pilote` (textures photo semi-réalistes, trois profils) est retirée au profit de `docs/projects/ambiance-cartoon.md` ; `rendu-ville-riche` en reprend les renvois.
 - Aucun code, aucun téléchargement : le pack se télécharge une seule fois au lot 1 du chantier.
+
+## 2026-11-01 — Cadrage des retours : panneau discret, minicarte, version PC, course réelle
+
+- Fiches cadrées : `panneau-discret` (fond transparent, en bas à gauche ou à droite), `carte-position-casque` (minicarte dans le casque, tracé seul), `version-pc` (une version PC de l'appli) et `course-reelle-gpx` (GPX ou points intermédiaires, longue distance, ville par bandes).
+- Intention ajoutée sans fiche : la mention OpenStreetMap plus discrète dans le casque (`docs/intentions/mention-osm-discrete.md`), à trancher.
+- Reportés à l'intention `docs/intentions/course-reelle-entrainement.md` : reprise de séance, allure ou temps cible, dénivelé.
+- Fiches ajoutées après une maquette reçue le même jour : `tableau-allure-progression` (allure, distance restante, progression) et `comparer-marche-reelle` (historique local des séances, saisie de la vraie marche à la main, comparaison du temps, de la distance et de l'allure). La vitesse maximale reste 8 km/h et la minicarte reste en tracé seul (décisions du demandeur).
