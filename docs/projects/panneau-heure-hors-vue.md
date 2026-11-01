@@ -30,7 +30,7 @@ panneau à droite, son bord extérieur est à environ 53° du regard (40° + la 
 bas, donc au bord ou au-delà du champ de vision du Quest 3 ; l'heure, alignée à droite, y est. À gauche, l'heure serait au
 bord intérieur, donc visible.
 
-Ce chantier reproduit le défaut avec l'outil de `docs/projects/champ-de-vision-casque.md` (à livrer avant), le prouve, puis
+Ce chantier reproduit le défaut avec l'outil de `docs/projects/journal.md` (à livrer avant), le prouve, puis
 règle la place et le contenu du panneau sur cette simulation, pour que tout son texte reste dans la vue des deux côtés.
 
 ## Critères d'acceptation
@@ -63,7 +63,7 @@ règle la place et le contenu du panneau sur cette simulation, pour que tout son
 
 ## 2. Hors périmètre
 
-- L'outil de simulation lui-même : `docs/projects/champ-de-vision-casque.md`, livré avant ; ce chantier s'en sert sans le modifier
+- L'outil de simulation lui-même : `docs/projects/journal.md`, livré avant ; ce chantier s'en sert sans le modifier
   (sauf pour y ajouter l'e2e du panneau, app/e2e/champ-de-vision.test.ts).
 - Lisser le panneau (sa distance change par pas de 2 cm quand la tête bouge) et ses commandes :
   `docs/intentions/essai-casque-commandes-panneau.md`.
