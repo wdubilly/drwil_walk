@@ -162,3 +162,9 @@ One entry per closed project, most recent last.
 - Contrats : `APP-002` modifié (tableau de bord, calories, poids local, sources et tests), déclaré à la fiche ; `APP-001` et `QUA-020` inchangés dans leur texte. Chemin e2e `app/e2e/tableau-de-bord.test.ts`.
 - Limites : le lieu est le nom de l'itinéraire, les extraits OpenStreetMap ne portent pas les noms de rues (`docs/intentions/noms-de-rues-extrait.md`) ; le texte de `AGENTS.md` sur la donnée personnelle reste à ajuster, hors périmètre (`docs/intentions/texte-agents-donnee-personnelle.md`) ; lot 4 (essai au casque, critère « hors de la zone tapis » de `APP-001`) non fait, reporté à `docs/intentions/essai-casque-tableau-de-bord.md`.
 - Branche `workstream/hud-tableau-de-bord`. Preuve de clôture : docs/preuves/hud-tableau-de-bord.md (écrite par la clôture).
+
+## 2026-11-01 — Cadrage de l'ambiance cartoon (remplace rendu-textures-pilote)
+
+- Décisions du demandeur : ambiance cartoon ; pack Quaternius « Stylized Nature MegaKit » (version Standard, CC0) pour les arbres ; bâtiments et routes générés par le code avec un matériau toon.
+- La fiche `rendu-textures-pilote` (textures photo semi-réalistes, trois profils) est retirée au profit de `docs/projects/ambiance-cartoon.md` ; `rendu-ville-riche` en reprend les renvois.
+- Aucun code, aucun téléchargement : le pack se télécharge une seule fois au lot 1 du chantier.
