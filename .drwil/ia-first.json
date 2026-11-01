@@ -119,6 +119,16 @@
       "degradable": false
     },
     {
+      "id": "app-005",
+      "name": "APP-005 panneau d'infos dans le champ de vision du casque : tests nommés par l'ID (Vitest)",
+      "run": "npm test -- -t \"APP-005\"",
+      "cwd": "app",
+      "paths": [
+        "app/**"
+      ],
+      "degradable": false
+    },
+    {
       "id": "e2e",
       "name": "e2e des chemins critiques (Playwright, Quest 3 émulé par IWER, QUA-020)",
       "run": "npm run e2e",

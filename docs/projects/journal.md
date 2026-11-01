@@ -217,3 +217,14 @@ One entry per closed project, most recent last.
 - Limites : aucune assertion sur le vrai panneau (chantier `panneau-heure-hors-vue`) ; distorsion, netteté des bords et ajustement du casque non simulés.
 - Sur décision de l'humain, le critère « sourcées » de la fiche, qui cite `APP-004`, est marqué [humain] (`verify` le refusait comme non durable, comme aux chantiers précédents pour `APP-001`). `APP-004` a été attesté par l'humain le 2026-11-01 ; les valeurs du champ de vision restent des hypothèses, relevées par l'intention `docs/intentions/source-champ-de-vision-quest3.md`.
 - Branche docs/fiches-champ-de-vision (celle des fiches). Preuve de clôture : docs/preuves/champ-de-vision-casque.md (écrite par la clôture).
+
+## 2026-11-01 — panneau-heure-hors-vue (lots 1, 2 et 3 ; lot 4 à faire par l'humain)
+
+- Défaut : l'heure du panneau d'infos sortait de la vue du Quest 3. Reproduit par le test d'`APP-005` sur le vrai panneau (`app/src/xr/hud-panel.test.ts`, avec la projection d'`APP-004`) : **24 cas sur 24 en échec** sur le code d'avant (panneau à 40°, 0,35 m sous les yeux), pour la bonne raison.
+- Cause mesurée : à 40° du regard, le bord extérieur du panneau est à 52,8° (demi-champ utile : 44°, soit 55° × 80 %), des deux côtés. L'hypothèse du besoin se confirme à droite (l'heure est au bord extérieur) mais pas à gauche : le panneau entier y sortait aussi (boussole et lieu au bord extérieur).
+- Correction : panneau à 28° du regard (bord extérieur à environ 41°) et 0,31 m sous les yeux (la tête inclinée de 10° vers le haut garde son bas dans la vue) ; taille, distance, fond, fondu, zone tapis et masquage inchangés, texte inchangé. 0,31 m plutôt que 0,30 : un test hors périmètre (`app/src/xr/experience-dashboard.test.ts`) exige un panneau strictement plus bas que 0,30 m sous les yeux.
+- Contrats : `APP-005` créé (contrôle `app-005`, `.drwil/ia-first.json`) ; `APP-001` point 5 (28°, 0,31 m) et `QUA-020` (chemin 15 rejoué avec le masque, les deux côtés, captures `champ-de-vision-panneau-*.png`) mis à jour ; features, guide, architecture et `app/AGENTS.md` à jour.
+- Choix de l'agent : plage de têtes testée = tout cap, de 10° vers le haut à 30° baissée (au-delà, le fondu a presque effacé le panneau ; à 39° baissée le coin haut extérieur sort de la vue, quasi invisible).
+- Fiche : le critère « zone tapis, fondu, bouton B » cite `APP-001`, attesté par un humain : marqué [humain] (`verify` le rejette sinon comme non durable) ; à confirmer par le demandeur.
+- Limites : valeurs du champ de vision de la cible toujours en hypothèse (`docs/intentions/source-champ-de-vision-quest3.md`) ; lisibilité, confort et heure bien visible à juger au Quest 3, puis `drwil attest APP-001` (lot 4, humain).
+- Branche chantier/panneau-heure-hors-vue. Preuve de clôture : docs/preuves/panneau-heure-hors-vue.md (écrite par la clôture).
