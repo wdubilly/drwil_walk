@@ -31,7 +31,6 @@ avant les fiches qui touchent le panneau d'infos, `champ-de-vision-casque` puis 
 (le panneau doit tenir dans la vue avant d'y ajouter du contenu), `tableau-allure-progression` et `hud-defis-progression` avant
 `comparer-marche-reelle`, les fiches de la ville avant `course-reelle-gpx`. La Corniche est reportée le 2026-11-01 : à annuler si `course-reelle-gpx` couvre le besoin.
 
-- [ ] [P0] [AI] Une ville plus riche : sol, végétation, toits, noms de rues — `docs/projects/rendu-ville-riche.md`
 - [ ] [P1] [AI] Minicarte dans le casque, avec le point qui avance sur le tracé — `docs/projects/carte-position-casque.md`
 - [ ] [P1] [AI] Allure et progression dans le tableau de bord — `docs/projects/tableau-allure-progression.md`
 - [ ] [P1] [AI] Une version PC de l'appli, sans casque — `docs/projects/version-pc.md`

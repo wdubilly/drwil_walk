@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
-import { OVERPASS_URL } from "../../scripts/extract-souq.ts";
+import { OVERPASS_URL, PROP_NODES } from "../../scripts/extract-souq.ts";
+import { LAND_WAYS } from "../../scripts/osm-tags.ts";
 import { rejectWith } from "../route/reject-double.ts";
 import type { LonLat } from "../route/geo.ts";
 import { createProviders } from "../route/create-providers.ts";
@@ -35,10 +36,12 @@ describe("APP-003: la ville d'un trajet libre ne vient pas d'un extrait versionn
     expect(query).toContain('way["highway"]');
     expect(query).toContain('node["natural"="tree"](around:150,');
     expect(query).toContain('node["amenity"="bench"]');
+    expect(query).toContain('way["barrier"="hedge"](around:150,');
+    expect(query).toContain('way["leisure"~"^(park|garden|playground|pitch|common)$"]');
     const many: LonLat[] = Array.from({ length: 500 }, (_, i) => [73 + i / 1000, 18]);
     const kept = corridorQuery(many).match(/18,/g)?.length ?? 0;
-    // Cinq fois (bâtiments, voies, arbres, lampadaires, bancs) au plus MAX_QUERY_POINTS + le dernier point.
-    expect(kept).toBeLessThanOrEqual(5 * (MAX_QUERY_POINTS + 1));
+    // Une fois par sélecteur (bâtiments, voies, sol et haies, arbres, lampadaires, bancs) au plus MAX_QUERY_POINTS + le dernier point.
+    expect(kept).toBeLessThanOrEqual((2 + LAND_WAYS.length + PROP_NODES.length) * (MAX_QUERY_POINTS + 1));
     expect(corridorQuery(many)).toContain("18,73.499)");
   });
 

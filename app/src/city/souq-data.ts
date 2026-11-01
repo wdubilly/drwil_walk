@@ -12,6 +12,8 @@ export interface Building {
   wall?: number;
   /** Teinte du toit (`roof:colour`) ; absente : celle des murs. */
   roof?: number;
+  /** Toit à deux pans (`roof:shape`) ; absent : toit plat. */
+  roofShape?: "gabled";
 }
 
 /** Un arbre, un lampadaire ou un banc de l'extrait, en mètres locaux. */
@@ -31,6 +33,23 @@ export interface Palette {
 export interface Road {
   highway: string;
   points: Vec2[];
+  /** Balise `name`, affichée sur le sol. */
+  name?: string;
+  /** Trottoirs portés par la voie elle-même (`sidewalk`). */
+  sidewalk?: "both" | "left" | "right";
+  /** Un cheminement piéton tracé à part : trottoir ou passage piéton (`footway`). */
+  footway?: "sidewalk" | "crossing";
+}
+
+/** Une surface verte (herbe, parc, jardin, bois) : son contour fermé, en mètres locaux. */
+export interface Area {
+  kind: "grass" | "park" | "garden" | "wood";
+  ring: Vec2[];
+}
+
+/** Une haie : son tracé, en mètres locaux. */
+export interface Hedge {
+  points: Vec2[];
 }
 
 export interface Souq {
@@ -40,12 +59,26 @@ export interface Souq {
   buildings: Building[];
   roads: Road[];
   props: Prop[];
+  areas: Area[];
+  hedges: Hedge[];
   palette: Palette;
 }
 
 interface FeatureFile {
   features: {
-    properties: { kind: string; heightM?: number; highway?: string; colour?: string; roofColour?: string; material?: string };
+    properties: {
+      kind: string;
+      heightM?: number;
+      highway?: string;
+      colour?: string;
+      roofColour?: string;
+      material?: string;
+      roofShape?: string;
+      name?: string;
+      sidewalk?: string;
+      footway?: string;
+      area?: string;
+    };
     geometry: { coordinates: unknown };
   }[];
 }
@@ -72,15 +105,25 @@ export function loadSouq(extract: FeatureFile, loop: LoopFile, palette: Palette)
       footprint: ((f.geometry.coordinates as number[][][])[0] as number[][]).map(local),
       heightM: f.properties.heightM as number,
       ...tints(f.properties),
+      ...(f.properties.roofShape === "gabled" ? { roofShape: "gabled" as const } : {}),
     }));
   const roads = extract.features
     .filter((f) => f.properties.kind === "highway")
     .map((f) => ({
       highway: f.properties.highway as string,
       points: (f.geometry.coordinates as number[][]).map(local),
+      ...(f.properties.name ? { name: f.properties.name } : {}),
+      ...(f.properties.sidewalk ? { sidewalk: f.properties.sidewalk as NonNullable<Road["sidewalk"]> } : {}),
+      ...(f.properties.footway ? { footway: f.properties.footway as NonNullable<Road["footway"]> } : {}),
     }));
+  const areas = extract.features
+    .filter((f) => f.properties.kind === "area")
+    .map((f) => ({ kind: f.properties.area as Area["kind"], ring: ((f.geometry.coordinates as number[][][])[0] as number[][]).map(local) }));
+  const hedges = extract.features
+    .filter((f) => f.properties.kind === "hedge")
+    .map((f) => ({ points: (f.geometry.coordinates as number[][]).map(local) }));
   const props = extract.features
     .filter((f) => ["tree", "lamp", "bench"].includes(f.properties.kind))
     .map((f) => ({ kind: f.properties.kind as Prop["kind"], at: local(f.geometry.coordinates as number[]) }));
-  return { origin, route: createPath(loop.geometry.coordinates.map(local)), buildings, roads, props, palette };
+  return { origin, route: createPath(loop.geometry.coordinates.map(local)), buildings, roads, props, areas, hedges, palette };
 }

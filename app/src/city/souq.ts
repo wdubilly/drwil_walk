@@ -22,11 +22,17 @@ import { buildBuildingsGeometry } from "./buildings.ts";
 import { buildFurniture, buildTrees } from "./props.ts";
 import { buildOutlinesGeometry } from "./outlines.ts";
 import { buildRoadsGeometry } from "./roads.ts";
+import { MAX_STREET_NAMES, buildStreetLabels } from "./street-names.ts";
+import { buildVegetation } from "./vegetation.ts";
+import { buildWalkways } from "./walkways.ts";
 import type { Souq } from "./souq-data.ts";
 import { buildingMaterial, toonMaterial } from "./toon.ts";
 import type { TreePack } from "./tree-pack.ts";
 
 const GROUND_SIZE_M = 3000;
+
+/** Budget de maillages de la ville en OpenStreetMap, sans le pack d'arbres : sol, verdure, voies, bâtiments, arbres, mobilier, contours, noms des rues. */
+export const MAX_CITY_MESHES = 8 + MAX_STREET_NAMES;
 
 /** Le trait des contours : un bleu nuit presque noir, lisible sur toutes les teintes de bâtiments. */
 const OUTLINE_COLOR = 0x1b1b2f;
@@ -57,14 +63,16 @@ export function createSouqScene(doc: Document, souq: Souq, options: SceneOptions
   city.name = "ville";
   const ground = new Mesh(new PlaneGeometry(GROUND_SIZE_M, GROUND_SIZE_M), toonMaterial({ color: new Color(souq.palette.ground) }));
   ground.rotation.x = -Math.PI / 2;
-  const roads = new Mesh(buildRoadsGeometry(souq.roads, souq.palette.road), toonMaterial({ vertexColors: true, side: DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }));
+  const roads = new Mesh(buildRoadsGeometry(souq.roads, souq.palette.road, buildWalkways(souq.roads, souq.route)), toonMaterial({ vertexColors: true, side: DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }));
   roads.name = "voies";
   // Couleurs par sommet : la teinte de chaque bâtiment vient de la géométrie, le matériau reste blanc.
-  const buildings = new Mesh(buildBuildingsGeometry(souq.buildings, souq.palette.buildings), buildingMaterial());
+  const buildings = new Mesh(buildBuildingsGeometry(souq.buildings, souq.palette.buildings, souq.route), buildingMaterial());
   buildings.name = "batiments";
+  const greenery = new Mesh(buildVegetation(souq.areas, souq.hedges, souq.route), toonMaterial({ vertexColors: true, side: DoubleSide, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }));
+  greenery.name = "verdure";
   const osm = new Group();
   osm.name = "osm";
-  osm.add(ground, roads, buildings, buildTrees(souq.props, souq.route, options.trees), buildFurniture(souq.props, souq.route));
+  osm.add(ground, greenery, roads, buildings, buildStreetLabels(doc, souq.roads, souq.route), buildTrees(souq.props, souq.route, options.trees), buildFurniture(souq.props, souq.route));
   if (options.outlines === true) {
     const outlines = new LineSegments(buildOutlinesGeometry(souq.buildings, souq.route), new LineBasicMaterial({ color: OUTLINE_COLOR }));
     outlines.name = "contours";

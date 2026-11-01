@@ -65,6 +65,13 @@ OpenStreetMap, qui préfère les cheminements piétons (hypothèse de cadrage, �
 relié le plus proche du musée et n'atteint pas West Bay (environ 3,5 km plus loin), dont les tours ne se voient que de loin ;
 310 bâtiments sur 756 sans hauteur OSM (7 m par défaut) ; jamais essayé sur un vrai Quest 3.
 
+Ville riche (chantier rendu-ville-riche) : sur les quatre itinéraires figés (et le trajet libre, dont la requête lit les mêmes balises), les rues
+portent des trottoirs (`sidewalk`) et des passages piétons zébrés, le chemin suivi est jaune bordé de sombre, les parcs, herbes et bois sont des
+surfaces vertes au sol avec leurs haies, les toits à deux pans (300 au plus) et les auvents (80 au plus) s'ajoutent aux bâtiments, et jusqu'à 8 noms
+de rues (les plus proches du parcours, à 60 m au plus) sont écrits à plat sur la chaussée, dans le sens de la marche. Rien de tout cela n'ajoute plus
+de 8 maillages fixes, et tout s'efface avec la ville tête baissée (APP-001). Hors périmètre : ciel, soleil, brume, relief. Non vu au casque :
+voir `docs/intentions/essai-casque-ville-riche.md`.
+
 Rendu enrichi (chantier osm-enrichi) : les bâtiments prennent la couleur, la couleur de toit ou le matériau de leurs balises
 OpenStreetMap, sinon un ton de la palette de l'itinéraire ; les murs s'assombrissent vers le pied (ombrage par sommet) ; les
 arbres, lampadaires et bancs de l'extrait s'affichent (300 arbres et 400 éléments de mobilier au plus, les plus proches du

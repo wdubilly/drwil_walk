@@ -228,3 +228,12 @@ One entry per closed project, most recent last.
 - Fiche : le critère « zone tapis, fondu, bouton B » cite `APP-001`, attesté par un humain : marqué [humain] (`verify` le rejette sinon comme non durable) ; à confirmer par le demandeur.
 - Limites : valeurs du champ de vision de la cible toujours en hypothèse (`docs/intentions/source-champ-de-vision-quest3.md`) ; lisibilité, confort et heure bien visible à juger au Quest 3, puis `drwil attest APP-001` (lot 4, humain).
 - Branche chantier/panneau-heure-hors-vue. Preuve de clôture : docs/preuves/panneau-heure-hors-vue.md (écrite par la clôture).
+
+## 2026-11-01 — rendu-ville-riche (lots 1 à 6 ; lot 7 à faire par l'humain)
+
+- Livré : extraits des quatre itinéraires ré-extraits avec zones vertes, haies, noms de rues, trottoirs, passages piétons et `roof:shape` (la requête du trajet libre lit les mêmes balises) ; trottoirs, passages zébrés et chemin suivi jaune (`app/src/city/walkways.ts`), verdure et haies (`app/src/city/vegetation.ts`), toits à deux pans et auvents dans le maillage des bâtiments (`app/src/city/roofs.ts`), huit plaques de noms de rues au plus, à plat (`app/src/city/street-names.ts`) ; e2e `app/e2e/ville-riche.test.ts` (chemin 17, quatre itinéraires).
+- Contrats : `APP-003` (règle, source de vérité, preuve, tests) et `QUA-020` (chemin 17) mis à jour ; architecture, features, guide et reprise de la fiche à jour.
+- Choix techniques de l'agent (pas des décisions de produit) : plafonds (400 rues à trottoirs, 120 passages, 150 surfaces, 200 haies, 300 toits, 80 auvents, 8 plaques à 60 m au plus), couleurs, plaques à plat, budget de 8 maillages fixes plus les plaques.
+- Limites : plaques à plat jamais vues au casque (lisibilité en grand angle rasant, devanagari et arabe selon les polices du navigateur) ; 72 images par seconde non mesurées ; lot 7 humain (`docs/intentions/essai-casque-ville-riche.md`). Le critère de fondu citant `APP-001` reste [humain].
+- Branche workstream/rendu-ville-riche. Preuve de clôture : docs/preuves/rendu-ville-riche.md (écrite par la clôture).
+

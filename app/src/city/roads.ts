@@ -38,9 +38,43 @@ export function roadColor(highway: string, base: number): Color {
   return lightness <= 1 ? color.multiplyScalar(lightness) : color.lerp(new Color(1, 1, 1), lightness - 1);
 }
 
-export function buildRoadsGeometry(roads: readonly Road[], base = 0x808080): BufferGeometry {
-  const positions: number[] = [];
-  const colors: number[] = [];
+/** Des rubans à plat, position et couleur par sommet, que les voies et leurs marquages remplissent ensemble. */
+export interface Ribbons {
+  positions: number[];
+  colors: number[];
+}
+
+export const newRibbons = (): Ribbons => ({ positions: [], colors: [] });
+
+/** Une bande plate le long de a→b, entre deux distances à l'axe (négatif : à gauche du sens a→b), à une hauteur et d'une couleur. */
+export function pushStrip(out: Ribbons, a: Vec2, b: Vec2, from: number, to: number, lift: number, color: Color): void {
+  const length = Math.hypot(b.x - a.x, b.z - a.z);
+  if (length === 0) return;
+  const nx = -(b.z - a.z) / length;
+  const nz = (b.x - a.x) / length;
+  const [p, q, r, s] = [
+    [a.x + nx * to, a.z + nz * to],
+    [a.x + nx * from, a.z + nz * from],
+    [b.x + nx * from, b.z + nz * from],
+    [b.x + nx * to, b.z + nz * to],
+  ] as const;
+  for (const [x, z] of [p, q, r, p, r, s]) {
+    out.positions.push(x, lift, z);
+    out.colors.push(color.r, color.g, color.b);
+  }
+}
+
+export function ribbonsGeometry(ribbons: Ribbons): BufferGeometry {
+  const geometry = new BufferGeometry();
+  geometry.setAttribute("position", new Float32BufferAttribute(ribbons.positions, 3));
+  geometry.setAttribute("color", new Float32BufferAttribute(ribbons.colors, 3));
+  geometry.setAttribute("normal", new Float32BufferAttribute(ribbons.positions.map((_, i) => (i % 3 === 1 ? 1 : 0)), 3));
+  return geometry;
+}
+
+/** Les voies, puis les rubans de `marks` (trottoirs, passages piétons, chemin suivi) posés par-dessus. */
+export function buildRoadsGeometry(roads: readonly Road[], base = 0x808080, marks: Ribbons = newRibbons()): BufferGeometry {
+  const out: Ribbons = newRibbons();
   for (const road of roads) {
     const half = widthOf(road.highway) / 2;
     const body = roadColor(road.highway, base);
@@ -48,32 +82,11 @@ export function buildRoadsGeometry(roads: readonly Road[], base = 0x808080): Buf
     const line = body.clone().lerp(new Color(1, 1, 1), LINE_WHITENING);
     for (const [i, b] of road.points.slice(1).entries()) {
       const a = road.points[i] as Vec2;
-      const length = Math.hypot(b.x - a.x, b.z - a.z);
-      if (length === 0) continue;
-      const nx = -(b.z - a.z) / length;
-      const nz = (b.x - a.x) / length;
-      // Une bande entre deux distances à l'axe (de -half à +half sur le travers), à une hauteur et d'une couleur.
-      const strip = (from: number, to: number, lift: number, color: Color): void => {
-        const [p, q, r, s] = [
-          [a.x + nx * to, a.z + nz * to],
-          [a.x + nx * from, a.z + nz * from],
-          [b.x + nx * from, b.z + nz * from],
-          [b.x + nx * to, b.z + nz * to],
-        ] as const;
-        for (const [x, z] of [p, q, r, p, r, s]) {
-          positions.push(x, lift, z);
-          colors.push(color.r, color.g, color.b);
-        }
-      };
-      strip(-half, half, LIFT_M, body);
-      strip(-half, -half + BORDER_WIDTH_M, BORDER_LIFT_M, border);
-      strip(half - BORDER_WIDTH_M, half, BORDER_LIFT_M, border);
-      if (half * 2 >= CENTRE_LINE_MIN_WIDTH_M) strip(-LINE_WIDTH_M / 2, LINE_WIDTH_M / 2, LINE_LIFT_M, line);
+      pushStrip(out, a, b, -half, half, LIFT_M, body);
+      pushStrip(out, a, b, -half, -half + BORDER_WIDTH_M, BORDER_LIFT_M, border);
+      pushStrip(out, a, b, half - BORDER_WIDTH_M, half, BORDER_LIFT_M, border);
+      if (half * 2 >= CENTRE_LINE_MIN_WIDTH_M) pushStrip(out, a, b, -LINE_WIDTH_M / 2, LINE_WIDTH_M / 2, LINE_LIFT_M, line);
     }
   }
-  const geometry = new BufferGeometry();
-  geometry.setAttribute("position", new Float32BufferAttribute(positions, 3));
-  geometry.setAttribute("color", new Float32BufferAttribute(colors, 3));
-  geometry.setAttribute("normal", new Float32BufferAttribute(positions.map((_, i) => (i % 3 === 1 ? 1 : 0)), 3));
-  return geometry;
+  return ribbonsGeometry({ positions: out.positions.concat(marks.positions), colors: out.colors.concat(marks.colors) });
 }
