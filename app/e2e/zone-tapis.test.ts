@@ -19,7 +19,7 @@ interface E2eWindow {
   IWER: { XRDevice: new (config: unknown) => EmulatedQuest & { installRuntime(o: object): void }; metaQuest3: unknown };
 }
 
-test.beforeEach(async ({ page }) => {
+async function installQuest(page: Page) {
   await page.addInitScript({ path: iwerBuild });
   await page.addInitScript(() => {
     const w = window as unknown as E2eWindow;
@@ -27,6 +27,10 @@ test.beforeEach(async ({ page }) => {
     quest.installRuntime({ forceInstall: true });
     w.quest = quest;
   });
+}
+
+test.beforeEach(async ({ page }) => {
+  await installQuest(page);
 });
 
 const panel = (page: Page) => page.getByRole("region", { name: "Marche" });
@@ -38,7 +42,7 @@ async function enter(page: Page) {
   await expect(page.getByRole("status")).toHaveText("Réalité mixte active (immersive-ar)");
 }
 
-test("chemin 13 : la boîte par défaut protège le tapis, X la pose, le joystick la déplace, elle est relue au lancement suivant", async ({ page }) => {
+test("chemin 13 : la boîte par défaut protège le tapis, X la pose, le joystick la déplace, elle est relue au lancement suivant", async ({ page, context }) => {
   const errors: string[] = [];
   page.on("console", (m) => {
     if (m.type() === "error") errors.push(m.text());
@@ -66,11 +70,12 @@ test("chemin 13 : la boîte par défaut protège le tapis, X la pose, le joystic
   const placed = await zone(page);
   await expect.poll(() => page.evaluate(() => localStorage.getItem("drwil_walk.zone-tapis"))).toContain('"width":1.2');
 
-  // Nouveau lancement : la zone enregistrée est relue.
-  await page.goto("/");
-  await page.getByRole("button", { name: "Entrer en réalité mixte" }).click();
-  await expect(page.getByRole("status")).toHaveText("Réalité mixte active (immersive-ar)");
-  const reread = await zone(page);
+  // Nouveau lancement, dans une page neuve du même navigateur (même stockage) : la zone enregistrée est relue.
+  await page.close();
+  const next = await context.newPage();
+  await installQuest(next);
+  await enter(next);
+  const reread = await zone(next);
   expect(reread[0]).toBeCloseTo(placed[0] as number, 2);
   expect(reread[1]).toBeCloseTo(placed[1] as number, 2);
   expect(errors).toEqual([]);
