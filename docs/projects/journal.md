@@ -235,5 +235,5 @@ One entry per closed project, most recent last.
 - Contrats : `APP-003` (règle, source de vérité, preuve, tests) et `QUA-020` (chemin 17) mis à jour ; architecture, features, guide et reprise de la fiche à jour.
 - Choix techniques de l'agent (pas des décisions de produit) : plafonds (400 rues à trottoirs, 120 passages, 150 surfaces, 200 haies, 300 toits, 80 auvents, 8 plaques à 60 m au plus), couleurs, plaques à plat, budget de 8 maillages fixes plus les plaques.
 - Limites : plaques à plat jamais vues au casque (lisibilité en grand angle rasant, devanagari et arabe selon les polices du navigateur) ; 72 images par seconde non mesurées ; lot 7 humain (`docs/intentions/essai-casque-ville-riche.md`). Le critère de fondu citant `APP-001` reste [humain].
-- Branche workstream/rendu-ville-riche.
+- Branche workstream/rendu-ville-riche. Preuve de clôture : docs/preuves/rendu-ville-riche.md (écrite par la clôture).
 
