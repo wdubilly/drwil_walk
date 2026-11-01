@@ -7,12 +7,12 @@ import { createTripPlanner } from "../city/free-route.ts";
 import { createSouqScene, placeOnRoute, setCityOpacity } from "../city/souq.ts";
 import type { Souq } from "../city/souq-data.ts";
 import { FREE_ITINERARY_ID, ITINERARIES, type Itinerary } from "../route/itineraries.ts";
-import { pointAt } from "../route/path.ts";
+import { headingAt, pointAt } from "../route/path.ts";
 import type { Providers } from "../route/providers.ts";
+import { DEFAULT_WEIGHT_KG, compassText, formatClock, type WeightStorage } from "../route/stats.ts";
 import { ARRIVAL_TEXT } from "../route/walk.ts";
 import { createZoneControl } from "./zone-control.ts";
 import { createVignette } from "./vignette.ts";
-import type { ZoneStorage } from "../safety/zone.ts";
 import { headPitchDownDeg } from "../safety/visibility.ts";
 import { renderHome, type HomeView } from "../ui/home.ts";
 import { chooseRendering, type GoogleConfig } from "./google-mode.ts";
@@ -36,8 +36,10 @@ export interface ExperienceDeps {
   google: GoogleConfig;
   /** Les services de routage, d'adresses et le réseau de l'itinéraire libre (injectés : les tests n'appellent jamais un service réel). */
   routes: Providers;
-  /** Le `localStorage` où la zone tapis est enregistrée (absent : la boîte par défaut, rien d'enregistré). */
-  storage?: ZoneStorage | undefined;
+  /** Le `localStorage` où la zone tapis et le poids sont gardés (absent : la boîte par défaut et la valeur moyenne, rien de gardé). */
+  storage?: WeightStorage | undefined;
+  /** L'horloge du tableau de bord (absente : l'heure du casque) ; injectée pour que les tests fixent l'heure. */
+  now?: (() => Date) | undefined;
 }
 
 export const ACTIVE_STATUS = `Réalité mixte active (${SESSION_MODE})`;
@@ -46,7 +48,7 @@ export const ENDED_STATUS = "Session terminée : vous pouvez y revenir.";
 /** Monte l'accueil ; le bouton ouvre la session et lance la marche. */
 export function startExperience(deps: ExperienceDeps): HomeView {
   const planner = createTripPlanner(deps.routes);
-  const home = renderHome(deps.document, deps.root, planner);
+  const home = renderHome(deps.document, deps.root, planner, deps.storage);
   home.onEnter(() => {
     void enter(deps, home);
   });
@@ -109,6 +111,9 @@ async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession, so
   const vignetteOn = home.readVignette();
   scene.add(vignette);
   const place = (ITINERARIES.find((itinerary) => itinerary.id === home.readRouteId()) as Itinerary).name;
+  // Le poids saisi à l'accueil, sinon la valeur moyenne : l'estimation de calories n'en demande jamais plus.
+  const weightKg = home.readWeightKg() ?? DEFAULT_WEIGHT_KG;
+  const now = deps.now ?? (() => new Date());
   let calibration = NO_CALIBRATION;
   const globalOpacityPct = home.readOpacityPct();
   let state = initialWalkState(home.readSpeedKmh(), globalOpacityPct);
@@ -126,6 +131,7 @@ async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession, so
       buttons: rightButtons(session.inputSources),
       pitchDownDeg: pose ? headPitchDownDeg(pose.transform.orientation) : null,
       globalOpacityPct,
+      weightKg,
       // Un trajet libre s'arrête à l'arrivée ; une boucle reprend au départ (APP-002).
       endM: souq.route.loop ? undefined : souq.route.lengthM,
     });
@@ -141,12 +147,12 @@ async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession, so
     vignette.visible = vignetteOn;
     setCityOpacity(world, state.cityOpacity, zone.clip.planes);
     mode.update(camera, renderer.xr.getCamera());
-    hud.update(
-      { ...state, place },
-      { show: state.showPanel, opacity: state.cityOpacity, pose: head },
-    );
+    // Le cap est celui du parcours (la ville défile dans le sens où l'on marche), l'heure celle du casque.
+    const dashboard = { place, weightKg, compass: compassText(headingAt(souq.route, state.distanceM)), clock: formatClock(now()) };
+    hud.update({ ...state, ...dashboard }, { show: state.showPanel, opacity: state.cityOpacity, pose: head });
     panel.update({
       ...state,
+      ...dashboard,
       calibration,
       position: pointAt(souq.route, state.distanceM),
       buildingCount,

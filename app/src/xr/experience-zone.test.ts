@@ -5,7 +5,7 @@ import { poseFrame, setup } from "./experience-double.ts";
 
 const memory = (initial?: string) => {
   const data = new Map<string, string>(initial ? [[ZONE_STORAGE_KEY, initial]] : []);
-  return { data, getItem: (k: string) => data.get(k) ?? null, setItem: (k: string, v: string) => void data.set(k, v) };
+  return { data, getItem: (k: string) => data.get(k) ?? null, setItem: (k: string, v: string) => void data.set(k, v), removeItem: (k: string) => void data.delete(k) };
 };
 async function started(options: Parameters<typeof setup>[0] = {}) {
   const t = setup(options);
