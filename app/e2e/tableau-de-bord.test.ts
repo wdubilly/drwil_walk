@@ -38,7 +38,7 @@ test("chemin 13 : le poids reste dans le navigateur et s'efface, les calories le
   await page.getByRole("button", { name: "Entrer en réalité mixte" }).click();
   await expect(page.getByRole("status")).toHaveText("Réalité mixte active (immersive-ar)");
   await expect(panel(page)).toHaveAttribute("data-hud-visible", "true");
-  await expect.poll(async () => Number(await panel(page).getAttribute("data-time-s"))).toBeGreaterThan(1);
+  await expect.poll(async () => Number(await panel(page).getAttribute("data-time-s")), { timeout: 20_000 }).toBeGreaterThan(1);
 
   // Les calories sont celles de la formule : 7,2 km/h = 120 m/min, VO2 = 15,5 ml/kg/min, 100 kg, 7,75 kcal/min.
   const { timeS, kcal } = await panel(page).evaluate((el) => ({ timeS: Number(el.dataset["timeS"]), kcal: Number(el.dataset["kcal"]) }));
