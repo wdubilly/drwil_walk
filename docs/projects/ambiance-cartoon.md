@@ -48,7 +48,7 @@ couleur sur les bâtiments et les routes, des routes plus lisibles, et des arbre
   dépôt, à côté des fichiers — `APP-003`
 - Un modèle qui ne se charge pas est dit à l'écran et la marche continue avec l'arbre procédural actuel — `QUA-002`
 - Tout ce qui s'ajoute est dans le groupe de la ville : effacé par le fondu tête baissée, découpé par la zone tapis (la
-  mention d'attribution reste exemptée) ; aucun ciel ni fond opaque, la session reste `immersive-ar` — `APP-001`
+  mention d'attribution reste exemptée) ; aucun ciel ni fond opaque, la session reste `immersive-ar` [human] — `APP-001`
 - Les contours des bâtiments se choisissent à l'accueil, désactivés par défaut tant que la cadence n'est pas mesurée au
   casque ; sans contours, le rendu est celui du matériau toon seul — `QUA-020`
 - Le parcours est rejoué de bout en bout dans le Quest 3 émulé, avec et sans contours — `QUA-020`
@@ -117,6 +117,8 @@ couleur sur les bâtiments et les routes, des routes plus lisibles, et des arbre
 
 ## 7. Reprise
 
-- **Dernier état** (2026-11-01) : cadrage seul, aucun code, aucun téléchargement.
-- **Travail non commité** : la fiche, sur la branche `cadrage/ambiance-cartoon`.
-- **Prochaine étape** : [AI] lot 1.
+- **Dernier état** (2026-11-01) : lots 2, 3 et 5 livrés (toon, voies bordées, fenêtres, contours en option) ; lots 1, 4 et 6 reportés
+  en intentions (pack derrière une vérification anti-robot) ; lot 7 humain. Le critère d'ensemble de l'ambiance dans le groupe de
+  la ville est jugé par l'humain (`[human]`) : le code l'applique et le teste, le rendu réel se juge au casque.
+- **Travail non commité** : aucun, sur la branche `workstream/ambiance-cartoon`.
+- **Prochaine étape** : [human] télécharger le pack (`docs/intentions/telechargement-pack-quaternius.md`).
