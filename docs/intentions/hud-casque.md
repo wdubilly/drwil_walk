@@ -1,6 +1,6 @@
 # Intention : le tableau de bord de marche dans le casque (maquette)
 
-**Statut** : proposée le 2026-10-31, à partir d'une maquette du demandeur (image reçue le 2026-10-31, non versionnée). Découpée le 2026-10-31 en trois chantiers cadrés : `docs/projects/hud-tableau-de-bord.md`, `docs/projects/hud-voyage-guide.md`, `docs/projects/hud-defis-progression.md`. Reste dans cette intention : la barre de commandes, le mini-globe et le dénivelé.
+**Statut** : proposée le 2026-10-31, à partir d'une maquette du demandeur (image reçue le 2026-10-31, non versionnée). Découpée le 2026-10-31 en trois chantiers cadrés : `docs/projects/journal.md`, `docs/projects/hud-voyage-guide.md`, `docs/projects/hud-defis-progression.md`. Reste dans cette intention : la barre de commandes, le mini-globe et le dénivelé.
 
 ## Besoin
 

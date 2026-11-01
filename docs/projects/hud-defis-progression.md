@@ -53,7 +53,7 @@ des défis qui ne sont qu'une **distance cumulée**, gardée en local, sans trac
 
 - Un tracé réel des défis et un mini-globe : choix du demandeur du 2026-10-31, distance seule.
 - Un partage ou une synchronisation de la progression, des comptes.
-- Le dénivelé et les calories : `docs/projects/hud-tableau-de-bord.md`.
+- Le dénivelé et les calories : `docs/projects/journal.md`.
 
 ## 3. Contraintes
 
