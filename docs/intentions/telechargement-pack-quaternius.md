@@ -1,6 +1,6 @@
 # Intention : obtenir le pack Quaternius « Stylized Nature MegaKit » (Standard) pour le chantier ambiance-cartoon
 
-**Statut** : proposée le 2026-11-01, bloque le lot 1 de `docs/projects/journal.md`.
+**Statut** : cadrée le 2026-11-01 dans `docs/projects/arbres-pack-quaternius.md` (proposée le 2026-11-01), bloque le lot 1 de `docs/projects/journal.md`.
 
 ## Besoin
 
@@ -18,7 +18,7 @@ navigateur manipulé par une personne. Contourner la vérification n'est pas per
 
 ## Questions à trancher
 
-- [decision] Le demandeur télécharge-t-il lui-même l'archive glTF Standard depuis son navigateur, pour la déposer hors dépôt
+- Tranché le 2026-11-01 : le demandeur a téléchargé l'archive Standard et l'a déposée dans `/tmp/quaternius/` (reçue par Taildrop) ; reprise dans `docs/projects/arbres-pack-quaternius.md`. Question d'origine : le demandeur télécharge-t-il lui-même l'archive glTF Standard depuis son navigateur, pour la déposer hors dépôt
   (par exemple dans `/tmp`) et laisser l'agent retenir et alléger les arbres, écrire la provenance (adresse, version, date,
   licence, fichiers) ?
 - Tranché le 2026-11-01 : le chantier a commencé par les lots 2, 3 et 5 (sans pack) ; ils sont livrés. Reste la première
