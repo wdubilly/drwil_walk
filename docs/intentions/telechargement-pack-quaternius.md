@@ -1,6 +1,6 @@
 # Intention : obtenir le pack Quaternius « Stylized Nature MegaKit » (Standard) pour le chantier ambiance-cartoon
 
-**Statut** : proposée le 2026-11-01, bloque le lot 1 de `docs/projects/ambiance-cartoon.md`.
+**Statut** : proposée le 2026-11-01, bloque le lot 1 de `docs/projects/journal.md`.
 
 ## Besoin
 
@@ -14,7 +14,7 @@ Lu le 2026-11-01 : la page `https://quaternius.com/packs/stylizednaturemegakit.h
 `https://quaternius.itch.io/stylized-nature-megakit` (script `Itch.attachBuyButton`). Cette page répond par une vérification
 anti-robot Cloudflare (« Just a moment... ») à `curl` comme à un Chromium piloté : aucun fichier n'est récupérable sans un
 navigateur manipulé par une personne. Contourner la vérification n'est pas permis ; aucune autre source n'a été utilisée
-(`docs/projects/ambiance-cartoon.md`, section 3). Aucun fichier du pack n'est dans le dépôt.
+(`docs/projects/journal.md`, section 3). Aucun fichier du pack n'est dans le dépôt.
 
 ## Questions à trancher
 

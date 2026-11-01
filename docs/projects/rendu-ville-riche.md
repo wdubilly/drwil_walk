@@ -57,7 +57,7 @@ propose sept familles ; le demandeur retient quatre : sol et route, végétation
 
 - Le ciel dégradé, le soleil, la brume et les collines de la maquette : un fond opaque cacherait le réel, ce qui
   affaiblit `APP-001` ; décision du 2026-10-31 de garder le passthrough sans ciel.
-- Fenêtres, marquages au sol, matériau toon et arbres du pack Quaternius : `docs/projects/ambiance-cartoon.md`.
+- Fenêtres, marquages au sol, matériau toon et arbres du pack Quaternius : `docs/projects/journal.md`.
 - Mobilier supplémentaire (poubelles, feux), voitures, silhouettes, monuments : reporté.
 - Le relief du sol : `docs/intentions/osm-enrichi.md`.
 - Une attribution plus discrète : l'attribution est obligatoire (`APP-003`), son aspect ne change pas ici.

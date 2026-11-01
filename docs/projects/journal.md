@@ -166,7 +166,7 @@ One entry per closed project, most recent last.
 ## 2026-11-01 — Cadrage de l'ambiance cartoon (remplace rendu-textures-pilote)
 
 - Décisions du demandeur : ambiance cartoon ; pack Quaternius « Stylized Nature MegaKit » (version Standard, CC0) pour les arbres ; bâtiments et routes générés par le code avec un matériau toon.
-- La fiche `rendu-textures-pilote` (textures photo semi-réalistes, trois profils) est retirée au profit de `docs/projects/ambiance-cartoon.md` ; `rendu-ville-riche` en reprend les renvois.
+- La fiche `rendu-textures-pilote` (textures photo semi-réalistes, trois profils) est retirée au profit de `docs/projects/journal.md` ; `rendu-ville-riche` en reprend les renvois.
 - Aucun code, aucun téléchargement : le pack se télécharge une seule fois au lot 1 du chantier.
 
 ## 2026-11-01 — Cadrage des retours : panneau discret, minicarte, version PC, course réelle
