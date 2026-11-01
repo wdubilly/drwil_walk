@@ -1,6 +1,7 @@
 // Une image de la marche : logique pure qui enchaîne joystick, vitesse, distance et sécurité.
 // Le rendu three.js (experience.ts) ne fait qu'appliquer l'état calculé ici.
 import { clampSpeedKmh, stepSpeedKmh } from "../route/speed.ts";
+import { advanceKcal } from "../route/stats.ts";
 import { advanceDistanceM } from "../route/walk.ts";
 import { cityOpacity } from "../safety/visibility.ts";
 import { BUTTONS_RELEASED, newPresses, type ButtonsReading } from "./buttons.ts";
@@ -11,6 +12,8 @@ export interface WalkState {
   distanceM: number;
   /** Temps de marche cumulé, celui qui a fait avancer la distance. */
   timeS: number;
+  /** Calories estimées dépensées pendant la marche (APP-002), cumulées à la vitesse de chaque image. */
+  kcal: number;
   /** Horodatage de l'image précédente, `null` avant la première. */
   lastTimeMs: number | null;
   joystick: JoystickState;
@@ -37,6 +40,8 @@ export interface FrameInput {
   /** Inclinaison de la tête sous l'horizontale, `null` si la pose n'est pas connue. */
   pitchDownDeg: number | null;
   globalOpacityPct: number;
+  /** Poids de l'utilisateur pour les calories : celui saisi à l'accueil, sinon la valeur moyenne. */
+  weightKg: number;
   /** Longueur d'un trajet libre : la marche s'y arrête. Absente pour une boucle, qui reprend au départ. */
   endM?: number | undefined;
 }
@@ -46,6 +51,7 @@ export function initialWalkState(speedKmh: number, globalOpacityPct: number): Wa
     speedKmh: clampSpeedKmh(speedKmh),
     distanceM: 0,
     timeS: 0,
+    kcal: 0,
     lastTimeMs: null,
     joystick: JOYSTICK_RELEASED,
     cityOpacity: cityOpacity(0, globalOpacityPct),
@@ -71,6 +77,7 @@ export function nextWalkState(state: WalkState, input: FrameInput): WalkState {
     speedKmh,
     distanceM: arrived ? (input.endM as number) : moved,
     timeS: still ? state.timeS : state.timeS + dtS,
+    kcal: still ? state.kcal : advanceKcal(state.kcal, speedKmh, dtS, input.weightKg),
     arrived,
     paused,
     showPanel: pressed.b ? !state.showPanel : state.showPanel,

@@ -1,6 +1,7 @@
 import { Event as DomEvent, Window } from "happy-dom";
 import { describe, expect, it, vi } from "vitest";
 import type { TripPlanner } from "../city/free-route.ts";
+import { WEIGHT_STORAGE_KEY, type WeightStorage } from "../route/stats.ts";
 import { ENTER_LABEL, renderHome } from "./home.ts";
 
 export const planner: TripPlanner = {
@@ -9,12 +10,17 @@ export const planner: TripPlanner = {
   plan: () => Promise.reject(new Error("jamais")),
 };
 
-function setup() {
+function memory(initial?: string): WeightStorage & { data: Map<string, string> } {
+  const data = new Map<string, string>(initial === undefined ? [] : [[WEIGHT_STORAGE_KEY, initial]]);
+  return { data, getItem: (k) => data.get(k) ?? null, setItem: (k, v) => void data.set(k, v), removeItem: (k) => void data.delete(k) };
+}
+
+function setup(storage?: WeightStorage) {
   const window = new Window();
   const doc = window.document as unknown as Document;
   const root = doc.createElement("main");
   doc.body.append(root);
-  const view = renderHome(doc, root, planner);
+  const view = renderHome(doc, root, planner, storage);
   const input = (label: string) => {
     const found = [...root.querySelectorAll("label")].find((l) => l.textContent.includes(label));
     const el = found?.querySelector("input");
@@ -144,5 +150,47 @@ describe("écran d'accueil", () => {
     view.showStatus("Réalité mixte active");
     expect(root.querySelector("[role='status']")?.textContent).toBe("Réalité mixte active");
     expect(view.root).toBe(root);
+  });
+
+  it("SEC-007: le poids est facultatif, se garde dans le navigateur à la saisie et se relit à l'accueil suivant", () => {
+    const storage = memory();
+    const { view, input } = setup(storage);
+    const weight = input("Poids");
+    expect(view.readWeightKg()).toBeUndefined();
+    weight.value = "72,5";
+    weight.dispatchEvent(new DomEvent("change") as unknown as Event);
+    expect(view.readWeightKg()).toBe(72.5);
+    expect(storage.data.get(WEIGHT_STORAGE_KEY)).toBe("72.5");
+    expect(setup(storage).input("Poids").value).toBe("72.5");
+  });
+
+  it("SEC-007: un poids invalide ou vidé n'est pas gardé, l'ancien est effacé", () => {
+    const storage = memory("80");
+    const { view, input } = setup(storage);
+    const weight = input("Poids");
+    expect(view.readWeightKg()).toBe(80);
+    weight.value = "5";
+    weight.dispatchEvent(new DomEvent("change") as unknown as Event);
+    expect(view.readWeightKg()).toBeUndefined();
+    expect(storage.data.size).toBe(0);
+  });
+
+  it("SEC-007: le bouton « Effacer mon poids » vide le champ et le stockage", () => {
+    const storage = memory("80");
+    const { root, view } = setup(storage);
+    const erase = [...root.querySelectorAll("button")].find((b) => b.textContent === "Effacer mon poids");
+    erase?.click();
+    expect(view.readWeightKg()).toBeUndefined();
+    expect(storage.data.size).toBe(0);
+    expect(root.querySelector("[role='alert']")?.textContent).toBe("");
+  });
+
+  it("QUA-002: dit que le poids ne sera pas gardé si le navigateur refuse ou n'a pas de stockage", () => {
+    const { root, view, input } = setup();
+    const weight = input("Poids");
+    weight.value = "70";
+    weight.dispatchEvent(new DomEvent("change") as unknown as Event);
+    expect(view.readWeightKg()).toBe(70);
+    expect(root.querySelector("[role='alert']")?.textContent).toContain("seulement pour cette séance");
   });
 });

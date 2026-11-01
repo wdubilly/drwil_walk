@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { BUTTONS_RELEASED } from "./buttons.ts";
+import { advanceKcal } from "../route/stats.ts";
 import { initialWalkState, nextWalkState, type FrameInput } from "./frame.ts";
 
-const still: Omit<FrameInput, "timeMs"> = { axisY: 0, buttons: BUTTONS_RELEASED, pitchDownDeg: 0, globalOpacityPct: 100 };
+const still: Omit<FrameInput, "timeMs"> = { axisY: 0, buttons: BUTTONS_RELEASED, pitchDownDeg: 0, globalOpacityPct: 100, weightKg: 70 };
 
 describe("image de la marche", () => {
   it("part immobile, à la vitesse et à l'opacité réglées", () => {
@@ -111,5 +112,17 @@ describe("image de la marche", () => {
     const before = s.distanceM;
     s = nextWalkState(s, { ...still, timeMs: 2000, buttons: { ...BUTTONS_RELEASED, a: true } });
     expect(s.distanceM).toBe(before);
+  });
+
+  it("APP-002: cumule les calories à la vitesse et au poids, et s'arrête en pause", () => {
+    let s = initialWalkState(4, 100);
+    expect(s.kcal).toBe(0);
+    s = nextWalkState(s, { ...still, timeMs: 0 });
+    s = nextWalkState(s, { ...still, timeMs: 60_000 });
+    expect(s.kcal).toBeCloseTo(advanceKcal(0, 4, 60, 70), 6);
+    const heavy = nextWalkState(nextWalkState(initialWalkState(4, 100), { ...still, timeMs: 0, weightKg: 140 }), { ...still, timeMs: 60_000, weightKg: 140 });
+    expect(heavy.kcal).toBeCloseTo(2 * s.kcal, 6);
+    const paused = nextWalkState(s, { ...still, timeMs: 61_000, buttons: { ...BUTTONS_RELEASED, trigger: true } });
+    expect(paused.kcal).toBe(s.kcal);
   });
 });
