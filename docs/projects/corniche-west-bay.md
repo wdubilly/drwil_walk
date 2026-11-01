@@ -76,6 +76,7 @@ va jusqu'aux tours de West Bay.
   musée à celui de la Corniche.
 - 2026-10-31, choix techniques de l'agent (pas des décisions de produit), fixés au lot 1 : emprise de l'extraction, point de
   raccord et sa longueur exacte, méthode pour borner les bâtiments affichés, ce qui est conservé du tronçon actuel.
+- 2026-11-01, décision humaine du demandeur : fiche reportée en fin de file (priorité P3) ; elle est à annuler si `docs/projects/course-reelle-gpx.md` couvre le besoin. L'itinéraire figé reste utile hors ligne, sans réseau pendant la marche.
 - Dépend du chantier osm-enrichi, livré le 2026-10-31 (`docs/projects/journal.md`) : l'extrait porte désormais les arbres et le mobilier.
 - Contrats concernés : `APP-001`, `APP-002`, `APP-003`, `QUA-001`, `QUA-004`, `QUA-020`.
 

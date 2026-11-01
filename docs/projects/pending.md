@@ -28,10 +28,9 @@ otherwise.
 Ordre de lancement : par priorité (`[P0]` d'abord), puis par ordre alphabétique du chemin à priorité égale (limite de l'outil
 de sondage : quatre niveaux). Les dépendances sont respectées : `ambiance-cartoon` avant `rendu-ville-riche`, `panneau-discret`
 avant les fiches qui touchent le panneau d'infos, `tableau-allure-progression` et `hud-defis-progression` avant
-`comparer-marche-reelle`, les fiches de la ville avant `course-reelle-gpx`.
+`comparer-marche-reelle`, les fiches de la ville avant `course-reelle-gpx`. La Corniche est reportée le 2026-11-01 : à annuler si `course-reelle-gpx` couvre le besoin.
 
 - [ ] [P0] [AI] Ambiance cartoon de la ville : matériau toon, routes, arbres du pack Quaternius — `docs/projects/ambiance-cartoon.md`
-- [ ] [P0] [AI] La Corniche de Doha jusqu'à West Bay, départ au musée — `docs/projects/corniche-west-bay.md`
 - [ ] [P0] [AI] Panneau d'infos discret : fond transparent, en bas à gauche ou à droite — `docs/projects/panneau-discret.md`
 - [ ] [P0] [AI] Une ville plus riche : sol, végétation, toits, noms de rues — `docs/projects/rendu-ville-riche.md`
 - [ ] [P1] [AI] Minicarte dans le casque, avec le point qui avance sur le tracé — `docs/projects/carte-position-casque.md`
@@ -41,6 +40,7 @@ avant les fiches qui touchent le panneau d'infos, `tableau-allure-progression` e
 - [ ] [P2] [AI] Les défis de distance et l'objectif annuel — `docs/projects/hud-defis-progression.md`
 - [ ] [P2] [AI] Le voyage guidé par étapes — `docs/projects/hud-voyage-guide.md`
 - [ ] [P3] [AI] Comparer la marche virtuelle à la vraie marche — `docs/projects/comparer-marche-reelle.md`
+- [ ] [P3] [AI] La Corniche de Doha jusqu'à West Bay, départ au musée (reportée, à annuler si le GPX suffit) — `docs/projects/corniche-west-bay.md`
 - [ ] [P3] [AI] Rejouer une vraie course : GPX ou points intermédiaires, longue distance — `docs/projects/course-reelle-gpx.md`
 
 <!-- Example:
