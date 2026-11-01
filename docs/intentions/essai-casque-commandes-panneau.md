@@ -10,8 +10,8 @@ une action) sur de vraies manettes Touch ?
 
 ## Existant
 
-Lu le 2026-11-01 : le panneau est un texte flottant (`app/src/xr/hud-panel.ts`), posé à 1,2 m devant le regard à
-l'horizontale et 20 cm sous les yeux (`app/src/xr/pose.ts`), de 50 cm de large, soumis au fondu de la ville (disparaît
+Lu le 2026-11-01 : le panneau est un texte flottant (`app/src/xr/hud-panel.ts`), posé en bas du champ de vision, côté choisi à l'accueil (chantier panneau-discret : 1,1 m, 40° du regard, 35 cm sous
+les yeux, `app/src/xr/pose.ts`), de 50 cm de large, soumis au fondu de la ville (disparaît
 tête baissée au-delà de 25° à 40°, `APP-001`). Boutons lus aux index « xr-standard » 0, 4 et 5 (`app/src/xr/buttons.ts`),
 seuil d'appui à 0,5. Le recalage reprend l'endroit et le cap du regard sans toucher à la distance. Tout cela est un choix
 de l'agent, jamais vu au casque. Le panneau suit le cap du regard à chaque image, sans lissage.

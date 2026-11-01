@@ -118,6 +118,7 @@ async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession, so
   const place = (ITINERARIES.find((itinerary) => itinerary.id === home.readRouteId()) as Itinerary).name;
   // Le poids saisi à l'accueil, sinon la valeur moyenne : l'estimation de calories n'en demande jamais plus.
   const weightKg = home.readWeightKg() ?? DEFAULT_WEIGHT_KG;
+  const panelSide = home.readPanelSide();
   const now = deps.now ?? (() => new Date());
   let calibration = NO_CALIBRATION;
   const globalOpacityPct = home.readOpacityPct();
@@ -154,7 +155,7 @@ async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession, so
     mode.update(camera, renderer.xr.getCamera());
     // Le cap est celui du parcours (la ville défile dans le sens où l'on marche), l'heure celle du casque.
     const dashboard = { place, weightKg, compass: compassText(headingAt(souq.route, state.distanceM)), clock: formatClock(now()) };
-    hud.update({ ...state, ...dashboard }, { show: state.showPanel, opacity: state.cityOpacity, pose: head });
+    hud.update({ ...state, ...dashboard }, { show: state.showPanel, opacity: state.cityOpacity, pose: head, side: panelSide, zone: zone.zone() });
     panel.update({
       ...state,
       ...dashboard,

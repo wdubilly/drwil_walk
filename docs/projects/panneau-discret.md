@@ -102,6 +102,8 @@ ou à droite**, plutôt qu'au milieu du champ de vision. Le côté se règle à 
 
 ## 7. Reprise
 
-- **Dernier état** (2026-11-01) : cadrage seul, aucun code.
-- **Travail non commité** : la fiche, sur la branche `cadrage/panneau-discret`.
-- **Prochaine étape** : [AI] lot 1.
+- **Dernier état** (2026-11-01) : lots 1 à 3 codés et testés en local (Vitest 100 % de couverture, tsc, taille des fichiers, e2e
+  `app/e2e/panneau-discret.test.ts` vert) : fond à 70 % d'opacité, place hors de la zone tapis (`app/src/xr/pose.ts`), côté choisi
+  à l'accueil (`app/src/ui/panel-side.ts`), docs et contrats à jour. Lot 4 (essai réel) : [human].
+- **Travail non commité** : tout, sur la branche `workstream/panneau-discret` (un seul commit de code prévu, puis la clôture).
+- **Prochaine étape** : commit de code, `npx drwil verify --agent`, journal, `node .githooks/close.mjs`, PR.

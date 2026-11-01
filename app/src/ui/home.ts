@@ -6,6 +6,7 @@ import type { TripPlanner, PlannedTrip } from "../city/free-route.ts";
 import { clearWeightKg, loadWeightKg, parseWeightKg, saveWeightKg, MAX_WEIGHT_KG, MIN_WEIGHT_KG, DEFAULT_WEIGHT_KG, type WeightStorage } from "../route/stats.ts";
 import { FREE_ITINERARY_ID } from "../route/itineraries.ts";
 import { renderFreeTrip } from "./free-trip.ts";
+import { renderPanelSide, type PanelSide } from "./panel-side.ts";
 import { renderRenderChoice, type Rendering } from "./render-choice.ts";
 import { renderRouteChoice } from "./route-choice.ts";
 import {
@@ -36,6 +37,8 @@ export interface HomeView {
   readRendering: () => Rendering;
   /** Le poids saisi (facultatif, gardé dans ce navigateur seulement) ; rien : la valeur moyenne s'applique aux calories. */
   readWeightKg(): number | undefined;
+  /** Le côté du panneau d'infos dans le casque (gauche ou droite), gardé dans ce navigateur seulement (APP-002). */
+  readPanelSide(): PanelSide;
   /** La vignette réelle (périphérie en passthrough), activée par défaut (APP-001). */
   readVignette(): boolean;
   /** Les contours des bâtiments, désactivés par défaut tant que la cadence n'est pas mesurée au casque. */
@@ -73,21 +76,13 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
   };
   routes.onChange(syncFree);
   const rendering = renderRenderChoice(doc);
-  const title = doc.createElement("h1");
-  title.textContent = "drwil_walk";
+  const title = Object.assign(doc.createElement("h1"), { textContent: "drwil_walk" });
   const reminder = doc.createElement("ul");
   reminder.setAttribute("aria-label", "Rappel de sécurité");
-  for (const text of SAFETY_REMINDERS) {
-    const item = doc.createElement("li");
-    item.textContent = text;
-    reminder.append(item);
-  }
+  for (const text of SAFETY_REMINDERS) reminder.append(Object.assign(doc.createElement("li"), { textContent: text }));
   const speed = numberInput(doc, "number", MIN_SPEED_KMH, MAX_SPEED_KMH, SPEED_STEP_KMH, DEFAULT_SPEED_KMH.toFixed(1));
-  const speedHint = doc.createElement("p");
-  speedHint.className = "speed-hint";
-  speedHint.textContent = SPEED_RANGE_TEXT;
-  const speedLimit = doc.createElement("p");
-  speedLimit.className = "speed-limit";
+  const speedHint = Object.assign(doc.createElement("p"), { className: "speed-hint", textContent: SPEED_RANGE_TEXT });
+  const speedLimit = Object.assign(doc.createElement("p"), { className: "speed-limit" });
   speedLimit.setAttribute("aria-live", "polite");
   const rawSpeed = (): number => Number(speed.value.replace(",", "."));
   const announce = (): number => {
@@ -133,6 +128,7 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
   const notice = doc.createElement("p");
   notice.setAttribute("role", "alert");
   notice.className = "notice";
+  const panelSide = renderPanelSide(doc, storage, notice);
   const weight = numberInput(doc, "number", MIN_WEIGHT_KG, MAX_WEIGHT_KG, 0.5, String(loadWeightKg(storage) ?? ""));
   weight.placeholder = `${String(DEFAULT_WEIGHT_KG)} par défaut`;
   const keep = (ok: boolean): void => {
@@ -154,6 +150,7 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
     routes.element,
     freeTrip.element,
     rendering.element,
+    panelSide.element,
     reminder,
     field(doc, "Vitesse de départ (km/h)", speed),
     speedHint,
@@ -176,6 +173,7 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
     readTrip: () => freeTrip.readTrip(),
     readRendering: rendering.readRendering,
     readWeightKg: () => parseWeightKg(weight.value),
+    readPanelSide: panelSide.readSide,
     readVignette: () => vignette.checked,
     readOutlines: () => outlines.checked,
     showNotice: (text) => {
@@ -185,6 +183,7 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
       button.addEventListener("click", () => {
         // L'itinéraire qui démarre est lisible sur la page, comme le panneau de marche.
         root.dataset["route"] = routes.readId();
+        root.dataset["panelSide"] = panelSide.readSide();
         handler();
       });
     },
