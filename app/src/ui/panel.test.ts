@@ -8,7 +8,7 @@ describe("panneau de marche", () => {
     const doc = new Window().document as unknown as Document;
     const root = doc.createElement("main");
     const panel = renderWalkPanel(doc, root);
-    const info = { speedKmh: 4.1, distanceM: 12.34, timeS: 65, cityOpacity: 0.5, position: { x: 3, z: -4 }, buildingCount: 253,
+    const info = { speedKmh: 4.1, distanceM: 12.34, timeS: 65, cityOpacity: 0.5, kcal: 12.4, weightKg: 72.5, compass: "NE 45°", clock: "09:05", place: "Doha", position: { x: 3, z: -4 }, buildingCount: 253,
       rendering: "google" as const, tileCount: 7, attribution: "© contributeurs OpenStreetMap · Google", arrived: false,
       paused: false, showPanel: true, calibration: { x: 0, z: 0, yawRad: 0 }, zone: DEFAULT_ZONE, vignette: true };
     panel.update(info);
@@ -19,6 +19,9 @@ describe("panneau de marche", () => {
     expect(text("distance")).toBe("12,3 m");
     expect(text("time")).toBe("1 min 05 s");
     expect(text("opacity")).toBe("50 %");
+    expect(text("kcal")).toBe("environ 12 kcal");
+    expect([section?.getAttribute("data-kcal"), section?.getAttribute("data-weight-kg")]).toEqual(["12.4", "72.5"]);
+    expect([section?.getAttribute("data-compass"), section?.getAttribute("data-clock"), section?.getAttribute("data-place")]).toEqual(["NE 45°", "09:05", "Doha"]);
     expect(section?.getAttribute("data-distance-m")).toBe("12.34");
     expect(section?.getAttribute("data-speed-kmh")).toBe("4.1");
     expect(section?.getAttribute("data-time-s")).toBe("65");
@@ -50,7 +53,7 @@ describe("panneau de marche", () => {
     const doc = new Window().document as unknown as Document;
     const root = doc.createElement("main");
     const panel = renderWalkPanel(doc, root);
-    const info = { speedKmh: 8, distanceM: 0, timeS: 0, cityOpacity: 1, position: { x: 0, z: 0 }, buildingCount: 1,
+    const info = { speedKmh: 8, distanceM: 0, timeS: 0, cityOpacity: 1, kcal: 0, weightKg: 70, compass: "N 0°", clock: "00:00", place: "Doha", position: { x: 0, z: 0 }, buildingCount: 1,
       rendering: "osm" as const, tileCount: 0, attribution: "", arrived: false,
       paused: false, showPanel: true, calibration: { x: 0, z: 0, yawRad: 0 }, zone: DEFAULT_ZONE, vignette: true };
     const limit = () => root.querySelector<HTMLElement>(".speed-limit");

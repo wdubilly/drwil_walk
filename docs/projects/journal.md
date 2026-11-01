@@ -153,3 +153,12 @@ One entry per closed project, most recent last.
 - Essai au casque (lot 6) fait par l'humain, qui a attesté `APP-001` (le détail de son jugement n'est pas consigné ici). Les choix de l'agent restent à régler selon `docs/intentions/essai-casque-zone-tapis.md`.
 - Sur décision de l'humain, les cinq critères automatiques citant `APP-001` sont marqués [human] : drwil les jugeait « non durables » parce que le contrat est attesté par un humain (défaut probable de drwil, à traiter séparément).
 - Branche `workstream/zone-tapis-vignette`. Preuve de clôture : docs/preuves/zone-tapis-vignette.md (écrite par la clôture).
+
+## 2026-11-01 — Le tableau de bord de marche dans le casque
+
+- Le panneau d'infos du casque devient un tableau de bord, affiché dès le départ et masqué par B : cap de la boussole (lu sur la direction du parcours) et heure locale, lieu, vitesse, durée, distance et calories « environ ». Un seul panneau de 0,6 m sur 0,3 m, redessiné seulement quand une valeur affichée change, soumis au fondu de la ville (`APP-001`) et posé au-dessus de la zone tapis par défaut.
+- Calories (`app/src/route/stats.ts`) : formule de marche de l'ACSM (VO2 = 0,1 × vitesse en m/min + 3,5), cumulée image par image à la vitesse du moment, poids saisi ou 70 kg sans poids (choix de l'agent, pas une décision de produit).
+- Poids : champ facultatif à l'accueil, gardé en `localStorage` (clé `drwil_walk.poids`), effaçable, jamais envoyé ; si le navigateur refuse, l'accueil le dit.
+- Contrats : `APP-002` modifié (tableau de bord, calories, poids local, sources et tests), déclaré à la fiche ; `APP-001` et `QUA-020` inchangés dans leur texte. Chemin e2e `app/e2e/tableau-de-bord.test.ts`.
+- Limites : le lieu est le nom de l'itinéraire, les extraits OpenStreetMap ne portent pas les noms de rues (`docs/intentions/noms-de-rues-extrait.md`) ; le texte de `AGENTS.md` sur la donnée personnelle reste à ajuster, hors périmètre (`docs/intentions/texte-agents-donnee-personnelle.md`) ; lot 4 (essai au casque, critère « hors de la zone tapis » de `APP-001`) non fait, reporté à `docs/intentions/essai-casque-tableau-de-bord.md`.
+- Branche `workstream/hud-tableau-de-bord`. Preuve de clôture : docs/preuves/hud-tableau-de-bord.md (écrite par la clôture).

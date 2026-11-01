@@ -80,6 +80,10 @@ files:
   - app/src/route/walk.ts
   - app/src/safety/visibility.test.ts
   - app/src/safety/visibility.ts
+  - app/src/safety/zone-edit.test.ts
+  - app/src/safety/zone-edit.ts
+  - app/src/safety/zone.test.ts
+  - app/src/safety/zone.ts
   - app/src/ui/contrast.test.ts
   - app/src/ui/contrast.ts
   - app/src/ui/doha-corniche.svg

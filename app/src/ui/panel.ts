@@ -1,8 +1,9 @@
-// Panneau de marche, sur la page : vitesse, distance, temps et opacité de la ville.
+// Panneau de marche, sur la page : vitesse, distance, temps, calories et opacité de la ville.
 // Les valeurs exactes sont aussi en attributs data-*, lues par l'e2e (texte arrondi à l'affichage).
 import type { Vec2 } from "../route/geo.ts";
 import { OSM_ATTRIBUTION } from "../city/licence.ts";
 import { formatSpeedKmh, speedBoundMessage } from "../route/speed.ts";
+import { formatKcal } from "../route/stats.ts";
 import { ARRIVAL_TEXT, formatDistanceM, formatDurationS } from "../route/walk.ts";
 import type { Zone } from "../safety/zone.ts";
 import { formatOpacity } from "../safety/visibility.ts";
@@ -12,6 +13,12 @@ export interface WalkInfo {
   distanceM: number;
   timeS: number;
   cityOpacity: number;
+  /** Le tableau de bord du casque, redit ici pour l'e2e : calories estimées, poids retenu (saisi ou moyen), cap, heure locale, lieu. */
+  kcal: number;
+  weightKg: number;
+  compass: string;
+  clock: string;
+  place: string;
   /** Position sur le parcours, en mètres depuis le départ (x est, z sud). */
   position: Vec2;
   buildingCount: number;
@@ -58,6 +65,7 @@ export function renderWalkPanel(doc: Document, root: HTMLElement): WalkPanel {
   const speed = row("speed", "Vitesse");
   const distance = row("distance", "Distance");
   const time = row("time", "Temps");
+  const kcal = row("kcal", "Calories");
   const opacity = row("opacity", "Opacité de la ville");
   const credit = doc.createElement("p");
   credit.className = "attribution";
@@ -84,6 +92,7 @@ export function renderWalkPanel(doc: Document, root: HTMLElement): WalkPanel {
       show(speed, formatSpeedKmh(info.speedKmh));
       show(distance, formatDistanceM(info.distanceM));
       show(time, formatDurationS(info.timeS));
+      show(kcal, formatKcal(info.kcal));
       show(opacity, formatOpacity(info.cityOpacity));
       show(credit, info.attribution);
       const bound = speedBoundMessage(info.speedKmh);
@@ -103,6 +112,11 @@ export function renderWalkPanel(doc: Document, root: HTMLElement): WalkPanel {
       panel.dataset.speedKmh = String(info.speedKmh);
       panel.dataset.distanceM = String(info.distanceM);
       panel.dataset.timeS = String(info.timeS);
+      panel.dataset.kcal = String(info.kcal);
+      panel.dataset.weightKg = String(info.weightKg);
+      panel.dataset.compass = info.compass;
+      panel.dataset.clock = info.clock;
+      panel.dataset.place = info.place;
       panel.dataset.cityOpacity = String(info.cityOpacity);
       panel.dataset.positionX = String(info.position.x);
       panel.dataset.positionZ = String(info.position.z);

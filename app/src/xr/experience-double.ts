@@ -6,6 +6,7 @@ import { withCanvasContext } from "../city/canvas-double.ts";
 import { createProviders } from "../route/create-providers.ts";
 import { startExperience, type RendererClass } from "./experience.ts";
 import type { GoogleTiles, GoogleTilesOptions } from "../city/google-tiles.ts";
+import type { WeightStorage } from "../route/stats.ts";
 import type { XrSystemLike } from "./session.ts";
 
 type Loop = ((timeMs: number, frame?: XRFrame) => void) | null;
@@ -22,7 +23,7 @@ export function poseFrame(deg: number | null, { yawDeg = 0, at = { x: 0, y: 1.6,
 export const KEY = "cle-fictive-pour-les-tests";
 
 export function setup(
-  options: { supported?: boolean; space?: boolean; xr?: boolean; sessionFails?: boolean; apiKey?: string | undefined; fetch?: typeof fetch; storage?: Pick<Storage, "getItem" | "setItem"> } = {},
+  options: { supported?: boolean; space?: boolean; xr?: boolean; sessionFails?: boolean; apiKey?: string | undefined; fetch?: typeof fetch; storage?: WeightStorage; now?: () => Date } = {},
 ) {
   const doc = withCanvasContext(new Window().document as unknown as Document);
   const root = doc.createElement("main");
@@ -78,6 +79,7 @@ export function setup(
     Renderer,
     google: { apiKey, create },
     storage: options.storage,
+    now: options.now,
     routes: createProviders({}, options.fetch ?? (() => Promise.reject(new Error("réseau interdit aux tests")))),
   });
   const status = () => root.querySelector("[role='status']")?.textContent;

@@ -3,6 +3,7 @@
 import { DEFAULT_SPEED_KMH, MAX_SPEED_KMH, MIN_SPEED_KMH, SPEED_RANGE_TEXT, SPEED_STEP_KMH, clampSpeedKmh, speedLimitMessage, formatSpeedKmh } from "../route/speed.ts";
 import { GOOGLE_ATTRIBUTION, OSM_ATTRIBUTION } from "../city/licence.ts";
 import type { TripPlanner, PlannedTrip } from "../city/free-route.ts";
+import { clearWeightKg, loadWeightKg, parseWeightKg, saveWeightKg, MAX_WEIGHT_KG, MIN_WEIGHT_KG, DEFAULT_WEIGHT_KG, type WeightStorage } from "../route/stats.ts";
 import { FREE_ITINERARY_ID } from "../route/itineraries.ts";
 import { renderFreeTrip } from "./free-trip.ts";
 import { renderRenderChoice, type Rendering } from "./render-choice.ts";
@@ -33,6 +34,8 @@ export interface HomeView {
   readTrip(): PlannedTrip | null;
   /** Le rendu choisi : OpenStreetMap par défaut, ou Google 3D. */
   readRendering: () => Rendering;
+  /** Le poids saisi (facultatif, gardé dans ce navigateur seulement) ; rien : la valeur moyenne s'applique aux calories. */
+  readWeightKg(): number | undefined;
   /** La vignette réelle (périphérie en passthrough), activée par défaut (APP-001). */
   readVignette(): boolean;
   /** Une raison qui reste lisible pendant la marche (ex. repli sur OpenStreetMap) ; vide l'efface. */
@@ -60,7 +63,7 @@ function numberInput(doc: Document, type: string, min: number, max: number, step
   return input;
 }
 
-export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanner): HomeView {
+export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanner, storage?: WeightStorage): HomeView {
   const routes = renderRouteChoice(doc);
   const freeTrip = renderFreeTrip(doc, planner);
   const syncFree = (): void => {
@@ -126,6 +129,22 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
   const notice = doc.createElement("p");
   notice.setAttribute("role", "alert");
   notice.className = "notice";
+  const weight = numberInput(doc, "number", MIN_WEIGHT_KG, MAX_WEIGHT_KG, 0.5, String(loadWeightKg(storage) ?? ""));
+  weight.placeholder = `${String(DEFAULT_WEIGHT_KG)} par défaut`;
+  const keep = (ok: boolean): void => {
+    notice.textContent = ok ? "" : "Le poids ne peut pas être gardé dans ce navigateur : il sert seulement pour cette séance.";
+  };
+  weight.addEventListener("change", () => {
+    const kg = parseWeightKg(weight.value);
+    keep(kg === undefined ? clearWeightKg(storage) : saveWeightKg(storage, kg));
+  });
+  const erase = doc.createElement("button");
+  erase.type = "button";
+  erase.textContent = "Effacer mon poids";
+  erase.addEventListener("click", () => {
+    weight.value = "";
+    keep(clearWeightKg(storage));
+  });
   root.replaceChildren(
     title,
     routes.element,
@@ -137,6 +156,8 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
     speedLimit,
     field(doc, "Opacité de la ville (%)", opacity),
     field(doc, "Vignette réelle (le réel reste visible sur les bords)", vignette),
+    field(doc, "Poids (kg, facultatif : pour les calories, gardé sur ce casque seulement)", weight),
+    erase,
     button,
     status,
     notice,
@@ -149,6 +170,7 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
     readRouteId: () => routes.readId(),
     readTrip: () => freeTrip.readTrip(),
     readRendering: rendering.readRendering,
+    readWeightKg: () => parseWeightKg(weight.value),
     readVignette: () => vignette.checked,
     showNotice: (text) => {
       notice.textContent = text;
