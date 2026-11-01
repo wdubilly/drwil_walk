@@ -46,6 +46,7 @@ removes it when fully covered.
 | `docs/intentions/noms-de-rues-extrait.md` | Le nom de la rue courante dans le tableau de bord (les extraits n'en portent pas) |
 | `docs/intentions/texte-agents-donnee-personnelle.md` | Ajuster le texte de `AGENTS.md` : le poids facultatif est une donnée personnelle |
 | `docs/intentions/essai-casque-ambiance-cartoon.md` | Juger l'ambiance cartoon (style, 72 images par seconde, contours) sur un vrai Quest 3 (lot 7) |
+| `docs/intentions/budget-temps-e2e-longs.md` | Donner aux e2e de marche longs un budget de temps qui tienne sur une machine chargée |
 
 A one-line idea, too light for a brief, is noted with one command:
 `node .githooks/note.mjs "<text>"` appends a dated line to

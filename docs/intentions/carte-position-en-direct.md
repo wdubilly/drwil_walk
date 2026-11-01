@@ -28,4 +28,4 @@ Lu le 2026-11-01 (`docs/features.md`, `app/src/ui/`, `docs/intentions/hud-casque
   tracé du parcours avec un point, tiré du fichier de l'itinéraire, sans réseau ?
 - [decision] La carte montre-t-elle le parcours entier avec le point qui avance, la portion à venir, ou les deux ?
 - Une minicarte dans le casque touche la place du panneau d'infos et `APP-001` (jamais dans la zone tapis, effacée tête
-  baissée) : à cadrer avec `docs/projects/panneau-discret.md`.
+  baissée) : à cadrer avec `docs/projects/journal.md`.

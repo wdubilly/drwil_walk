@@ -1,6 +1,8 @@
 import type { Mesh, Scene } from "three";
 import { describe, expect, it } from "vitest";
 import { WEIGHT_STORAGE_KEY, advanceKcal } from "../route/stats.ts";
+import { PANEL_SIDE_STORAGE_KEY } from "../ui/panel-side.ts";
+import { ZONE_STORAGE_KEY } from "../safety/zone.ts";
 import { poseFrame, setup } from "./experience-double.ts";
 
 const memory = (initial?: string) => {
@@ -67,6 +69,30 @@ describe("tableau de bord de marche dans le casque", () => {
     t.frame(0, poseFrame(0));
     expect(hud(t).visible).toBe(true);
     t.frame(10, poseFrame(-60));
+    expect(hud(t).visible).toBe(false);
+  });
+
+  it("APP-001: pose le panneau du côté gardé à l'accueil, en bas du champ de vision", async () => {
+    for (const [side, sign] of [["left", -1], ["right", 1]] as const) {
+      const storage = memory();
+      storage.data.set(PANEL_SIDE_STORAGE_KEY, side);
+      const t = await started({ storage });
+      t.frame(0, poseFrame(0));
+      expect(hud(t).visible).toBe(true);
+      expect(Math.sign(hud(t).position.x)).toBe(sign);
+      expect(hud(t).position.y).toBeLessThan(1.6 - 0.3);
+    }
+  });
+
+  it("APP-001: le panneau s'écarte d'une zone tapis réglée plus large, et reste caché sans pose", async () => {
+    const storage = memory();
+    storage.data.set(ZONE_STORAGE_KEY, JSON.stringify({ x: 0, z: 0, yawRad: 0, width: 3, depth: 4, height: 2.5 }));
+    const t = await started({ storage });
+    t.frame(0, poseFrame(0));
+    // Hors de la boîte large de 3 m : au-delà de 1,5 m de l'axe, ou de 2 m devant.
+    const { x, z } = hud(t).position;
+    expect(Math.abs(x) > 1.5 || Math.abs(z) > 2).toBe(true);
+    t.frame(10, poseFrame(null));
     expect(hud(t).visible).toBe(false);
   });
 });

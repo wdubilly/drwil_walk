@@ -9,8 +9,9 @@ lisible, bien placé, et le tapis reste-t-il visible quand il est affiché ? Se 
 
 ## Existant
 
-Lu le 2026-11-01 : un seul panneau de 0,6 m sur 0,3 m, posé à 1,2 m devant le regard et 0,2 m sous les yeux (`app/src/xr/pose.ts`,
-`app/src/xr/hud-panel.ts`), dont le bord bas reste au-dessus de la zone tapis par défaut (1,2 m) pour une tête à 1,6 m ; texte
+Lu le 2026-11-01 (mis à jour par le chantier panneau-discret) : un seul panneau de 0,5 m sur 0,25 m, sur un fond sombre à 70 %
+d'opacité, posé à 1,1 m, à 40° du regard côté choisi à l'accueil (droite par défaut) et 0,35 m sous les yeux (`app/src/xr/pose.ts`,
+`app/src/xr/hud-panel.ts`, `app/src/ui/panel-side.ts`) ; s'il recouvre la zone tapis, il s'éloigne en grandissant jusqu'à en sortir ; texte
 de 34 à 60 px sur 640 px ; fondu de la ville (`APP-001`). Tout cela est un choix de l'agent, jamais vu au casque. Les critères de
 la fiche citant `APP-001` (reste hors de la zone tapis) sont à juger par l'humain, qui doit aussi attester le contrat.
 

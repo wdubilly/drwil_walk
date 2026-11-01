@@ -21,7 +21,7 @@ Le détail de la v0.1 est dans `MISSION.md`.
 ## Démarrer
 
 Une première tranche est codée : accueil, entrée en réalité mixte, marche dans le souk de Doha, la Vieille ville de Pune, la Corniche de Doha ou FC Road (bâtiments
-OpenStreetMap extrudés et teintés, arbres et mobilier, boucle d'environ 1,5 km) à la vitesse réglée (joystick droit : ±0,1 km/h ; gâchette : pause ; A : recalibrer ; B : tableau de bord (vitesse, durée, distance, calories environ, cap, lieu, heure) ; manette gauche : zone tapis), ville qui s'efface
+OpenStreetMap extrudés et teintés, arbres et mobilier, boucle d'environ 1,5 km) à la vitesse réglée (joystick droit : ±0,1 km/h ; gâchette : pause ; A : recalibrer ; B : tableau de bord discret, en bas à gauche ou à droite au choix de l'accueil (vitesse, durée, distance, calories environ, cap, lieu, heure) ; manette gauche : zone tapis), ville qui s'efface
 tête baissée, zone tapis et vignette réelle. Les données de la ville sont ©
 contributeurs OpenStreetMap (licence ODbL) ; les modèles d'arbres sont ceux du pack « Stylized Nature MegaKit » de
 Quaternius (CC0, provenance dans `app/assets/PROVENANCE.md`). Avec Node.js 24 :

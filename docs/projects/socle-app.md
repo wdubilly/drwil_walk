@@ -101,6 +101,8 @@ files:
   - app/src/ui/map-math.ts
   - app/src/ui/map-picker.test.ts
   - app/src/ui/map-picker.ts
+  - app/src/ui/panel-side.test.ts
+  - app/src/ui/panel-side.ts
   - app/src/ui/panel.test.ts
   - app/src/ui/panel.ts
   - app/src/ui/pune-fc-road.svg

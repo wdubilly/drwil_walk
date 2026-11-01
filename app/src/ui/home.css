@@ -50,7 +50,8 @@ h1 {
   font-weight: 600;
 }
 
-.rendering {
+.rendering,
+.panel-side {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
@@ -59,14 +60,16 @@ h1 {
   border: 0;
 }
 
-.rendering legend {
+.rendering legend,
+.panel-side legend {
   margin-bottom: 0.5rem;
   padding: 0;
   font-size: 1.5rem;
   font-weight: 600;
 }
 
-.rendering label {
+.rendering label,
+.panel-side label {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -78,11 +81,13 @@ h1 {
   cursor: pointer;
 }
 
-.rendering label:has(input:checked) {
+.rendering label:has(input:checked),
+.panel-side label:has(input:checked) {
   border-color: var(--accent);
 }
 
-.rendering input {
+.rendering input,
+.panel-side input {
   width: 1.5rem;
   height: 1.5rem;
 }
