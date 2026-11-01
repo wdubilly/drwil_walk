@@ -38,6 +38,8 @@ removes it when fully covered.
 | `docs/intentions/essai-casque-osm-enrichi.md` | Juger le rendu OSM enrichi et ses 72 images par seconde sur un vrai Quest 3 |
 | `docs/intentions/auto-heberger-valhalla-photon.md` | Auto-héberger Valhalla et Photon |
 | `docs/intentions/relais-cles-google.md` | Ne pas exposer les clés Google restantes dans le navigateur |
+| `docs/intentions/noms-de-rues-extrait.md` | Le nom de la rue courante dans le tableau de bord (les extraits n'en portent pas) |
+| `docs/intentions/texte-agents-donnee-personnelle.md` | Ajuster le texte de `AGENTS.md` : le poids facultatif est une donnée personnelle |
 
 A one-line idea, too light for a brief, is noted with one command:
 `node .githooks/note.mjs "<text>"` appends a dated line to
