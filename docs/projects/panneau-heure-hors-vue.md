@@ -106,6 +106,7 @@ règle la place et le contenu du panneau sur cette simulation, pour que tout son
 
 ## 7. Reprise
 
-- **Dernier état** (2026-11-01) : cadrage seul, aucun code.
-- **Travail non commité** : la fiche, sur la branche docs/fiches-champ-de-vision.
-- **Prochaine étape** : [AI] lot 1, une fois `champ-de-vision-casque` fusionné.
+- **Dernier état** (2026-11-01) : lots 1 à 3 faits et commités sur la branche chantier/panneau-heure-hors-vue (panneau à 28°, 0,31 m
+  sous les yeux, `APP-005`, e2e avec masque des deux côtés). Test vu échouer avant la correction (24 cas sur 24).
+- **Travail non commité** : aucun hors clôture.
+- **Prochaine étape** : [human] lot 4, essai au Quest 3 (heure visible, lisibilité, confort), puis `drwil attest APP-001` et `APP-005` si demandé.
