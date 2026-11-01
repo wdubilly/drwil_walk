@@ -144,3 +144,12 @@ One entry per closed project, most recent last.
 - Contrats : `APP-002` (pause, recalage, panneau) et `APP-001` (point 5, panneau soumis au fondu) modifiés dans `docs/contracts.md` ; `QUA-020` reçoit le chemin 12 (`app/e2e/commandes-panneau.test.ts`).
 - Essai au casque (lot 5) fait par l'humain, qui a attesté `APP-001` (le détail de son jugement n'est pas consigné ici). Les choix de l'agent restent à régler selon `docs/intentions/essai-casque-commandes-panneau.md`. Le panneau de la scène existe désormais : `docs/intentions/limite-vitesse-casque.md` peut s'y appuyer.
 - Branche `workstream/commandes-panneau`. Preuve de clôture : docs/preuves/commandes-panneau.md (écrite par la clôture).
+
+## 2026-11-01 — Zone tapis toujours transparente et vignette réelle
+
+- Zone tapis (`APP-001`, point 2) : boîte par défaut (1,2 m × 2,4 m × 1,2 m) autour de la position de départ, validée à la lecture (zone illisible ou aberrante remplacée par la boîte par défaut), enregistrée en `localStorage` en fin de geste. La ville est découpée par six plans `clipIntersection` partagés par ses matériaux, sans rendu supplémentaire ; les mentions d'attribution en sont exemptées (`APP-003`). Réglage à la manette gauche : X pose la boîte sous la tête (choix de l'agent, la fiche disait « devant lui »), joystick = déplacer, prise + joystick = redimensionner, Y = boîte par défaut.
+- Vignette réelle : quadrilatère plein écran à fondu multiplicatif (`app/src/xr/vignette.ts`), activée par défaut, case à décocher à l'accueil.
+- Contrats : `APP-001` modifié (point 2, vignette, sources et tests) ; son champ Manual est réduit, non retiré (la découpe et la vignette ne sont vues par aucun test) ; `QUA-020` reçoit le chemin 13 (`app/e2e/zone-tapis.test.ts`), extension non prévue à la fiche.
+- Essai au casque (lot 6) fait par l'humain, qui a attesté `APP-001` (le détail de son jugement n'est pas consigné ici). Les choix de l'agent restent à régler selon `docs/intentions/essai-casque-zone-tapis.md`.
+- Sur décision de l'humain, les cinq critères automatiques citant `APP-001` sont marqués [human] : drwil les jugeait « non durables » parce que le contrat est attesté par un humain (défaut probable de drwil, à traiter séparément).
+- Branche `workstream/zone-tapis-vignette`. Preuve de clôture : docs/preuves/zone-tapis-vignette.md (écrite par la clôture).
