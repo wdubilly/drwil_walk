@@ -81,7 +81,7 @@ async function enter(deps: ExperienceDeps, home: HomeView): Promise<void> {
 
 async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession, souq: Souq): Promise<void> {
   // La scène d'abord : si elle ne se construit pas, aucun renderer ni canevas n'est laissé derrière.
-  const souqScene = createSouqScene(deps.document, souq);
+  const souqScene = createSouqScene(deps.document, souq, { outlines: home.readOutlines() });
   const { scene, camera, world, city, buildingCount } = souqScene;
   // Le message d'arrivée d'un trajet libre, dans le casque : il s'efface avec la ville (APP-001).
   const arrival = createAttributionLabel(deps.document, ARRIVAL_TEXT, { name: "arrivee", y: 1.4 });

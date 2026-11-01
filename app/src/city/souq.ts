@@ -2,11 +2,14 @@
 // l'origine : c'est la ville qui glisse et pivote pour amener le point courant du parcours sous ses pieds.
 import {
   Color,
+  DirectionalLight,
   DoubleSide,
   Group,
   HemisphereLight,
+  Line,
+  LineBasicMaterial,
+  LineSegments,
   Mesh,
-  MeshLambertMaterial,
   PerspectiveCamera,
   Plane,
   PlaneGeometry,
@@ -17,13 +20,19 @@ import { headingAt, pointAt, type Path } from "../route/path.ts";
 import { createAttributionLabel, type AttributionLabel } from "./attribution.ts";
 import { buildBuildingsGeometry } from "./buildings.ts";
 import { buildFurniture, buildTrees } from "./props.ts";
+import { buildOutlinesGeometry } from "./outlines.ts";
 import { buildRoadsGeometry } from "./roads.ts";
 import type { Souq } from "./souq-data.ts";
+import { buildingMaterial, toonMaterial } from "./toon.ts";
 
 const GROUND_SIZE_M = 3000;
 
-function material(hex: number): MeshLambertMaterial {
-  return new MeshLambertMaterial({ color: new Color(hex) });
+/** Le trait des contours : un bleu nuit presque noir, lisible sur toutes les teintes de bâtiments. */
+const OUTLINE_COLOR = 0x1b1b2f;
+
+export interface SceneOptions {
+  /** Les contours des bâtiments proches du parcours : désactivés par défaut (QUA-020). */
+  outlines?: boolean;
 }
 
 export interface SouqScene {
@@ -40,29 +49,35 @@ export interface SouqScene {
 }
 
 /** La scène : pas de fond (le passthrough le remplace), une lumière douce, le souk. */
-export function createSouqScene(doc: Document, souq: Souq): SouqScene {
+export function createSouqScene(doc: Document, souq: Souq, options: SceneOptions = {}): SouqScene {
   const city = new Group();
   city.name = "ville";
-  const ground = new Mesh(new PlaneGeometry(GROUND_SIZE_M, GROUND_SIZE_M), material(souq.palette.ground));
+  const ground = new Mesh(new PlaneGeometry(GROUND_SIZE_M, GROUND_SIZE_M), toonMaterial({ color: new Color(souq.palette.ground) }));
   ground.rotation.x = -Math.PI / 2;
-  const roads = new Mesh(buildRoadsGeometry(souq.roads), new MeshLambertMaterial({ color: souq.palette.road, side: DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }));
+  const roads = new Mesh(buildRoadsGeometry(souq.roads, souq.palette.road), toonMaterial({ vertexColors: true, side: DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }));
   roads.name = "voies";
   // Couleurs par sommet : la teinte de chaque bâtiment vient de la géométrie, le matériau reste blanc.
-  const buildings = new Mesh(
-    buildBuildingsGeometry(souq.buildings, souq.palette.buildings),
-    new MeshLambertMaterial({ vertexColors: true }),
-  );
+  const buildings = new Mesh(buildBuildingsGeometry(souq.buildings, souq.palette.buildings), buildingMaterial());
   buildings.name = "batiments";
   const osm = new Group();
   osm.name = "osm";
   osm.add(ground, roads, buildings, buildTrees(souq.props, souq.route), buildFurniture(souq.props, souq.route));
+  if (options.outlines === true) {
+    const outlines = new LineSegments(buildOutlinesGeometry(souq.buildings, souq.route), new LineBasicMaterial({ color: OUTLINE_COLOR }));
+    outlines.name = "contours";
+    osm.add(outlines);
+  }
   city.add(osm);
   const label = createAttributionLabel(doc);
   const world = new Group();
   world.add(city, label.mesh);
   const scene = new Scene();
   scene.background = null;
-  scene.add(new HemisphereLight(0xffffff, 0x444444, 2));
+  scene.add(new HemisphereLight(0xffffff, 0x444444, 1.2));
+  // Sans lumière directionnelle, un matériau toon n'a pas de paliers : le soleil est fixe pour l'utilisateur.
+  const sun = new DirectionalLight(0xffffff, 1.6);
+  sun.position.set(0.4, 1, 0.3);
+  scene.add(sun);
   scene.add(world);
   return { scene, camera: new PerspectiveCamera(70, 1, 0.1, 1000), world, city, osm, label, buildingCount: souq.buildings.length };
 }
@@ -75,7 +90,7 @@ export function setCityOpacity(world: Group, opacity: number, zonePlanes: Plane[
   // Ville invisible : rien n'est rendu, le passthrough montre le réel sans aucun voile.
   world.visible = opacity > 0;
   world.traverse((object) => {
-    if (!(object instanceof Mesh)) return;
+    if (!(object instanceof Mesh) && !(object instanceof Line)) return;
     const mat = object.material as Material;
     mat.transparent = opacity < 1;
     mat.opacity = opacity;

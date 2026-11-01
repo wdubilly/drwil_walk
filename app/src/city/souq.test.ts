@@ -1,5 +1,5 @@
 import { Window } from "happy-dom";
-import { Group, HemisphereLight, InstancedMesh, Mesh, type Material, type MeshLambertMaterial } from "three";
+import { DirectionalLight, Group, HemisphereLight, InstancedMesh, LineSegments, Mesh, type Material, type MeshToonMaterial } from "three";
 import { describe, expect, it } from "vitest";
 import { withCanvasContext } from "./canvas-double.ts";
 import { createPath } from "../route/path.ts";
@@ -38,9 +38,9 @@ const souq: Souq = {
   ],
 };
 
-function setup() {
+function setup(outlines?: boolean) {
   const doc = withCanvasContext(new Window().document as unknown as Document);
-  return createSouqScene(doc, souq);
+  return createSouqScene(doc, souq, outlines === undefined ? undefined : { outlines });
 }
 
 function materials(world: Group): Material[] {
@@ -90,10 +90,10 @@ describe("scène du souk", () => {
 
   it("APP-003: le sol, les voies et les bâtiments ont chacun leur teinte, ceux-ci par sommet", () => {
     const { city } = setup();
-    const color = (name: string) => (city.getObjectByName(name) as Mesh).material as MeshLambertMaterial;
+    const color = (name: string) => (city.getObjectByName(name) as Mesh).material as MeshToonMaterial;
     const [ground] = (city.getObjectByName("osm") as Group).children as Mesh[];
-    expect((ground?.material as MeshLambertMaterial).color.getHex()).toBe(palette.ground);
-    expect(color("voies").color.getHex()).toBe(palette.road);
+    expect((ground?.material as MeshToonMaterial).color.getHex()).toBe(palette.ground);
+    expect(color("voies").vertexColors).toBe(true);
     expect(color("batiments").vertexColors).toBe(true);
     expect((city.getObjectByName("batiments") as Mesh).geometry.getAttribute("color").count).toBeGreaterThan(0);
   });
@@ -145,5 +145,27 @@ describe("scène du souk", () => {
     const under = city.localToWorld(city.position.clone().set(50, 0, -100));
     expect(under.x).toBeCloseTo(0, 1);
     expect(under.z).toBeCloseTo(0, 1);
+  });
+});
+
+describe("ambiance cartoon", () => {
+  it("APP-003: la scène a un soleil, pour que les paliers du matériau toon se voient", () => {
+    expect(setup().scene.children.some((child) => child instanceof DirectionalLight)).toBe(true);
+  });
+
+  it("QUA-020: sans option, aucun contour ; avec l'option, des traits dans le groupe de la ville", () => {
+    expect(setup().osm.getObjectByName("contours")).toBeUndefined();
+    expect(setup(false).osm.getObjectByName("contours")).toBeUndefined();
+    expect(setup(true).osm.getObjectByName("contours")).toBeInstanceOf(LineSegments);
+  });
+
+  it("APP-001: les contours s'effacent avec la ville et sont découpés par la zone tapis", () => {
+    const { world, osm } = setup(true);
+    const planes = createZoneClip(DEFAULT_ZONE).planes;
+    setCityOpacity(world, 0.4, planes);
+    const outlines = osm.getObjectByName("contours") as LineSegments;
+    const material = outlines.material as Material;
+    expect(material.transparent && material.opacity === 0.4).toBe(true);
+    expect(material.clippingPlanes).toBe(planes);
   });
 });

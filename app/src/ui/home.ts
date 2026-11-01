@@ -38,6 +38,8 @@ export interface HomeView {
   readWeightKg(): number | undefined;
   /** La vignette réelle (périphérie en passthrough), activée par défaut (APP-001). */
   readVignette(): boolean;
+  /** Les contours des bâtiments, désactivés par défaut tant que la cadence n'est pas mesurée au casque. */
+  readOutlines(): boolean;
   /** Une raison qui reste lisible pendant la marche (ex. repli sur OpenStreetMap) ; vide l'efface. */
   showNotice: (text: string) => void;
   onEnter(handler: () => void): void;
@@ -107,6 +109,8 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
   const vignette = doc.createElement("input");
   vignette.type = "checkbox";
   vignette.checked = true;
+  const outlines = doc.createElement("input");
+  outlines.type = "checkbox";
   const button = doc.createElement("button");
   button.type = "button";
   button.textContent = ENTER_LABEL;
@@ -156,6 +160,7 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
     speedLimit,
     field(doc, "Opacité de la ville (%)", opacity),
     field(doc, "Vignette réelle (le réel reste visible sur les bords)", vignette),
+    field(doc, "Contours des bâtiments (à essayer : peut ralentir l'image)", outlines),
     field(doc, "Poids (kg, facultatif : pour les calories, gardé sur ce casque seulement)", weight),
     erase,
     button,
@@ -172,6 +177,7 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
     readRendering: rendering.readRendering,
     readWeightKg: () => parseWeightKg(weight.value),
     readVignette: () => vignette.checked,
+    readOutlines: () => outlines.checked,
     showNotice: (text) => {
       notice.textContent = text;
     },
