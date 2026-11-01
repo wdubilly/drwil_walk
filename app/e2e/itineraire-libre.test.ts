@@ -131,9 +131,12 @@ test("chemin 10 : une adresse de départ et d'arrivée, le chemin calculé, la m
   await enter(page);
   await expect(panel(page)).toHaveAttribute("data-building-count", "1");
   await expect(panel(page).locator(".arrival")).toBeHidden();
+  // La minicarte (APP-002) porte le trajet libre : son point avance du départ vers l'arrivée.
+  const start = await page.locator("#app").getAttribute("data-minimap");
   // APP-002 : la marche s'arrête à l'arrivée au lieu de reprendre au départ.
   await expect(panel(page)).toHaveAttribute("data-arrived", "true", { timeout: 90_000 });
   await expect(panel(page).locator(".arrival")).toContainText("Arrivée");
+  await expect(page.locator("#app")).not.toHaveAttribute("data-minimap", start ?? "");
   const end = await panel(page).getAttribute("data-distance-m");
   expect(Number(end)).toBeGreaterThan(40);
   await expect(panel(page)).toHaveAttribute("data-distance-m", end ?? "");

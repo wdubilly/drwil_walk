@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_ZONE } from "../safety/zone.ts";
-import { PANEL_DISTANCE_M, PANEL_DROP_M, PANEL_SIDE_RAD, calibrationFrom, gazeYawRad, panelPlacement } from "./pose.ts";
+import { PANEL_DISTANCE_M, PANEL_DROP_M, PANEL_SIDE_RAD, calibrationFrom, gazeYawRad, minimapPlacement, panelPlacement } from "./pose.ts";
 
 /** Une zone loin de la tête : le panneau garde sa place nominale. */
 const FAR_ZONE = { ...DEFAULT_ZONE, x: 50 };
@@ -66,5 +66,14 @@ describe("pose de la tête", () => {
   it("APP-001: ne se pose pas quand la zone ne laisse aucune place à portée", () => {
     const huge = { ...DEFAULT_ZONE, width: 40, depth: 40 };
     expect(panelPlacement({ position: { x: 0, y: 1.6, z: 0 }, orientation: head(0) }, "left", huge)).toBeUndefined();
+  });
+
+  it("APP-001: la minicarte est du côté opposé au panneau, à la même hauteur", () => {
+    const pose = { position: { x: 0, y: 1.6, z: 0 }, orientation: head(0) };
+    const panel = panelPlacement(pose, "right", FAR_ZONE);
+    const map = minimapPlacement(pose, "right", FAR_ZONE);
+    expect(map?.x).toBeCloseTo(-(panel?.x ?? 0));
+    expect(map?.y).toBeCloseTo(panel?.y ?? 0);
+    expect(minimapPlacement(pose, "left", FAR_ZONE)?.x).toBeCloseTo(panel?.x ?? 0);
   });
 });

@@ -1,3 +1,4 @@
+import type { Scene } from "three";
 import { describe, expect, it } from "vitest";
 import { ACTIVE_STATUS, ENDED_STATUS } from "./experience.ts";
 import { poseFrame, setup } from "./experience-double.ts";
@@ -147,5 +148,18 @@ describe("expérience en réalité mixte", () => {
     t.xr.requestSession.mockImplementationOnce(() => Promise.reject("refus brut"));
     await t.enter();
     expect(t.status()).toBe("refus brut");
+  });
+
+  it("APP-002: la minicarte du casque avance avec la marche et suit le fondu", async () => {
+    const t = setup();
+    await t.enter();
+    t.frame(0, poseFrame(0));
+    const first = t.root.dataset["minimap"];
+    t.frame(60_000, poseFrame(0));
+    expect(t.root.dataset["minimap"]).not.toBe(first);
+    const map = (t.fake.render.mock.calls[0]?.[0] as Scene).getObjectByName("minimap");
+    expect(map?.visible).toBe(true);
+    t.frame(61_000, poseFrame(-60));
+    expect(map?.visible).toBe(false);
   });
 });
