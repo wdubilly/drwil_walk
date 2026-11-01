@@ -22,7 +22,7 @@ export function poseFrame(deg: number | null, { yawDeg = 0, at = { x: 0, y: 1.6,
 export const KEY = "cle-fictive-pour-les-tests";
 
 export function setup(
-  options: { supported?: boolean; space?: boolean; xr?: boolean; sessionFails?: boolean; apiKey?: string | undefined; fetch?: typeof fetch } = {},
+  options: { supported?: boolean; space?: boolean; xr?: boolean; sessionFails?: boolean; apiKey?: string | undefined; fetch?: typeof fetch; storage?: Pick<Storage, "getItem" | "setItem"> } = {},
 ) {
   const doc = withCanvasContext(new Window().document as unknown as Document);
   const root = doc.createElement("main");
@@ -45,15 +45,19 @@ export function setup(
     isSessionSupported: () => Promise.resolve(options.supported ?? true),
     requestSession: vi.fn(() => Promise.resolve(session)),
   } satisfies XrSystemLike;
-  const fake = { loop: null as Loop, render: vi.fn(), dispose: vi.fn(), canvas: doc.createElement("canvas") };
+  const fake = { renderer: null as { localClippingEnabled: boolean } | null, loop: null as Loop, render: vi.fn(), dispose: vi.fn(), canvas: doc.createElement("canvas") };
   const space = options.space === false ? null : ({} as XRReferenceSpace);
   class FakeRenderer {
     domElement = fake.canvas;
+    localClippingEnabled = false;
     xr = { enabled: false, getCamera: () => ({ cameras: [] }), setReferenceSpaceType: vi.fn(), setSession: vi.fn(() =>
         options.sessionFails ? Promise.reject(new Error("contexte WebGL refusé")) : Promise.resolve(),
       ), getReferenceSpace: () => space };
     setAnimationLoop = (cb: Loop) => (fake.loop = cb);
     render = fake.render;
+    constructor() {
+      fake.renderer = this;
+    }
     dispose = fake.dispose;
   }
   const Renderer = FakeRenderer as unknown as RendererClass;
@@ -73,6 +77,7 @@ export function setup(
     xr: options.xr === false ? undefined : xr,
     Renderer,
     google: { apiKey, create },
+    storage: options.storage,
     routes: createProviders({}, options.fetch ?? (() => Promise.reject(new Error("réseau interdit aux tests")))),
   });
   const status = () => root.querySelector("[role='status']")?.textContent;

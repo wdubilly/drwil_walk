@@ -117,6 +117,14 @@ describe("écran d'accueil", () => {
     expect(limit?.textContent).toContain("0,2 km/h est sous la limite");
   });
 
+  it("APP-001: la vignette réelle est cochée par défaut et se décoche", () => {
+    const { view, input } = setup();
+    const vignette = input("Vignette réelle");
+    expect(view.readVignette()).toBe(true);
+    vignette.checked = false;
+    expect(view.readVignette()).toBe(false);
+  });
+
   it("APP-001: borne l'opacité de la ville saisie entre 30 et 100 %", () => {
     const { view, input } = setup();
     const opacity = input("Opacité de la ville");

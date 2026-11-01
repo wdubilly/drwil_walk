@@ -10,6 +10,9 @@ import { FREE_ITINERARY_ID, ITINERARIES, type Itinerary } from "../route/itinera
 import { pointAt } from "../route/path.ts";
 import type { Providers } from "../route/providers.ts";
 import { ARRIVAL_TEXT } from "../route/walk.ts";
+import { createZoneControl } from "./zone-control.ts";
+import { createVignette } from "./vignette.ts";
+import type { ZoneStorage } from "../safety/zone.ts";
 import { headPitchDownDeg } from "../safety/visibility.ts";
 import { renderHome, type HomeView } from "../ui/home.ts";
 import { chooseRendering, type GoogleConfig } from "./google-mode.ts";
@@ -21,7 +24,7 @@ import { rightThumbstickY } from "./joystick.ts";
 import { NO_CALIBRATION, calibrationFrom, type HeadPose } from "./pose.ts";
 import { REFERENCE_SPACE, SESSION_MODE, requestMixedRealitySession, type XrSystemLike } from "./session.ts";
 
-export type RendererLike = Pick<WebGLRenderer, "xr" | "setAnimationLoop" | "render" | "domElement" | "dispose">;
+export type RendererLike = Pick<WebGLRenderer, "xr" | "setAnimationLoop" | "render" | "domElement" | "dispose" | "localClippingEnabled">;
 export type RendererClass = new (parameters: { antialias: boolean; alpha: boolean }) => RendererLike;
 
 export interface ExperienceDeps {
@@ -33,6 +36,8 @@ export interface ExperienceDeps {
   google: GoogleConfig;
   /** Les services de routage, d'adresses et le réseau de l'itinéraire libre (injectés : les tests n'appellent jamais un service réel). */
   routes: Providers;
+  /** Le `localStorage` où la zone tapis est enregistrée (absent : la boîte par défaut, rien d'enregistré). */
+  storage?: ZoneStorage | undefined;
 }
 
 export const ACTIVE_STATUS = `Réalité mixte active (${SESSION_MODE})`;
@@ -90,12 +95,19 @@ async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession, so
   });
   const renderer = new deps.Renderer({ antialias: true, alpha: true });
   renderer.xr.enabled = true;
+  // Nécessaire à la découpe de la zone tapis, portée par les matériaux (APP-001).
+  renderer.localClippingEnabled = true;
   renderer.xr.setReferenceSpaceType(REFERENCE_SPACE);
   deps.root.append(renderer.domElement);
   const panel = renderWalkPanel(deps.document, deps.root);
   // Le panneau d'infos du casque : dans la scène, hors de `world`, mais soumis au même fondu (APP-001).
   const hud = createHudPanel(deps.document);
   scene.add(hud.mesh);
+  // La zone tapis (découpe) et la vignette réelle (bords de l'image) : elles ne font que retirer du rendu (APP-001).
+  const zone = createZoneControl(deps.storage);
+  const vignette = createVignette();
+  const vignetteOn = home.readVignette();
+  scene.add(vignette);
   const place = (ITINERARIES.find((itinerary) => itinerary.id === home.readRouteId()) as Itinerary).name;
   let calibration = NO_CALIBRATION;
   const globalOpacityPct = home.readOpacityPct();
@@ -123,7 +135,11 @@ async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession, so
     world.rotation.y = calibration.yawRad;
     arrival.mesh.visible = state.arrived;
     placeOnRoute(city, souq.route, state.distanceM);
-    setCityOpacity(world, state.cityOpacity);
+    if (zone.update(timeMs, session.inputSources, head)) {
+      home.showNotice("La zone tapis n'a pas pu être enregistrée : elle reste réglée pour cette séance.");
+    }
+    vignette.visible = vignetteOn;
+    setCityOpacity(world, state.cityOpacity, zone.clip.planes);
     mode.update(camera, renderer.xr.getCamera());
     hud.update(
       { ...state, place },
@@ -134,6 +150,8 @@ async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession, so
       calibration,
       position: pointAt(souq.route, state.distanceM),
       buildingCount,
+      zone: zone.zone(),
+      vignette: vignetteOn,
       rendering: mode.rendering(),
       tileCount: mode.tileCount(),
       attribution: mode.attribution(),

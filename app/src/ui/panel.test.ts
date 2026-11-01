@@ -1,5 +1,6 @@
 import { Window } from "happy-dom";
 import { describe, expect, it } from "vitest";
+import { DEFAULT_ZONE } from "../safety/zone.ts";
 import { renderWalkPanel } from "./panel.ts";
 
 describe("panneau de marche", () => {
@@ -9,7 +10,7 @@ describe("panneau de marche", () => {
     const panel = renderWalkPanel(doc, root);
     const info = { speedKmh: 4.1, distanceM: 12.34, timeS: 65, cityOpacity: 0.5, position: { x: 3, z: -4 }, buildingCount: 253,
       rendering: "google" as const, tileCount: 7, attribution: "© contributeurs OpenStreetMap · Google", arrived: false,
-      paused: false, showPanel: true, calibration: { x: 0, z: 0, yawRad: 0 } };
+      paused: false, showPanel: true, calibration: { x: 0, z: 0, yawRad: 0 }, zone: DEFAULT_ZONE, vignette: true };
     panel.update(info);
     panel.update(info);
     const section = root.querySelector("[aria-label='Marche']");
@@ -24,6 +25,8 @@ describe("panneau de marche", () => {
     expect(section?.getAttribute("data-city-opacity")).toBe("0.5");
     expect([section?.getAttribute("data-position-x"), section?.getAttribute("data-position-z")]).toEqual(["3", "-4"]);
     expect(section?.getAttribute("data-building-count")).toBe("253");
+    expect(section?.getAttribute("data-zone")).toBe("0.000 0.000 0.000 1.200 2.400 1.200");
+    expect(section?.getAttribute("data-vignette")).toBe("true");
     expect(section?.getAttribute("data-rendering")).toBe("google");
     expect(section?.getAttribute("data-tile-count")).toBe("7");
     expect(section?.querySelector(".attribution")?.textContent).toBe("© contributeurs OpenStreetMap · Google");
@@ -49,7 +52,7 @@ describe("panneau de marche", () => {
     const panel = renderWalkPanel(doc, root);
     const info = { speedKmh: 8, distanceM: 0, timeS: 0, cityOpacity: 1, position: { x: 0, z: 0 }, buildingCount: 1,
       rendering: "osm" as const, tileCount: 0, attribution: "", arrived: false,
-      paused: false, showPanel: true, calibration: { x: 0, z: 0, yawRad: 0 } };
+      paused: false, showPanel: true, calibration: { x: 0, z: 0, yawRad: 0 }, zone: DEFAULT_ZONE, vignette: true };
     const limit = () => root.querySelector<HTMLElement>(".speed-limit");
     panel.update(info);
     expect(limit()?.hidden).toBe(false);

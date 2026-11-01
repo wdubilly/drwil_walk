@@ -4,6 +4,7 @@ import type { Vec2 } from "../route/geo.ts";
 import { OSM_ATTRIBUTION } from "../city/licence.ts";
 import { formatSpeedKmh, speedBoundMessage } from "../route/speed.ts";
 import { ARRIVAL_TEXT, formatDistanceM, formatDurationS } from "../route/walk.ts";
+import type { Zone } from "../safety/zone.ts";
 import { formatOpacity } from "../safety/visibility.ts";
 
 export interface WalkInfo {
@@ -22,6 +23,9 @@ export interface WalkInfo {
   attribution: string;
   /** Trajet libre arrivé : le panneau le dit. */
   arrived: boolean;
+  /** La zone tapis réglée et la vignette réelle (APP-001). */
+  zone: Zone;
+  vignette: boolean;
   /** Marche en pause (gâchette droite) et panneau du casque affiché (bouton B). */
   paused: boolean;
   showPanel: boolean;
@@ -92,6 +96,9 @@ export function renderWalkPanel(doc: Document, root: HTMLElement): WalkPanel {
       panel.dataset.calibrationX = String(info.calibration.x);
       panel.dataset.calibrationZ = String(info.calibration.z);
       panel.dataset.calibrationYaw = String(info.calibration.yawRad);
+      const z = info.zone;
+      panel.dataset.zone = [z.x, z.z, z.yawRad, z.width, z.depth, z.height].map((v) => v.toFixed(3)).join(" ");
+      panel.dataset.vignette = String(info.vignette);
       panel.dataset.arrived = String(info.arrived);
       panel.dataset.speedKmh = String(info.speedKmh);
       panel.dataset.distanceM = String(info.distanceM);

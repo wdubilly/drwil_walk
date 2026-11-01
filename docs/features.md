@@ -80,7 +80,16 @@ toujours transparente, l'opacité de la ville est réglable (30 à 100 %) et la 
 Règle protégée par le contrat APP-001.
 
 Codé : le fondu tête baissée (ville pleine jusqu'à 25° sous l'horizontale, effacée à 40°, et effacée aussi si le
-casque perd la pose) et l'opacité globale bornée. À venir : la zone tapis et la vignette réelle.
+casque perd la pose) et l'opacité globale bornée.
+
+Zone tapis : une boîte (par défaut 1,2 m de large, 2,4 m de profondeur, 1,2 m de haut, autour de la position de départ)
+dans laquelle la ville n'est jamais rendue, quel que soit l'angle de la tête ou l'opacité ; le tapis, la rampe et la console
+restent visibles. Elle se règle à la manette gauche : X la pose sous soi dans le sens du regard, le joystick la déplace
+(vers l'avant en poussant), la prise (grip) tenue + joystick la redimensionne, Y rend la boîte par défaut. Elle est
+enregistrée en fin de geste dans `localStorage` (un volume en mètres, aucune donnée personnelle) et relue au lancement suivant ;
+une zone illisible est remplacée par la boîte par défaut. Vignette réelle : la périphérie du champ de vision reste en
+passthrough (fondu entre 60 % et 125 % du rayon de l'image) ; activée par défaut, case à décocher à l'accueil.
+Non essayé sur un vrai Quest 3 (lot 6 de la fiche).
 
 ## Vérifié en conditions réelles
 
