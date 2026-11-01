@@ -2,6 +2,7 @@
 
 **Statut** : proposée le 2026-10-31 ; traitée le 2026-10-31 par les chantiers rendu-ville (voies, tons de bâtiments, palette par itinéraire, passthrough conservé) et osm-enrichi (couleurs et matériaux d'OpenStreetMap, ombrage, arbres, mobilier).
 **Reviewed on 2026-10-31** : le passthrough sans ciel virtuel est gardé, la palette est par itinéraire et le rendu enrichi est livré ; ne reste que la question des types de bâtiments et le jugement au casque.
+**Repris le 2026-11-01** : l'ambiance cartoon (matériau toon, routes, arbres du pack Quaternius) est cadrée par `docs/projects/ambiance-cartoon.md`.
 
 ## Besoin
 

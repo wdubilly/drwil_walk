@@ -35,11 +35,11 @@ propose sept familles ; le demandeur retient quatre : sol et route, végétation
 ## Critères d'acceptation
 
 - Le sol et la route montrent trottoirs et passages piétons tirés des voies d'OpenStreetMap, et le chemin suivi se
-  distingue par son contraste ; les marquages au sol viennent de la texture de route de `rendu-textures-pilote` — `APP-003`
+  distingue par son contraste ; les marquages au sol sont ceux d'`ambiance-cartoon` — `APP-003`
 - Le sol montre de l'herbe, des parcs, des jardins et des haies tirés de l'occupation du sol d'OpenStreetMap ; l'extrait
   figé porte ces balises — `APP-003`
-- Les bâtiments ont des toits plus variés (deux pans selon la balise OSM) et des auvents ; la matière des toits (tuiles,
-  zinc) est celle de `rendu-textures-pilote`, sans augmenter le nombre de
+- Les bâtiments ont des toits plus variés (deux pans selon la balise OSM) et des auvents ; la couleur des toits suit le matériau toon
+  d'`ambiance-cartoon`, sans augmenter le nombre de
   maillages au-delà d'un budget fixé — `APP-003`
 - Les noms des rues s'affichent dans la scène, lisibles, tirés de la balise `name` de l'extrait — `APP-003`
 - Tout ce qui s'ajoute (sol, végétation, toits, noms) est effacé par le fondu tête baissée et reste hors de la zone tapis
@@ -57,7 +57,7 @@ propose sept familles ; le demandeur retient quatre : sol et route, végétation
 
 - Le ciel dégradé, le soleil, la brume et les collines de la maquette : un fond opaque cacherait le réel, ce qui
   affaiblit `APP-001` ; décision du 2026-10-31 de garder le passthrough sans ciel.
-- Fenêtres, portes, marquages au sol et matières (crépi, tuiles, asphalte) : rendus par textures, `docs/projects/rendu-textures-pilote.md`.
+- Fenêtres, marquages au sol, matériau toon et arbres du pack Quaternius : `docs/projects/ambiance-cartoon.md`.
 - Mobilier supplémentaire (poubelles, feux), voitures, silhouettes, monuments : reporté.
 - Le relief du sol : `docs/intentions/osm-enrichi.md`.
 - Une attribution plus discrète : l'attribution est obligatoire (`APP-003`), son aspect ne change pas ici.
@@ -79,7 +79,7 @@ propose sept familles ; le demandeur retient quatre : sol et route, végétation
 - 2026-10-31, choix techniques de l'agent (pas des décisions de produit), fixés au lot 1 : balises exactes (par exemple
   `landuse=grass`, `leisure=park`, `highway=crossing`, `barrier=hedge`, `roof:shape`), budgets d'éléments, formes, couleurs,
   police et taille des noms.
-- À lancer après `rendu-textures-pilote`, qui couvre en textures ce qu'il aurait dessiné en géométrie. Dépend d'`osm-enrichi` (livré, `docs/projects/journal.md`) ; touche `app/src/city/` comme `corniche-west-bay` : à lancer
+- À lancer après `ambiance-cartoon`, qui fixe le style (matériau toon, routes, arbres du pack) que ce chantier complète en géométrie. Dépend d'`osm-enrichi` (livré, `docs/projects/journal.md`) ; touche `app/src/city/` comme `corniche-west-bay` : à lancer
   avant ou après lui, jamais en même temps.
 - Contrats concernés : `APP-001`, `APP-003`, `QUA-001`, `QUA-004`, `QUA-020`.
 

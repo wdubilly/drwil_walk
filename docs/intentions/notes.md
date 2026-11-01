@@ -1,6 +1,6 @@
 # Intention : notes en vrac
 
-**Statut** : ouverte en permanence — dernière note le 2026-10-31.
+**Statut** : ouverte en permanence — dernière note le 2026-11-01.
 
 ## Besoin
 
