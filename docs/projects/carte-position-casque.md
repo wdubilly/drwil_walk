@@ -62,7 +62,7 @@ visible en réalité mixte.
   voisin.
 - La carte de l'accueil (`app/src/ui/map-picker.ts`) et le zoom ou le déplacement dans la minicarte.
 - Le dénivelé, les étapes et le mini-globe de la maquette (`docs/intentions/hud-casque.md`).
-- La place et le fond du panneau d'infos : `docs/projects/panneau-discret.md`, à lancer avant.
+- La place et le fond du panneau d'infos : `docs/projects/journal.md`, à lancer avant.
 
 ## 3. Contraintes
 

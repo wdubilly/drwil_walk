@@ -57,12 +57,12 @@ Le tableau de bord actuel affiche cap, heure, lieu, vitesse, durée, distance et
 - Le dénivelé (+42 m sur la maquette) : aucune source d'élévation dans le dépôt.
 - La position sur une carte (`docs/projects/carte-position-casque.md`), le prochain repère et les étapes
   (`docs/projects/hud-voyage-guide.md`), les boutons Carte, Profil et Options.
-- La mise en page, la transparence et le côté du panneau : `docs/projects/panneau-discret.md`, à lancer avant.
+- La mise en page, la transparence et le côté du panneau : `docs/projects/journal.md`, à lancer avant.
 - Relever la vitesse maximale de 8 km/h.
 
 ## 3. Contraintes
 
-- `APP-001` ne régresse pas : le panneau grossit seulement dans la place fixée par `docs/projects/panneau-discret.md`, hors de
+- `APP-001` ne régresse pas : le panneau grossit seulement dans la place fixée par `docs/projects/journal.md`, hors de
   la zone tapis.
 - La vitesse reste plafonnée à 8 km/h : rien ici ne relève ce maximum, qui est un choix de sécurité sur le tapis.
 - Couverture à 100 % sans exclusion, fichiers de 200 lignes au plus, e2e vert en CI (`QUA-004`, `QUA-001`, `QUA-020`).
