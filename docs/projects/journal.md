@@ -207,3 +207,13 @@ One entry per closed project, most recent last.
 - Sur décision de l'humain, les quatre critères automatiques citant `APP-001` sont marqués [human] : `verify` les rejetait comme « non durables » (« APP-001 is attested by a human: add [human] to the criterion »). Défaut probable de drwil, à signaler et à traiter séparément, comme au chantier précédent.
 - Limites : le panneau se déplace sans lissage et sa distance varie par pas de 2 cm quand la tête bouge dans la zone (`docs/intentions/essai-casque-commandes-panneau.md`) ; les e2e longs (chemins 6 à 8, zone tapis) tiennent à peine dans leur budget de 30 s quand la machine est chargée (identique sur `master`, mesuré : 16 à 22 s en isolé) : plusieurs rejeux ont échoué avant de passer, sans lien avec ce chantier.
 - Branche `workstream/panneau-discret`. Preuve de clôture : docs/preuves/panneau-discret.md (écrite par la clôture).
+
+## 2026-11-01 — champ-de-vision-casque (lots 1, 2 et 3)
+
+- Livré : `app/src/xr/fov.ts` (cible Quest 3, marge, point et rectangle dans la vue d'une tête, masque d'IWER), ses tests sur cas synthétiques aux bornes (`APP-004`) et `app/e2e/champ-de-vision.test.ts` (la marche avec le masque de la cible, capture `champ-de-vision-marche.png` publiée avec celles des autres parcours, lue : les bords du champ sont masqués).
+- Contrats : `APP-004` créé (contrôle `app-004`, `.drwil/ia-first.json`), `QUA-020` étendu (chemin 16) ; architecture et notice `app/AGENTS.md` mises à jour.
+- Hypothèse de cadrage non confirmée : 110° × 96° et marge de 80 % gardés comme hypothèses, aucune source fiable relue (le site de Meta refuse la lecture automatisée, Wikipédia et UploadVR ne donnent pas les degrés) ; dit dans `app/src/xr/fov.ts`, `docs/architecture.md` et `APP-004`. Intention : `docs/intentions/source-champ-de-vision-quest3.md`.
+- Choix techniques de l'agent (pas des décisions de produit) : projection par tangente des demi-angles, un rectangle est dans la vue si ses quatre coins le sont, même masque pour chaque œil (sans recouvrement binoculaire).
+- Limites : aucune assertion sur le vrai panneau (chantier `panneau-heure-hors-vue`) ; distorsion, netteté des bords et ajustement du casque non simulés.
+- Sur décision de l'humain, le critère « sourcées » de la fiche, qui cite `APP-004`, est marqué [humain] (`verify` le refusait comme non durable, comme aux chantiers précédents pour `APP-001`). `APP-004` a été attesté par l'humain le 2026-11-01 ; les valeurs du champ de vision restent des hypothèses, relevées par l'intention `docs/intentions/source-champ-de-vision-quest3.md`.
+- Branche docs/fiches-champ-de-vision (celle des fiches). Preuve de clôture : docs/preuves/champ-de-vision-casque.md (écrite par la clôture).

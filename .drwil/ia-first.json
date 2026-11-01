@@ -109,6 +109,16 @@
       "degradable": false
     },
     {
+      "id": "app-004",
+      "name": "APP-004 champ de vision du casque simulé : tests nommés par l'ID (Vitest)",
+      "run": "npm test -- -t \"APP-004\"",
+      "cwd": "app",
+      "paths": [
+        "app/**"
+      ],
+      "degradable": false
+    },
+    {
       "id": "e2e",
       "name": "e2e des chemins critiques (Playwright, Quest 3 émulé par IWER, QUA-020)",
       "run": "npm run e2e",
