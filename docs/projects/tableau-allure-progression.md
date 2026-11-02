@@ -41,7 +41,7 @@ Le tableau de bord actuel affiche cap, heure, lieu, vitesse, durée, distance et
 - La distance restante et la progression en pourcentage s'affichent pour un parcours qui a une arrivée (trajet libre) ; pour
   une boucle, ce sont celles du tour en cours — `APP-002`
 - Le panneau de la page et le tableau de bord du casque disent les mêmes valeurs — `APP-002`
-- Le tableau de bord, plus chargé, reste hors de la zone tapis, fondu tête baissée et masqué par le bouton B — `APP-001`
+- Le tableau de bord, plus chargé, reste hors de la zone tapis, fondu tête baissée et masqué par le bouton B [humain] — `APP-001`
 - Le parcours est rejoué de bout en bout dans le Quest 3 émulé, l'allure, la distance restante et la progression étant lues
   dans le casque et sur la page — `QUA-020`
 - La lisibilité du tableau de bord plus chargé et le tapis resté visible sont jugés sur un vrai Quest 3 [human] — `APP-001`
