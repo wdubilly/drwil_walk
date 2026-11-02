@@ -55,7 +55,7 @@ donne la même marche (même ville, même parcours, même vitesse) dans un canva
 
 ## 2. Hors périmètre
 
-- La minicarte (`docs/projects/carte-position-casque.md`), la manette de jeu, le tactile et le mobile.
+- La minicarte (`docs/projects/journal.md`), la manette de jeu, le tactile et le mobile.
 - Le rendu Google 3D en version PC, le panneau d'infos flottant du casque (la page garde son panneau de marche) et le
   recalage à la manette.
 - Un mode sécurité pour la version PC : elle n'a pas de tapis ni de réel à protéger, rien n'y remplace `APP-001`.

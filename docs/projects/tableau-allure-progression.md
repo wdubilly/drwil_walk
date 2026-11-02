@@ -55,7 +55,7 @@ Le tableau de bord actuel affiche cap, heure, lieu, vitesse, durée, distance et
 ## 2. Hors périmètre
 
 - Le dénivelé (+42 m sur la maquette) : aucune source d'élévation dans le dépôt.
-- La position sur une carte (`docs/projects/carte-position-casque.md`), le prochain repère et les étapes
+- La position sur une carte (`docs/projects/journal.md`), le prochain repère et les étapes
   (`docs/projects/hud-voyage-guide.md`), les boutons Carte, Profil et Options.
 - La mise en page, la transparence et le côté du panneau : `docs/projects/journal.md`, à lancer avant.
 - Relever la vitesse maximale de 8 km/h.
