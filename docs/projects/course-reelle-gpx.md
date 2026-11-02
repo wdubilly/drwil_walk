@@ -72,7 +72,7 @@ toute la ville d'un coup à l'accueil.
 - La reprise d'une séance là où elle s'est arrêtée, l'allure ou le temps cible, le partage ou l'export d'un parcours : ils
   restent dans `docs/intentions/course-reelle-entrainement.md`, à trancher.
 - Le dénivelé : aucune source d'élévation, le parcours se rejoue à plat.
-- La minicarte pendant la marche (`docs/projects/carte-position-casque.md`) et la version PC (`docs/projects/version-pc.md`).
+- La minicarte pendant la marche (`docs/projects/journal.md`) et la version PC (`docs/projects/version-pc.md`).
 - Le rendu Google 3D pour un long parcours.
 
 ## 3. Contraintes

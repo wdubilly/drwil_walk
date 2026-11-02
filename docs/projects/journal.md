@@ -237,3 +237,11 @@ One entry per closed project, most recent last.
 - Limites : plaques à plat jamais vues au casque (lisibilité en grand angle rasant, devanagari et arabe selon les polices du navigateur) ; 72 images par seconde non mesurées ; lot 7 humain (`docs/intentions/essai-casque-ville-riche.md`). Le critère de fondu citant `APP-001` reste [humain].
 - Branche workstream/rendu-ville-riche. Preuve de clôture : docs/preuves/rendu-ville-riche.md (écrite par la clôture).
 
+## 2026-11-02 — carte-position-casque (lots 1, 2 et 3 ; lot 4 à faire par l'humain)
+
+- Livré : tracé réduit à 120 points au plus (`app/src/route/simplify.ts`), minicarte dans la scène (`app/src/xr/minimap.ts` : tracé nord en haut, point courant, redessin seulement quand le point change de case de 2 px), place du côté opposé au panneau, hors de la zone tapis (`app/src/xr/pose.ts`, `placeBox` partagé avec le panneau), branchement dans `app/src/xr/experience.ts` ; e2e `app/e2e/minicarte.test.ts` (itinéraire figé, sans requête hors de la page) et point qui avance sur le trajet libre (`app/e2e/itineraire-libre.test.ts`).
+- Contrats : `APP-001` point 5 (minicarte, même fondu, masquage et zone tapis), `APP-002` (tracé et point courant) et `QUA-020` (chemin 18) mis à jour : **à approuver par le demandeur à la validation de la fiche** ; architecture, features, guide, README et `app/AGENTS.md` à jour.
+- Choix techniques de l'agent (pas des décisions de produit) : carré de 0,22 m, côté opposé au panneau, nord en haut (le tracé ne tourne pas avec le recalage), plafond de 120 points, couleurs jaune (tracé) et orange (point), la case du point exposée sur `data-minimap` de `#app` pour l'e2e (la carte est dans la scène, pas dans la page).
+- Limites : lisibilité, place dans le champ de vision et tapis visible jamais jugés sur un vrai Quest 3 (lot 4 humain) ; pas de test de champ de vision (`APP-004`) propre à la minicarte ; 72 images par seconde non mesurées ; nord en haut et non tête en haut, à rouvrir à l'essai.
+- Branche workstream/carte-position-casque. Preuve de clôture : docs/preuves/carte-position-casque.md (écrite par la clôture).
+

@@ -21,12 +21,17 @@ export function poseFrame(deg: number | null, { yawDeg = 0, at = { x: 0, y: 1.6,
   return { getViewerPose: () => pose } as unknown as XRFrame;
 }
 
+/** Un contexte 2D muet qui accepte aussi le tracé de la minicarte. */
+const DRAWING_CONTEXT = Object.fromEntries(
+  ["fillRect", "fillText", "beginPath", "moveTo", "lineTo", "stroke", "arc", "fill"].map((name) => [name, () => undefined]),
+);
+
 export const KEY = "cle-fictive-pour-les-tests";
 
 export function setup(
   options: { supported?: boolean; space?: boolean; xr?: boolean; sessionFails?: boolean; apiKey?: string | undefined; fetch?: typeof fetch; storage?: WeightStorage; now?: () => Date; trees?: () => Promise<TreePack> } = {},
 ) {
-  const doc = withCanvasContext(new Window().document as unknown as Document);
+  const doc = withCanvasContext(new Window().document as unknown as Document, DRAWING_CONTEXT);
   const root = doc.createElement("main");
   doc.body.append(root);
   const listeners: Record<string, () => void> = {};

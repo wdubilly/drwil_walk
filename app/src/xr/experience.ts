@@ -21,6 +21,7 @@ import { renderWalkPanel } from "../ui/panel.ts";
 import { initialWalkState, nextWalkState } from "./frame.ts";
 import { rightButtons } from "./buttons.ts";
 import { createHudPanel } from "./hud-panel.ts";
+import { createMinimap } from "./minimap.ts";
 import { rightThumbstickY } from "./joystick.ts";
 import { NO_CALIBRATION, calibrationFrom, type HeadPose } from "./pose.ts";
 import { preloadTrees, withTreeNotice, type TreeLoad } from "./trees-load.ts";
@@ -107,9 +108,10 @@ async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession, so
   renderer.xr.setReferenceSpaceType(REFERENCE_SPACE);
   deps.root.append(renderer.domElement);
   const panel = renderWalkPanel(deps.document, deps.root);
-  // Le panneau d'infos du casque : dans la scène, hors de `world`, mais soumis au même fondu (APP-001).
+  // Le panneau d'infos et la minicarte du casque : dans la scène, hors de `world`, mais soumis au même fondu (APP-001).
   const hud = createHudPanel(deps.document);
-  scene.add(hud.mesh);
+  const minimap = createMinimap(deps.document, souq.route.points);
+  scene.add(hud.mesh, minimap.mesh);
   // La zone tapis (découpe) et la vignette réelle (bords de l'image) : elles ne font que retirer du rendu (APP-001).
   const zone = createZoneControl(deps.storage);
   const vignette = createVignette();
@@ -155,7 +157,10 @@ async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession, so
     mode.update(camera, renderer.xr.getCamera());
     // Le cap est celui du parcours (la ville défile dans le sens où l'on marche), l'heure celle du casque.
     const dashboard = { place, weightKg, compass: compassText(headingAt(souq.route, state.distanceM)), clock: formatClock(now()) };
-    hud.update({ ...state, ...dashboard }, { show: state.showPanel, opacity: state.cityOpacity, pose: head, side: panelSide, zone: zone.zone() });
+    const view = { show: state.showPanel, opacity: state.cityOpacity, pose: head, side: panelSide, zone: zone.zone() };
+    hud.update({ ...state, ...dashboard }, view);
+    // La case du point, lue par l'e2e : la minicarte est dans la scène, pas dans la page.
+    deps.root.dataset["minimap"] = minimap.update(pointAt(souq.route, state.distanceM), view);
     panel.update({
       ...state,
       ...dashboard,

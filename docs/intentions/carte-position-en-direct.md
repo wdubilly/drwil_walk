@@ -1,6 +1,6 @@
 # Intention : voir la carte et sa position bouger pendant la marche
 
-**Statut** : proposée le 2026-11-01, à partir d'un retour du demandeur ; cadrée le 2026-11-01 par `docs/projects/carte-position-casque.md` (minicarte dans le casque, tracé seul, sans réseau).
+**Statut** : proposée le 2026-11-01, à partir d'un retour du demandeur ; cadrée le 2026-11-01 par `docs/projects/journal.md` (minicarte dans le casque, tracé seul, sans réseau) ; réalisée le 2026-11-02, reste l'essai sur le Quest 3 (orientation nord en haut, taille, place).
 
 ## Besoin
 

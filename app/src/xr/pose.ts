@@ -28,6 +28,8 @@ export const PANEL_HEIGHT_M = PANEL_WIDTH_M / 2;
 export const PANEL_DISTANCE_M = 1.1;
 export const PANEL_DROP_M = 0.31;
 export const PANEL_SIDE_RAD = (28 * Math.PI) / 180;
+/** La minicarte : un carré de 0,22 m, à la même distance et à la même hauteur que le panneau, mais du côté opposé. */
+export const MINIMAP_SIZE_M = 0.22;
 /** Le panneau s'écarte de la zone tapis d'au moins cette marge, et ne s'éloigne jamais au-delà de MAX : il se cache alors. */
 const ZONE_MARGIN_M = 0.05;
 const PUSH_STEP_M = 0.02;
@@ -72,14 +74,23 @@ export interface PanelPlace {
  * en sortir ; sans place trouvée à moins de 5 m, il n'est pas posé (rien), plutôt que posé sur le tapis.
  */
 export function panelPlacement(pose: HeadPose, side: PanelSide, zone: Zone): PanelPlace | undefined {
-  const yawRad = gazeYawRad(pose.orientation) + (side === "left" ? PANEL_SIDE_RAD : -PANEL_SIDE_RAD);
+  return placeBox(pose, side === "left" ? PANEL_SIDE_RAD : -PANEL_SIDE_RAD, PANEL_WIDTH_M, PANEL_HEIGHT_M, zone);
+}
+
+/** Place de la minicarte : du côté opposé au panneau d'infos, avec la même règle de zone tapis (APP-001). */
+export function minimapPlacement(pose: HeadPose, side: PanelSide, zone: Zone): PanelPlace | undefined {
+  return placeBox(pose, side === "left" ? -PANEL_SIDE_RAD : PANEL_SIDE_RAD, MINIMAP_SIZE_M, MINIMAP_SIZE_M, zone);
+}
+
+function placeBox(pose: HeadPose, sideRad: number, widthM: number, heightM: number, zone: Zone): PanelPlace | undefined {
+  const yawRad = gazeYawRad(pose.orientation) + sideRad;
   const y = pose.position.y - PANEL_DROP_M;
   for (let distance = PANEL_DISTANCE_M; distance <= MAX_DISTANCE_M; distance += PUSH_STEP_M) {
     const scale = distance / PANEL_DISTANCE_M;
     const x = pose.position.x - Math.sin(yawRad) * distance;
     const z = pose.position.z - Math.cos(yawRad) * distance;
-    const above = y - (PANEL_HEIGHT_M * scale) / 2 >= zone.height + ZONE_MARGIN_M;
-    const half = (PANEL_WIDTH_M * scale) / 2;
+    const above = y - (heightM * scale) / 2 >= zone.height + ZONE_MARGIN_M;
+    const half = (widthM * scale) / 2;
     const clear =
       above ||
       Array.from({ length: EDGE_SAMPLES }, (_, i) => (i / (EDGE_SAMPLES - 1) - 0.5) * 2 * half).every(
