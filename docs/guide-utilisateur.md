@@ -111,6 +111,24 @@ Autres commandes de la **manette droite** : **gâchette** = pause / reprise (la 
 **Ambiance cartoon** : la ville est dessinée en aplats à paliers de couleur, les voies ont une bordure plus claire (et une ligne centrale quand elles sont larges) et les façades portent des fenêtres. À l'accueil, la case **Contours des bâtiments** (décochée par défaut) trace un trait sombre autour des bâtiments proches du parcours ; si l'image devient saccadée, décochez-la. Les arbres sont ceux du pack Quaternius (quatre variantes, tournées et à des tailles différentes), embarqués dans l'application : aucun réseau n'est utilisé pour eux. Si leur chargement échoue, un message l'indique sur la page d'accueil et la marche continue avec des arbres simples. Ce rendu n'a pas encore été jugé sur un vrai Quest 3.
 Les données de la ville sont © contributeurs OpenStreetMap (et © Google en rendu Google 3D).
 
+### Sans casque : la version PC
+
+Sur l'accueil, le bouton **« Version PC »** (à côté de « Entrer en réalité mixte ») lance la même marche dans la page,
+sans casque et sans WebXR : n'importe quel navigateur de bureau convient (essayé sur Chromium). Elle n'applique ni le fondu
+tête baissée, ni la zone tapis, ni la vignette : il n'y a pas de réel à protéger devant un écran, mais ne marchez pas sur un
+tapis en regardant un écran sans la même vigilance (clé de sécurité, main près de la rampe).
+
+| Touche | Action |
+|---|---|
+| Espace (ou P) | pause et reprise |
+| ↑ ou +, ↓ ou − | vitesse +0,1 / −0,1 km/h (PageHaut, PageBas : ±1 km/h), de 1 à 8 km/h |
+| R | recaler le parcours sur le regard |
+| H | masquer ou réafficher le tableau |
+| glisser la souris | regarder autour |
+| Échap | quitter la version PC |
+
+Le rendu Google 3D n'existe pas en version PC : la marche se fait en OpenStreetMap et l'accueil le dit. Un trajet libre s'arrête à l'arrivée et le dit.
+
 ## 6. Ennuis connus et remèdes
 
 | Symptôme | Remède |

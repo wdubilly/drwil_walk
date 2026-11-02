@@ -42,7 +42,7 @@ donne la même marche (même ville, même parcours, même vitesse) dans un canva
 - Un navigateur sans WebXR peut lancer la version PC : l'échec de la réalité mixte reste dit pour le bouton du casque, il ne
   bloque plus l'application — `QUA-002`
 - Le bouton du casque continue d'ouvrir une session `immersive-ar` avec le fondu tête baissée, la zone tapis et la vignette ;
-  la version PC n'ouvre jamais de session WebXR et ne les applique pas, faute de passthrough ni de tapis — `APP-001`
+  la version PC n'ouvre jamais de session WebXR et ne les applique pas, faute de passthrough ni de tapis [humain] — `APP-001`
 - Le parcours est rejoué de bout en bout dans Chromium en version PC, sans émulation WebXR — `QUA-020`
 
 ## Contrats modifiés
@@ -90,6 +90,6 @@ donne la même marche (même ville, même parcours, même vitesse) dans un canva
 
 ## 7. Reprise
 
-- **Dernier état** (2026-11-01) : cadrage seul, aucun code.
-- **Travail non commité** : la fiche, sur la branche `cadrage/retours-carte-poste`.
-- **Prochaine étape** : [AI] lot 1.
+- **Dernier état** (2026-11-02) : lots 1 à 3 faits (version PC, commandes et accueil, e2e et docs) sur la branche `workstream/version-pc`.
+- **Travail non commité** : aucun une fois les commits du chantier faits.
+- **Prochaine étape** : [humain] essayer la version PC dans un vrai navigateur (touches, sensibilité de la souris), voir `docs/intentions/version-pc-suites.md`.

@@ -41,6 +41,7 @@ removes it when fully covered.
 | `docs/intentions/mention-osm-discrete.md` | Rendre la mention OpenStreetMap plus discrète dans le casque (sans la retirer, ODbL) |
 | `docs/intentions/carte-position-en-direct.md` | Voir la carte et sa position bouger pendant la marche |
 | `docs/intentions/poste-sans-casque.md` | Une interface pour PC, sans le casque |
+| `docs/intentions/version-pc-suites.md` | Suites de la version PC : Google 3D, minicarte, manette de jeu, tactile, essais |
 | `docs/intentions/course-reelle-entrainement.md` | Rejouer chez soi le parcours d'une vraie course (pluie, entraînement à la distance) |
 | `docs/intentions/essai-casque-tableau-de-bord.md` | Juger le tableau de bord de marche (lisibilité, place, tapis visible) sur un vrai Quest 3 |
 | `docs/intentions/noms-de-rues-extrait.md` | Le nom de la rue courante dans le tableau de bord (les extraits n'en portent pas) |
