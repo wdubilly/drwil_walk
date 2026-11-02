@@ -1,6 +1,6 @@
 # Intention : mesurer le rendu (images par seconde, appels de rendu, triangles)
 
-**Statut** : proposée le 2026-11-02 (lots 1 et 8 de `docs/intentions/rendu-jeu-video.md`) ; à faire en premier.
+**Statut** : proposée le 2026-11-02 (lots 1 et 8 de `docs/intentions/rendu-jeu-video.md`) ; à faire en premier ; cadrée le 2026-11-02 dans `docs/projects/rendu-mesures-diagnostic.md`.
 
 ## Besoin
 
@@ -16,7 +16,7 @@ jugent à l'œil, sans chiffre.
 
 ## Questions à trancher
 
-- [decision] Où s'affiche le diagnostic (panneau d'infos, touche en version PC) et s'il est masqué par défaut pour ne pas gêner la marche ?
-- [decision] Les mesures sont-elles seulement lues à l'écran, ou aussi consignées (fichier téléchargeable) pour comparer avant et après ?
+- Tranché le 2026-11-02 : diagnostic masqué par défaut ; touche en version PC, bouton dans le panneau d'infos sur casque et tablette.
+- Tranché le 2026-11-02 : mesures aussi consignées, fichier JSON téléchargeable pour comparer avant et après.
 - Un budget chiffré par profil (appels de rendu, triangles) se fixe après les premières mesures, pas avant.
 - [human] L'essai sur un vrai Quest 3 pour confirmer les chiffres.
