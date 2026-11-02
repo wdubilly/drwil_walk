@@ -20,6 +20,8 @@ interface E2eWindow {
 }
 
 test.beforeEach(async ({ page }) => {
+  // Le rendu logiciel (swiftshader) frôle les 30 s par défaut sur une machine chargée : la capture d'écran du chemin 6 expirait.
+  test.setTimeout(60_000);
   await page.addInitScript({ path: iwerBuild });
   await page.addInitScript(() => {
     const w = window as unknown as E2eWindow & { navigator: Navigator & { xr: XRSystem } };

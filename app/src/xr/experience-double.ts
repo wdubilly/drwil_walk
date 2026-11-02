@@ -29,9 +29,10 @@ const DRAWING_CONTEXT = Object.fromEntries(
 export const KEY = "cle-fictive-pour-les-tests";
 
 export function setup(
-  options: { supported?: boolean; space?: boolean; xr?: boolean; sessionFails?: boolean; apiKey?: string | undefined; fetch?: typeof fetch; storage?: WeightStorage; now?: () => Date; trees?: () => Promise<TreePack> } = {},
+  options: { supported?: boolean; space?: boolean; xr?: boolean; sessionFails?: boolean; rendererThrows?: unknown; apiKey?: string | undefined; fetch?: typeof fetch; storage?: WeightStorage; now?: () => Date; trees?: () => Promise<TreePack> } = {},
 ) {
-  const doc = withCanvasContext(new Window().document as unknown as Document, DRAWING_CONTEXT);
+  const win = new Window();
+  const doc = withCanvasContext(win.document as unknown as Document, DRAWING_CONTEXT);
   const root = doc.createElement("main");
   doc.body.append(root);
   const listeners: Record<string, () => void> = {};
@@ -52,7 +53,7 @@ export function setup(
     isSessionSupported: () => Promise.resolve(options.supported ?? true),
     requestSession: vi.fn(() => Promise.resolve(session)),
   } satisfies XrSystemLike;
-  const fake = { renderer: null as { localClippingEnabled: boolean } | null, loop: null as Loop, render: vi.fn(), dispose: vi.fn(), canvas: doc.createElement("canvas") };
+  const fake = { renderer: null as { localClippingEnabled: boolean } | null, loop: null as Loop, render: vi.fn(), setSize: vi.fn(), dispose: vi.fn(), canvas: doc.createElement("canvas") };
   const space = options.space === false ? null : ({} as XRReferenceSpace);
   class FakeRenderer {
     domElement = fake.canvas;
@@ -61,8 +62,10 @@ export function setup(
         options.sessionFails ? Promise.reject(new Error("contexte WebGL refusé")) : Promise.resolve(),
       ), getReferenceSpace: () => space };
     setAnimationLoop = (cb: Loop) => (fake.loop = cb);
+    setSize = fake.setSize;
     render = fake.render;
     constructor() {
+      if ("rendererThrows" in options) throw options.rendererThrows;
       fake.renderer = this;
     }
     dispose = fake.dispose;
@@ -97,6 +100,21 @@ export function setup(
       expect(status()).not.toBe("Ouverture de la réalité mixte…");
     });
   };
+  const enterPc = async () => {
+    root.querySelector<HTMLButtonElement>("button.enter-pc")?.click();
+    await vi.waitFor(() => {
+      expect(status()).not.toBe("Ouverture de la version PC…");
+    });
+  };
+  /** Une pression de touche et la souris de la version PC. */
+  const press = (key: string, init: { repeat?: boolean; ctrlKey?: boolean } = {}) => {
+    const event = new win.KeyboardEvent("keydown", { key, cancelable: true, ...init });
+    doc.dispatchEvent(event as unknown as Event);
+    return event;
+  };
+  const mouse = (type: string, init: { movementX?: number; movementY?: number } = {}, target: EventTarget = doc) => {
+    target.dispatchEvent(new win.MouseEvent(type, init) as unknown as Event);
+  };
   const frame = (timeMs: number, f?: XRFrame) => {
     if (!fake.loop) throw new Error("boucle de rendu non lancée");
     fake.loop(timeMs, f);
@@ -106,6 +124,6 @@ export function setup(
   const fail = (reason: string) => {
     for (const failure of failures) failure(reason);
   };
-  return { root, home, xr, fake, inputSources, hold, listeners, status, panel, enter, frame, notice, chooseGoogle, create, tiles, tileMesh, fail };
+  return { root, win, home, xr, enterPc, press, mouse, fake, inputSources, hold, listeners, status, panel, enter, frame, notice, chooseGoogle, create, tiles, tileMesh, fail };
 }
 

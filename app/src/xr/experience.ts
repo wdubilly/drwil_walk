@@ -2,16 +2,17 @@
 // Le rendu three.js est injecté (classe du renderer) : les tests le remplacent par une doublure.
 import type { WebGLRenderer } from "three";
 import { createAttributionLabel } from "../city/attribution.ts";
-import { cityFor } from "../city/cities.ts";
 import { createTripPlanner } from "../city/free-route.ts";
 import type { TreePack } from "../city/tree-pack.ts";
 import { createSouqScene, placeOnRoute, setCityOpacity } from "../city/souq.ts";
 import type { Souq } from "../city/souq-data.ts";
-import { FREE_ITINERARY_ID, ITINERARIES, type Itinerary } from "../route/itineraries.ts";
-import { headingAt, pointAt } from "../route/path.ts";
+import { pointAt } from "../route/path.ts";
 import type { Providers } from "../route/providers.ts";
-import { DEFAULT_WEIGHT_KG, compassText, formatClock, formatPace, progressOf, type WeightStorage } from "../route/stats.ts";
+import { DEFAULT_WEIGHT_KG, type WeightStorage } from "../route/stats.ts";
 import { ARRIVAL_TEXT } from "../route/walk.ts";
+import { enterPc } from "../pc/enter-pc.ts";
+import { chosenCity } from "./city-choice.ts";
+import { placeOf, walkDashboard } from "./dashboard.ts";
 import { createZoneControl } from "./zone-control.ts";
 import { createVignette } from "./vignette.ts";
 import { headPitchDownDeg } from "../safety/visibility.ts";
@@ -27,7 +28,7 @@ import { NO_CALIBRATION, calibrationFrom, type HeadPose } from "./pose.ts";
 import { preloadTrees, withTreeNotice, type TreeLoad } from "./trees-load.ts";
 import { REFERENCE_SPACE, SESSION_MODE, requestMixedRealitySession, type XrSystemLike } from "./session.ts";
 
-export type RendererLike = Pick<WebGLRenderer, "xr" | "setAnimationLoop" | "render" | "domElement" | "dispose" | "localClippingEnabled">;
+export type RendererLike = Pick<WebGLRenderer, "xr" | "setAnimationLoop" | "render" | "domElement" | "dispose" | "localClippingEnabled" | "setSize">;
 export type RendererClass = new (parameters: { antialias: boolean; alpha: boolean }) => RendererLike;
 
 export interface ExperienceDeps {
@@ -58,16 +59,10 @@ export function startExperience(deps: ExperienceDeps): HomeView {
   home.onEnter(() => {
     void enter(deps, home, trees);
   });
+  home.onEnterPc(() => {
+    void enterPc(deps, home, trees);
+  });
   return home;
-}
-
-/** La ville de l'itinéraire choisi ; un trajet libre non préparé est une erreur dite, pas une marche dans le vide (QUA-002). */
-function chosenCity(home: HomeView): Souq {
-  const id = home.readRouteId();
-  if (id !== FREE_ITINERARY_ID) return cityFor(id);
-  const trip = home.readTrip();
-  if (!trip) throw new Error("Itinéraire libre : posez un départ et une arrivée, puis calculez le trajet.");
-  return trip.souq;
 }
 
 async function enter(deps: ExperienceDeps, home: HomeView, trees: Promise<TreeLoad>): Promise<void> {
@@ -117,7 +112,7 @@ async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession, so
   const vignette = createVignette();
   const vignetteOn = home.readVignette();
   scene.add(vignette);
-  const place = (ITINERARIES.find((itinerary) => itinerary.id === home.readRouteId()) as Itinerary).name;
+  const place = placeOf(home.readRouteId());
   // Le poids saisi à l'accueil, sinon la valeur moyenne : l'estimation de calories n'en demande jamais plus.
   const weightKg = home.readWeightKg() ?? DEFAULT_WEIGHT_KG;
   const panelSide = home.readPanelSide();
@@ -155,10 +150,8 @@ async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession, so
     vignette.visible = vignetteOn;
     setCityOpacity(world, state.cityOpacity, zone.clip.planes);
     mode.update(camera, renderer.xr.getCamera());
-    // Le cap est celui du parcours (la ville défile dans le sens où l'on marche), l'heure celle du casque.
-    const { remainingM, percent } = progressOf(souq.route, state.distanceM);
-    const moving = !state.paused && !state.arrived;
-    const dashboard = { place, weightKg, compass: compassText(headingAt(souq.route, state.distanceM)), clock: formatClock(now()), pace: formatPace(state.speedKmh, moving), remainingM, progressPct: percent };
+    // L'heure est celle du casque.
+    const dashboard = walkDashboard(souq.route, state, { place, weightKg, now });
     const view = { show: state.showPanel, opacity: state.cityOpacity, pose: head, side: panelSide, zone: zone.zone() };
     hud.update({ ...state, ...dashboard }, view);
     // La case du point, lue par l'e2e : la minicarte est dans la scène, pas dans la page.
