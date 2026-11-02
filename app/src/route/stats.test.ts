@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { createPath } from "./path.ts";
 import {
   DEFAULT_WEIGHT_KG,
   WEIGHT_STORAGE_KEY,
@@ -7,6 +8,9 @@ import {
   compassText,
   formatClock,
   formatKcal,
+  formatPace,
+  formatProgress,
+  progressOf,
   loadWeightKg,
   parseWeightKg,
   saveWeightKg,
@@ -95,5 +99,36 @@ describe("boussole et heure", () => {
   it("APP-002: écrit l'heure locale sur deux chiffres", () => {
     expect(formatClock(new Date(2026, 10, 1, 9, 5))).toBe("09:05");
     expect(formatClock(new Date(2026, 10, 1, 23, 59))).toBe("23:59");
+  });
+});
+
+describe("allure et progression", () => {
+  it("APP-002: l'allure en min/km vient de la vitesse, « — » à l'arrêt, en pause ou si la vitesse est absurde", () => {
+    expect(formatPace(8, true)).toBe("7:30 min/km");
+    expect(formatPace(4, true)).toBe("15:00 min/km");
+    expect(formatPace(5.5, true)).toBe("10:55 min/km");
+    expect(formatPace(4, false)).toBe("—");
+    expect(formatPace(0, true)).toBe("—");
+    expect(formatPace(Number.NaN, true)).toBe("—");
+  });
+
+  const line = [{ x: 0, z: 0 }, { x: 0, z: -1000 }];
+  it("APP-002: un trajet libre compte jusqu'à l'arrivée et s'y arrête à 100 %", () => {
+    const route = createPath(line, false);
+    expect(progressOf(route, 0)).toEqual({ remainingM: 1000, percent: 0 });
+    expect(progressOf(route, 250)).toEqual({ remainingM: 750, percent: 25 });
+    expect(progressOf(route, 1500)).toEqual({ remainingM: 0, percent: 100 });
+    expect(progressOf(route, -5)).toEqual({ remainingM: 1000, percent: 0 });
+  });
+
+  it("APP-002: une boucle compte le tour en cours et repart à 0 % au départ", () => {
+    const route = createPath(line, true);
+    expect(progressOf(route, 1250)).toEqual({ remainingM: 750, percent: 25 });
+    expect(progressOf(route, 1000)).toEqual({ remainingM: 1000, percent: 0 });
+    expect(progressOf(route, -5)).toEqual({ remainingM: 1000, percent: 0 });
+  });
+
+  it("APP-002: dit la progression du casque en kilomètres et en pourcentage", () => {
+    expect(formatProgress(3456, 12)).toBe("3,5 km restants · 12 %");
   });
 });

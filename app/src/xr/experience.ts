@@ -10,7 +10,7 @@ import type { Souq } from "../city/souq-data.ts";
 import { FREE_ITINERARY_ID, ITINERARIES, type Itinerary } from "../route/itineraries.ts";
 import { headingAt, pointAt } from "../route/path.ts";
 import type { Providers } from "../route/providers.ts";
-import { DEFAULT_WEIGHT_KG, compassText, formatClock, type WeightStorage } from "../route/stats.ts";
+import { DEFAULT_WEIGHT_KG, compassText, formatClock, formatPace, progressOf, type WeightStorage } from "../route/stats.ts";
 import { ARRIVAL_TEXT } from "../route/walk.ts";
 import { createZoneControl } from "./zone-control.ts";
 import { createVignette } from "./vignette.ts";
@@ -156,7 +156,9 @@ async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession, so
     setCityOpacity(world, state.cityOpacity, zone.clip.planes);
     mode.update(camera, renderer.xr.getCamera());
     // Le cap est celui du parcours (la ville défile dans le sens où l'on marche), l'heure celle du casque.
-    const dashboard = { place, weightKg, compass: compassText(headingAt(souq.route, state.distanceM)), clock: formatClock(now()) };
+    const { remainingM, percent } = progressOf(souq.route, state.distanceM);
+    const moving = !state.paused && !state.arrived;
+    const dashboard = { place, weightKg, compass: compassText(headingAt(souq.route, state.distanceM)), clock: formatClock(now()), pace: formatPace(state.speedKmh, moving), remainingM, progressPct: percent };
     const view = { show: state.showPanel, opacity: state.cityOpacity, pose: head, side: panelSide, zone: zone.zone() };
     hud.update({ ...state, ...dashboard }, view);
     // La case du point, lue par l'e2e : la minicarte est dans la scène, pas dans la page.

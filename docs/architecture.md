@@ -34,7 +34,7 @@ Décidée le 2026-10-30 par le demandeur :
     safety (visibilité du réel), ui (accueil et panneau d'infos).
   - `app/src/main.ts` : point d'entrée ; il monte l'accueil et branche le renderer three.js (`WebGLRenderer`).
   - `app/src/route/` : la vitesse de marche (`app/src/route/speed.ts` : bornage 1 à 8 km/h, pas de 0,1, conversion en m/s) et le
-    déplacement (`app/src/route/walk.ts` : distance à la vitesse réglée, affichage distance et temps ; `app/src/route/stats.ts` : calories estimées, poids gardé en `localStorage`, cap de la boussole, heure locale), le parcours GPS
+    déplacement (`app/src/route/walk.ts` : distance à la vitesse réglée, affichage distance et temps ; `app/src/route/stats.ts` : calories estimées, poids gardé en `localStorage`, cap de la boussole, heure locale, allure, distance restante et progression), le parcours GPS
     (`app/src/route/geo.ts` : GPS vers mètres locaux ; `app/src/route/path.ts` : position et direction à une distance,
     boucle qui reprend au départ, contrat APP-002) et les quatre itinéraires de l'accueil
     (`app/src/route/itineraries.ts` : données, dont l'indicateur « disponible »).

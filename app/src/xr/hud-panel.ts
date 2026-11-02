@@ -3,7 +3,7 @@
 // le même fondu que la ville (APP-001) : il disparaît tête baissée et ne masque jamais le tapis.
 import { CanvasTexture, Mesh, MeshBasicMaterial, PlaneGeometry } from "three";
 import { formatSpeedKmh } from "../route/speed.ts";
-import { formatKcal } from "../route/stats.ts";
+import { formatKcal, formatProgress } from "../route/stats.ts";
 import { formatDistanceM, formatDurationS } from "../route/walk.ts";
 import type { Zone } from "../safety/zone.ts";
 import type { PanelSide } from "../ui/panel-side.ts";
@@ -25,6 +25,10 @@ export interface HudInfo {
   kcal: number;
   /** Cap de la boussole, lu sur la direction du parcours (« NE 45° »). */
   compass: string;
+  /** Allure (« 7:30 min/km », « — » à l'arrêt), distance restante et progression du parcours (du tour en cours pour une boucle). */
+  pace: string;
+  remainingM: number;
+  progressPct: number;
   /** L'heure locale (« 09:05 »). */
   clock: string;
   /** Le lieu : le nom de l'itinéraire choisi. */
@@ -83,9 +87,11 @@ export function createHudPanel(doc: Document): HudPanel {
         { text: info.clock, y: 36, sizePx: 34, align: "right" },
         { text: info.place, y: 92, sizePx: 34, align: "left" },
         { text: info.paused ? `${speed} · PAUSE` : speed, y: 160, sizePx: 60, align: "left" },
+        { text: info.pace, y: 160, sizePx: 38, align: "right" },
         { text: formatDurationS(info.timeS), y: 230, sizePx: 40, align: "left" },
         { text: formatDistanceM(info.distanceM), y: 230, sizePx: 40, align: "right" },
-        { text: formatKcal(info.kcal), y: 288, sizePx: 36, align: "left" },
+        { text: formatKcal(info.kcal), y: 288, sizePx: 30, align: "left" },
+        { text: formatProgress(info.remainingM, info.progressPct), y: 288, sizePx: 30, align: "right" },
       ];
       const key = cells.map((cell) => cell.text).join("\n");
       if (key !== drawn) {

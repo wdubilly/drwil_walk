@@ -36,7 +36,7 @@ vrai Quest 3 (cadence avec des milliers de bâtiments en bande de 150 m, profil 
 
 La ville défile le long de l'itinéraire à la vitesse réglée (défaut 4,0 km/h, de 1 à 8 km/h, par pas de 0,1 ; le panneau de la page dit quand la vitesse est à une borne, le message dans le casque lui-même reste à faire : `docs/intentions/hud-casque.md`), avec une
 caméra qui suit le parcours sans rotation brusque (la direction est lissée sur 8 m dans les virages). Manettes : gâchette droite pour pause / reprise, joystick droit pour la
-vitesse, bouton A pour recalibrer, bouton B pour le tableau de bord (vitesse, durée, distance, calories environ, cap, lieu, heure) et la minicarte du côté opposé (le tracé du parcours, nord en haut, avec un point qui avance ; sans fond de tuiles ni réseau). La ville est faite
+vitesse, bouton A pour recalibrer, bouton B pour le tableau de bord (vitesse, allure, durée, distance, distance restante et progression, calories environ, cap, lieu, heure) et la minicarte du côté opposé (le tracé du parcours, nord en haut, avec un point qui avance ; sans fond de tuiles ni réseau). La ville est faite
 de bâtiments OpenStreetMap extrudés par défaut, ou des tuiles photoréalistes Google 3D au choix de l'accueil (clé requise), avec les mentions « © contributeurs OpenStreetMap » et, en rendu Google, celle de Google et les droits des tuiles. Le fondu tête baissée efface les tuiles Google comme la ville OpenStreetMap. À juger au casque : netteté à hauteur d'yeux, 72 images par seconde, lisibilité des mentions.
 
 Codé : session `immersive-ar` (passthrough), le souk de Doha (Souq Waqif : 253 bâtiments OpenStreetMap extrudés, sol)
