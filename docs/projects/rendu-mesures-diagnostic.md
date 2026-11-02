@@ -51,8 +51,8 @@ avant et après un changement.
   la distance parcourue — `APP-002`
 - En version PC, une touche l'affiche et le masque (une pression, une action) ; sur casque et tablette, un bouton du
   panneau d'infos fait de même — `APP-002`
-- Affiché, il suit le fondu tête baissée, reste hors de la zone tapis et ne masque aucune information de sécurité [humain
-  sur casque] — `APP-001`
+- Affiché, il suit le fondu tête baissée, reste hors de la zone tapis et ne masque aucune information de sécurité [humain] sur
+  casque — `APP-001`
 - Un bouton « Enregistrer les mesures » télécharge un fichier JSON (cible, ville, version, date, valeurs mesurées et leur
   fenêtre) pour comparer avant et après ; rien n'est envoyé, aucun appel réseau, aucune donnée personnelle — `SEC-007`
 - Un téléchargement impossible est dit à l'écran, la marche continue — `QUA-002`
@@ -61,7 +61,8 @@ avant et après un changement.
 
 ## Contrats modifiés
 
-- `APP-002` : la liste des touches de la version PC reçoit la touche du diagnostic (écrit au lot 3 avec le test).
+- `APP-002` : la liste des touches de la version PC reçoit la touche du diagnostic, et le casque son clic du joystick droit (écrit au lot 3 avec le test).
+- `QUA-020` : le chemin 21 (le diagnostic de rendu rejoué de bout en bout) rejoint la liste des chemins critiques.
 
 ## 2. Hors périmètre
 
