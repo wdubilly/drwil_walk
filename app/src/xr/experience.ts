@@ -4,15 +4,15 @@ import type { WebGLRenderer } from "three";
 import { createAttributionLabel } from "../city/attribution.ts";
 import { createTripPlanner } from "../city/free-route.ts";
 import type { TreePack } from "../city/tree-pack.ts";
-import { createSouqScene, placeOnRoute, setCityOpacity } from "../city/souq.ts";
+import { createSouqScene, setCityOpacity } from "../city/souq.ts";
 import type { Souq } from "../city/souq-data.ts";
-import { pointAt } from "../route/path.ts";
 import type { Providers } from "../route/providers.ts";
 import { DEFAULT_WEIGHT_KG, type WeightStorage } from "../route/stats.ts";
 import { ARRIVAL_TEXT } from "../route/walk.ts";
 import { enterPc } from "../pc/enter-pc.ts";
 import { chosenCity } from "./city-choice.ts";
 import { placeOf, walkDashboard } from "./dashboard.ts";
+import { createJunctions } from "./junctions.ts";
 import { createZoneControl } from "./zone-control.ts";
 import { createVignette } from "./vignette.ts";
 import { headPitchDownDeg } from "../safety/visibility.ts";
@@ -112,6 +112,7 @@ async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession, so
   const vignette = createVignette();
   const vignetteOn = home.readVignette();
   scene.add(vignette);
+  const junctions = createJunctions(city, souq);
   const place = placeOf(home.readRouteId());
   // Le poids saisi à l'accueil, sinon la valeur moyenne : l'estimation de calories n'en demande jamais plus.
   const weightKg = home.readWeightKg() ?? DEFAULT_WEIGHT_KG;
@@ -143,7 +144,8 @@ async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession, so
     world.position.set(calibration.x, 0, calibration.z);
     world.rotation.y = calibration.yawRad;
     arrival.mesh.visible = state.arrived;
-    placeOnRoute(city, souq.route, state.distanceM);
+    // La ville suit le tracé d'origine, ou le réseau de voies une fois une autre rue choisie à un carrefour (APP-002).
+    const walking = junctions.update({ distanceM: state.distanceM, frame, space, sources: session.inputSources, visible: state.cityOpacity > 0 });
     if (zone.update(timeMs, session.inputSources, head)) {
       home.showNotice("La zone tapis n'a pas pu être enregistrée : elle reste réglée pour cette séance.");
     }
@@ -151,16 +153,17 @@ async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession, so
     setCityOpacity(world, state.cityOpacity, zone.clip.planes);
     mode.update(camera, renderer.xr.getCamera());
     // L'heure est celle du casque.
-    const dashboard = walkDashboard(souq.route, state, { place, weightKg, now });
+    const dashboard = walkDashboard(souq.route, state, { place, weightKg, now, heading: walking.heading });
     const view = { show: state.showPanel, opacity: state.cityOpacity, pose: head, side: panelSide, zone: zone.zone() };
     hud.update({ ...state, ...dashboard }, view);
     // La case du point, lue par l'e2e : la minicarte est dans la scène, pas dans la page.
-    deps.root.dataset["minimap"] = minimap.update(pointAt(souq.route, state.distanceM), view);
+    deps.root.dataset["minimap"] = minimap.update(walking.at, view);
     panel.update({
       ...state,
       ...dashboard,
       calibration,
-      position: pointAt(souq.route, state.distanceM),
+      position: walking.at,
+      junction: { distanceM: walking.crossingM, choices: walking.choices, offRoute: walking.offRoute },
       buildingCount,
       zone: zone.zone(),
       vignette: vignetteOn,

@@ -27,7 +27,7 @@ export interface ButtonSourceLike {
   gamepad?: { buttons?: readonly ButtonLike[] } | null | undefined;
 }
 
-const isDown = (button: ButtonLike | undefined): boolean =>
+export const isDown = (button: ButtonLike | undefined): boolean =>
   button !== undefined && (button.pressed || button.value >= PRESS_THRESHOLD);
 
 /** Boutons tenus sur la manette droite, tous relâchés sans manette droite. */
