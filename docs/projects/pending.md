@@ -31,7 +31,6 @@ avant les fiches qui touchent le panneau d'infos, `champ-de-vision-casque` puis 
 (le panneau doit tenir dans la vue avant d'y ajouter du contenu), `tableau-allure-progression` et `hud-defis-progression` avant
 `comparer-marche-reelle`, les fiches de la ville avant `course-reelle-gpx`. La Corniche est reportée le 2026-11-01 : à annuler si `course-reelle-gpx` couvre le besoin.
 
-- [ ] [P1] [AI] Une version PC de l'appli, sans casque — `docs/projects/version-pc.md`
 - [ ] [P2] [AI] Choisir sa direction à chaque carrefour — `docs/projects/carrefours-choix.md`
 - [ ] [P2] [AI] Les défis de distance et l'objectif annuel — `docs/projects/hud-defis-progression.md`
 - [ ] [P2] [AI] Le voyage guidé par étapes — `docs/projects/hud-voyage-guide.md`
