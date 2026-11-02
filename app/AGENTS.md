@@ -52,7 +52,7 @@ session `immersive-ar`, rue simple, marche en ligne droite, joystick, fondu têt
   substitution (`vi.stubGlobal`) puis l'importe dynamiquement.
 - 2026-10-30 : les e2e sont nommés `*.test.ts` dans e2e/ : c8 exclut les fichiers de test par défaut (pas les
   `*.spec.ts`), et Vitest ne lit que src/ et la racine. IWER n'applique un axe de manette qu'à l'image suivante :
-  laisser passer des images entre deux poussées (`letFramesPass`) ; même règle pour un bouton (`updateButtonValue`) : tenir la valeur, observer l'effet, relâcher, laisser passer des images avant l'appui suivant. Les commandes de la manette droite sont lues par `src/xr/buttons.ts` (gâchette 0, A 4, B 5) : un appui est un front montant ; celles de la gauche (prise 1, X 4, Y 5, joystick axes 2 et 3) par `src/xr/left-controller.ts`.
+  laisser passer des images entre deux poussées (`letFramesPass`) ; même règle pour un bouton (`updateButtonValue`) : tenir la valeur, observer l'effet, relâcher, laisser passer des images avant l'appui suivant. Les commandes de la manette droite sont lues par `src/xr/buttons.ts` (gâchette 0, A 4, B 5) : un appui est un front montant ; celles de la gauche (prise 1, X 4, Y 5, joystick axes 2 et 3) par `src/xr/left-controller.ts`. Le choix de la rue aux carrefours (APP-002) lit le rayon (`targetRaySpace`) et la prise droite (index 1) dans `src/xr/choice-ray.ts` ; dans IWER, viser = `controllers.right.quaternion`, confirmer = `updateButtonValue("squeeze", 1)` (voir `e2e/carrefours.test.ts`).
 - 2026-10-30 : three.js fait tourner sa boucle de page en plus de celle de la session si `setAnimationLoop` est appelé
   après `xr.setSession` (images sans `XRFrame`) : poser la boucle avant la session, et ignorer une image sans frame.
 - 2026-10-31 : `GLTFExtensionsPlugin` (3d-tiles-renderer) libère à sa fin un chargeur KTX2 même absent et lève alors une erreur : le
@@ -66,7 +66,7 @@ session `immersive-ar`, rue simple, marche en ligne droite, joystick, fondu têt
 | ID | Subject | Reference file |
 |---|---|---|
 | APP-001 | Sécurité-visibilité : le réel reste visible (tête baissée, zone tapis) | `src/safety/visibility.ts` |
-| APP-002 | La marche suit le parcours GPS de l'itinéraire choisi : en boucle pour les quatre figés, jusqu'à l'arrivée pour un trajet libre | `src/route/path.ts` |
+| APP-002 | La marche suit le parcours GPS de l'itinéraire choisi : en boucle pour les quatre figés, jusqu'à l'arrivée pour un trajet libre ; choix de la rue aux carrefours | `src/route/path.ts`, `src/route/network.ts`, `src/xr/guide.ts` |
 | APP-003 | Bâtiments (extrait OpenStreetMap figé, ou chargés pour un trajet libre) et attribution | `src/city/licence.ts` |
 | APP-004 | Champ de vision du casque simulé : un objet de la scène est-il dans la vue (cible Quest 3, marge) | `src/xr/fov.ts` |
 | APP-005 | Le panneau d'infos du casque reste dans le champ de vision, texte compris | `src/xr/pose.ts` |

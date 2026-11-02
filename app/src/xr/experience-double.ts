@@ -13,12 +13,15 @@ import type { XrSystemLike } from "./session.ts";
 type Loop = ((timeMs: number, frame?: XRFrame) => void) | null;
 
 /** Pose de tête inclinée de `deg` degrés (négatif : tête baissée), tournée de `yawDeg` vers la gauche, à la position `at`. */
-export function poseFrame(deg: number | null, { yawDeg = 0, at = { x: 0, y: 1.6, z: 0 } } = {}): XRFrame {
+export function poseFrame(deg: number | null, { yawDeg = 0, at = { x: 0, y: 1.6, z: 0 }, rayYawDeg }: { yawDeg?: number; at?: { x: number; y: number; z: number }; rayYawDeg?: number } = {}): XRFrame {
   const p = ((deg ?? 0) * Math.PI) / 360;
   const y = (yawDeg * Math.PI) / 360;
   const orientation = { x: Math.cos(y) * Math.sin(p), y: Math.sin(y) * Math.cos(p), z: -Math.sin(y) * Math.sin(p), w: Math.cos(y) * Math.cos(p) };
   const pose = deg === null ? undefined : { transform: { position: at, orientation } };
-  return { getViewerPose: () => pose } as unknown as XRFrame;
+  // La manette droite, quand `rayYawDeg` est donné, vise ce cap (positif à gauche) à hauteur de poitrine.
+  const half = ((rayYawDeg ?? 0) * Math.PI) / 360;
+  const hand = rayYawDeg === undefined ? null : { transform: { position: { x: 0, y: 1.2, z: 0 }, orientation: { x: 0, y: Math.sin(half), z: 0, w: Math.cos(half) } } };
+  return { getViewerPose: () => pose, getPose: () => hand } as unknown as XRFrame;
 }
 
 /** Un contexte 2D muet qui accepte aussi le tracé de la minicarte. */
@@ -37,11 +40,15 @@ export function setup(
   doc.body.append(root);
   const listeners: Record<string, () => void> = {};
   const released = () => Array.from({ length: 6 }, () => ({ pressed: false, value: 0 }));
-  const inputSources = [{ handedness: "right", gamepad: { axes: [0, 0, 0, 0], buttons: released() } }];
+  const targetRaySpace = {} as XRSpace;
+  const inputSources: { handedness: string; targetRaySpace?: XRSpace; gamepad: { axes: number[]; buttons: { pressed: boolean; value: number }[] } }[] = [
+    { handedness: "right", targetRaySpace, gamepad: { axes: [0, 0, 0, 0], buttons: released() } },
+  ];
   /** Tient les boutons d'index donnés de la manette droite (aucun : tous relâchés). */
   const hold = (...indices: number[]) => {
     inputSources[0] = {
       handedness: "right",
+      targetRaySpace,
       gamepad: { axes: [0, 0, 0, 0], buttons: released().map((b, i) => (indices.includes(i) ? { pressed: true, value: 1 } : b)) },
     };
   };

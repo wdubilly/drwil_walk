@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { HEADING_WINDOW_M, createPath, headingAt, pointAt } from "./path.ts";
+import { HEADING_WINDOW_M, createPath, headingAt, lookingAt, pointAt } from "./path.ts";
 
 // Un carré de 100 m de côté : nord, est, sud, retour à l'ouest.
 const square = createPath([
@@ -78,5 +78,14 @@ describe("APP-002: un trajet libre ne boucle pas", () => {
   });
   it("APP-002: les itinéraires figés gardent leur boucle", () => {
     expect(createPath([{ x: 0, z: 0 }, { x: 0, z: -100 }]).loop).toBe(true);
+  });
+});
+
+describe("APP-002: tronçon de pose hors tracé", () => {
+  it("part du point donné dans le cap donné, sans boucler", () => {
+    const stretch = lookingAt({ x: 5, z: 7 }, { x: 0, z: -1 });
+    expect(stretch.loop).toBe(false);
+    expect(pointAt(stretch, 0)).toEqual({ x: 5, z: 7 });
+    expect(headingAt(stretch, 0)).toEqual({ x: 0, z: -1 });
   });
 });

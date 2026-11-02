@@ -49,3 +49,8 @@ export function headingAt(path: Path, distanceM: number): Vec2 {
   if (length === 0) return { x: 0, z: -1 };
   return { x: (after.x - before.x) / length, z: (after.z - before.z) / length };
 }
+
+/** Un tronçon droit qui part de `at` dans la direction `heading` : `placeOnRoute` y pose la ville, à la distance 0, hors du tracé d'origine. */
+export function lookingAt(at: Vec2, heading: Vec2): Path {
+  return createPath([at, { x: at.x + heading.x * 2 * HEADING_WINDOW_M, z: at.z + heading.z * 2 * HEADING_WINDOW_M }], false);
+}

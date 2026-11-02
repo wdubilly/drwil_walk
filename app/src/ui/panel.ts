@@ -9,6 +9,13 @@ import { ARRIVAL_TEXT, formatDistanceM, formatDurationS, formatKm } from "../rou
 import type { Zone } from "../safety/zone.ts";
 import { formatOpacity } from "../safety/visibility.ts";
 
+/** Les carrefours de la marche au casque (APP-002), redits ici pour l'e2e : le carrefour qui approche, ses rues vues de l'utilisateur, le tracé quitté. */
+export interface JunctionInfo {
+  distanceM: number | undefined;
+  choices: { bearingDeg: number; isDefault: boolean; chosen: boolean; pointed: boolean }[];
+  offRoute: boolean;
+}
+
 export interface WalkInfo {
   speedKmh: number;
   distanceM: number;
@@ -43,6 +50,8 @@ export interface WalkInfo {
   showPanel: boolean;
   /** Où le parcours est posé après un recalage (bouton A) : position en mètres et cap en radians. */
   calibration: { x: number; z: number; yawRad: number };
+  /** Absent dans la version PC, qui ne propose pas de carrefours. */
+  junction?: JunctionInfo;
 }
 
 export interface WalkPanel {
@@ -95,7 +104,11 @@ export function renderWalkPanel(doc: Document, root: HTMLElement, pc = false): W
   pause.className = "paused";
   pause.textContent = pc ? "Marche en pause : la touche Espace la reprend." : "Marche en pause : la gâchette droite la reprend.";
   pause.hidden = true;
-  panel.append(list, limit, pause, arrival, credit);
+  const crossing = doc.createElement("p");
+  crossing.className = "junction";
+  crossing.setAttribute("aria-live", "polite");
+  crossing.hidden = true;
+  panel.append(list, limit, pause, crossing, arrival, credit);
   if (pc) panel.append(Object.assign(doc.createElement("p"), { className: "pc-help", textContent: PC_HELP }));
   root.append(panel);
   return {
@@ -119,6 +132,13 @@ export function renderWalkPanel(doc: Document, root: HTMLElement, pc = false): W
       pause.hidden = !info.paused;
       // Les mentions de données restent lisibles : seul le tableau se masque (APP-003).
       list.hidden = pc && !info.showPanel;
+      const junction = info.junction;
+      const near = junction?.distanceM;
+      show(crossing, near === undefined ? "" : `Carrefour dans ${String(Math.round(near))} m : pointez une rue avec la manette droite, puis appuyez sur la prise.`);
+      crossing.hidden = near === undefined;
+      panel.dataset.junctionM = near === undefined ? "" : String(near);
+      panel.dataset.choices = JSON.stringify(junction?.choices ?? []);
+      panel.dataset.offRoute = String(junction?.offRoute ?? false);
       panel.dataset.paused = String(info.paused);
       panel.dataset.hudVisible = String(info.showPanel);
       panel.dataset.calibrationX = String(info.calibration.x);

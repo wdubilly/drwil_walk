@@ -51,6 +51,29 @@ describe("panneau de marche", () => {
     expect(root.querySelector("[aria-label='Marche']")).toBeNull();
   });
 
+  it("APP-002: annonce le carrefour à venir, expose les rues proposées, et s'efface après", () => {
+    const doc = new Window().document as unknown as Document;
+    const root = doc.createElement("main");
+    const panel = renderWalkPanel(doc, root);
+    const info = { speedKmh: 4, distanceM: 0, timeS: 0, cityOpacity: 1, kcal: 0, pace: "—", remainingM: 0, progressPct: 0, weightKg: 70, compass: "N 0°", clock: "00:00", place: "Pune", position: { x: 0, z: 0 }, buildingCount: 1,
+      rendering: "osm" as const, tileCount: 0, attribution: "", arrived: false,
+      paused: false, showPanel: true, calibration: { x: 0, z: 0, yawRad: 0 }, zone: DEFAULT_ZONE, vignette: true };
+    const section = root.querySelector<HTMLElement>("[aria-label='Marche']");
+    const text = () => root.querySelector<HTMLElement>(".junction");
+    panel.update(info);
+    expect(text()?.hidden).toBe(true);
+    expect([section?.getAttribute("data-junction-m"), section?.getAttribute("data-choices"), section?.getAttribute("data-off-route")]).toEqual(["", "[]", "false"]);
+    const choices = [{ bearingDeg: 0, isDefault: true, chosen: false, pointed: false }, { bearingDeg: 88, isDefault: false, chosen: false, pointed: true }];
+    panel.update({ ...info, junction: { distanceM: 24.6, choices, offRoute: true } });
+    expect(text()?.hidden).toBe(false);
+    expect(text()?.textContent).toBe("Carrefour dans 25 m : pointez une rue avec la manette droite, puis appuyez sur la prise.");
+    expect(section?.getAttribute("data-junction-m")).toBe("24.6");
+    expect(JSON.parse(section?.getAttribute("data-choices") ?? "")).toEqual(choices);
+    expect(section?.getAttribute("data-off-route")).toBe("true");
+    panel.update({ ...info, junction: { distanceM: undefined, choices: [], offRoute: true } });
+    expect(text()?.hidden).toBe(true);
+  });
+
   it("QUA-002: dit la limite quand la vitesse est à la borne, et l'efface sinon", () => {
     const doc = new Window().document as unknown as Document;
     const root = doc.createElement("main");

@@ -102,6 +102,6 @@ veut que le choix se fasse **dans les quatre itinéraires figés**, en pointant 
 
 ## 7. Reprise
 
-- **Dernier état** (2026-10-31) : cadrage seul, aucun code.
-- **Travail non commité** : la fiche, sur la branche `cadrage/commandes-panneau`.
-- **Prochaine étape** : [AI] lot 1, après `commandes-panneau` et `zone-tapis-vignette`.
+- **Dernier état** (2026-11-02) : lots 1 à 4 faits sur la branche `workstream/carrefours-choix` : réseau de voies (`app/src/route/network.ts`), guide tracé d'origine ou réseau (`app/src/xr/guide.ts`), pointage à la manette droite et prise droite (`app/src/xr/choice-ray.ts`, `app/src/xr/junctions.ts`), flèches (`app/src/xr/choice-markers.ts`), annonce dans le panneau, e2e `app/e2e/carrefours.test.ts`, contrats `APP-002` et `QUA-020` et docs à jour.
+- **Travail non commité** : aucun une fois la clôture faite.
+- **Prochaine étape** : [human] lot 5 : essai réel sur le Quest 3 (`docs/intentions/essai-casque-carrefours.md`) ; suites : `docs/intentions/carrefours-retour-au-trace.md`, `docs/intentions/carrefours-version-pc.md`.
