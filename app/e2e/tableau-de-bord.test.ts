@@ -47,6 +47,18 @@ test("chemin 13 : le poids reste dans le navigateur et s'efface, les calories le
   await expect(panel(page).locator("[data-field='kcal']")).toHaveText(/^environ \d+ kcal$/);
   await expect(panel(page)).toHaveAttribute("data-clock", "09:05");
   await expect(panel(page)).toHaveAttribute("data-place", "Doha Souq Waqif");
+  // 7,2 km/h : 8 min 20 s par kilomètre ; la boucle du souk est entamée, il en reste moins que sa longueur.
+  await expect(panel(page)).toHaveAttribute("data-pace", "8:20 min/km");
+  await expect(panel(page).locator("[data-field='pace']")).toHaveText("8:20 min/km");
+  const { remainingM, progressPct, distanceM } = await panel(page).evaluate((el) => ({
+    remainingM: Number(el.dataset["remainingM"]), progressPct: Number(el.dataset["progressPct"]), distanceM: Number(el.dataset["distanceM"]),
+  }));
+  expect(remainingM).toBeGreaterThan(0);
+  expect(progressPct).toBeGreaterThanOrEqual(0);
+  expect(progressPct).toBeLessThan(100);
+  expect(distanceM).toBeGreaterThan(0);
+  await expect(panel(page).locator("[data-field='remaining']")).toHaveText(/^\d+,\d km$/);
+  await expect(panel(page).locator("[data-field='progress']")).toHaveText(/^\d+ %$/);
   await expect(panel(page)).toHaveAttribute("data-compass", /^(N|NE|E|SE|S|SO|O|NO) \d{1,3}°$/);
 
   // Le poids s'efface : le stockage est vidé.

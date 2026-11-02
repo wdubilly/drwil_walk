@@ -1,6 +1,8 @@
-// Chiffres du tableau de bord du casque (APP-002) : calories estimées, poids gardé en local, cap de la boussole, heure.
+// Chiffres du tableau de bord du casque (APP-002) : calories estimées, poids gardé en local, cap de la boussole, heure, allure, distance restante et progression.
 // Logique pure : le rendu (xr/hud-panel.ts) ne fait que les afficher.
 import type { Vec2 } from "./geo.ts";
+import type { Path } from "./path.ts";
+import { formatKm } from "./walk.ts";
 import { clampSpeedKmh } from "./speed.ts";
 
 /** Poids moyen utilisé tant que l'utilisateur n'en a pas saisi un. */
@@ -82,3 +84,22 @@ export function formatClock(now: Date): string {
   const two = (n: number): string => String(n).padStart(2, "0");
   return `${two(now.getHours())}:${two(now.getMinutes())}`;
 }
+
+/** Allure en minutes par kilomètre : « 7:30 min/km » à 8 km/h ; « — » à l'arrêt, en pause ou à l'arrivée plutôt qu'une valeur absurde. */
+export function formatPace(speedKmh: number, moving: boolean): string {
+  if (!moving || !Number.isFinite(speedKmh) || speedKmh <= 0) return "—";
+  const seconds = Math.round(3600 / clampSpeedKmh(speedKmh));
+  return `${String(Math.floor(seconds / 60))}:${String(seconds % 60).padStart(2, "0")} min/km`;
+}
+
+/** Ce qui reste du parcours : du trajet libre jusqu'à l'arrivée, du tour en cours pour une boucle. */
+export function progressOf(route: Path, distanceM: number): { remainingM: number; percent: number } {
+  const doneM = route.loop ? Math.max(0, distanceM) % route.lengthM : Math.min(Math.max(0, distanceM), route.lengthM);
+  return { remainingM: route.lengthM - doneM, percent: Math.floor((doneM / route.lengthM) * 100) };
+}
+
+/** Affichage français de la progression : « 12 % ». */
+export const formatPercent = (percent: number): string => `${String(percent)} %`;
+
+/** La ligne du casque : « 3,4 km restants · 12 % » (la page dit les mêmes valeurs sur deux lignes). */
+export const formatProgress = (remainingM: number, percent: number): string => `${formatKm(remainingM)} restants · ${formatPercent(percent)}`;

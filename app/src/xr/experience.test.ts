@@ -30,6 +30,18 @@ describe("expérience en réalité mixte", () => {
     expect(at("data-building-count")).toBeGreaterThan(100);
   });
 
+  it("APP-002: la page dit l'allure, la distance restante et la progression du tour en cours", async () => {
+    const t = setup();
+    await t.enter();
+    t.frame(0, poseFrame(0));
+    t.frame(10_000, poseFrame(0));
+    const read = (name: string) => t.panel()?.getAttribute(name);
+    expect(read("data-pace")).toBe("15:00 min/km");
+    expect(Number(read("data-remaining-m"))).toBeGreaterThan(1000);
+    expect(Number(read("data-progress-pct"))).toBeGreaterThanOrEqual(0);
+    expect(t.panel()?.querySelector("[data-field='progress']")?.textContent).toMatch(/^\d+ %$/);
+  });
+
   it("APP-002: l'itinéraire choisi à l'accueil détermine la ville et le tracé de la marche", async () => {
     const souk = setup();
     await souk.enter();

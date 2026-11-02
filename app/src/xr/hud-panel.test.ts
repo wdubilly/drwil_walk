@@ -10,6 +10,7 @@ import type { PanelSide } from "../ui/panel-side.ts";
 
 const info: HudInfo = {
   speedKmh: 4, distanceM: 12.34, timeS: 65, kcal: 7.4, compass: "NE 45°", clock: "09:05", place: "Doha Souq Waqif", paused: false,
+  pace: "15:00 min/km", remainingM: 3456, progressPct: 12,
 };
 const head = { position: { x: 0, y: 1.6, z: 0 }, orientation: { x: 0, y: 0, z: 0, w: 1 } };
 /** Ce que la boucle de rendu donne au panneau : par défaut côté droit, zone tapis par défaut. */
@@ -33,11 +34,11 @@ function setup() {
 }
 
 describe("panneau d'infos dans le casque", () => {
-  it("APP-002: dessine boussole, heure, lieu, vitesse, durée, distance et calories « environ »", () => {
+  it("APP-002: dessine boussole, heure, lieu, vitesse, allure, durée, distance, calories « environ », distance restante et progression", () => {
     const { panel, context } = setup();
     panel.update(info, view());
     const lines = context.fillText.mock.calls.map((call) => call[0] as string);
-    expect(lines).toEqual(["NE 45°", "09:05", "Doha Souq Waqif", "4,0 km/h", "1 min 05 s", "12,3 m", "environ 7 kcal"]);
+    expect(lines).toEqual(["NE 45°", "09:05", "Doha Souq Waqif", "4,0 km/h", "15:00 min/km", "1 min 05 s", "12,3 m", "environ 7 kcal", "3,5 km restants · 12 %"]);
   });
 
   it("APP-002: dit la pause avec la vitesse", () => {

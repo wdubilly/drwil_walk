@@ -46,6 +46,7 @@ test("chemin 12 : la gâchette met en pause et reprend, A recale le parcours, B 
 
   // Gâchette : l'avancée s'arrête, la vitesse réglée reste, puis la marche repart.
   await press(page, "trigger", () => expect(panel(page)).toHaveAttribute("data-paused", "true"));
+  await expect(panel(page)).toHaveAttribute("data-pace", "—");
   await expect(panel(page).getByText("Marche en pause")).toBeVisible();
   const frozen = await read(page, "data-distance-m");
   await page.waitForTimeout(400);
