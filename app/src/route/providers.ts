@@ -3,9 +3,7 @@
 // clé ni abonnement ; leurs adresses se règlent par des variables non secrètes pour viser une instance auto-hébergée. Google
 // (Routes, Geocoding) reste possible, voir `create-providers.ts`. Les points et adresses ne partent
 // qu'à ces services : rien n'est enregistré. Toute panne est dite avec sa raison (QUA-002).
-import { distanceM, type LonLat } from "./geo.ts";
-/** Un trajet libre fait 5 km au plus, pour limiter les chargements de la ville. */
-export const MAX_ROUTE_M = 5000;
+import { type LonLat } from "./geo.ts";
 
 export interface Place {
   point: LonLat;
@@ -35,18 +33,9 @@ export interface Providers {
 /** Les coordonnées arrondies (environ 10 m), quand aucune adresse n'est connue. */
 export const roundedCoordinates = (point: LonLat): string => `${point[1].toFixed(4)}, ${point[0].toFixed(4)}`;
 
-const tooLong = (km: number, what: string): Error =>
-  new Error(`Trajet trop long : ${what} ${km.toFixed(1).replace(".", ",")} km, ${String(MAX_ROUTE_M / 1000)} km au plus.`);
+// Un trajet libre n'a aucune limite de longueur : ces deux gardes restent appelées par les routeurs mais ne refusent plus rien.
+export const assertCrowFlies: (from: LonLat, to: LonLat) => void = () => undefined;
 
-/** Refus avant tout appel : un trajet trop long ne coûte pas une requête. */
-export function assertCrowFlies(from: LonLat, to: LonLat): void {
-  const crow = distanceM(from, to);
-  if (crow > MAX_ROUTE_M) throw tooLong(crow / 1000, "à vol d'oiseau");
-}
-
-/** Refus du chemin calculé, s'il dépasse la limite. */
-export function assertRouteLength(meters: number): void {
-  if (meters > MAX_ROUTE_M) throw tooLong(meters / 1000, "le chemin à pied fait");
-}
+export const assertRouteLength: (meters: number) => void = () => undefined;
 
 export const errorMessage = (error: unknown): string => (error instanceof Error ? error.message : String(error));

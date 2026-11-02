@@ -22,7 +22,7 @@ la ville défile à la vitesse de marche réglée par l'utilisateur, et le monde
 
 ### 4.1 Déplacement
 - Itinéraire **prédéfini** le long d'une rue (liste de points GPS → courbe lissée)
-- Itinéraires configurables dans un fichier `routes.json`
+- Itinéraires configurables dans un fichier routes.json
 - Ville par défaut : **Pune (Inde)**, avec **2 itinéraires distincts** :
   1. **Vieille ville** (itinéraire par défaut) : de **Shaniwar Wada au temple Dagdusheth Halwai Ganpati**, par Laxmi Road / Budhwar Peth
   2. **FC Road (Fergusson College Road)** : balade le long de l'avenue
@@ -30,7 +30,7 @@ la ville défile à la vitesse de marche réglée par l'utilisateur, et le monde
   1. **Corniche** : du Musée d'art islamique (MIA) vers les tours de West Bay, en bord de mer
   2. **Souq Waqif** : balade dans les ruelles du souk
   - ⚠️ Vérifier la couverture photoréaliste de Google 3D Tiles sur Pune et sur Doha. Si la couverture est partielle ou absente pour une ville, basculer automatiquement sur le plan B (OSM)
-- Avancement à vitesse constante, **réglable en km/h** (défaut 4,0 km/h, pas de 0,1, plage 1 à 8 km/h)
+- Avancement à vitesse constante, **réglable en km/h** (défaut 4,0 km/h, pas de 0,1, minimum 1 km/h, sans maximum)
 - La caméra suit la direction de la rue **en douceur** ; aucune rotation brusque (prévention du mal des transports)
 - Hauteur des yeux réaliste (environ 1,65 m au-dessus du sol virtuel, ajustable)
 - Pause / reprise
@@ -82,7 +82,7 @@ Session `immersive-ar` : le passthrough est visible partout où rien n'est rendu
 1. Code source dans ce dossier (`drwil_walk`)
 2. `README.md` (français)
 3. `.env.example`
-4. `routes.json` avec 4 itinéraires : Pune Vieille ville (défaut), Pune FC Road, Doha Corniche MIA → West Bay, Doha Souq Waqif
+4. routes.json avec 4 itinéraires : Pune Vieille ville (défaut), Pune FC Road, Doha Corniche MIA → West Bay, Doha Souq Waqif
 5. Un court récapitulatif des choix techniques et des limites connues, avec en particulier :
    - la **qualité visuelle à hauteur de piéton** des Google 3D Tiles sur chaque itinéraire (bâtiments flous ou « fondus » ?)
    - les **fps mesurés** sur Quest 3

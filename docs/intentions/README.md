@@ -82,5 +82,7 @@ and its line is then removed.
 ```
 | `docs/intentions/entree-npm-pack-arbres.md` | Une entrée npm pour préparer les arbres du pack Quaternius |
 | `docs/intentions/essai-casque-carrefours.md` | Juger le choix de la rue aux carrefours (pointage, prise, flèches) sur un vrai Quest 3 |
+| `docs/intentions/essai-casque-vitesse-haute.md` | Essayer la marche à haute vitesse et un trajet libre de plus de 5 km sur un vrai Quest 3 |
+| `docs/intentions/nettoyer-gardes-longueur-routeurs.md` | Retirer les gardes de longueur devenues sans effet des routeurs |
 | `docs/intentions/carrefours-retour-au-trace.md` | Revenir au tracé d'origine après un détour aux carrefours |
 | `docs/intentions/carrefours-version-pc.md` | Le choix de la rue aux carrefours dans la version PC |

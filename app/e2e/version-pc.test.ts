@@ -50,17 +50,17 @@ test("chemin 13 : la version PC marche dans un canvas de la page, sans session W
   await expect(panel(page).locator("[data-field='speed']")).toHaveText("7,2 km/h");
   await expect(panel(page).locator(".attribution")).toContainText("OpenStreetMap");
 
-  // Vitesse : ↑ plus, ↓ moins, bornée entre 1 et 8 km/h.
+  // Vitesse : ↑ plus, ↓ moins, au moins 1 km/h, sans maximum.
   await page.keyboard.press("ArrowUp");
   await expect(panel(page)).toHaveAttribute("data-speed-kmh", "7.3");
   await page.keyboard.press("ArrowDown");
   await page.keyboard.press("ArrowDown");
   await expect(panel(page)).toHaveAttribute("data-speed-kmh", "7.1");
   await page.keyboard.press("PageUp");
-  await expect(panel(page)).toHaveAttribute("data-speed-kmh", "8");
-  await expect(panel(page)).toContainText("Vitesse au maximum");
+  await expect(panel(page)).toHaveAttribute("data-speed-kmh", "8.1");
+  await expect(panel(page)).not.toContainText("Vitesse au maximum");
   await page.keyboard.press("PageDown");
-  await expect(panel(page)).toHaveAttribute("data-speed-kmh", "7");
+  await expect(panel(page)).toHaveAttribute("data-speed-kmh", "7.1");
 
   // Espace : pause puis reprise, une pression, une action (une touche tenue ne répète pas).
   await page.keyboard.down("Space");

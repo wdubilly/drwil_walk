@@ -33,12 +33,12 @@ Décidée le 2026-10-30 par le demandeur :
     Découpage prévu : xr (session et contrôles), city (bâtiments OSM extrudés), route (itinéraires et déplacement),
     safety (visibilité du réel), ui (accueil et panneau d'infos).
   - `app/src/main.ts` : point d'entrée ; il monte l'accueil et branche le renderer three.js (`WebGLRenderer`).
-  - `app/src/route/` : la vitesse de marche (`app/src/route/speed.ts` : bornage 1 à 8 km/h, pas de 0,1, conversion en m/s) et le
+  - `app/src/route/` : la vitesse de marche (`app/src/route/speed.ts` : minimum 1 km/h sans maximum, pas de 0,1, conversion en m/s) et le
     déplacement (`app/src/route/walk.ts` : distance à la vitesse réglée, affichage distance et temps ; `app/src/route/stats.ts` : calories estimées, poids gardé en `localStorage`, cap de la boussole, heure locale, allure, distance restante et progression), le parcours GPS
     (`app/src/route/geo.ts` : GPS vers mètres locaux ; `app/src/route/path.ts` : position et direction à une distance,
     boucle qui reprend au départ, contrat APP-002 ; `app/src/route/network.ts` : réseau de voies de l'extrait, rues à un carrefour et marche sur le réseau, pour le choix de la rue) et les quatre itinéraires de l'accueil
     (`app/src/route/itineraries.ts` : données, dont l'indicateur « disponible »).
-  - Itinéraire libre (chantier itineraire-libre) : `app/src/route/providers.ts` (interfaces `Router` et `Geocoder`, limite de 5 km), `app/src/route/valhalla.ts` (chemin à pied, profil piéton) et `app/src/route/photon.ts` (recherche d'adresse et géocodage inverse), par défaut et sans clé,
+  - Itinéraire libre (chantier itineraire-libre) : `app/src/route/providers.ts` (interfaces `Router` et `Geocoder`, aucune limite de longueur), `app/src/route/valhalla.ts` (chemin à pied, profil piéton) et `app/src/route/photon.ts` (recherche d'adresse et géocodage inverse), par défaut et sans clé,
     `app/src/route/create-providers.ts` (choix des services, adresses `VITE_ROUTING_URL` et `VITE_GEOCODING_URL`), `app/src/route/routes-api.ts` et `app/src/route/geocoding.ts` (option Google Routes et Geocoding, clé `VITE_GOOGLE_ROUTES_API_KEY`), `app/src/route/reject-double.ts` (doublure de test),
     `app/src/city/free-route.ts` (bâtiments OpenStreetMap proches du tracé demandés à Overpass, préparation du trajet, contrats APP-002 et APP-003),
     `app/src/ui/free-trip.ts` (départ et arrivée : carte et adresses qui se remplissent mutuellement), `app/src/ui/map-picker.ts` et `app/src/ui/map-math.ts`

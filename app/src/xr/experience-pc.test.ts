@@ -77,7 +77,7 @@ describe("version PC (sans casque)", () => {
     expect(t.panel()?.getAttribute("data-paused")).toBe("false");
   });
 
-  it("APP-002: la vitesse monte et descend de 0,1 km/h par pression (toutes comptent, même entre deux images), par pas de 1 km/h avec PageHaut et PageBas, dans la plage de 1 à 8", async () => {
+  it("APP-002: la vitesse monte et descend de 0,1 km/h par pression (toutes comptent, même entre deux images), par pas de 1 km/h avec PageHaut et PageBas, au moins 1 km/h et sans maximum", async () => {
     const t = await walking();
     t.press("ArrowUp");
     t.press("+");
@@ -96,8 +96,8 @@ describe("version PC (sans casque)", () => {
     t.press("PageUp");
     t.press("PageUp");
     t.frame(4000);
-    expect(read(t, "data-speed-kmh")).toBe(8);
-    expect(t.panel()?.textContent).toContain("Vitesse au maximum");
+    expect(read(t, "data-speed-kmh")).toBe(8.9);
+    expect(t.panel()?.textContent).not.toContain("Vitesse au maximum");
     for (let i = 0; i < 9; i++) t.press("PageDown");
     t.frame(5000);
     expect(read(t, "data-speed-kmh")).toBe(1);

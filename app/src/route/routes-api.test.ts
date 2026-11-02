@@ -1,6 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
 import { rejectWith } from "./reject-double.ts";
-import { MAX_ROUTE_M } from "./providers.ts";
 import { ROUTES_URL, createGoogleRouter, readRoutesKey } from "./routes-api.ts";
 
 const KEY = "cle-fictive-routes";
@@ -24,16 +23,10 @@ describe("APP-002: calcul du chemin à pied par Google, option derrière l'inter
     expect(body.origin.location.latLng.latitude).toBe(18.5204);
   });
 
-  it("refuse avant tout appel un trajet de plus de 5 km à vol d'oiseau", async () => {
-    const fetchFn = ok(good);
-    await expect(computeWalkingRoute(FROM, [73.92, 18.5204], { apiKey: KEY, fetch: fetchFn })).rejects.toThrow("Trajet trop long : à vol d'oiseau");
-    expect(fetchFn).not.toHaveBeenCalled();
-    expect(MAX_ROUTE_M).toBe(5000);
-  });
-
-  it("refuse un chemin à pied de plus de 5 km", async () => {
-    const long = { routes: [{ ...good.routes[0], distanceMeters: 6200 }] };
-    await expect(computeWalkingRoute(FROM, TO, { apiKey: KEY, fetch: ok(long) })).rejects.toThrow("le chemin à pied fait 6,2 km, 5 km au plus");
+  it("APP-002: accepte un trajet de n'importe quelle longueur, à vol d'oiseau comme par le chemin", async () => {
+    const fetchFn = ok({ routes: [{ ...good.routes[0], distanceMeters: 62000 }] });
+    await expect(computeWalkingRoute(FROM, [74.9, 18.5204], { apiKey: KEY, fetch: fetchFn })).resolves.toHaveLength(3);
+    expect(fetchFn).toHaveBeenCalledOnce();
   });
 
   it("QUA-002: dit le refus du service, sans jamais montrer la clé", async () => {
