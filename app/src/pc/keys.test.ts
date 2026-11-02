@@ -5,8 +5,8 @@ const key = (name: string, init: Partial<KeyLike> = {}): KeyLike => ({ key: name
 
 describe("touches de la version PC", () => {
   it("APP-002: chaque commande a sa touche, majuscule ou minuscule", () => {
-    expect(["p", " ", "ArrowUp", "+", "ArrowDown", "-", "PageUp", "PageDown", "r", "R", "h", "Escape"].map((k) => actionOf(key(k)))).toEqual([
-      "pause", "pause", "faster", "faster", "slower", "slower", "muchFaster", "muchSlower", "recalibrate", "recalibrate", "panel", "quit",
+    expect(["p", " ", "ArrowUp", "+", "ArrowDown", "-", "PageUp", "PageDown", "r", "R", "h", "d", "D", "Escape"].map((k) => actionOf(key(k)))).toEqual([
+      "pause", "pause", "faster", "faster", "slower", "slower", "muchFaster", "muchSlower", "recalibrate", "recalibrate", "panel", "diagnostics", "diagnostics", "quit",
     ]);
   });
 

@@ -128,6 +128,36 @@ describe("version PC (sans casque)", () => {
     expect(t.panel()?.querySelector<HTMLElement>("dl")?.hidden).toBe(false);
   });
 
+  it("APP-002: le diagnostic de rendu est masqué par défaut, la touche D l'affiche et le masque (une pression, une action) sans toucher à la marche", async () => {
+    const t = await walking();
+    const dd = (field: string) => t.panel()?.querySelector(`.diagnostics [data-field='${field}']`)?.textContent;
+    const body = () => t.panel()?.querySelector<HTMLElement>(".diagnostics div")?.hidden;
+    Object.assign(t.fake.renderer as object, { info: { render: { calls: 9, triangles: 77 }, memory: { geometries: 4, textures: 2 } } });
+    t.frame(1000);
+    expect(body()).toBe(true);
+    expect(dd("calls")).toBeUndefined();
+    t.press("d");
+    t.press("d", { repeat: true });
+    t.frame(2000);
+    expect(body()).toBe(false);
+    expect([dd("calls"), dd("triangles"), dd("geometries"), dd("textures"), dd("fps")]).toEqual(["9", "77", "4", "2", "1,0 i/s"]);
+    expect(Number(dd("objects"))).toBeGreaterThan(10);
+    expect(read(t, "data-speed-kmh")).toBe(4);
+    expect(read(t, "data-distance-m")).toBeCloseTo(8 / 3.6);
+    t.press("D");
+    t.frame(3000);
+    expect(body()).toBe(true);
+    expect(read(t, "data-distance-m")).toBeCloseTo(12 / 3.6);
+  });
+
+  it("QUA-002: sans renderer.info, le diagnostic dit « indisponible » au lieu d'inventer", async () => {
+    const t = await walking();
+    t.press("d");
+    t.frame(1000);
+    const dd = (field: string) => t.panel()?.querySelector(`.diagnostics [data-field='${field}']`)?.textContent;
+    expect([dd("calls"), dd("triangles"), dd("geometries"), dd("textures")]).toEqual(["indisponible", "indisponible", "indisponible", "indisponible"]);
+  });
+
   it("une touche inconnue ou un raccourci du navigateur ne fait rien", async () => {
     const t = await walking();
     expect(t.press("x").defaultPrevented).toBe(false);

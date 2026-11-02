@@ -5,6 +5,8 @@
 export const TRIGGER_BUTTON = 0;
 export const A_BUTTON = 4;
 export const B_BUTTON = 5;
+/** Clic du joystick droit : le diagnostic de rendu (la prise droite sert au pointeur des carrefours). */
+export const STICK_BUTTON = 3;
 /** Au-delà de cette valeur analogique (0 à 1), un bouton compte comme appuyé. */
 export const PRESS_THRESHOLD = 0.5;
 
@@ -40,6 +42,14 @@ export function rightButtons(sources: Iterable<ButtonSourceLike>): ButtonsReadin
   }
   return BUTTONS_RELEASED;
 }
+
+/** Le clic du joystick droit est-il tenu ? Faux sans manette droite. */
+export const rightStickPressed = (sources: Iterable<ButtonSourceLike>): boolean => {
+  for (const source of sources) {
+    if (source.handedness === "right") return isDown(source.gamepad?.buttons?.[STICK_BUTTON]);
+  }
+  return false;
+};
 
 /** Les boutons qui viennent d'être appuyés : tenus maintenant et pas à l'image précédente. */
 export function newPresses(now: ButtonsReading, before: ButtonsReading): ButtonsReading {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { BUTTONS_RELEASED, newPresses, rightButtons, type ButtonLike } from "./buttons.ts";
+import { BUTTONS_RELEASED, newPresses, rightButtons, rightStickPressed, type ButtonLike } from "./buttons.ts";
 
 const up: ButtonLike = { pressed: false, value: 0 };
 const down: ButtonLike = { pressed: true, value: 1 };
@@ -31,5 +31,15 @@ describe("boutons de la manette droite", () => {
     expect(newPresses(held, BUTTONS_RELEASED)).toEqual({ trigger: true, a: true, b: false });
     expect(newPresses(held, held)).toEqual(BUTTONS_RELEASED);
     expect(newPresses(BUTTONS_RELEASED, held)).toEqual(BUTTONS_RELEASED);
+  });
+});
+
+describe("clic du joystick droit", () => {
+  const stick = (handedness: string, button: ButtonLike) => ({ handedness, gamepad: { buttons: [up, up, up, button] } });
+  it("APP-002: se lit sur la manette droite seulement, faux sans elle ou sans bouton", () => {
+    expect(rightStickPressed([stick("left", down), stick("right", down)])).toBe(true);
+    expect(rightStickPressed([stick("left", down), stick("right", up)])).toBe(false);
+    expect(rightStickPressed([stick("left", down)])).toBe(false);
+    expect(rightStickPressed([{ handedness: "right", gamepad: null }])).toBe(false);
   });
 });

@@ -21,6 +21,7 @@ import { chooseRendering, type GoogleConfig } from "./google-mode.ts";
 import { renderWalkPanel } from "../ui/panel.ts";
 import { initialWalkState, nextWalkState } from "./frame.ts";
 import { rightButtons } from "./buttons.ts";
+import { createDiagnosticsUi } from "./diagnostics-report.ts";
 import { createHudPanel } from "./hud-panel.ts";
 import { createMinimap } from "./minimap.ts";
 import { rightThumbstickY } from "./joystick.ts";
@@ -28,7 +29,7 @@ import { NO_CALIBRATION, calibrationFrom, type HeadPose } from "./pose.ts";
 import { preloadTrees, withTreeNotice, type TreeLoad } from "./trees-load.ts";
 import { REFERENCE_SPACE, SESSION_MODE, requestMixedRealitySession, type XrSystemLike } from "./session.ts";
 
-export type RendererLike = Pick<WebGLRenderer, "xr" | "setAnimationLoop" | "render" | "domElement" | "dispose" | "localClippingEnabled" | "setSize">;
+export type RendererLike = Pick<WebGLRenderer, "xr" | "setAnimationLoop" | "render" | "domElement" | "dispose" | "localClippingEnabled" | "setSize" | "info">;
 export type RendererClass = new (parameters: { antialias: boolean; alpha: boolean }) => RendererLike;
 
 export interface ExperienceDeps {
@@ -102,7 +103,9 @@ async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession, so
   renderer.localClippingEnabled = true;
   renderer.xr.setReferenceSpaceType(REFERENCE_SPACE);
   deps.root.append(renderer.domElement);
-  const panel = renderWalkPanel(deps.document, deps.root);
+  const now = deps.now ?? (() => new Date());
+  const diagnostics = createDiagnosticsUi({ doc: deps.document, target: "casque", city: placeOf(home.readRouteId()), now, renderer, scene });
+  const panel = renderWalkPanel(deps.document, deps.root, false, diagnostics.element);
   // Le panneau d'infos et la minicarte du casque : dans la scène, hors de `world`, mais soumis au même fondu (APP-001).
   const hud = createHudPanel(deps.document);
   const minimap = createMinimap(deps.document, souq.route.points);
@@ -117,7 +120,6 @@ async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession, so
   // Le poids saisi à l'accueil, sinon la valeur moyenne : l'estimation de calories n'en demande jamais plus.
   const weightKg = home.readWeightKg() ?? DEFAULT_WEIGHT_KG;
   const panelSide = home.readPanelSide();
-  const now = deps.now ?? (() => new Date());
   let calibration = NO_CALIBRATION;
   const globalOpacityPct = home.readOpacityPct();
   let state = initialWalkState(home.readSpeedKmh(), globalOpacityPct);
@@ -155,7 +157,7 @@ async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession, so
     // L'heure est celle du casque.
     const dashboard = walkDashboard(souq.route, state, { place, weightKg, now, heading: walking.heading });
     const view = { show: state.showPanel, opacity: state.cityOpacity, pose: head, side: panelSide, zone: zone.zone() };
-    hud.update({ ...state, ...dashboard }, view);
+    hud.update({ ...state, ...dashboard, diagnostics: diagnostics.update(timeMs, session.inputSources) }, view);
     // La case du point, lue par l'e2e : la minicarte est dans la scène, pas dans la page.
     deps.root.dataset["minimap"] = minimap.update(walking.at, view);
     panel.update({

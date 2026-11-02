@@ -1,6 +1,6 @@
 # Intention : mesurer le rendu (images par seconde, appels de rendu, triangles)
 
-**Statut** : proposée le 2026-11-02 (lots 1 et 8 de `docs/intentions/rendu-jeu-video.md`) ; à faire en premier ; cadrée le 2026-11-02 dans `docs/projects/rendu-mesures-diagnostic.md`.
+**Statut** : proposée le 2026-11-02 (lots 1 et 8 de `docs/intentions/rendu-jeu-video.md`) ; à faire en premier ; livrée le 2026-11-02 par le chantier `rendu-mesures-diagnostic` (`docs/projects/journal.md`) ; reste l'essai sur un vrai Quest 3 (`docs/intentions/essai-casque-diagnostic-rendu.md`) et l'enregistrement depuis le casque (`docs/intentions/diagnostic-casque-enregistrer.md`).
 
 ## Besoin
 

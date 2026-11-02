@@ -14,6 +14,7 @@ import { BUTTONS_RELEASED } from "../xr/buttons.ts";
 import { chosenCity } from "../xr/city-choice.ts";
 import { placeOf, walkDashboard } from "../xr/dashboard.ts";
 import type { ExperienceDeps } from "../xr/experience.ts";
+import { createDiagnosticsUi } from "../xr/diagnostics-report.ts";
 import { initialWalkState, nextWalkState } from "../xr/frame.ts";
 import { NO_CALIBRATION, calibrationFrom } from "../xr/pose.ts";
 import { type TreeLoad, withTreeNotice } from "../xr/trees-load.ts";
@@ -54,11 +55,12 @@ function walkPc(deps: ExperienceDeps, home: HomeView, souq: Souq, trees: TreeLoa
   win.addEventListener("resize", resize);
   renderer.domElement.className = "pc-canvas";
   deps.root.append(renderer.domElement);
-  const panel = renderWalkPanel(deps.document, deps.root, true);
-  const input = createPcInput(deps.document, renderer.domElement);
   const place = placeOf(home.readRouteId());
-  const weightKg = home.readWeightKg() ?? DEFAULT_WEIGHT_KG;
   const now = deps.now ?? (() => new Date());
+  const diagnostics = createDiagnosticsUi({ doc: deps.document, target: "pc", city: place, now, renderer, scene });
+  const panel = renderWalkPanel(deps.document, deps.root, true, diagnostics.element);
+  const input = createPcInput(deps.document, renderer.domElement);
+  const weightKg = home.readWeightKg() ?? DEFAULT_WEIGHT_KG;
   let calibration = NO_CALIBRATION;
   // Opacité pleine : aucun fondu à appliquer sans réel à montrer.
   let state = initialWalkState(home.readSpeedKmh(), 100);
@@ -75,6 +77,7 @@ function walkPc(deps: ExperienceDeps, home: HomeView, souq: Souq, trees: TreeLoa
   };
   renderer.setAnimationLoop((timeMs: number) => {
     const taken = input.take();
+    if (taken.diagnostics) diagnostics.toggle();
     if (taken.quit) {
       stop();
       return;
@@ -103,6 +106,7 @@ function walkPc(deps: ExperienceDeps, home: HomeView, souq: Souq, trees: TreeLoa
       tileCount: 0,
       attribution: OSM_ATTRIBUTION,
     });
+    diagnostics.update(timeMs);
     renderer.render(scene, camera);
   });
   home.showStatus(PC_ACTIVE_STATUS);

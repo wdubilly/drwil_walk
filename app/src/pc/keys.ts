@@ -1,5 +1,5 @@
 // Les touches de la version PC (APP-002) : une touche, une action. Logique pure, sans DOM.
-export type PcAction = "pause" | "faster" | "slower" | "muchFaster" | "muchSlower" | "recalibrate" | "panel" | "quit";
+export type PcAction = "pause" | "faster" | "slower" | "muchFaster" | "muchSlower" | "recalibrate" | "panel" | "diagnostics" | "quit";
 
 const ACTIONS: Readonly<Record<string, PcAction>> = {
   " ": "pause",
@@ -12,12 +12,13 @@ const ACTIONS: Readonly<Record<string, PcAction>> = {
   PageDown: "muchSlower",
   r: "recalibrate",
   h: "panel",
+  d: "diagnostics",
   Escape: "quit",
 };
 
 /** Le texte des commandes, dit sur la page pendant la marche. */
 export const PC_HELP =
-  "Commandes : Espace pause et reprise · ↑ ou + : +0,1 km/h · ↓ ou - : −0,1 km/h · PageHaut ou PageBas : ±1 km/h · R recaler le parcours sur le regard · H masquer le tableau · glisser la souris regarder autour · Échap quitter.";
+  "Commandes : Espace pause et reprise · ↑ ou + : +0,1 km/h · ↓ ou - : −0,1 km/h · PageHaut ou PageBas : ±1 km/h · R recaler le parcours sur le regard · H masquer le tableau · D afficher ou masquer le diagnostic de rendu · glisser la souris regarder autour · Échap quitter.";
 
 export interface KeyLike {
   key: string;

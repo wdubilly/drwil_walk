@@ -64,8 +64,8 @@ function show(el: HTMLElement, text: string): void {
   if (el.textContent !== text) el.textContent = text;
 }
 
-/** `pc` : le panneau de la version PC, posé sur le canvas, avec ses commandes et son tableau qui se masque (touche H). */
-export function renderWalkPanel(doc: Document, root: HTMLElement, pc = false): WalkPanel {
+/** `pc` : le panneau de la version PC, posé sur le canvas, avec ses commandes et son tableau qui se masque (touche H). `diagnostics` : le bloc du diagnostic de rendu, masqué par défaut. */
+export function renderWalkPanel(doc: Document, root: HTMLElement, pc = false, diagnostics?: HTMLElement): WalkPanel {
   const panel = doc.createElement("section");
   panel.setAttribute("aria-label", "Marche");
   if (pc) {
@@ -109,6 +109,7 @@ export function renderWalkPanel(doc: Document, root: HTMLElement, pc = false): W
   crossing.setAttribute("aria-live", "polite");
   crossing.hidden = true;
   panel.append(list, limit, pause, crossing, arrival, credit);
+  if (diagnostics) panel.append(diagnostics);
   if (pc) panel.append(Object.assign(doc.createElement("p"), { className: "pc-help", textContent: PC_HELP }));
   root.append(panel);
   return {

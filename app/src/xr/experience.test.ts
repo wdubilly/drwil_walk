@@ -162,6 +162,23 @@ describe("expérience en réalité mixte", () => {
     expect(t.status()).toBe("refus brut");
   });
 
+  it("APP-002: dans le casque, le diagnostic est masqué par défaut et le bouton du panneau l'affiche sans changer la distance", async () => {
+    const t = setup();
+    await t.enter();
+    Object.assign(t.fake.renderer as object, { info: { render: { calls: 9, triangles: 77 }, memory: { geometries: 4, textures: 2 } } });
+    t.frame(0, poseFrame(0));
+    t.frame(1000, poseFrame(0));
+    const button = t.panel()?.querySelector<HTMLButtonElement>(".diagnostics button");
+    const dd = (field: string) => t.panel()?.querySelector(`.diagnostics [data-field='${field}']`)?.textContent;
+    expect(button?.textContent).toBe("Diagnostic de rendu");
+    expect(dd("calls")).toBeUndefined();
+    button?.click();
+    t.frame(2000, poseFrame(0));
+    expect([dd("calls"), dd("triangles")]).toEqual(["9", "77"]);
+    expect(Number(t.panel()?.getAttribute("data-distance-m"))).toBeCloseTo(8 / 3.6);
+    expect(Number(t.panel()?.getAttribute("data-speed-kmh"))).toBe(4);
+  });
+
   it("APP-002: la minicarte du casque avance avec la marche et suit le fondu", async () => {
     const t = setup();
     await t.enter();

@@ -41,6 +41,21 @@ describe("panneau d'infos dans le casque", () => {
     expect(lines).toEqual(["NE 45°", "09:05", "Doha Souq Waqif", "4,0 km/h", "15:00 min/km", "1 min 05 s", "12,3 m", "environ 7 kcal", "3,5 km restants · 12 %"]);
   });
 
+  it("APP-002: le diagnostic de rendu prend la place de la ligne des calories, et rien d'autre ne change", () => {
+    const { panel, context } = setup();
+    panel.update({ ...info, diagnostics: "72 i/s · 13,9 ms · 12 appels · 3456 tri" }, view());
+    const lines = context.fillText.mock.calls.map((call) => call[0] as string);
+    expect(lines).toEqual(["NE 45°", "09:05", "Doha Souq Waqif", "4,0 km/h", "15:00 min/km", "1 min 05 s", "12,3 m", "72 i/s · 13,9 ms · 12 appels · 3456 tri"]);
+  });
+
+  it("APP-001: affiché, le diagnostic suit le fondu et reste hors de la zone tapis comme le panneau", () => {
+    const { panel } = setup();
+    panel.update({ ...info, diagnostics: "x" }, view({ opacity: 0 }));
+    expect(panel.mesh.visible).toBe(false);
+    panel.update({ ...info, diagnostics: "x" }, view({ pose: undefined }));
+    expect(panel.mesh.visible).toBe(false);
+  });
+
   it("APP-002: dit la pause avec la vitesse", () => {
     const { panel, context } = setup();
     panel.update({ ...info, paused: true }, view());
