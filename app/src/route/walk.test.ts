@@ -8,8 +8,9 @@ describe("marche à la vitesse réglée", () => {
     expect(advanceDistanceM(10, 7.2, 0.5)).toBeCloseTo(11);
   });
 
-  it("borne la vitesse avant d'avancer", () => {
-    expect(advanceDistanceM(0, 100, 1)).toBeCloseTo(8 / 3.6);
+  it("n'a aucun plafond de vitesse, et remonte une vitesse sous 1 km/h à 1 km/h", () => {
+    expect(advanceDistanceM(0, 100, 1)).toBeCloseTo(100 / 3.6);
+    expect(advanceDistanceM(0, 0.2, 1)).toBeCloseTo(1 / 3.6);
   });
 
   it("n'avance pas sur un pas de temps nul, négatif ou non fini", () => {

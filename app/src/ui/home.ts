@@ -1,6 +1,6 @@
 // Écran d'accueil (MISSION.md, « Écran d'accueil ») : vitesse de départ, opacité de la ville,
 // choix de l'itinéraire, rappel de sécurité et bouton d'entrée en réalité mixte. Construit en DOM simple, sans framework.
-import { DEFAULT_SPEED_KMH, MAX_SPEED_KMH, MIN_SPEED_KMH, SPEED_RANGE_TEXT, SPEED_STEP_KMH, clampSpeedKmh, speedLimitMessage, formatSpeedKmh } from "../route/speed.ts";
+import { DEFAULT_SPEED_KMH, MIN_SPEED_KMH, SPEED_RANGE_TEXT, SPEED_STEP_KMH, clampSpeedKmh, speedLimitMessage, formatSpeedKmh } from "../route/speed.ts";
 import { GOOGLE_ATTRIBUTION, OSM_ATTRIBUTION } from "../city/licence.ts";
 import type { TripPlanner, PlannedTrip } from "../city/free-route.ts";
 import { clearWeightKg, loadWeightKg, parseWeightKg, saveWeightKg, MAX_WEIGHT_KG, MIN_WEIGHT_KG, DEFAULT_WEIGHT_KG, type WeightStorage } from "../route/stats.ts";
@@ -61,11 +61,11 @@ function field(doc: Document, label: string, input: HTMLInputElement): HTMLLabel
   return wrapper;
 }
 
-function numberInput(doc: Document, type: string, min: number, max: number, step: number, value: string) {
+function numberInput(doc: Document, type: string, min: number, max: number | undefined, step: number, value: string) {
   const input = doc.createElement("input");
   input.type = type;
   input.min = String(min);
-  input.max = String(max);
+  if (max !== undefined) input.max = String(max);
   input.step = String(step);
   input.value = value;
   return input;
@@ -83,7 +83,7 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
   const reminder = doc.createElement("ul");
   reminder.setAttribute("aria-label", "Rappel de sécurité");
   for (const text of SAFETY_REMINDERS) reminder.append(Object.assign(doc.createElement("li"), { textContent: text }));
-  const speed = numberInput(doc, "number", MIN_SPEED_KMH, MAX_SPEED_KMH, SPEED_STEP_KMH, DEFAULT_SPEED_KMH.toFixed(1));
+  const speed = numberInput(doc, "number", MIN_SPEED_KMH, undefined, SPEED_STEP_KMH, DEFAULT_SPEED_KMH.toFixed(1));
   const speedHint = Object.assign(doc.createElement("p"), { className: "speed-hint", textContent: SPEED_RANGE_TEXT });
   const speedLimit = Object.assign(doc.createElement("p"), { className: "speed-limit" });
   speedLimit.setAttribute("aria-live", "polite");

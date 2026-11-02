@@ -74,21 +74,19 @@ describe("panneau de marche", () => {
     expect(text()?.hidden).toBe(true);
   });
 
-  it("QUA-002: dit la limite quand la vitesse est à la borne, et l'efface sinon", () => {
+  it("QUA-002: dit le minimum quand la vitesse y est, et n'en dit rien à haute vitesse", () => {
     const doc = new Window().document as unknown as Document;
     const root = doc.createElement("main");
     const panel = renderWalkPanel(doc, root);
-    const info = { speedKmh: 8, distanceM: 0, timeS: 0, cityOpacity: 1, kcal: 0, pace: "—", remainingM: 0, progressPct: 0, weightKg: 70, compass: "N 0°", clock: "00:00", place: "Doha", position: { x: 0, z: 0 }, buildingCount: 1,
+    const info = { speedKmh: 1, distanceM: 0, timeS: 0, cityOpacity: 1, kcal: 0, pace: "—", remainingM: 0, progressPct: 0, weightKg: 70, compass: "N 0°", clock: "00:00", place: "Doha", position: { x: 0, z: 0 }, buildingCount: 1,
       rendering: "osm" as const, tileCount: 0, attribution: "", arrived: false,
       paused: false, showPanel: true, calibration: { x: 0, z: 0, yawRad: 0 }, zone: DEFAULT_ZONE, vignette: true };
     const limit = () => root.querySelector<HTMLElement>(".speed-limit");
     panel.update(info);
     expect(limit()?.hidden).toBe(false);
-    expect(limit()?.textContent).toBe("Vitesse au maximum : 8 km/h, limite de sécurité sur le tapis.");
-    panel.update({ ...info, speedKmh: 7.9 });
-    expect(limit()?.hidden).toBe(true);
-    panel.update({ ...info, speedKmh: 1 });
     expect(limit()?.textContent).toBe("Vitesse au minimum : 1 km/h.");
+    panel.update({ ...info, speedKmh: 12 });
+    expect(limit()?.hidden).toBe(true);
   });
 
   it("APP-002: le panneau de la version PC dit ses commandes, masque seulement le tableau et n'a pas de zone tapis", () => {

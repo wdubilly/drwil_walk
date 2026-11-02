@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
   DEFAULT_SPEED_KMH,
-  MAX_SPEED_KMH,
   MIN_SPEED_KMH,
   clampSpeedKmh,
   formatSpeedKmh,
@@ -13,16 +12,17 @@ import {
 } from "./speed.ts";
 
 describe("vitesse de marche", () => {
-  it("part de 4,0 km/h par défaut, dans une plage de 1 à 8 km/h", () => {
+  it("part de 4,0 km/h par défaut, avec un minimum de 1 km/h", () => {
     expect(DEFAULT_SPEED_KMH).toBe(4);
     expect(MIN_SPEED_KMH).toBe(1);
-    expect(MAX_SPEED_KMH).toBe(8);
   });
 
-  it("borne la vitesse entre 1 et 8 km/h", () => {
+  it("borne la vitesse à 1 km/h au moins, sans maximum", () => {
     expect(clampSpeedKmh(0)).toBe(1);
     expect(clampSpeedKmh(-3)).toBe(1);
-    expect(clampSpeedKmh(12)).toBe(8);
+    expect(clampSpeedKmh(12)).toBe(12);
+    expect(clampSpeedKmh(50)).toBe(50);
+    expect(clampSpeedKmh(1e6)).toBe(1e6);
     expect(clampSpeedKmh(5.5)).toBe(5.5);
   });
 
@@ -44,8 +44,8 @@ describe("vitesse de marche", () => {
     expect(speed).toBe(5);
   });
 
-  it("ne dépasse pas les bornes en crans successifs", () => {
-    expect(stepSpeedKmh(8, 1)).toBe(8);
+  it("monte sans limite et ne descend pas sous 1 km/h", () => {
+    expect(stepSpeedKmh(8, 1)).toBe(8.1);
     expect(stepSpeedKmh(1, -1)).toBe(1);
   });
 
@@ -59,17 +59,18 @@ describe("vitesse de marche", () => {
     expect(formatSpeedKmh(5.25)).toBe("5,3 km/h");
   });
 
-  it("QUA-002: dit la limite et la raison quand une vitesse saisie est hors de la plage", () => {
-    expect(SPEED_RANGE_TEXT).toBe("De 1 à 8 km/h, par sécurité sur le tapis.");
-    expect(speedLimitMessage(50)).toBe("50 km/h dépasse la limite : 8,0 km/h retenus, par sécurité sur le tapis.");
-    expect(speedLimitMessage(0.5)).toBe("0,5 km/h est sous la limite : 1,0 km/h retenus, plage de 1 à 8 km/h.");
+  it("QUA-002: dit le minimum et la valeur par défaut, jamais un maximum", () => {
+    expect(SPEED_RANGE_TEXT).toBe("À partir de 1 km/h.");
+    expect(speedLimitMessage(50)).toBe("");
+    expect(speedLimitMessage(0.5)).toBe("0,5 km/h est sous la limite : 1,0 km/h retenus, minimum de 1 km/h.");
     expect(speedLimitMessage(5)).toBe("");
     expect(speedLimitMessage(8)).toBe("");
     expect(speedLimitMessage(Number.NaN)).toBe("Vitesse illisible : 4,0 km/h retenus.");
   });
 
-  it("QUA-002: dit qu'une vitesse est à la borne quand le joystick tente de la dépasser", () => {
-    expect(speedBoundMessage(8)).toBe("Vitesse au maximum : 8 km/h, limite de sécurité sur le tapis.");
+  it("QUA-002: dit que la vitesse est au minimum, et rien à haute vitesse", () => {
+    expect(speedBoundMessage(8)).toBe("");
+    expect(speedBoundMessage(50)).toBe("");
     expect(speedBoundMessage(1)).toBe("Vitesse au minimum : 1 km/h.");
     expect(speedBoundMessage(4)).toBe("");
   });

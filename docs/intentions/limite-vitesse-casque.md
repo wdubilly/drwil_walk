@@ -1,6 +1,7 @@
 # Intention : dire la limite de vitesse dans la scène du casque
 
 **Statut** : proposée le 2026-10-31, issue du chantier `vitesse-limite-dite` (limite non traitée).
+**Reviewed on 2026-11-02**: devenue sans objet, le chantier `limites-vitesse-distance` a supprimé le plafond de 8 km/h ; seul reste le minimum de 1 km/h, que le panneau de la page dit déjà. À supprimer au prochain tri.
 
 ## Besoin
 

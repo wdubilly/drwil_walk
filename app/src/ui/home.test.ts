@@ -95,26 +95,27 @@ describe("écran d'accueil", () => {
     expect([...root.querySelectorAll(".rendering label")].map((l) => l.textContent.trim())).toEqual(["OpenStreetMap", "Google 3D"]);
   });
 
-  it("propose 4,0 km/h par défaut, réglable de 1 à 8 km/h par pas de 0,1", () => {
+  it("propose 4,0 km/h par défaut, réglable dès 1 km/h, sans maximum, par pas de 0,1", () => {
     const { view, input } = setup();
     const speed = input("Vitesse de départ");
-    expect([speed.value, speed.min, speed.max, speed.step]).toEqual(["4.0", "1", "8", "0.1"]);
+    expect([speed.value, speed.min, speed.max, speed.step]).toEqual(["4.0", "1", "", "0.1"]);
     expect(view.readSpeedKmh()).toBe(4);
     speed.value = "5,5";
     expect(view.readSpeedKmh()).toBe(5.5);
   });
 
-  it("QUA-002: lit la plage de vitesse avant la saisie et dit la limite quand 50 est saisi", () => {
+  it("QUA-002: lit le minimum avant la saisie, accepte 50 sans message et dit l'illisible", () => {
     const { root, view, input } = setup();
     const speed = input("Vitesse de départ");
-    expect(root.querySelector(".speed-hint")?.textContent).toBe("De 1 à 8 km/h, par sécurité sur le tapis.");
+    expect(root.querySelector(".speed-hint")?.textContent).toBe("À partir de 1 km/h.");
     const limit = root.querySelector<HTMLElement>(".speed-limit");
     expect(limit?.textContent).toBe("");
     speed.value = "50";
     speed.dispatchEvent(new DomEvent("input") as unknown as Event);
-    expect(limit?.textContent).toBe("50 km/h dépasse la limite : 8,0 km/h retenus, par sécurité sur le tapis.");
+    expect(limit?.textContent).toBe("");
+    expect(view.readSpeedKmh()).toBe(50);
     speed.dispatchEvent(new DomEvent("change") as unknown as Event);
-    expect(speed.value).toBe("8.0");
+    expect(speed.value).toBe("50.0");
     speed.value = "6";
     speed.dispatchEvent(new DomEvent("input") as unknown as Event);
     expect(limit?.textContent).toBe("");

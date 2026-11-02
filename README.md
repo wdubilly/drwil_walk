@@ -9,11 +9,11 @@ sur son environnement réel.
 - Une version PC (bouton « Version PC » de l'accueil) : la même marche dans un canvas de la page, sans casque ni WebXR, au clavier et à la souris (Espace, flèches, R, H, Échap).
 - 4 itinéraires proposés : Pune Vieille ville, Pune FC Road, Doha Corniche (du Musée d'art islamique vers West Bay)
   et Doha Souq Waqif. Le souk de Doha (par défaut), la Vieille ville de Pune, la Corniche de Doha et Pune FC Road se parcourent.
-- Un itinéraire libre (départ et arrivée sur une carte ou par une adresse, chemin à pied calculé par Valhalla et adresses de Photon, 5 km au plus,
+- Un itinéraire libre (départ et arrivée sur une carte ou par une adresse, chemin à pied calculé par Valhalla et adresses de Photon, sans limite de longueur,
   arrêt à l'arrivée), sans clé (instances publiques d'OpenStreetMap, `INSTALL.md`) ; si un service refuse, la raison est dite et les quatre itinéraires restent.
 - Deux rendus de la ville, au choix à l'accueil : bâtiments OpenStreetMap (par défaut, sans réseau) ou, avec une clé
   Google (`INSTALL.md`), les tuiles photoréalistes Google 3D, avec repli sur OpenStreetMap et raison dite à l'écran.
-- La vitesse se règle à la manette pour correspondre à celle du tapis (pas de Bluetooth dans la v0.1), de 1 à 8 km/h : une saisie hors plage est ramenée à la borne et l'écran le dit.
+- La vitesse se règle à la manette pour correspondre à celle du tapis (pas de Bluetooth dans la v0.1), à partir de 1 km/h, sans maximum : une saisie sous 1 km/h est ramenée à 1 km/h et l'écran le dit.
 - Sécurité : la ville s'efface quand on baisse la tête, la zone du tapis (boîte réglée à la manette gauche) reste toujours transparente, la périphérie du champ de vision reste
   en passthrough (vignette réelle) et l'opacité de la ville est réglable.
 

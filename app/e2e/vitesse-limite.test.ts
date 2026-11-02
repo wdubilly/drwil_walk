@@ -1,5 +1,5 @@
-// e2e de la limite de vitesse (QUA-002, QUA-020), dans Chromium avec un Meta Quest 3 émulé (IWER) :
-// 50 km/h saisi à l'accueil, 8 km/h retenu, la limite et sa raison sont dites à l'accueil puis dans le panneau.
+// e2e de la vitesse sans plafond (APP-002, QUA-002, QUA-020), dans Chromium avec un Meta Quest 3 émulé (IWER) :
+// 50 km/h saisi à l'accueil est retenu tel quel, sans aucun message de limite, et la ville avance à cette vitesse.
 import { createRequire } from "node:module";
 import { expect, test } from "@playwright/test";
 
@@ -15,14 +15,22 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
-test("chemin 11 : 50 km/h saisi, 8 km/h retenu, la limite est annoncée à l'accueil et dans le panneau", async ({ page }) => {
+test("chemin 11 : 50 km/h saisi, 50 km/h retenu, aucun maximum annoncé, la ville avance à cette vitesse", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByText("De 1 à 8 km/h, par sécurité sur le tapis.")).toBeVisible();
+  await expect(page.getByText("À partir de 1 km/h.")).toBeVisible();
   await page.getByLabel("Vitesse de départ (km/h)").fill("50");
-  await expect(page.getByText("50 km/h dépasse la limite : 8,0 km/h retenus, par sécurité sur le tapis.")).toBeVisible();
+  await expect(page.locator(".speed-limit")).toHaveText("");
   await page.getByRole("button", { name: "Entrer en réalité mixte" }).click();
   await expect(page.getByRole("status")).toHaveText("Réalité mixte active (immersive-ar)");
   const panel = page.getByRole("region", { name: "Marche" });
-  await expect(panel.locator("[data-field='speed']")).toHaveText("8,0 km/h");
-  await expect(panel.getByText("Vitesse au maximum : 8 km/h, limite de sécurité sur le tapis.")).toBeVisible();
+  await expect(panel.locator("[data-field='speed']")).toHaveText("50,0 km/h");
+  await expect(panel).not.toContainText("Vitesse au maximum");
+  await expect(panel).not.toContainText("limite de sécurité");
+  await expect.poll(async () => Number(await panel.getAttribute("data-distance-m")), { timeout: 20_000 }).toBeGreaterThan(14);
+});
+
+test("chemin 11 : une saisie sous 1 km/h est ramenée à 1 km/h en le disant à l'accueil", async ({ page }) => {
+  await page.goto("/");
+  await page.getByLabel("Vitesse de départ (km/h)").fill("0.5");
+  await expect(page.getByText("0,5 km/h est sous la limite : 1,0 km/h retenus, minimum de 1 km/h.")).toBeVisible();
 });

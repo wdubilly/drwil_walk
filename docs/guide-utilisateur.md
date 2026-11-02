@@ -89,17 +89,17 @@ L'opacité de la ville se règle à l'accueil (30 à 100 %) : baissez-la si vous
    ou tapez un lieu ou une adresse dans les champs « Départ » et « Arrivée » puis « Chercher » : les deux modes se
    remplissent mutuellement (l'adresse trouvée s'inscrit dans le champ, et le point se place sur la carte ; si plusieurs
    lieux correspondent, le premier est retenu et affiché). Un troisième toucher recommence ; « Effacer » vide tout. Appuyez sur
-   « Calculer le trajet » : le chemin à pied et la ville autour sont chargés, et la longueur s'affiche (5 km au plus, sinon
-   un message le dit). Si un service public refuse ou limite les demandes, la raison s'affiche et les quatre autres itinéraires restent utilisables.
+   « Calculer le trajet » : le chemin à pied et la ville autour sont chargés, et la longueur s'affiche (sans limite de longueur ; si la ville ne
+   se charge pas, la marche se fait sur le sol seul et l'écran le dit). Si un service public refuse ou limite les demandes, la raison s'affiche et les quatre autres itinéraires restent utilisables.
    Aucun lieu ni adresse n'est enregistré : ils ne partent qu'aux services d'adresses (Photon) et de routage (Valhalla) d'OpenStreetMap.
-2. Réglez la **vitesse de départ** (1 à 8 km/h, par pas de 0,1) et l'**opacité de la ville**. La plage est écrite sous le champ ;
-   une valeur hors plage (50 par exemple) est ramenée à la borne et l'écran le dit, avec la raison (sécurité sur le tapis).
+2. Réglez la **vitesse de départ** (à partir de 1 km/h, sans maximum, par pas de 0,1) et l'**opacité de la ville**. Le minimum est écrit sous le champ ;
+   une valeur sous 1 km/h est ramenée à 1 km/h et l'écran le dit. Réglez une vitesse que vous maîtrisez, clé de sécurité du tapis attachée.
    Facultatif : saisissez votre **poids** (en kg) pour que l'estimation de calories soit plus juste ; sans poids, 70 kg sont utilisés. Il est gardé dans le navigateur du casque seulement (rien n'est envoyé) et repris à la prochaine visite ; « Effacer mon poids » le supprime.
 3. Appuyez sur « Entrer en réalité mixte » et acceptez la demande d'autorisation du navigateur. Si le bouton est
    grisé ou affiche un message, voir la section 6.
 4. La ville défile le long de l'itinéraire à la vitesse réglée. Lancez ou ajustez le tapis à la même vitesse.
 5. Pendant la marche, **joystick droit haut / bas** : +0,1 / −0,1 km/h. Un panneau (vitesse, distance, temps)
-   s'affiche sur la page et dans la scène ; à 8 km/h (ou 1 km/h), il le dit : le joystick ne va pas plus loin. À la fin d'une boucle, la marche reprend au départ ; sur un itinéraire libre,
+   s'affiche sur la page et dans la scène ; à 1 km/h, il le dit : le joystick ne descend pas plus bas. À la fin d'une boucle, la marche reprend au départ ; sur un itinéraire libre,
    elle s'arrête à l'arrivée et le dit (page et casque) : arrêtez alors le tapis.
 
 **Carrefours** (dans le casque) : à l'approche d'un carrefour, des flèches au sol montrent les rues possibles (jaune), le panneau dit « Carrefour dans N m ». Visez une rue avec la **manette droite** (la flèche devient blanche) puis appuyez sur la **prise** : la flèche devient verte et vous prenez cette rue. Si vous ne choisissez rien, vous suivez le tracé de l'itinéraire. Choisir une autre rue ne change ni la vitesse ni la distance parcourue ; une fois sorti du tracé, il n'y a pas de retour guidé vers lui. La version PC ne propose pas de carrefours.
@@ -123,7 +123,7 @@ tapis en regardant un écran sans la même vigilance (clé de sécurité, main p
 | Touche | Action |
 |---|---|
 | Espace (ou P) | pause et reprise |
-| ↑ ou +, ↓ ou − | vitesse +0,1 / −0,1 km/h (PageHaut, PageBas : ±1 km/h), de 1 à 8 km/h |
+| ↑ ou +, ↓ ou − | vitesse +0,1 / −0,1 km/h (PageHaut, PageBas : ±1 km/h), à partir de 1 km/h, sans maximum |
 | R | recaler le parcours sur le regard |
 | H | masquer ou réafficher le tableau |
 | glisser la souris | regarder autour |

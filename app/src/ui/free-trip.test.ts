@@ -117,8 +117,8 @@ describe("itinéraire libre à l'accueil (QUA-020, services factices)", () => {
     expect(trip.readTrip()).toBeNull();
   });
 
-  it("QUA-002: dit l'échec du calcul (trop long, clé refusée) et n'en garde aucun trajet", async () => {
-    const { input, button, message, settle, trip } = setup({ plan: vi.fn(() => Promise.reject(new Error("Trajet trop long : à vol d'oiseau 7,0 km, 5 km au plus."))) });
+  it("QUA-002: dit l'échec du calcul (service injoignable, clé refusée) et n'en garde aucun trajet", async () => {
+    const { input, button, message, settle, trip } = setup({ plan: vi.fn(() => Promise.reject(new Error("Service de routage injoignable (réseau coupé)."))) });
     for (const [i, name] of [[0, "départ"], [1, "arrivée"]] as const) {
       input(i).value = name;
       button(`Chercher ${name}`).click();
@@ -126,7 +126,7 @@ describe("itinéraire libre à l'accueil (QUA-020, services factices)", () => {
     }
     button("Calculer le trajet").click();
     await settle();
-    expect(message()).toContain("Trajet trop long");
+    expect(message()).toContain("Service de routage injoignable");
     expect(trip.readTrip()).toBeNull();
   });
 

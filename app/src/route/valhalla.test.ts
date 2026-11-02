@@ -49,11 +49,10 @@ describe("routage piéton Valhalla (APP-002, service factice)", () => {
     expect(request.locations).toEqual([{ lat: 18.5204, lon: 73.8567 }, { lat: 18.522, lon: 73.86 }]);
   });
 
-  it("refuse avant tout appel un trajet de plus de 5 km à vol d'oiseau, et un chemin de plus de 5 km", async () => {
-    const fetchFn = answer(good);
-    await expect(walk(fetchFn, [73.92, 18.5204])).rejects.toThrow("Trajet trop long : à vol d'oiseau");
-    expect(fetchFn).not.toHaveBeenCalled();
-    await expect(walk(answer({ trip: { summary: { length: 6.2 }, legs: [{ shape: SHAPE }] } }))).rejects.toThrow("le chemin à pied fait 6,2 km");
+  it("APP-002: accepte un trajet de n'importe quelle longueur, à vol d'oiseau comme par le chemin", async () => {
+    const fetchFn = answer({ trip: { summary: { length: 62 }, legs: [{ shape: SHAPE }] } });
+    await expect(walk(fetchFn, [74.9, 18.5204])).resolves.toHaveLength(3);
+    expect(fetchFn).toHaveBeenCalledOnce();
   });
 
   it("QUA-002: dit la limite du service public, son refus avec sa raison, et la panne", async () => {

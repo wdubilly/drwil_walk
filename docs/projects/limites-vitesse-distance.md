@@ -51,7 +51,7 @@ plus refusé pour sa longueur (aujourd'hui 5 km au plus, `MAX_ROUTE_M` dans `app
   sol seul et la raison est dite à l'écran, sans bloquer le trajet — `QUA-002`
 - La marche à plus de 8 km/h et un trajet libre de plus de 5 km sont rejoués de bout en bout dans le Quest 3 émulé, sans
   requête hors de la page servie et avec des services factices — `QUA-020`
-- La ville s'efface toujours tête baissée, quelle que soit la vitesse — `APP-001`
+- La ville s'efface toujours tête baissée, quelle que soit la vitesse [human] — `APP-001`
 
 ## Contrats modifiés
 
@@ -99,8 +99,8 @@ plus refusé pour sa longueur (aujourd'hui 5 km au plus, `MAX_ROUTE_M` dans `app
 
 ## 7. Reprise
 
-- **Dernier état** (2026-11-02) : cadrage seul, aucun code.
-- **Travail non commité** : la fiche et sa ligne de l'index, sur la branche `cadrage/limites-vitesse-distance`.
-- **Prochaine étape** : [AI] lot 1. Chevauchement à régler au lancement : `docs/projects/course-reelle-gpx.md` lève aussi la
-  limite de 5 km (lot 2, avec un plafond technique) ; une fois ce chantier clos, retirer ce point de cette fiche
-  (commit séparé).
+- **Dernier état** (2026-11-02) : lots 1 à 3 réalisés sur la branche `workstream/limites-vitesse-distance` ; lot 4 [human] reporté
+  dans `docs/intentions/essai-casque-vitesse-haute.md`. Critère `APP-001` marqué [human] (contrat attesté par un humain, comme aux chantiers précédents).
+- **Travail non commité** : aucun une fois commité.
+- **Prochaine étape** : clôture, puis retirer de `docs/projects/course-reelle-gpx.md` le point sur la limite de 5 km, qui chevauche
+  ce chantier (commit séparé).
