@@ -5,6 +5,7 @@ import { GOOGLE_ATTRIBUTION, OSM_ATTRIBUTION } from "../city/licence.ts";
 import type { TripPlanner, PlannedTrip } from "../city/free-route.ts";
 import { clearWeightKg, loadWeightKg, parseWeightKg, saveWeightKg, MAX_WEIGHT_KG, MIN_WEIGHT_KG, DEFAULT_WEIGHT_KG, type WeightStorage } from "../route/stats.ts";
 import { FREE_ITINERARY_ID } from "../route/itineraries.ts";
+import { renderPcButton } from "../pc/pc-button.ts";
 import { renderFreeTrip } from "./free-trip.ts";
 import { renderPanelSide, type PanelSide } from "./panel-side.ts";
 import { renderRenderChoice, type Rendering } from "./render-choice.ts";
@@ -46,6 +47,8 @@ export interface HomeView {
   /** Une raison qui reste lisible pendant la marche (ex. repli sur OpenStreetMap) ; vide l'efface. */
   showNotice: (text: string) => void;
   onEnter(handler: () => void): void;
+  /** Le bouton « Version PC » : la marche dans la page, sans session WebXR. */
+  onEnterPc(handler: () => void): void;
   setEntering(entering: boolean): void;
   showStatus(text: string): void;
   /** Le conteneur où le panneau de marche s'ajoute. */
@@ -101,15 +104,13 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
     10,
     String(DEFAULT_GLOBAL_OPACITY_PCT),
   );
-  const vignette = doc.createElement("input");
-  vignette.type = "checkbox";
-  vignette.checked = true;
-  const outlines = doc.createElement("input");
-  outlines.type = "checkbox";
+  const vignette = Object.assign(doc.createElement("input"), { type: "checkbox", checked: true });
+  const outlines = Object.assign(doc.createElement("input"), { type: "checkbox" });
   const button = doc.createElement("button");
   button.type = "button";
   button.textContent = ENTER_LABEL;
   button.className = "enter";
+  const pcButton = renderPcButton(doc);
   const status = doc.createElement("p");
   status.setAttribute("role", "status");
   const credit = doc.createElement("p");
@@ -161,10 +162,17 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
     field(doc, "Poids (kg, facultatif : pour les calories, gardé sur ce casque seulement)", weight),
     erase,
     button,
+    pcButton,
     status,
     notice,
     credit,
   );
+  // L'itinéraire qui démarre est lisible sur la page, comme le panneau de marche.
+  const start = (handler: () => void) => (): void => {
+    root.dataset["route"] = routes.readId();
+    root.dataset["panelSide"] = panelSide.readSide();
+    handler();
+  };
   return {
     root,
     readSpeedKmh: announce,
@@ -179,16 +187,11 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
     showNotice: (text) => {
       notice.textContent = text;
     },
-    onEnter: (handler) => {
-      button.addEventListener("click", () => {
-        // L'itinéraire qui démarre est lisible sur la page, comme le panneau de marche.
-        root.dataset["route"] = routes.readId();
-        root.dataset["panelSide"] = panelSide.readSide();
-        handler();
-      });
-    },
+    onEnter: (handler) => { button.addEventListener("click", start(handler)); },
+    onEnterPc: (handler) => { pcButton.addEventListener("click", start(handler)); },
     setEntering: (entering) => {
       button.disabled = entering;
+      pcButton.disabled = entering;
     },
     showStatus: (text) => {
       status.textContent = text;

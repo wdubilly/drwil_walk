@@ -160,6 +160,25 @@ describe("écran d'accueil", () => {
     expect(view.root).toBe(root);
   });
 
+  it("APP-002: le bouton « Version PC » est distinct de celui du casque, prévient au clic et se désactive avec lui", () => {
+    const { root, view, button } = setup();
+    const pcButton = root.querySelector<HTMLButtonElement>("button.enter-pc");
+    const headset = vi.fn();
+    const pc = vi.fn();
+    view.onEnter(headset);
+    view.onEnterPc(pc);
+    expect(pcButton?.textContent).toBe("Version PC");
+    expect(pcButton).not.toBe(button);
+    pcButton?.click();
+    expect(pc).toHaveBeenCalledOnce();
+    expect(headset).not.toHaveBeenCalled();
+    expect(root.dataset["route"]).toBeTruthy();
+    view.setEntering(true);
+    expect([button.disabled, pcButton?.disabled]).toEqual([true, true]);
+    view.setEntering(false);
+    expect([button.disabled, pcButton?.disabled]).toEqual([false, false]);
+  });
+
   it("SEC-007: le poids est facultatif, se garde dans le navigateur à la saisie et se relit à l'accueil suivant", () => {
     const storage = memory();
     const { view, input } = setup(storage);

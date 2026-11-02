@@ -67,4 +67,23 @@ describe("panneau de marche", () => {
     panel.update({ ...info, speedKmh: 1 });
     expect(limit()?.textContent).toBe("Vitesse au minimum : 1 km/h.");
   });
+
+  it("APP-002: le panneau de la version PC dit ses commandes, masque seulement le tableau et n'a pas de zone tapis", () => {
+    const doc = new Window().document as unknown as Document;
+    const root = doc.createElement("main");
+    const panel = renderWalkPanel(doc, root, true);
+    const info = { speedKmh: 4, distanceM: 0, timeS: 0, cityOpacity: 1, kcal: 0, pace: "—", remainingM: 0, progressPct: 0, weightKg: 70, compass: "N 0°", clock: "00:00", place: "Doha", position: { x: 0, z: 0 }, buildingCount: 1,
+      rendering: "osm" as const, tileCount: 0, attribution: "© OpenStreetMap", arrived: false,
+      paused: true, showPanel: false, calibration: { x: 0, z: 0, yawRad: 0 }, zone: null, vignette: false };
+    panel.update(info);
+    const section = root.querySelector<HTMLElement>("[aria-label='Marche']");
+    expect(section?.dataset.mode).toBe("pc");
+    expect(section?.querySelector(".pc-help")?.textContent).toContain("Espace");
+    expect(section?.querySelector(".paused")?.textContent).toContain("Espace");
+    expect(section?.querySelector<HTMLElement>("dl")?.hidden).toBe(true);
+    expect(section?.querySelector(".attribution")?.textContent).toBe("© OpenStreetMap");
+    expect(section?.getAttribute("data-zone")).toBe("aucune");
+    panel.update({ ...info, showPanel: true });
+    expect(section?.querySelector<HTMLElement>("dl")?.hidden).toBe(false);
+  });
 });

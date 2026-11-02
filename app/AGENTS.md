@@ -13,7 +13,7 @@ session `immersive-ar`, rue simple, marche en ligne droite, joystick, fondu têt
 
 - Code dans src/, un dossier par module : xr/ (session `immersive-ar`, manettes), city/ (3d-tiles-renderer,
   repli OSM), route/ (itinéraires, déplacement à vitesse réglée), safety/ (fondu tête baissée, zone tapis,
-  opacité, vignette), ui/ (accueil, panneau d'infos).
+  opacité, vignette), ui/ (accueil, panneau d'infos), pc/ (version PC sans casque : clavier, souris, canvas de la page ; réutilise la marche de xr/, n'applique jamais le fondu, la zone ni la vignette).
 - La logique (calculs de vitesse, d'opacité, de zone, de trajectoire) est en **fonctions pures**, séparée du rendu
   three.js : c'est elle que les tests unitaires couvrent à 100 %.
 - Les itinéraires sont des données (liste de points GPS par itinéraire), pas du code.
@@ -47,6 +47,7 @@ session `immersive-ar`, rue simple, marche en ligne droite, joystick, fondu têt
   écrite) : garder `pool: "threads"` dans `vite.config.ts`.
 - 2026-10-30 : c8 compte des branches sur des commentaires si le code passe par le module runner de Vite (positions
   décalées) : garder `experimental.viteModuleRunner: false`.
+- 2026-11-02 : l'e2e de la version PC (`e2e/version-pc.test.ts`) tourne SANS IWER : `navigator.xr` n'y est pas émulé, et le test compte les appels à `requestSession` (zéro attendu). Les touches se lisent sur `document` : tester avec `page.keyboard`, la souris par glisser sur le canvas `.pc-canvas`.
 - Le point d'entrée s'exécute à l'import : son test fournit un `document` (happy-dom) et un `navigator` de
   substitution (`vi.stubGlobal`) puis l'importe dynamiquement.
 - 2026-10-30 : les e2e sont nommés `*.test.ts` dans e2e/ : c8 exclut les fichiers de test par défaut (pas les

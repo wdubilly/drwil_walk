@@ -14,7 +14,7 @@ Codé : accueil sombre à grandes cibles (48 px au moins, contraste prouvé par 
 fond) ; quatre cartes d'itinéraire avec une illustration, Doha Souq Waqif choisi par défaut, choix d'un clic ou à la
 manette ; un itinéraire sans ville dans le dépôt serait marqué « Bientôt » et ne se choisirait pas (plus aucun aujourd'hui) ;
 vitesse de départ (1 à 8 km/h, défaut 4,0 ; la plage est écrite sous le champ et une saisie hors plage est ramenée à la borne en le disant, avec la raison), opacité de la ville (30 à 100 %), rappel de sécurité, mention « © contributeurs OpenStreetMap » (suivie de « Google » quand ce rendu est choisi), bouton d'entrée ; rendu OpenStreetMap par défaut, Google 3D en option : sans clé, ou si les tuiles ne se chargent pas, la marche se fait en OpenStreetMap et la raison s'affiche sur l'accueil ; un
-échec (navigateur sans WebXR, réalité mixte non prise en charge) s'affiche sur la page. Les itinéraires qui démarrent sont le souk
+échec (navigateur sans WebXR, réalité mixte non prise en charge) s'affiche sur la page, pour le bouton du casque seulement : le bouton « Version PC » reste utilisable. Les itinéraires qui démarrent sont le souk
 de Doha, la Vieille ville de Pune, la Corniche de Doha et FC Road à Pune ; le choisi est inscrit sur la page (`data-route`) .
 
 ## Itinéraire libre
@@ -79,6 +79,20 @@ parcours ; les arbres sont ceux du pack Quaternius, voir l'ambiance cartoon ci-d
 bancs 19 (souk) et 8 (Corniche) ; aucun lampadaire ; très peu de bâtiments portent une couleur ou un matériau (7 matériaux
 au total, un seul toit coloré hors bâtiment), donc la plupart gardent le ton de la palette. À juger au casque, cadence
 comprise (lot 5 du chantier, humain) ; le relief du sol n'est pas fait (`docs/intentions/osm-enrichi.md`).
+
+## Version PC (sans casque)
+
+Le bouton « Version PC » de l'accueil lance la même marche (même ville, même parcours, même vitesse) dans un canvas qui couvre la
+page, sans aucune session WebXR : un navigateur sans WebXR peut donc l'utiliser. Le bouton « Entrer en réalité mixte » reste
+distinct et ouvre toujours une session `immersive-ar`, avec le fondu tête baissée, la zone tapis et la vignette ; la version PC ne les
+applique pas, faute de passthrough ni de tapis (rien n'y remplace APP-001, voir `docs/contracts.md`).
+
+Commandes : Espace (ou P) pause et reprise ; ↑ ou + et ↓ ou − règlent la vitesse de 0,1 km/h par pression (PageHaut et PageBas : 1 km/h), de 1 à 8 km/h ;
+R recale le parcours sur le regard sans toucher à la distance ; H masque le tableau (les mentions de données restent) ; glisser la souris tourne le regard ;
+Échap quitte. Une pression ne déclenche qu'une action : une touche tenue ne répète pas. Les itinéraires figés bouclent ; le trajet libre s'arrête à l'arrivée et le dit.
+
+Limites : OpenStreetMap seulement (le rendu Google 3D choisi est dit indisponible), ni minicarte, ni manette de jeu, ni tactile ;
+le tableau de bord est celui de la page ; jamais essayé sur un autre navigateur que Chromium (e2e). Voir `docs/intentions/version-pc-suites.md`.
 
 ## Sécurité : le réel reste visible
 

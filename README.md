@@ -6,6 +6,7 @@ sur son environnement réel.
 ## Ce que ça fait
 
 - Une page WebXR en réalité mixte, ouverte dans le navigateur du Quest 3, sans rien installer.
+- Une version PC (bouton « Version PC » de l'accueil) : la même marche dans un canvas de la page, sans casque ni WebXR, au clavier et à la souris (Espace, flèches, R, H, Échap).
 - 4 itinéraires proposés : Pune Vieille ville, Pune FC Road, Doha Corniche (du Musée d'art islamique vers West Bay)
   et Doha Souq Waqif. Le souk de Doha (par défaut), la Vieille ville de Pune, la Corniche de Doha et Pune FC Road se parcourent.
 - Un itinéraire libre (départ et arrivée sur une carte ou par une adresse, chemin à pied calculé par Valhalla et adresses de Photon, 5 km au plus,

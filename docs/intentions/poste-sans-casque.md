@@ -1,6 +1,8 @@
 # Intention : une interface pour PC, sans le casque
 
-**Statut** : proposée le 2026-11-01, à partir d'un retour du demandeur ; cadrée le 2026-11-01 par `docs/projects/version-pc.md` (une version PC de l'appli, clavier et souris).
+**Statut** : proposée le 2026-11-01, à partir d'un retour du demandeur ; cadrée le 2026-11-01 par `docs/projects/journal.md` (une version PC de l'appli, clavier et souris).
+
+**Reviewed on 2026-11-02** : le chantier version-pc a codé la marche dans un canvas de la page, clavier et souris (décisions du demandeur du 2026-11-01) ; ce qui reste ouvert (Google 3D, manette de jeu, tactile, minicarte, essai sur d'autres navigateurs) est dans `docs/intentions/version-pc-suites.md`.
 
 ## Besoin
 

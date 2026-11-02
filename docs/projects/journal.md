@@ -253,3 +253,10 @@ One entry per closed project, most recent last.
 - Limites : lisibilité du tableau de bord plus chargé et tapis visible jamais jugés sur un vrai Quest 3 (lot 4 humain, critère `APP-001` [human]) ; le texte du casque est dessiné sur un canevas, l'e2e lit donc les mêmes valeurs sur la page ; pas de dénivelé.
 - Branche workstream/tableau-allure-progression. Preuve de clôture : docs/preuves/tableau-allure-progression.md (écrite par la clôture).
 
+## 2026-11-02 — version-pc (lots 1 à 3)
+
+- Livré : bouton « Version PC » à l'accueil, marche dans un canvas de la page sans session WebXR (`app/src/pc/` : touches, regard à la souris, assemblage), réutilisant la marche, la ville et le tableau de bord du casque (`app/src/xr/dashboard.ts`, `app/src/xr/city-choice.ts`) ; panneau de page avec aide des touches ; e2e `app/e2e/version-pc.test.ts` (itinéraire figé, navigateur sans WebXR, trajet libre jusqu'à l'arrivée).
+- Contrats : `APP-001` (règle : la version PC n'est pas concernée, le casque est inchangé) et `APP-002` (marche au clavier et à la souris) mis à jour : **à approuver par le demandeur à la validation de la fiche** ; `QUA-020` (chemin 19) ; architecture, features, guide, README et `app/AGENTS.md` à jour.
+- Choix techniques de l'agent (pas des décisions de produit) : Espace ou P pour la pause, flèches haut/bas ou + / - de 0,1 km/h, Page haut/bas de 1 km/h, R recalage, H masque, Échap quitte ; regard en glissant la souris bouton enfoncé (pas de verrouillage du pointeur) ; OpenStreetMap seulement.
+- Limites : touches et sensibilité jamais essayées par une personne ; Chromium seulement ; ni Google 3D, ni minicarte, ni manette de jeu, ni tactile en version PC (`docs/intentions/version-pc-suites.md`).
+- Branche workstream/version-pc. Preuve de clôture : docs/preuves/version-pc.md (écrite par la clôture).

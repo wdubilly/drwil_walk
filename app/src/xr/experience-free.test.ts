@@ -95,4 +95,20 @@ describe("itinéraire libre en marche (QUA-020, services factices)", () => {
     expect(t.panel()?.getAttribute("data-building-count")).toBe("1");
     expect(t.panel()?.getAttribute("data-rendering")).toBe("osm");
   });
+
+  it("APP-002: en version PC, le trajet libre s'arrête à l'arrivée et le dit sur la page", async () => {
+    const t = await prepared();
+    await t.enterPc();
+    t.frame(0);
+    t.frame(10_000);
+    expect(t.panel()?.getAttribute("data-arrived")).toBe("false");
+    t.frame(900_000);
+    const length = Number(t.panel()?.getAttribute("data-distance-m"));
+    expect(length).toBeGreaterThan(100);
+    expect(t.panel()?.getAttribute("data-arrived")).toBe("true");
+    expect(t.panel()?.querySelector<HTMLElement>(".arrival")?.hidden).toBe(false);
+    t.frame(1_800_000);
+    expect(Number(t.panel()?.getAttribute("data-distance-m"))).toBe(length);
+    expect(t.panel()?.getAttribute("data-building-count")).toBe("1");
+  });
 });

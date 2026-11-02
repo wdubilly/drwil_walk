@@ -1,6 +1,7 @@
 // Panneau de marche, sur la page : vitesse, distance, temps, allure, distance restante, progression, calories et opacité de la ville.
 // Les valeurs exactes sont aussi en attributs data-*, lues par l'e2e (texte arrondi à l'affichage).
 import type { Vec2 } from "../route/geo.ts";
+import { PC_HELP } from "../pc/keys.ts";
 import { OSM_ATTRIBUTION } from "../city/licence.ts";
 import { formatSpeedKmh, speedBoundMessage } from "../route/speed.ts";
 import { formatKcal, formatPercent } from "../route/stats.ts";
@@ -34,8 +35,8 @@ export interface WalkInfo {
   attribution: string;
   /** Trajet libre arrivé : le panneau le dit. */
   arrived: boolean;
-  /** La zone tapis réglée et la vignette réelle (APP-001). */
-  zone: Zone;
+  /** La zone tapis réglée et la vignette réelle (APP-001) ; sans zone (null) dans la version PC, qui n'a pas de tapis à protéger. */
+  zone: Zone | null;
   vignette: boolean;
   /** Marche en pause (gâchette droite) et panneau du casque affiché (bouton B). */
   paused: boolean;
@@ -54,9 +55,14 @@ function show(el: HTMLElement, text: string): void {
   if (el.textContent !== text) el.textContent = text;
 }
 
-export function renderWalkPanel(doc: Document, root: HTMLElement): WalkPanel {
+/** `pc` : le panneau de la version PC, posé sur le canvas, avec ses commandes et son tableau qui se masque (touche H). */
+export function renderWalkPanel(doc: Document, root: HTMLElement, pc = false): WalkPanel {
   const panel = doc.createElement("section");
   panel.setAttribute("aria-label", "Marche");
+  if (pc) {
+    panel.className = "pc-panel";
+    panel.dataset.mode = "pc";
+  }
   const list = doc.createElement("dl");
   const row = (field: string, label: string): HTMLElement => {
     const term = doc.createElement("dt");
@@ -87,9 +93,10 @@ export function renderWalkPanel(doc: Document, root: HTMLElement): WalkPanel {
   limit.hidden = true;
   const pause = doc.createElement("p");
   pause.className = "paused";
-  pause.textContent = "Marche en pause : la gâchette droite la reprend.";
+  pause.textContent = pc ? "Marche en pause : la touche Espace la reprend." : "Marche en pause : la gâchette droite la reprend.";
   pause.hidden = true;
   panel.append(list, limit, pause, arrival, credit);
+  if (pc) panel.append(Object.assign(doc.createElement("p"), { className: "pc-help", textContent: PC_HELP }));
   root.append(panel);
   return {
     remove: () => {
@@ -110,13 +117,15 @@ export function renderWalkPanel(doc: Document, root: HTMLElement): WalkPanel {
       limit.hidden = bound === "";
       arrival.hidden = !info.arrived;
       pause.hidden = !info.paused;
+      // Les mentions de données restent lisibles : seul le tableau se masque (APP-003).
+      list.hidden = pc && !info.showPanel;
       panel.dataset.paused = String(info.paused);
       panel.dataset.hudVisible = String(info.showPanel);
       panel.dataset.calibrationX = String(info.calibration.x);
       panel.dataset.calibrationZ = String(info.calibration.z);
       panel.dataset.calibrationYaw = String(info.calibration.yawRad);
       const z = info.zone;
-      panel.dataset.zone = [z.x, z.z, z.yawRad, z.width, z.depth, z.height].map((v) => v.toFixed(3)).join(" ");
+      panel.dataset.zone = z ? [z.x, z.z, z.yawRad, z.width, z.depth, z.height].map((v) => v.toFixed(3)).join(" ") : "aucune";
       panel.dataset.vignette = String(info.vignette);
       panel.dataset.arrived = String(info.arrived);
       panel.dataset.speedKmh = String(info.speedKmh);
