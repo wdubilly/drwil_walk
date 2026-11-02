@@ -245,3 +245,11 @@ One entry per closed project, most recent last.
 - Limites : lisibilité, place dans le champ de vision et tapis visible jamais jugés sur un vrai Quest 3 (lot 4 humain) ; pas de test de champ de vision (`APP-004`) propre à la minicarte ; 72 images par seconde non mesurées ; nord en haut et non tête en haut, à rouvrir à l'essai.
 - Branche workstream/carte-position-casque. Preuve de clôture : docs/preuves/carte-position-casque.md (écrite par la clôture).
 
+## 2026-11-02 — tableau-allure-progression (lots 1, 2 et 3 ; lot 4 à faire par l'humain)
+
+- Livré : allure en minutes par kilomètre (« — » à l'arrêt, en pause ou à l'arrivée), distance restante et progression en pourcentage (`app/src/route/stats.ts`), affichées dans le tableau de bord du casque (`app/src/xr/hud-panel.ts`) et sur la page (`app/src/ui/panel.ts`) à partir des mêmes valeurs calculées par `app/src/xr/experience.ts` ; e2e `app/e2e/tableau-de-bord.test.ts` (allure, reste, progression sur la page) et `app/e2e/commandes-panneau.test.ts` (« — » en pause).
+- Contrats : `APP-002` (tableau de bord complété) et `QUA-020` (chemin 13) mis à jour : **à approuver par le demandeur à la validation de la fiche** ; architecture, features, guide, README, intention `hud-casque` et `app/AGENTS.md` à jour.
+- Choix techniques de l'agent (pas des décisions de produit) : format « 7:30 min/km », pour une boucle le reste et le pourcentage du tour en cours (pourcentage arrondi vers le bas), ligne « 3,5 km restants · 12 % » en bas du panneau, police réduite à 30 px sur cette ligne pour garder la taille du panneau (`app/src/xr/pose.ts`, hors périmètre, inchangé).
+- Limites : lisibilité du tableau de bord plus chargé et tapis visible jamais jugés sur un vrai Quest 3 (lot 4 humain, critère `APP-001` [human]) ; le texte du casque est dessiné sur un canevas, l'e2e lit donc les mêmes valeurs sur la page ; pas de dénivelé.
+- Branche workstream/tableau-allure-progression. Preuve de clôture : docs/preuves/tableau-allure-progression.md (écrite par la clôture).
+

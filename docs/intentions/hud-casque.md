@@ -20,7 +20,7 @@ aucune source d'élévation, aucune notion d'étape, de défi ni de progression 
 ## Décisions déjà prises (2026-10-31)
 
 - Calories : une estimation affichée « environ », avec le poids saisi une fois à l'accueil et gardé en local (valeur moyenne sans poids).
-- Allure (min/km), distance restante et progression : posées le 2026-11-02 par `docs/projects/tableau-allure-progression.md` (pour une boucle, ceux du tour en cours ; « — » à l'arrêt) ; restent le dénivelé et les défis.
+- Allure (min/km), distance restante et progression : posées le 2026-11-02 par `docs/projects/journal.md` (pour une boucle, ceux du tour en cours ; « — » à l'arrêt) ; restent le dénivelé et les défis.
 - Tableau de bord affiché par défaut, masqué par le bouton B.
 - « Voyage guidé » : enchaîne des étapes, lieux nommés tirés d'OpenStreetMap.
 - Défis et objectif annuel : une distance cumulée, progression locale, sans tracé ni mini-globe.
