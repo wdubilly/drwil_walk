@@ -9,6 +9,8 @@ export interface PcFrameInput {
   steps: number;
   /** Les boutons « appuyés à cette image », au même format que la manette du casque. */
   buttons: ButtonsReading;
+  /** Touche du diagnostic de rendu : afficher ou masquer. */
+  diagnostics: boolean;
   quit: boolean;
 }
 
@@ -52,7 +54,7 @@ export function createPcInput(doc: Document, canvas: HTMLElement): PcInput {
       const count = (action: PcAction): number => taken.filter((a) => a === action).length;
       const steps = count("faster") - count("slower") + 10 * (count("muchFaster") - count("muchSlower"));
       const buttons = { ...BUTTONS_RELEASED, trigger: taken.includes("pause"), a: taken.includes("recalibrate"), b: taken.includes("panel") };
-      return { steps, buttons, quit: taken.includes("quit") };
+      return { steps, buttons, diagnostics: taken.includes("diagnostics"), quit: taken.includes("quit") };
     },
     dispose() {
       doc.removeEventListener("keydown", onKey);

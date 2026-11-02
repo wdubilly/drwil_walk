@@ -34,6 +34,8 @@ export interface HudInfo {
   /** Le lieu : le nom de l'itinéraire choisi. */
   place: string;
   paused: boolean;
+  /** Ligne du diagnostic de rendu, absente tant qu'il est masqué : elle prend la place de la ligne des calories. */
+  diagnostics?: string | undefined;
 }
 
 /** Un texte du tableau de bord : à gauche ou à droite de la même ligne, `y` au milieu de la ligne. */
@@ -90,8 +92,12 @@ export function createHudPanel(doc: Document): HudPanel {
         { text: info.pace, y: 160, sizePx: 38, align: "right" },
         { text: formatDurationS(info.timeS), y: 230, sizePx: 40, align: "left" },
         { text: formatDistanceM(info.distanceM), y: 230, sizePx: 40, align: "right" },
-        { text: formatKcal(info.kcal), y: 288, sizePx: 30, align: "left" },
-        { text: formatProgress(info.remainingM, info.progressPct), y: 288, sizePx: 30, align: "right" },
+        ...(info.diagnostics === undefined
+          ? [
+              { text: formatKcal(info.kcal), y: 288, sizePx: 30, align: "left" as const },
+              { text: formatProgress(info.remainingM, info.progressPct), y: 288, sizePx: 30, align: "right" as const },
+            ]
+          : [{ text: info.diagnostics, y: 288, sizePx: 30, align: "left" as const }]),
       ];
       const key = cells.map((cell) => cell.text).join("\n");
       if (key !== drawn) {
