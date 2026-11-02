@@ -91,10 +91,10 @@ test("chemin 13 : la version PC marche dans un canvas de la page, sans session W
   // H masque le tableau (les mentions de données restent), Échap quitte la version PC.
   await page.keyboard.press("h");
   await expect(panel(page)).toHaveAttribute("data-hud-visible", "false");
-  await expect(panel(page).locator("dl")).toBeHidden();
+  await expect(panel(page).locator(":scope > dl")).toBeHidden();
   await expect(panel(page).locator(".attribution")).toBeVisible();
   await page.keyboard.press("h");
-  await expect(panel(page).locator("dl")).toBeVisible();
+  await expect(panel(page).locator(":scope > dl")).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(page.getByRole("status")).toHaveText("Version PC arrêtée : vous pouvez y revenir.");
   await expect(canvas).toHaveCount(0);
