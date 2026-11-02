@@ -21,6 +21,7 @@ files:
   - app/src/pc/*
   - app/src/ui/panel.ts
   - app/src/ui/panel.test.ts
+  - app/src/ui/home.css
   - app/src/main.ts
   - app/src/main.test.ts
   - app/e2e/*
@@ -87,6 +88,10 @@ avant et après un changement.
 - 2026-11-02, décision humaine du demandeur : mesures aussi consignées, fichier JSON téléchargeable.
 - Choix techniques de l'agent (pas des décisions de produit), fixés au lot 1 : la touche, la taille de la fenêtre
   glissante, le schéma du JSON, le nom du fichier.
+- Choix de l'agent au lot 2 : sur casque, la page n'est pas visible en session `immersive-ar` (aucun DOM overlay), un bouton
+  de page y est inatteignable ; le diagnostic s'y bascule donc par le clic du joystick droit (seul bouton libre de la
+  manette droite), le bouton de la page restant pour la tablette. L'enregistrement depuis le casque reste à décider :
+  `docs/intentions/diagnostic-casque-enregistrer.md`.
 - Contrats concernés : `APP-001`, `APP-002`, `SEC-007`, `QUA-001`, `QUA-002`, `QUA-004`, `QUA-006`, `QUA-013`, `QUA-020`.
 
 ## 5. Points à trancher

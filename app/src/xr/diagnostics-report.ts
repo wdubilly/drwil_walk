@@ -2,6 +2,7 @@
 // un changement. Rien n'est envoyé : le fichier est écrit par le navigateur (aucun appel réseau, aucune donnée personnelle, SEC-007).
 import type { Object3D } from "three";
 import pkg from "../../package.json" with { type: "json" };
+import { rightStickPressed, type ButtonSourceLike } from "./buttons.ts";
 import { createDiagnostics, diagnosticLine, diagnosticRows, type InfoSource, type Measures } from "./diagnostics.ts";
 
 export type DiagnosticsTarget = "casque" | "pc";
@@ -62,8 +63,8 @@ export interface DiagnosticsUi {
   /** Le bloc à poser dans le panneau d'infos de la page. */
   element: HTMLElement;
   toggle(): void;
-  /** À appeler à chaque image : compte l'image, met à jour le bloc, rend la ligne du casque (rien si masqué). */
-  update(timeMs: number): string | undefined;
+  /** À appeler à chaque image : compte l'image, met à jour le bloc, rend la ligne du casque (rien si masqué). Sur casque, le clic du joystick droit des `sources` affiche ou masque le diagnostic, une fois par appui. */
+  update(timeMs: number, sources?: Iterable<ButtonSourceLike>): string | undefined;
 }
 
 export interface DiagnosticsDeps {
@@ -93,6 +94,7 @@ export function createDiagnosticsUi({ doc, target, city, now, renderer, scene }:
   message.setAttribute("aria-live", "polite");
   body.append(list, save);
   element.append(toggleButton, body, message);
+  let stickWasDown = false;
   const values = new Map<string, HTMLElement>();
   const set = (el: HTMLElement, text: string): void => {
     if (el.textContent !== text) el.textContent = text;
@@ -108,7 +110,10 @@ export function createDiagnosticsUi({ doc, target, city, now, renderer, scene }:
     toggle: () => {
       diagnostics.toggle();
     },
-    update(timeMs) {
+    update(timeMs, sources = []) {
+      const stick = rightStickPressed(sources);
+      if (stick && !stickWasDown) diagnostics.toggle();
+      stickWasDown = stick;
       diagnostics.tick(timeMs);
       const m = diagnostics.measure(renderer, scene);
       toggleButton.setAttribute("aria-pressed", String(m !== undefined));

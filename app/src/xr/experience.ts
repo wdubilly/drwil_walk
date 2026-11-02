@@ -157,7 +157,7 @@ async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession, so
     // L'heure est celle du casque.
     const dashboard = walkDashboard(souq.route, state, { place, weightKg, now, heading: walking.heading });
     const view = { show: state.showPanel, opacity: state.cityOpacity, pose: head, side: panelSide, zone: zone.zone() };
-    hud.update({ ...state, ...dashboard, diagnostics: diagnostics.update(timeMs) }, view);
+    hud.update({ ...state, ...dashboard, diagnostics: diagnostics.update(timeMs, session.inputSources) }, view);
     // La case du point, lue par l'e2e : la minicarte est dans la scène, pas dans la page.
     deps.root.dataset["minimap"] = minimap.update(walking.at, view);
     panel.update({

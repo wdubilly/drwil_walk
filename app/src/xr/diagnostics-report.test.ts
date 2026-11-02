@@ -87,6 +87,16 @@ describe("bloc du diagnostic sur la page", () => {
     expect(u.element.querySelector("div")?.hidden).toBe(true);
   });
 
+  it("APP-002: le clic du joystick droit l'affiche et le masque, une fois par appui", () => {
+    const { u } = ui();
+    const stick = (down: boolean) => [{ handedness: "right", gamepad: { buttons: [0, 0, 0, down ? 1 : 0].map((v) => ({ pressed: v === 1, value: v })) } }];
+    expect(u.update(0, stick(false))).toBeUndefined();
+    expect(u.update(10, stick(true))).toContain("i/s");
+    expect(u.update(20, stick(true))).toContain("i/s");
+    expect(u.update(30, stick(false))).toContain("i/s");
+    expect(u.update(40, stick(true))).toBeUndefined();
+  });
+
   it("APP-002: « Enregistrer les mesures » télécharge le fichier et le dit ; l'échec aussi", async () => {
     const t = ui();
     t.u.update(0);

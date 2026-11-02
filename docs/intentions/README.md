@@ -28,6 +28,8 @@ removes it when fully covered.
 | `docs/intentions/corniche-west-bay.md` | La Corniche de Doha jusqu'à West Bay, départ au musée |
 | `docs/intentions/rendu-jeu-video.md` | Un rendu de jeu vidéo moderne : fiche d'ensemble, ordre et règles des intentions `rendu-*` |
 | `docs/intentions/rendu-mesures-diagnostic.md` | [P0] Mesurer le rendu (images par seconde, appels de rendu, triangles) : à faire en premier |
+| `docs/intentions/essai-casque-diagnostic-rendu.md` | Essayer le diagnostic de rendu sur un vrai Quest 3 (72 images par seconde, lisibilité) |
+| `docs/intentions/diagnostic-casque-enregistrer.md` | Enregistrer les mesures de rendu depuis le casque (le bouton de la page n'y est pas atteignable) |
 | `docs/intentions/rendu-profils-graphiques.md` | [P1] Des profils graphiques (casque, PC, tablette) et la détection des capacités |
 | `docs/intentions/rendu-tablette-tactile.md` | [P1] La tablette et le tactile, dans le périmètre dès les premiers lots |
 | `docs/intentions/rendu-facades-batiments.md` | [P2] Des bâtiments détaillés (façades, fenêtres, vitrines), plus des blocs extrudés |

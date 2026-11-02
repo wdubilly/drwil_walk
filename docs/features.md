@@ -88,7 +88,7 @@ distinct et ouvre toujours une session `immersive-ar`, avec le fondu tête baiss
 applique pas, faute de passthrough ni de tapis (rien n'y remplace APP-001, voir `docs/contracts.md`).
 
 Commandes : Espace (ou P) pause et reprise ; ↑ ou + et ↓ ou − règlent la vitesse de 0,1 km/h par pression (PageHaut et PageBas : 1 km/h), à partir de 1 km/h et sans maximum ;
-R recale le parcours sur le regard sans toucher à la distance ; H masque le tableau (les mentions de données restent) ; glisser la souris tourne le regard ;
+R recale le parcours sur le regard sans toucher à la distance ; H masque le tableau (les mentions de données restent) ; D affiche ou masque le diagnostic de rendu ; glisser la souris tourne le regard ;
 Échap quitte. Une pression ne déclenche qu'une action : une touche tenue ne répète pas. Les itinéraires figés bouclent ; le trajet libre s'arrête à l'arrivée et le dit.
 
 Limites : OpenStreetMap seulement (le rendu Google 3D choisi est dit indisponible), ni minicarte, ni manette de jeu, ni tactile ;
