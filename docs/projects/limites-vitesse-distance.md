@@ -59,6 +59,8 @@ plus refusé pour sa longueur (aujourd'hui 5 km au plus, `MAX_ROUTE_M` dans `app
   pause et reprise, recalage, masquage du tableau, regard, une pression = une action) » ; le chemin e2e de la limite de
   vitesse (`app/e2e/vitesse-limite.test.ts`) rejoue aujourd'hui la borne de 8 km/h — raison : la borne haute disparaît,
   seul le minimum de 1 km/h reste borné (approuvé le 2026-11-02 par le demandeur).
+- `APP-002` — sa règle cite « dans la plage de 1 à 8 km/h » pour les touches de la version PC ; même changement que ci-dessus
+  (la borne haute disparaît), couvert par la décision du demandeur du 2026-11-02 « plus de plafond » ; à confirmer par lui.
 
 ## 2. Hors périmètre
 
