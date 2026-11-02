@@ -26,9 +26,15 @@ removes it when fully covered.
 | `docs/intentions/hud-casque.md` | Le tableau de bord de marche dans le casque (maquette : statistiques, défis, boussole, étapes) |
 | `docs/intentions/commandes-panneau.md` | Pause, recalibrage et panneau d'infos dans le casque |
 | `docs/intentions/corniche-west-bay.md` | La Corniche de Doha jusqu'à West Bay, départ au musée |
-| `docs/intentions/google-3d-tiles.md` | Google Photorealistic 3D Tiles, en option (report levé le 2026-10-31) |
-| `docs/intentions/cle-google-couverture.md` | Créer la clé Google, la restreindre, vérifier la couverture de Pune et de Doha |
-| `docs/intentions/essai-casque-google.md` | Essayer le rendu Google 3D au casque (netteté, fondu, 72 images par seconde) |
+| `docs/intentions/rendu-jeu-video.md` | Un rendu de jeu vidéo moderne : fiche d'ensemble, ordre et règles des intentions `rendu-*` |
+| `docs/intentions/rendu-mesures-diagnostic.md` | [P0] Mesurer le rendu (images par seconde, appels de rendu, triangles) : à faire en premier |
+| `docs/intentions/rendu-profils-graphiques.md` | [P1] Des profils graphiques (casque, PC, tablette) et la détection des capacités |
+| `docs/intentions/rendu-tablette-tactile.md` | [P1] La tablette et le tactile, dans le périmètre dès les premiers lots |
+| `docs/intentions/rendu-facades-batiments.md` | [P2] Des bâtiments détaillés (façades, fenêtres, vitrines), plus des blocs extrudés |
+| `docs/intentions/rendu-lod-cellules.md` | [P2] Niveaux de détail et fusion ou chargement par cellules, si les mesures le justifient |
+| `docs/intentions/rendu-rues-mobilier.md` | [P2] Des rues, trottoirs et du mobilier urbain crédibles (marquages, passages, bordures) |
+| `docs/intentions/rendu-eclairage-ambiance.md` | [P3] Éclairage, ombres, reflets, ambiance et sons (tension avec le réel visible, `APP-001`) |
+| `docs/intentions/rendu-sources-donnees.md` | [P3] Plusieurs sources géographiques (Overture, autres) : la moins urgente |
 | `docs/intentions/mise-a-jour-drwil.md` | Mettre drwil à jour pour clore les trois chantiers de garantie |
 | `docs/intentions/relecture-guide-casque.md` | Relire `docs/guide-utilisateur.md` sur un vrai Quest 3 |
 | `docs/intentions/rendu-ville.md` | Une ville moins austère : reste la question des types de bâtiments (église, mosquée, commerce) |
@@ -37,7 +43,6 @@ removes it when fully covered.
 | `docs/intentions/essai-fournisseurs-ouverts.md` | Essayer un trajet libre sur les instances publiques de Valhalla et de Photon |
 | `docs/intentions/essai-casque-osm-enrichi.md` | Juger le rendu OSM enrichi et ses 72 images par seconde sur un vrai Quest 3 |
 | `docs/intentions/auto-heberger-valhalla-photon.md` | Auto-héberger Valhalla et Photon |
-| `docs/intentions/relais-cles-google.md` | Ne pas exposer les clés Google restantes dans le navigateur |
 | `docs/intentions/mention-osm-discrete.md` | Rendre la mention OpenStreetMap plus discrète dans le casque (sans la retirer, ODbL) |
 | `docs/intentions/carte-position-en-direct.md` | Voir la carte et sa position bouger pendant la marche |
 | `docs/intentions/poste-sans-casque.md` | Une interface pour PC, sans le casque |
