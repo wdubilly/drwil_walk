@@ -43,7 +43,7 @@ visible en réalité mixte.
 - Le tracé d'un parcours long est simplifié sous un plafond de points testé, et la carte ne se redessine que lorsque la
   position a bougé d'un pas — `APP-002`
 - La minicarte est posée hors de la zone tapis, suit le fondu tête baissée, se masque avec le panneau d'infos (bouton B),
-  reste cachée sans pose de la tête, et ne crée ni ciel ni fond opaque — `APP-001`
+  reste cachée sans pose de la tête, et ne crée ni ciel ni fond opaque [human] — `APP-001`
 - Le point avance le long du parcours dans le Quest 3 émulé, sur un itinéraire figé comme sur un trajet libre — `QUA-020`
 - La lisibilité de la carte, sa place dans le champ de vision et le tapis resté visible sont jugés sur un vrai Quest 3
   [human] — `APP-001`
