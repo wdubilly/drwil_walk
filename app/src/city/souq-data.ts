@@ -22,9 +22,9 @@ export interface Building {
   roofShape?: "gabled";
 }
 
-/** Un arbre, un lampadaire ou un banc de l'extrait, en mètres locaux. */
+/** Un arbre ou un mobilier urbain de l'extrait (lampadaire, banc, poubelle, panneau), en mètres locaux. */
 export interface Prop {
-  kind: "tree" | "lamp" | "bench";
+  kind: "tree" | "lamp" | "bench" | "bin" | "sign";
   at: Vec2;
 }
 
@@ -135,7 +135,7 @@ export function loadSouq(extract: FeatureFile, loop: LoopFile, palette: Palette)
     .filter((f) => f.properties.kind === "hedge")
     .map((f) => ({ points: (f.geometry.coordinates as number[][]).map(local) }));
   const props = extract.features
-    .filter((f) => ["tree", "lamp", "bench"].includes(f.properties.kind))
+    .filter((f) => ["tree", "lamp", "bench", "bin", "sign"].includes(f.properties.kind))
     .map((f) => ({ kind: f.properties.kind as Prop["kind"], at: local(f.geometry.coordinates as number[]) }));
   return { origin, route: createPath(loop.geometry.coordinates.map(local)), buildings, roads, props, areas, hedges, palette };
 }

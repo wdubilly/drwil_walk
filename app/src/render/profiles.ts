@@ -11,6 +11,8 @@ export interface RenderSettings {
   facades: FacadeDetail;
   /** La ville riche : verdure au sol et noms des rues. */
   richCity: boolean;
+  /** Les marquages au sol des voies (bordures de trottoir, lignes d'arrêt) : retirés par le profil le plus léger (APP-009). */
+  markings: boolean;
   /** Plafonds d'arbres et de mobilier (bornés par ceux des données, `props.ts`). */
   maxTrees: number;
   maxFurniture: number;
@@ -30,9 +32,9 @@ export interface Profile {
 export const FALLBACK_PROFILE: ProfileId = "equilibre";
 
 export const PROFILES: readonly Profile[] = [
-  { id: "performance", label: "Performance", settings: { outlines: false, facades: "reduced", richCity: false, maxTrees: 100, maxFurniture: 120, pixelRatio: 0.75, xrScale: 0.8 } },
-  { id: "equilibre", label: "Équilibré", settings: { outlines: false, facades: "full", richCity: true, maxTrees: 300, maxFurniture: 400, pixelRatio: 1, xrScale: 1 } },
-  { id: "qualite", label: "Qualité", settings: { outlines: true, facades: "full", richCity: true, maxTrees: 300, maxFurniture: 400, pixelRatio: 2, xrScale: 1.2 } },
+  { id: "performance", label: "Performance", settings: { outlines: false, facades: "reduced", richCity: false, markings: false, maxTrees: 100, maxFurniture: 120, pixelRatio: 0.75, xrScale: 0.8 } },
+  { id: "equilibre", label: "Équilibré", settings: { outlines: false, facades: "full", richCity: true, markings: true, maxTrees: 300, maxFurniture: 400, pixelRatio: 1, xrScale: 1 } },
+  { id: "qualite", label: "Qualité", settings: { outlines: true, facades: "full", richCity: true, markings: true, maxTrees: 300, maxFurniture: 400, pixelRatio: 2, xrScale: 1.2 } },
 ];
 
 export function isProfileId(value: unknown): value is ProfileId {
@@ -52,7 +54,7 @@ export function appliedPixelRatio(settings: RenderSettings, devicePixelRatio: nu
 }
 
 /** Les options de la scène de la ville réglées par un profil (`createSouqScene`). */
-export function sceneOptionsOf(settings: RenderSettings): Pick<RenderSettings, "outlines" | "facades" | "richCity" | "maxTrees" | "maxFurniture"> {
-  const { outlines, facades, richCity, maxTrees, maxFurniture } = settings;
-  return { outlines, facades, richCity, maxTrees, maxFurniture };
+export function sceneOptionsOf(settings: RenderSettings): Pick<RenderSettings, "outlines" | "facades" | "richCity" | "markings" | "maxTrees" | "maxFurniture"> {
+  const { outlines, facades, richCity, markings, maxTrees, maxFurniture } = settings;
+  return { outlines, facades, richCity, markings, maxTrees, maxFurniture };
 }

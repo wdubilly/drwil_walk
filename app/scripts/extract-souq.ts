@@ -16,7 +16,7 @@ export interface OverpassWay {
   id: number;
   tags?: Record<string, string>;
   geometry?: { lat: number; lon: number }[];
-  /** Position d'un nœud (arbre, lampadaire, banc). */
+  /** Position d'un nœud (arbre, lampadaire, banc, poubelle, panneau). */
   lat?: number;
   lon?: number;
 }
@@ -32,12 +32,14 @@ export interface ExtractFeature {
     | { kind: "highway"; highway: string; name?: string; sidewalk?: Sidewalk; footway?: "sidewalk" | "crossing" }
     | { kind: "area"; area: AreaKind }
     | { kind: "hedge" }
-    | { kind: "tree" | "lamp" | "bench" };
+    | { kind: "tree" | "lamp" | "bench" | "bin" | "sign" };
   geometry: { type: "Polygon"; coordinates: number[][][] } | { type: "LineString"; coordinates: number[][] } | { type: "Point"; coordinates: number[] };
 }
 
-/** Les nœuds ponctuels demandés avec les bâtiments et voies : arbres, lampadaires, bancs. */
-export const PROP_NODES = ['node["natural"="tree"]', 'node["highway"="street_lamp"]', 'node["amenity"="bench"]'] as const;
+/** Les nœuds ponctuels demandés avec les bâtiments et voies : arbres, lampadaires, bancs, poubelles et panneaux. */
+export const PROP_NODES = [
+  'node["natural"="tree"]', 'node["highway"="street_lamp"]', 'node["amenity"="bench"]', 'node["amenity"="waste_basket"]', 'node["traffic_sign"]',
+] as const;
 
 export function buildQuery(bbox = BBOX): string {
   const area = `(${String(bbox.south)},${String(bbox.west)},${String(bbox.north)},${String(bbox.east)})`;

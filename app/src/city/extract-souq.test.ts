@@ -32,6 +32,8 @@ const osm: OverpassResponse = {
     { type: "node", id: 9, lat: 25.2872, lon: 51.5332, tags: { highway: "street_lamp" } },
     { type: "node", id: 10, tags: { amenity: "bench" } },
     { type: "node", id: 11, lat: 25.2873, lon: 51.5333, tags: { shop: "bakery" } },
+    { type: "node", id: 12, lat: 25.2874, lon: 51.5334, tags: { amenity: "waste_basket" } },
+    { type: "node", id: 13, lat: 25.2875, lon: 51.5335, tags: { traffic_sign: "DE:274" } },
   ],
 };
 
@@ -76,7 +78,7 @@ describe("extraction du souk depuis OpenStreetMap", () => {
     const query = buildQuery();
     expect(query).toContain('way["building"](25.284,51.529,25.29,51.538)');
     expect(query).toContain('way["highway"](25.284,51.529,25.29,51.538)');
-    for (const node of ['node["natural"="tree"]', 'node["highway"="street_lamp"]', 'node["amenity"="bench"]']) {
+    for (const node of ['node["natural"="tree"]', 'node["highway"="street_lamp"]', 'node["amenity"="bench"]', 'node["amenity"="waste_basket"]', 'node["traffic_sign"]']) {
       expect(query).toContain(`${node}(25.284,51.529,25.29,51.538)`);
     }
     expect(query).toContain("out geom");
@@ -100,14 +102,17 @@ describe("extraction du souk depuis OpenStreetMap", () => {
     expect(parsed.attribution).toContain("OpenStreetMap");
     expect(parsed.extractedFrom).toBe("2026-10-31T06:43:47Z");
     // Le bâtiment sans anneau, la voie d'un seul point, la voie sans géométrie et l'entité sans balise utile sont écartés.
-    expect(parsed.features.map((f) => f.id)).toEqual([1, 3, 7, 8, 9]);
+    expect(parsed.features.map((f) => f.id)).toEqual([1, 3, 7, 8, 9, 12, 13]);
     expect(parsed.features[0]?.properties).toEqual({ kind: "building", heightM: 6, building: "yes", levels: 2 });
     expect(parsed.features[0]?.geometry.coordinates).toEqual([[[51.533123, 25.287], [51.534, 25.287], [51.534, 25.288], [51.533123, 25.287]]]);
     expect(parsed.features[1]?.properties).toEqual({ kind: "highway", highway: "pedestrian" });
     expect(parsed.features[2]?.properties).toEqual({ kind: "building", heightM: 7, building: "yes", colour: "#c8785a", roofColour: "#cc3333", material: "brick" });
     expect(parsed.features[3]).toMatchObject({ properties: { kind: "tree" }, geometry: { type: "Point", coordinates: [51.533123, 25.2871] } });
     expect(parsed.features[4]?.properties).toEqual({ kind: "lamp" });
-    expect(text.split("\n")).toHaveLength(8);
+    // APP-009 : poubelles et panneaux sont lus de leurs balises, comme les lampadaires et les bancs.
+    expect(parsed.features[5]?.properties).toEqual({ kind: "bin" });
+    expect(parsed.features[6]?.properties).toEqual({ kind: "sign" });
+    expect(text.split("\n")).toHaveLength(10);
     expect(toGeoJsonText({ elements: [] })).toContain('"extractedFrom":""');
   });
 

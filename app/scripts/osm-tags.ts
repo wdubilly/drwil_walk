@@ -16,11 +16,13 @@ export function parseColour(value: string | undefined): string | undefined {
   return NAMED_COLOURS[text];
 }
 
-/** Le mobilier urbain simple retenu : lampadaires et bancs (balises exactes), au côté des arbres `natural=tree`. */
-export function propKind(tags: Record<string, string>): "tree" | "lamp" | "bench" | undefined {
+/** Le mobilier urbain simple retenu : lampadaires, bancs, poubelles et panneaux (balises exactes), au côté des arbres `natural=tree`. */
+export function propKind(tags: Record<string, string>): "tree" | "lamp" | "bench" | "bin" | "sign" | undefined {
   if (tags["natural"] === "tree") return "tree";
   if (tags["highway"] === "street_lamp") return "lamp";
   if (tags["amenity"] === "bench") return "bench";
+  if (tags["amenity"] === "waste_basket") return "bin";
+  if (tags["traffic_sign"] !== undefined || tags["highway"] === "stop" || tags["highway"] === "give_way") return "sign";
   return undefined;
 }
 
