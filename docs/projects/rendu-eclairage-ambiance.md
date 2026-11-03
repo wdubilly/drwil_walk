@@ -33,13 +33,15 @@ visible**, et des sons d'ambiance facultatifs, coupés par défaut. Tout est ré
 - L'éclairage de la ville suit l'heure locale réelle de l'utilisateur ; un repli fixe s'applique si l'heure est illisible —
   `APP-011`
 - Au casque, aucun ciel ni brouillard ne réduit la visibilité du réel : la sécurité-visibilité reste testée avec chaque effet
-  actif — `APP-001`
+  actif [human] — `APP-001`
 - Sur PC et tablette (sans passthrough), un ciel et un brouillard virtuels sont permis — `APP-011`
 - Les sons d'ambiance sont coupés par défaut, se règlent à l'accueil et se coupent d'un geste ; aucun son n'est joué sans
   choix de l'utilisateur — `APP-011`
 - Chaque effet se règle par le profil graphique et garde un repli désactivé — `APP-011`
 - La marche se rejoue avec chaque effet actif, sans erreur — `QUA-020`
-- La crédibilité de la lumière et le confort des sons sur un vrai Quest 3 [human] — `APP-011`
+
+Le jugement de la crédibilité de la lumière et du confort des sons au casque sort des tests : il est porté par
+`docs/intentions/essai-casque-eclairage-ambiance.md`.
 
 ## Contrats modifiés
 
@@ -47,8 +49,8 @@ visible**, et des sons d'ambiance facultatifs, coupés par défaut. Tout est ré
   éteint par défaut et plafonné à 0,15 d'opacité au casque (rien de voilé sous 8 m, désactivable entièrement), aucun ciel ni
   fond posé au casque, sons coupés par défaut et plafonnés, rien n'est gardé dans le navigateur, réglage par le profil avec
   repli désactivé.
-- `APP-001` complété : l'ambiance ne touche pas à la sécurité-visibilité (aucun fond au casque, voile plafonné, rien de voilé
-  sous 8 m).
+- `APP-001` inchangé : l'ambiance ne touche pas à la sécurité-visibilité (aucun fond au casque, voile plafonné, rien de voilé
+  sous 8 m) ; c'est `APP-011` qui porte ces garanties.
 - `APP-006` complété : le brouillard d'ambiance fait partie des réglages du profil (« performance » le refuse) et un refus
   l'emporte sur la case de l'accueil.
 - `QUA-020` complété : chemin 25, `app/e2e/eclairage-ambiance.test.ts`.

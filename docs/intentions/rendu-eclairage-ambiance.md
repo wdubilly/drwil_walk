@@ -1,6 +1,9 @@
 # Intention : éclairage et ambiance de la ville
 
-**Statut** : proposée le 2026-11-02 (lot 6 de `docs/intentions/rendu-jeu-video.md`) ; après des façades détaillées.
+**Statut** : partiellement livrée le 2026-11-03 par le chantier rendu-eclairage-ambiance (lumière suivant l'heure réelle,
+brouillard plafonné et désactivable, sons d'ambiance facultatifs : contrat `APP-011`, voir le journal des chantiers) ;
+**laissée ouverte** pour ce qui reste : ombres portées, reflets, surfaces mouillées, pluie, particules, éclairage des
+vitrines, et des sons enregistrés plutôt qu'un murmure produit par code (`docs/intentions/sons-ambiance-ville.md`).
 
 ## Besoin
 
@@ -16,7 +19,8 @@ qui couvrent le champ de vision sont en tension avec ce contrat. Aucun son dans 
 
 ## Questions à trancher
 
-- [decision] Un ciel ou un brouillard virtuel est-il acceptable, sachant qu'il cache le réel (`APP-001`) ?
-- [decision] Le son est-il voulu (le casque a déjà ses propres sons) ?
-- [decision] L'heure de la journée suit-elle l'heure réelle, un réglage, ou reste fixe ?
+- ~~Un ciel ou un brouillard virtuel est-il acceptable, sachant qu'il cache le réel (`APP-001`) ?~~ tranché le
+  2026-11-03 : oui au casque, voile plafonné à 0,15 et désactivable, aucun ciel posé (`APP-011`).
+- ~~Le son est-il voulu (le casque a déjà ses propres sons) ?~~ tranché le 2026-11-03 : oui, coupé par défaut et plafonné.
+- ~~L'heure de la journée suit-elle l'heure réelle, un réglage, ou reste fixe ?~~ tranchée le 2026-11-03 : l'heure réelle.
 - Des ombres portées coûtent cher : à décider après les mesures (`docs/intentions/rendu-mesures-diagnostic.md`).
