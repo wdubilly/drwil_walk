@@ -64,8 +64,9 @@ visible**, et des sons d'ambiance facultatifs, coupés par défaut. Tout est ré
 - 2026-11-03 : **sons d'ambiance facultatifs, coupés par défaut**.
 - 2026-11-03 : l'heure de la journée suit **l'heure réelle**.
 - 2026-11-03 : **brouillard admis au casque**, opacité maximale **0,15** — seuil mesurable, donc testable sous
-  `APP-001`. Aucun garde-fou supplémentaire retenu (coupure tête baissée, coupure hors zone tapis, réglage à
-  l'accueil) : le seuil seul tient la sécurité.
+  `APP-001`. Trois conditions tenues ensemble : le brouillard est **désactivable entièrement** par l'utilisateur ;
+  il ne masque **jamais un obstacle** ; il ne compromet **jamais la lisibilité du cheminement**. Ces trois points
+  sont à traduire en critères testables dans `APP-011`.
 - 2026-11-03 : **sons d'ambiance admis au casque**, coupés par défaut, sans jamais masquer les bruits du réel.
 
 ## 5. Points à trancher
@@ -74,8 +75,9 @@ visible**, et des sons d'ambiance facultatifs, coupés par défaut. Tout est ré
 
 ## 6. Lots
 
-- **Lot 1 — contrat de sécurité** [AI] : écrire `APP-011` (opacité du brouillard au casque plafonnée à 0,15, sons
-  coupés par défaut), avec son test.
+- **Lot 1 — contrat de sécurité** [AI] : écrire `APP-011` (opacité du brouillard au casque plafonnée à 0,15,
+  brouillard désactivable, aucun obstacle masqué, cheminement toujours lisible, sons coupés par défaut), avec son
+  test.
 - **Lot 2 — lumière selon l'heure** [AI] : éclairage, ciel et brouillard, casque compris sous le plafond d'opacité.
   Sortie : tests verts.
 - **Lot 3 — sons facultatifs** [AI] : réglage à l'accueil, coupés par défaut. Sortie : tests verts.

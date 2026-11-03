@@ -55,8 +55,8 @@ niveaux de détail simples. Pas de chargement par cellules (le demandeur l'écar
 
 - 2026-11-03 : **fusion par cellules de l'extrait déjà chargé** ; pas de chargement par cellules.
 - 2026-11-03 : budget serré, **150 appels de rendu et 500 000 triangles** au plus par image, sur chacune des quatre
-  villes. Repères usuels du Quest 3 pour tenir 72 images par seconde avec de la marge ; à corriger si la mesure au
-  casque le dément.
+  villes. Repères usuels du Quest 3 pour tenir 72 images par seconde avec de la marge. Ce sont des **objectifs
+  provisoires** : le chantier ne démarre pas avant les mesures réelles au Quest 3, qui peuvent les corriger.
 - 2026-11-03 : le chantier vient **après les façades détaillées**, livrées le 2026-11-03.
 
 ## 5. Points à trancher

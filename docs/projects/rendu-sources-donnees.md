@@ -52,7 +52,8 @@ les licences ; il n'intègre rien dans l'application et ne remplace aucune donn�
   vérification de cohérence et de licence.
 - 2026-11-03 : l'essai lit les **fichiers publiés d'Overture (Parquet, sans compte ni clé)**, pas l'API en ligne.
 - 2026-11-03 : le demandeur autorise **l'agent à lancer le script de relevé**, avec l'accès réseau que cela demande,
-  pour ce seul relevé hors marche.
+  pour ce **seul relevé ponctuel**. Aucun flux réseau pendant l'utilisation de l'application : la ville reste figée
+  dans le dépôt.
 
 ## 5. Points à trancher
 
