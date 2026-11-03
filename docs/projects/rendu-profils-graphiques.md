@@ -49,10 +49,10 @@ repli.
 - Le profil se choisit à l'accueil, se garde dans le navigateur et s'applique au casque, au PC et à la tablette ; le choix
   manuel l'emporte sur la détection — `APP-006`
 - Une valeur de profil inconnue ou corrompue dans le navigateur est ignorée et dite, jamais avalée en silence — `QUA-002`
-- Aucun profil, « qualité » compris, n'assouplit la sécurité-visibilité : le réel reste visible quel que soit le profil —
-  `APP-001`
+- Aucun profil, « qualité » compris, n'assouplit la sécurité-visibilité : le réel reste visible quel que soit le profil
+  [human] — `APP-001`
 - Les trois profils s'enchaînent dans le Quest 3 émulé sans changer le parcours ni la visibilité du réel — `QUA-020`
-- Les images par seconde de chaque profil sur un vrai Quest 3 [human] — `APP-006`
+- Les images par seconde de chaque profil sur un vrai Quest 3 [human] — `APP-001`
 
 ## Contrats modifiés
 
