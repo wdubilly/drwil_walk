@@ -49,7 +49,7 @@ propres, rien de flottant ni de posé au hasard.
 
 ## 2. Hors périmètre
 
-- Les façades (`docs/projects/rendu-facades-batiments.md`) et l'éclairage des lampadaires comme source de lumière
+- Les façades (`docs/projects/journal.md`) et l'éclairage des lampadaires comme source de lumière
   (`docs/intentions/rendu-eclairage-ambiance.md`).
 - Une nouvelle extraction des données : si les balises manquent, ce manque est écrit dans la fiche, pas contourné.
 
