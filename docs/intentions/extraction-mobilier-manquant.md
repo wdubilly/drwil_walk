@@ -16,7 +16,22 @@ Lu le 2026-11-03 : `app/scripts/osm-tags.ts` reconnaît `highway=street_lamp`, `
 fichiers `app/data/*.json` datent des extractions du 2026-10-31 et sont restés tels quels : le chantier rendu-rues-mobilier
 excluait explicitement toute nouvelle extraction.
 
+## Décisions
+
+- 2026-11-03 : **réextraire les quatre quartiers** avec les balises complètes, pour y amener poubelles et panneaux là où
+  OpenStreetMap en porte.
+- 2026-11-03 : les bancs existants sont **remplacés**, pas fusionnés : la ville doit rester attribuable à OpenStreetMap
+  (`APP-003`). Un banc gardé après sa suppression d'OSM serait une donnée orpheline, impossible à attribuer. Le diff est
+  relu avant d'être commité ; une perte importante et inattendue rouvrirait la question.
+
 ## Questions à trancher
 
-- [decision] Réextraire les quatre quartiers (et accepter le diff des données) ou rester sur les extraits du 2026-10-31 ?
 - Le poids des extraits reste-t-il sous le plafond vérifié par les tests une fois le mobilier ajouté ?
+- Les tracés `*-boucle.json` restent-ils valides : chaque point doit rester un sommet d'une voie de l'extrait (test de
+  non-régression existant).
+
+## À savoir avant de lancer
+
+Les lampadaires ne viendront **pas** de cette réextraction : `highway=street_lamp` était déjà demandé le 2026-10-31 et les
+quatre extraits en portent zéro — ils sont absents d'OpenStreetMap dans ces quartiers. C'est l'objet d'une intention à part,
+`docs/intentions/lampadaires-generes.md`.
