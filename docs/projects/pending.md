@@ -31,6 +31,13 @@ avant les fiches qui touchent le panneau d'infos, `champ-de-vision-casque` puis 
 (le panneau doit tenir dans la vue avant d'y ajouter du contenu), `tableau-allure-progression` et `hud-defis-progression` avant
 `comparer-marche-reelle`, les fiches de la ville avant `course-reelle-gpx`. La Corniche est reportée le 2026-11-01 : à annuler si `course-reelle-gpx` couvre le besoin.
 
+- [ ] [P1] [AI] Des profils graphiques (casque, PC, tablette) — `docs/projects/rendu-profils-graphiques.md`
+- [ ] [P1] [AI] La tablette et le tactile — `docs/projects/rendu-tablette-tactile.md`
+- [ ] [P2] [AI] Des bâtiments détaillés (façades procédurales) — `docs/projects/rendu-facades-batiments.md`
+- [ ] [P2] [AI] Fusion des bâtiments par cellules (à affiner : budget à fixer) — `docs/projects/rendu-lod-cellules.md`
+- [ ] [P2] [AI] Des rues, trottoirs et mobilier urbain crédibles — `docs/projects/rendu-rues-mobilier.md`
+- [ ] [P3] [AI] Éclairage et ambiance de la ville (à affiner : sécurité au casque) — `docs/projects/rendu-eclairage-ambiance.md`
+- [ ] [P3] [AI] Essai de couverture d'Overture Maps (à affiner : accès) — `docs/projects/rendu-sources-donnees.md`
 - [ ] [P2] [AI] Les défis de distance et l'objectif annuel — `docs/projects/hud-defis-progression.md`
 - [ ] [P2] [AI] Le voyage guidé par étapes — `docs/projects/hud-voyage-guide.md`
 - [ ] [P3] [AI] Comparer la marche virtuelle à la vraie marche — `docs/projects/comparer-marche-reelle.md`
