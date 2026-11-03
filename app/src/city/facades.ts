@@ -68,13 +68,19 @@ export function planAll(chosen: readonly Building[], region: Region): Map<Buildi
   return plans;
 }
 
+const anchor = (b: Building): Vec2 => b.footprint[0] as Vec2;
+
+/** Les bâtiments détaillés (les plus proches du parcours, dans le plafond du profil) et leur plan : les matériaux locaux s'y posent aussi. */
+export function detailedPlans(solid: readonly Building[], ctx: Omit<FacadeContext, "footLight">): Map<Building, FacadePlan> {
+  const candidates = solid.filter((b) => b.heightM >= MIN_DETAIL_HEIGHT_M && distanceToRoute(anchor(b), ctx.route) <= FACADE_MAX_DISTANCE_M);
+  return planAll(closest(candidates, ctx.route, FACADE_BUDGETS[ctx.detail].maxBuildings, anchor), ctx.region);
+}
+
 /** Ajoute les façades des bâtiments les plus proches du parcours et rend ceux qui en ont reçu (leurs murs n'ont plus besoin du motif de repli). */
 export function addFacades(soup: Soup, solid: readonly Building[], ctx: FacadeContext): Set<Building> {
-  const { maxBuildings, trianglesPerBuilding } = FACADE_BUDGETS[ctx.detail];
-  const anchor = (b: Building): Vec2 => b.footprint[0] as Vec2;
-  const candidates = solid.filter((b) => b.heightM >= MIN_DETAIL_HEIGHT_M && distanceToRoute(anchor(b), ctx.route) <= FACADE_MAX_DISTANCE_M);
+  const { trianglesPerBuilding } = FACADE_BUDGETS[ctx.detail];
   const detailed = new Set<Building>();
-  for (const [b, plan] of planAll(closest(candidates, ctx.route, maxBuildings, anchor), ctx.region)) {
+  for (const [b, plan] of detailedPlans(solid, ctx)) {
     const draw: Draw = { soup, plan, heightM: b.heightM, left: trianglesPerBuilding, light: (y) => ctx.footLight + (1 - ctx.footLight) * Math.min(y / b.heightM, 1) };
     wallsOf(b.footprint, ctx.route).forEach((wall, i) => { addWall(draw, wall, i === 0); });
     const ring = b.footprint.slice(0, -1);

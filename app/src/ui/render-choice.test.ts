@@ -37,4 +37,23 @@ describe("choix du rendu de la ville", () => {
     radio("osm").checked = false;
     expect(choice.readRendering()).toBe("osm");
   });
+
+  it("APP-012: les matériaux locaux habillent la ville OpenStreetMap ; cachés, ils ne sont plus choisis", () => {
+    const { choice, radio } = setup();
+    radio("materiaux").click();
+    expect(choice.readLocalMaterials()).toBe(true);
+    expect(choice.readRendering()).toBe("osm");
+    choice.setLocalAvailable(false);
+    expect(radio("materiaux").closest("label")?.hidden).toBe(true);
+    expect(radio("materiaux").closest("label")?.style.display).toBe("none");
+    expect(choice.readLocalMaterials()).toBe(false);
+    expect(radio("osm").checked).toBe(true);
+    radio("google").click();
+    choice.setLocalAvailable(false);
+    expect(choice.readRendering()).toBe("google");
+    choice.setLocalAvailable(true);
+    expect(radio("materiaux").closest("label")?.hidden).toBe(false);
+    expect(radio("materiaux").closest("label")?.style.display).toBe("");
+    expect(choice.readRendering()).toBe("google");
+  });
 });

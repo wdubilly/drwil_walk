@@ -5,6 +5,7 @@ import { GOOGLE_ATTRIBUTION, OSM_ATTRIBUTION } from "../city/licence.ts";
 import type { TripPlanner, PlannedTrip } from "../city/free-route.ts";
 import { clearWeightKg, loadWeightKg, parseWeightKg, saveWeightKg, MAX_WEIGHT_KG, MIN_WEIGHT_KG, DEFAULT_WEIGHT_KG, type WeightStorage } from "../route/stats.ts";
 import { FREE_ITINERARY_ID } from "../route/itineraries.ts";
+import { hasLocalMaterials, localMaterialsFor, type LocalMaterials } from "../city/material-library.ts";
 import { renderPcButton } from "../pc/pc-button.ts";
 import { renderFreeTrip } from "./free-trip.ts";
 import { renderPanelSide, type PanelSide } from "./panel-side.ts";
@@ -33,6 +34,8 @@ export interface HomeView {
   readTrip(): PlannedTrip | null;
   /** Le rendu choisi : OpenStreetMap par défaut, ou Google 3D. */
   readRendering: () => Rendering;
+  /** Les matériaux locaux de l'itinéraire s'ils sont choisis (prototype, seulement là où une bibliothèque existe). */
+  readMaterials(): LocalMaterials | undefined;
   /** Le poids saisi (facultatif, gardé dans ce navigateur seulement) ; rien : la valeur moyenne s'applique aux calories. */
   readWeightKg(): number | undefined;
   /** Le côté du panneau d'infos dans le casque (gauche ou droite), gardé dans ce navigateur seulement (APP-002). */
@@ -77,11 +80,13 @@ function numberInput(doc: Document, type: string, min: number, max: number | und
 export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanner, storage?: WeightStorage): HomeView {
   const routes = renderRouteChoice(doc);
   const freeTrip = renderFreeTrip(doc, planner);
-  const syncFree = (): void => {
-    freeTrip.setVisible(routes.readId() === FREE_ITINERARY_ID);
-  };
-  routes.onChange(syncFree);
   const rendering = renderRenderChoice(doc);
+  const syncRoute = (): void => {
+    freeTrip.setVisible(routes.readId() === FREE_ITINERARY_ID);
+    rendering.setLocalAvailable(hasLocalMaterials(routes.readId()));
+  };
+  routes.onChange(syncRoute);
+  syncRoute();
   const title = Object.assign(doc.createElement("h1"), { textContent: "drwil_walk" });
   const reminder = doc.createElement("ul");
   reminder.setAttribute("aria-label", "Rappel de sécurité");
@@ -104,10 +109,7 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
   const fog = Object.assign(doc.createElement("input"), { type: "checkbox", checked: false });
   const sound = numberInput(doc, "range", 0, 100, 10, "0");
   const vignette = Object.assign(doc.createElement("input"), { type: "checkbox", checked: true });
-  const button = doc.createElement("button");
-  button.type = "button";
-  button.textContent = ENTER_LABEL;
-  button.className = "enter";
+  const button = Object.assign(doc.createElement("button"), { type: "button", textContent: ENTER_LABEL, className: "enter" });
   const pcButton = renderPcButton(doc);
   const status = doc.createElement("p");
   status.setAttribute("role", "status");
@@ -115,10 +117,7 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
   credit.className = "attribution";
   credit.textContent = OSM_ATTRIBUTION;
   // La mention de Google s'ajoute à celle d'OpenStreetMap dès que son rendu est choisi (APP-003).
-  const googleCredit = doc.createElement("span");
-  googleCredit.className = "attribution-google";
-  googleCredit.textContent = ` · ${GOOGLE_ATTRIBUTION}`;
-  googleCredit.hidden = true;
+  const googleCredit = Object.assign(doc.createElement("span"), { className: "attribution-google", textContent: ` · ${GOOGLE_ATTRIBUTION}`, hidden: true });
   credit.append(googleCredit);
   rendering.onChange(() => { googleCredit.hidden = rendering.readRendering() !== "google"; });
   // Une alerte à part du statut : l'ouverture de la session réécrit le statut, pas ce repli.
@@ -134,9 +133,7 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
     const kg = parseWeightKg(weight.value);
     keep(kg === undefined ? clearWeightKg(storage) : saveWeightKg(storage, kg));
   });
-  const erase = doc.createElement("button");
-  erase.type = "button";
-  erase.textContent = "Effacer mon poids";
+  const erase = Object.assign(doc.createElement("button"), { type: "button", textContent: "Effacer mon poids" });
   erase.addEventListener("click", () => {
     weight.value = "";
     keep(clearWeightKg(storage));
@@ -178,6 +175,7 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
     readRouteId: () => routes.readId(),
     readTrip: () => freeTrip.readTrip(),
     readRendering: rendering.readRendering,
+    readMaterials: () => (rendering.readLocalMaterials() ? localMaterialsFor(routes.readId()) : undefined),
     readWeightKg: () => parseWeightKg(weight.value),
     readPanelSide: panelSide.readSide,
     readVignette: () => vignette.checked,

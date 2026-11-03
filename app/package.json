@@ -15,7 +15,9 @@
     "extract": "node -e \"import('./scripts/cities.ts').then(m=>m.extractCity(fetch,'souq').then(t=>require('node:fs').writeFileSync(m.CITIES['souq'].file,t)))\"",
     "extract:pune": "node -e \"import('./scripts/cities.ts').then(m=>m.extractCity(fetch,'pune').then(t=>require('node:fs').writeFileSync(m.CITIES['pune'].file,t)))\"",
     "extract:corniche": "node -e \"import('./scripts/cities.ts').then(m=>m.extractCity(fetch,'corniche').then(t=>require('node:fs').writeFileSync(m.CITIES['corniche'].file,t)))\"",
-    "extract:fc-road": "node -e \"import('./scripts/cities.ts').then(m=>m.extractCity(fetch,'fc-road').then(t=>require('node:fs').writeFileSync(m.CITIES['fc-road'].file,t)))\""
+    "extract:fc-road": "node -e \"import('./scripts/cities.ts').then(m=>m.extractCity(fetch,'fc-road').then(t=>require('node:fs').writeFileSync(m.CITIES['fc-road'].file,t)))\"",
+    "materials:inventory": "node -e \"import('./scripts/materials-run.ts').then(m=>m.runInventory(fetch,process.argv[1],process.env.MAPILLARY_TOKEN,m.DISK)).then(console.log)\"",
+    "materials:library": "node -e \"import('./scripts/materials-run.ts').then(m=>m.runLibrary(fetch,process.argv[1],m.DISK)).then(console.log)\""
   },
   "devDependencies": {
     "@eslint-community/eslint-plugin-eslint-comments": "^4.8.1",
@@ -28,6 +30,7 @@
     "eslint": "^10.14.0",
     "happy-dom": "^21.0.4",
     "iwer": "^2.7.0",
+    "jpeg-js": "^0.4.4",
     "license-checker-rseidelsohn": "^5.0.1",
     "three": "^0.187.0",
     "typescript": "~6.0.3",

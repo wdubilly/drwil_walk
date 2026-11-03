@@ -34,3 +34,22 @@ Les arbres d'origine pèsent de 1 700 à 6 900 triangles d'écorce et 1 300 à 1
 
 Relancer (depuis `app/`, l'archive étant hors du dépôt) :
 `node -e "import('./scripts/prepare-nature-pack.ts').then(m=>m.prepareFiles(process.argv[1],'assets'))" "<chemin de l'archive>.zip"`.
+
+# Provenance des matériaux locaux du souk (`materials/`)
+
+Les textures de `materials/doha-souq-waqif.json` viennent d'ambientCG, sous licence **CC0 1.0** (domaine public :
+https://docs.ambientcg.com/license/) ; la mention n'est pas obligatoire, elle est écrite pour que l'origine se retrouve
+(`APP-012`).
+
+| Matériau | Texture ambientCG | Page |
+|---|---|---|
+| Enduit | `Plaster001` (couleur et relief, 1K JPG) | https://ambientcg.com/view?id=Plaster001 |
+| Pierre | `Bricks106A` (couleur et relief, 1K JPG) | https://ambientcg.com/view?id=Bricks106A |
+| Bois | `Planks037A` (couleur et relief, 1K JPG) | https://ambientcg.com/view?id=Planks037A |
+
+Ce qui a été changé (script `app/scripts/materials-textures.ts`, lancé par `npm run materials:library -- doha-souq-waqif`
+depuis `app/`) : réduites à 256 × 256 px, la couleur réduite à sa luminance (rapportée à sa moyenne) puis multipliée par la couleur relevée du
+quartier, réencodées en JPEG (qualité 80) et embarquées en base64 dans le fichier (aucun appel réseau pendant la marche).
+Les couleurs sont aujourd'hui **provisoires** (la palette du souk) : aucune photo de rue n'a encore été relevée
+(`docs/preuves/materiaux-souk.md`). Les photos de rue ne sont jamais embarquées : l'inventaire
+`materials/doha-souq-waqif-photos.json` n'en garde que le lien, l'identifiant, l'auteur et la licence.

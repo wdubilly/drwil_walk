@@ -89,10 +89,28 @@ describe("écran d'accueil", () => {
     expect(root.querySelector("[role='alert']")?.textContent).toBe("");
   });
 
-  it("propose le rendu OpenStreetMap par défaut, et Google 3D en option", () => {
+  it("propose le rendu OpenStreetMap par défaut, Google 3D et, pour le souk, les matériaux locaux en option", () => {
     const { root, view } = setup();
     expect(view.readRendering()).toBe("osm");
-    expect([...root.querySelectorAll(".rendering label")].map((l) => l.textContent.trim())).toEqual(["OpenStreetMap", "Google 3D"]);
+    expect(view.readMaterials()).toBeUndefined();
+    expect([...root.querySelectorAll(".rendering label")].map((l) => l.textContent.trim())).toEqual(["OpenStreetMap", "Google 3D", "Matériaux locaux (prototype)"]);
+  });
+
+  it("APP-012: les matériaux locaux se choisissent pour le souk seulement ; un autre itinéraire cache l'option et revient à OpenStreetMap", () => {
+    const { root, view } = setup();
+    const pick = (name: string, value: string): void => {
+      root.querySelector<HTMLInputElement>(`input[name='${name}'][value='${value}']`)?.click();
+    };
+    const option = root.querySelector<HTMLInputElement>("input[name='rendu'][value='materiaux']")?.closest("label");
+    expect(option?.hidden).toBe(false);
+    pick("rendu", "materiaux");
+    expect(view.readRendering()).toBe("osm");
+    expect(view.readMaterials()?.library.itinerary).toBe("doha-souq-waqif");
+    expect(view.readMaterials()?.library.provisional).toBe(true);
+    pick("itineraire", "pune-fc-road");
+    expect(option?.hidden).toBe(true);
+    expect(view.readMaterials()).toBeUndefined();
+    expect(root.querySelector<HTMLInputElement>("input[name='rendu'][value='osm']")?.checked).toBe(true);
   });
 
   it("propose 4,0 km/h par défaut, réglable dès 1 km/h, sans maximum, par pas de 0,1", () => {
