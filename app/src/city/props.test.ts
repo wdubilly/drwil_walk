@@ -1,12 +1,16 @@
 import { Group, InstancedMesh } from "three";
 import { describe, expect, it } from "vitest";
 import { createPath } from "../route/path.ts";
-import { MAX_FURNITURE, MAX_TREES, MAX_TREE_TRIANGLES, buildFurniture, buildTrees, nearest } from "./props.ts";
+import { MAX_FURNITURE, MAX_TREES, MAX_TREE_TRIANGLES, buildFurniture, buildTrees, nearest, routeYaw } from "./props.ts";
+import { LAMP_HEIGHT_M } from "./furniture.ts";
 import type { Prop } from "./souq-data.ts";
 import { testPack } from "./tree-pack-double.ts";
 
 const route = createPath([{ x: 0, z: 0 }, { x: 0, z: -100 }]);
 const at = (kind: Prop["kind"], x: number): Prop => ({ kind, at: { x, z: -50 } });
+/** Nombre de sommets du mobilier produit : le modèle de chaque pièce est un détail de `furniture.ts`. */
+const vertices = (props: Prop[], max?: number): number => buildFurniture(props, route, max).geometry.getAttribute("position").count;
+const BENCH_VERTICES = vertices([at("bench", 1)]);
 
 describe("arbres et mobilier urbain", () => {
   it("APP-003: garde les éléments les plus proches du parcours, dans la limite du plafond", () => {
@@ -28,21 +32,34 @@ describe("arbres et mobilier urbain", () => {
     expect(buildTrees(many, route, undefined, 5).count).toBe(5);
     expect(buildTrees(many, route, undefined, MAX_TREES * 10).count).toBe(20);
     const benches = Array.from({ length: 20 }, (_, i) => at("bench", i));
-    expect(buildFurniture(benches, route, 4).geometry.getAttribute("position").count).toBe(4 * 36);
-    expect(buildFurniture(benches, route, MAX_FURNITURE * 10).geometry.getAttribute("position").count).toBe(20 * 36);
+    expect(vertices(benches, 4)).toBe(4 * BENCH_VERTICES);
+    expect(vertices(benches, MAX_FURNITURE * 10)).toBe(20 * BENCH_VERTICES);
   });
 
-  it("APP-003: lampadaires et bancs sont fusionnés en un seul maillage coloré, plafonné, sans arbre", () => {
-    const furniture = buildFurniture([at("lamp", 3), at("bench", -3), at("tree", 1)], route);
+  it("APP-009: le mobilier est fusionné en un seul maillage coloré, plafonné, posé au sol, sans arbre", () => {
+    const furniture = buildFurniture([at("lamp", 3), at("bench", -3), at("bin", 2), at("sign", -2), at("tree", 1)], route);
     expect(furniture.name).toBe("mobilier");
     const geometry = furniture.geometry;
     geometry.computeBoundingBox();
-    // Le lampadaire dépasse les 5 m ; le banc, posé au sol, reste bas.
-    expect(geometry.boundingBox?.max.y).toBeGreaterThan(5);
+    // Le lampadaire est le plus haut (4,5 m) ; rien ne flotte : tout part du sol.
+    expect(geometry.boundingBox?.max.y).toBeCloseTo(LAMP_HEIGHT_M, 1);
+    expect(geometry.boundingBox?.min.y).toBeCloseTo(0);
     expect(geometry.getAttribute("color").count).toBe(geometry.getAttribute("position").count);
     const capped = buildFurniture(Array.from({ length: MAX_FURNITURE + 20 }, (_, i) => at("bench", i)), route);
-    expect(capped.geometry.getAttribute("position").count).toBe(MAX_FURNITURE * 36);
+    expect(capped.geometry.getAttribute("position").count).toBe(MAX_FURNITURE * BENCH_VERTICES);
     expect(buildFurniture([at("tree", 1)], route).geometry.getAttribute("position")).toBeUndefined();
+  });
+
+  it("APP-009: le mobilier est tourné dans l'axe de la rue, jamais posé de travers", () => {
+    // Parcours vers -z : l'axe de la rue fait un quart de tour avec l'axe X du modèle.
+    expect(routeYaw({ x: 1, z: -50 }, route)).toBeCloseTo(Math.PI / 2);
+    const bent = createPath([{ x: 0, z: 0 }, { x: 100, z: 0 }]);
+    expect(routeYaw({ x: 99, z: 2 }, bent)).toBeCloseTo(0);
+    const bench = buildFurniture([at("bench", 1)], route).geometry;
+    bench.computeBoundingBox();
+    // Le banc, long de 1,8 m, s'allonge le long du parcours (axe z) et non en travers.
+    const box = bench.boundingBox;
+    expect((box?.max.z ?? 0) - (box?.min.z ?? 0)).toBeCloseTo(1.8, 1);
   });
 
   it("APP-003: avec le pack, les arbres sont ceux du pack, dans le plafond d'arbres et le plafond de triangles", async () => {

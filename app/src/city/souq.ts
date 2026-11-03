@@ -23,6 +23,7 @@ import { regionOf } from "./facade-family.ts";
 import type { FacadeDetail } from "./facades.ts";
 import { buildFurniture, buildTrees } from "./props.ts";
 import { buildOutlinesGeometry } from "./outlines.ts";
+import { pushMarkings } from "./markings.ts";
 import { buildRoadsGeometry } from "./roads.ts";
 import { MAX_STREET_NAMES, buildStreetLabels } from "./street-names.ts";
 import { buildVegetation } from "./vegetation.ts";
@@ -51,6 +52,8 @@ export interface SceneOptions {
   /** Plafonds d'arbres et de mobilier, bornés par ceux des données (APP-006). */
   maxTrees?: number;
   maxFurniture?: number;
+  /** Les marquages au sol lus des balises de voie (bordures, lignes d'arrêt) : vrais par défaut ; un profil léger les retire (APP-009, APP-006). */
+  markings?: boolean;
 }
 
 export interface SouqScene {
@@ -73,7 +76,9 @@ export function createSouqScene(doc: Document, souq: Souq, options: SceneOptions
   city.name = "ville";
   const ground = new Mesh(new PlaneGeometry(GROUND_SIZE_M, GROUND_SIZE_M), toonMaterial({ color: new Color(souq.palette.ground) }));
   ground.rotation.x = -Math.PI / 2;
-  const roads = new Mesh(buildRoadsGeometry(souq.roads, souq.palette.road, buildWalkways(souq.roads, souq.route)), toonMaterial({ vertexColors: true, side: DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }));
+  const marks = buildWalkways(souq.roads, souq.route);
+  if (options.markings !== false) pushMarkings(marks, souq.roads, souq.route);
+  const roads = new Mesh(buildRoadsGeometry(souq.roads, souq.palette.road, marks), toonMaterial({ vertexColors: true, side: DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }));
   roads.name = "voies";
   // Couleurs par sommet : la teinte de chaque bâtiment vient de la géométrie, le matériau reste blanc.
   const buildings = new Mesh(buildBuildingsGeometry(souq.buildings, souq.palette.buildings, souq.route, { detail: options.facades ?? "off", region: regionOf(souq.origin) }), buildingMaterial());

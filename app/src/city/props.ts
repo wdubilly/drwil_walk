@@ -1,21 +1,12 @@
-// Arbres, lampadaires et bancs de l'extrait OpenStreetMap, en très peu de maillages (72 images par seconde sur le Quest 3) :
-// les arbres sont les instances d'un seul modèle, plafonnées en nombre ; le mobilier est fusionné en un seul maillage.
-import {
-  BoxGeometry,
-  BufferGeometry,
-  Color,
-  CylinderGeometry,
-  Float32BufferAttribute,
-  Group,
-  IcosahedronGeometry,
-  InstancedMesh,
-  Matrix4,
-  Mesh,
-  MeshLambertMaterial,
-} from "three";
+// Arbres et mobilier urbain de l'extrait OpenStreetMap, en très peu de maillages (72 images par seconde sur le Quest 3) :
+// les arbres sont les instances d'un seul modèle, plafonnées en nombre ; le mobilier (lampadaires, bancs, poubelles, panneaux)
+// est produit par code (`furniture.ts`) et fusionné en un seul maillage, posé au sol et tourné dans l'axe de la rue (APP-009).
+import { CylinderGeometry, Group, IcosahedronGeometry, InstancedMesh, Matrix4, Mesh, MeshLambertMaterial, type BufferGeometry } from "three";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
+import type { Vec2 } from "../route/geo.ts";
 import type { Path } from "../route/path.ts";
 import { closest } from "./near-route.ts";
+import { colored, furnitureParts, mergeParts } from "./furniture.ts";
 import type { Prop } from "./souq-data.ts";
 import { buildPackTrees } from "./tree-instances.ts";
 import { MAX_MODEL_TRIANGLES, type TreePack } from "./tree-pack.ts";
@@ -24,18 +15,8 @@ import { MAX_MODEL_TRIANGLES, type TreePack } from "./tree-pack.ts";
 export const MAX_TREES = 300;
 /** Plafond de triangles de tous les arbres du pack ensemble : MAX_TREES arbres de la taille maximale d'un modèle. */
 export const MAX_TREE_TRIANGLES = MAX_TREES * MAX_MODEL_TRIANGLES;
-/** Plafond du mobilier (lampadaires et bancs) fusionné dans un maillage. */
+/** Plafond du mobilier (lampadaires, bancs, poubelles, panneaux) fusionné dans un maillage. */
 export const MAX_FURNITURE = 400;
-
-/** Un modèle coloré : le matériau reste blanc, la teinte vient des sommets. */
-function colored(geometry: BufferGeometry, hex: number, x = 0, y = 0, z = 0): BufferGeometry {
-  const solid = geometry.index ? geometry.toNonIndexed() : geometry;
-  solid.translate(x, y, z);
-  solid.deleteAttribute("uv");
-  const c = new Color(hex);
-  solid.setAttribute("color", new Float32BufferAttribute(Array.from({ length: solid.getAttribute("position").count }, () => [c.r, c.g, c.b]).flat(), 3));
-  return solid;
-}
 
 /** Un arbre : tronc brun et couronne verte. */
 export const treeModel = (): BufferGeometry =>
@@ -57,21 +38,22 @@ export function buildTrees(props: readonly Prop[], route: Path, pack?: TreePack,
   return mesh;
 }
 
-/** Lampadaire (mât gris, tête claire) ou banc (assise en bois) posé en (x, z). */
-function furniture(prop: Prop): BufferGeometry[] {
-  const { x, z } = prop.at;
-  if (prop.kind === "lamp") {
-    return [colored(new CylinderGeometry(0.06, 0.08, 5, 5), 0x4d5156, x, 2.5, z), colored(new BoxGeometry(0.5, 0.15, 0.5), 0xf2e6a8, x, 5.1, z)];
-  }
-  return [colored(new BoxGeometry(1.6, 0.45, 0.5), 0x7a5a38, x, 0.4, z)];
+/** Le cap de la rue à l'endroit du mobilier : celui du parcours au sommet le plus proche, pour que rien ne soit posé de travers. */
+export function routeYaw(at: Vec2, route: Path): number {
+  const points = route.points;
+  const distances = points.map((p) => Math.hypot(p.x - at.x, p.z - at.z));
+  const i = distances.indexOf(Math.min(...distances));
+  // Un parcours a toujours au moins deux points (`createPath`) : le dernier sommet se lit sur le segment qui le précède.
+  const j = i + 1 < points.length ? i + 1 : i - 1;
+  const [from, to] = j > i ? [points[i] as Vec2, points[j] as Vec2] : [points[j] as Vec2, points[i] as Vec2];
+  return Math.atan2(-(to.z - from.z), to.x - from.x);
 }
 
 /** Le mobilier : un seul maillage fusionné, vide s'il n'y en a pas. */
 export function buildFurniture(props: readonly Prop[], route: Path, max = MAX_FURNITURE): Mesh {
   const kept = nearest(props.filter((p) => p.kind !== "tree"), route, Math.min(max, MAX_FURNITURE));
-  const parts = kept.flatMap(furniture);
-  const geometry = (parts.length > 0 ? mergeGeometries(parts) : null) ?? new BufferGeometry();
-  const mesh = new Mesh(geometry, new MeshLambertMaterial({ vertexColors: true }));
+  const parts: BufferGeometry[] = kept.flatMap((prop) => furnitureParts(prop, routeYaw(prop.at, route)));
+  const mesh = new Mesh(mergeParts(parts), new MeshLambertMaterial({ vertexColors: true }));
   mesh.name = "mobilier";
   return mesh;
 }

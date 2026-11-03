@@ -80,6 +80,28 @@ bancs 19 (souk) et 8 (Corniche) ; aucun lampadaire ; très peu de bâtiments por
 au total, un seul toit coloré hors bâtiment), donc la plupart gardent le ton de la palette. À juger au casque, cadence
 comprise (lot 5 du chantier, humain) ; le relief du sol n'est pas fait (`docs/intentions/osm-enrichi.md`).
 
+## Mobilier urbain et marquages au sol
+
+Chantier rendu-rues-mobilier (APP-009). Le mobilier courant est produit par code, aux dimensions réelles : lampadaire (mât de
+4,5 m, bras et lanterne au-dessus de la chaussée), banc (assise à 45 cm, dossier à 85 cm, long de 1,8 m), corbeille (90 cm) et
+panneau (2,2 m). Chaque pièce est posée au sol et tournée dans l'axe du parcours le plus proche, jamais de travers. Rien n'est
+inventé : une pièce n'est posée que là où l'extrait porte la balise exacte (`highway=street_lamp`, `amenity=bench`,
+`amenity=waste_basket`, `traffic_sign` ou `highway=stop|give_way`). Les marquages suivent les balises de voie : passages piétons
+en bandes blanches (`footway=crossing`) avec une ligne d'arrêt de chaque côté, trottoirs et leurs bordures (`footway=sidewalk`,
+`sidewalk=both|left|right`) ; une balise absente ne produit rien.
+
+Relevé des quatre extraits figés (2026-11-03) : bancs 19 (souk) et 8 (Corniche), aucun ailleurs ; **aucun lampadaire**, aucune
+poubelle ni panneau (ces deux balises n'étaient pas demandées à Overpass avant ce chantier : le code les lit désormais, mais
+elles resteront absentes jusqu'à une nouvelle extraction, `docs/intentions/extraction-mobilier-manquant.md`). Passages piétons :
+31 (souk), 18 (Vieille ville), 30 (FC Road), 104 (Corniche) ; trottoirs tracés à part : 40 (Vieille ville), 69 (FC Road),
+18 (Corniche), 0 (souk) ; voies portant une balise `sidewalk` : 1 (FC Road), 8 (Corniche).
+
+Tout le mobilier tient dans un seul maillage plafonné (400 pièces, les plus proches du parcours d'abord) et les marquages se
+fondent dans le maillage des voies : aucun maillage ni matériau en plus, donc tout s'efface avec la ville tête baissée
+(APP-001). Hors périmètre : les lampadaires comme source de lumière (`docs/intentions/rendu-eclairage-ambiance.md`) et les
+éléments remarquables en glTF (`docs/intentions/mobilier-remarquable-gltf.md`). Non jugé au casque :
+`docs/intentions/essai-casque-mobilier-urbain.md`.
+
 ## Version PC (sans casque)
 
 Le bouton « Version PC » de l'accueil lance la même marche (même ville, même parcours, même vitesse) dans un canvas qui couvre la
@@ -132,11 +154,11 @@ l'arbre simple. Non essayé sur un vrai Quest 3 (`docs/intentions/essai-casque-a
 
 Chantier rendu-profils-graphiques (APP-006). À l'accueil, trois profils figés règlent ensemble le rendu, au casque, au PC et à la tablette :
 
-| Profil | Contours | Ville riche (verdure, noms des rues) | Arbres / mobilier au plus | Ratio de pixels (PC, tablette) | Échelle d'image (casque) |
-|---|---|---|---|---|---|
-| Performance | non | non | 100 / 120 | 0,75 | 0,8 |
-| Équilibré | non | oui | 300 / 400 | 1 | 1 |
-| Qualité | oui | oui | 300 / 400 | 2, sans dépasser l'écran | 1,2 |
+| Profil | Contours | Ville riche (verdure, noms des rues) | Marquages au sol | Arbres / mobilier au plus | Ratio de pixels (PC, tablette) | Échelle d'image (casque) |
+|---|---|---|---|---|---|---|
+| Performance | non | non | non | 100 / 120 | 0,75 | 0,8 |
+| Équilibré | non | oui | oui | 300 / 400 | 1 | 1 |
+| Qualité | oui | oui | oui | 300 / 400 | 2, sans dépasser l'écran | 1,2 |
 
 Le profil proposé vient des capacités de l'appareil, pas du seul user-agent : session `immersive-ar` possible (casque : équilibré), pointeur tactile
 principal (tablette : performance), WebGL 2 absent (performance), ni casque ni tactile (PC : qualité) ; une détection impossible donne « équilibré ». Le choix

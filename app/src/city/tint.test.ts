@@ -18,11 +18,16 @@ describe("teintes issues des balises OpenStreetMap", () => {
     expect(buildingLook({ "building:colour": "?", building: "yes" })).toEqual({});
   });
 
-  it("APP-003: reconnaît les arbres, lampadaires et bancs par leurs balises exactes", () => {
+  it("APP-009: reconnaît arbres, lampadaires, bancs, poubelles et panneaux par leurs balises exactes, sans rien inventer", () => {
     expect(propKind({ natural: "tree" })).toBe("tree");
     expect(propKind({ highway: "street_lamp" })).toBe("lamp");
     expect(propKind({ amenity: "bench" })).toBe("bench");
+    expect(propKind({ amenity: "waste_basket" })).toBe("bin");
+    expect(propKind({ traffic_sign: "maxspeed" })).toBe("sign");
+    expect(propKind({ highway: "stop" })).toBe("sign");
+    expect(propKind({ highway: "give_way" })).toBe("sign");
     expect(propKind({ natural: "wood" })).toBeUndefined();
+    expect(propKind({ amenity: "cafe" })).toBeUndefined();
     expect(propKind({})).toBeUndefined();
   });
 

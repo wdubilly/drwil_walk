@@ -13,11 +13,13 @@ describe("profils graphiques", () => {
 
   it("APP-006: chaque profil règle les mêmes réglages de rendu, dans les plafonds des données", () => {
     for (const { settings } of PROFILES) {
-      expect(Object.keys(settings).sort()).toEqual(["facades", "maxFurniture", "maxTrees", "outlines", "pixelRatio", "richCity", "xrScale"]);
+      expect(Object.keys(settings).sort()).toEqual(["facades", "markings", "maxFurniture", "maxTrees", "outlines", "pixelRatio", "richCity", "xrScale"]);
       expect(settings.maxTrees).toBeLessThanOrEqual(MAX_TREES);
       expect(settings.maxFurniture).toBeLessThanOrEqual(MAX_FURNITURE);
     }
     expect(settingsOf("performance").richCity).toBe(false);
+    // APP-009 : le profil le plus léger retire les marquages au sol, les autres les gardent.
+    expect(PROFILES.map((p) => p.settings.markings)).toEqual([false, true, true]);
     expect(settingsOf("qualite").outlines).toBe(true);
     expect(settingsOf("equilibre")).toMatchObject({ outlines: false, richCity: true, maxTrees: MAX_TREES, maxFurniture: MAX_FURNITURE });
   });
@@ -30,7 +32,7 @@ describe("profils graphiques", () => {
     for (const { settings } of PROFILES) {
       expect(Object.keys(settings).filter((key) => /opacit|vignette|zone|fondu|visib/i.test(key))).toEqual([]);
     }
-    expect(Object.keys(sceneOptionsOf(settingsOf("qualite"))).sort()).toEqual(["facades", "maxFurniture", "maxTrees", "outlines", "richCity"]);
+    expect(Object.keys(sceneOptionsOf(settingsOf("qualite"))).sort()).toEqual(["facades", "markings", "maxFurniture", "maxTrees", "outlines", "richCity"]);
   });
 
   it("APP-006: le ratio de pixels ne dépasse jamais celui de l'écran et reste lisible", () => {

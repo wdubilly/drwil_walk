@@ -204,6 +204,14 @@ describe("ville riche", () => {
     expect((osm.getObjectByName("mobilier") as Mesh).geometry.hasAttribute("position")).toBe(false);
   });
 
+  it("APP-009: les marquages des voies sont dans le maillage des voies, et un profil léger les retire", () => {
+    const doc = withCanvasContext(new Window().document as unknown as Document);
+    const vertices = (markings: boolean): number =>
+      (createSouqScene(doc, souq, { markings }).osm.getObjectByName("voies") as Mesh).geometry.getAttribute("position").count;
+    expect(vertices(true)).toBeGreaterThan(vertices(false));
+    expect(createSouqScene(doc, souq, { markings: false }).osm.children).toHaveLength(createSouqScene(doc, souq).osm.children.length);
+  });
+
   it("APP-001: le fondu efface verdure et noms des rues, la zone tapis les découpe, et sans ville rien n'est rendu", () => {
     const { world, osm } = setup();
     const planes = createZoneClip(DEFAULT_ZONE).planes;

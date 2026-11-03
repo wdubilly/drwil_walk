@@ -112,6 +112,13 @@ Autres commandes de la **manette droite** : **gâchette** = pause / reprise (la 
 
 **Façades** : près du parcours, les bâtiments ont des fenêtres, des portes, des volets, des balcons et une corniche, qui varient d'un bâtiment à l'autre ; elles s'effacent tête baissée comme le reste de la ville. Le profil « performance » en dessine moins. Non vérifié dans un vrai casque.
 
+**Mobilier urbain et marquages** : les bancs, lampadaires, poubelles et panneaux de la rue sont dessinés à leur taille réelle et
+posés dans l'axe de la rue, uniquement là où les données OpenStreetMap en signalent ; les passages piétons, les bordures de
+trottoir et les lignes d'arrêt suivent les mêmes données. Les extraits livrés ne contiennent aujourd'hui ni lampadaire, ni
+poubelle, ni panneau : vous ne verrez donc que les bancs du souk de Doha et de la Corniche. Le profil **Performance** réduit le
+mobilier et retire les marquages. Rien de tout cela ne masque le réel : tête baissée, la ville et son mobilier s'effacent. Non
+vérifié au casque.
+
 **Ambiance cartoon** : la ville est dessinée en aplats à paliers de couleur, les voies ont une bordure plus claire (et une ligne centrale quand elles sont larges) et les façades portent des fenêtres. À l'accueil, le **profil graphique** (Performance, Équilibré ou Qualité) règle le rendu : le profil **Qualité** trace un trait sombre autour des bâtiments proches du parcours ; si l'image devient saccadée, choisissez Équilibré ou Performance (qui retire aussi la verdure au sol et les noms des rues, et réduit arbres et mobilier). Le profil proposé dépend de votre appareil ; votre choix est gardé dans le navigateur. Le réel reste visible quel que soit le profil. Non vérifié au casque. Les arbres sont ceux du pack Quaternius (quatre variantes, tournées et à des tailles différentes), embarqués dans l'application : aucun réseau n'est utilisé pour eux. Si leur chargement échoue, un message l'indique sur la page d'accueil et la marche continue avec des arbres simples. Ce rendu n'a pas encore été jugé sur un vrai Quest 3.
 Les données de la ville sont © contributeurs OpenStreetMap (et © Google en rendu Google 3D).
 
