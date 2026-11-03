@@ -39,7 +39,9 @@ removes it when fully covered.
 | `docs/intentions/rendu-lod-cellules.md` | [P2] Niveaux de détail et fusion ou chargement par cellules, si les mesures le justifient |
 | `docs/intentions/rendu-rues-mobilier.md` | [P2] Des rues, trottoirs et du mobilier urbain crédibles (marquages, passages, bordures) |
 | `docs/intentions/rendu-eclairage-ambiance.md` | [P3] Éclairage, ombres, reflets, ambiance et sons (tension avec le réel visible, `APP-001`) |
-| `docs/intentions/rendu-sources-donnees.md` | [P3] Plusieurs sources géographiques (Overture, autres) : la moins urgente |
+| `docs/intentions/rendu-sources-donnees.md` | [P3] Plusieurs sources géographiques (Overture, autres) : relevé de couverture fait le 2026-11-03, décision à prendre |
+| `docs/intentions/overture-emprises-manquantes.md` | Combler les emprises de bâtiments manquantes (empreintes d'apprentissage d'Overture) |
+| `docs/intentions/noms-de-batiments-extrait.md` | Garder le nom des bâtiments dans l'extrait OpenStreetMap |
 | `docs/intentions/mise-a-jour-drwil.md` | Mettre drwil à jour pour clore les trois chantiers de garantie |
 | `docs/intentions/relecture-guide-casque.md` | Relire `docs/guide-utilisateur.md` sur un vrai Quest 3 |
 | `docs/intentions/rendu-ville.md` | Une ville moins austère : reste la question des types de bâtiments (église, mosquée, commerce) |

@@ -30,6 +30,7 @@ files:
   - app/scripts/extract-pune.ts
   - app/scripts/extract-souq.ts
   - app/scripts/osm-tags.ts
+  - app/scripts/overture-coverage.ts
   - app/scripts/prepare-nature-pack.ts
   - app/src/city/attribution.test.ts
   - app/src/city/attribution.ts
@@ -47,6 +48,7 @@ files:
   - app/src/city/google-tiles.test.ts
   - app/src/city/google-tiles.ts
   - app/src/city/licence.ts
+  - app/src/city/overture-coverage.test.ts
   - app/src/city/props.test.ts
   - app/src/city/props.ts
   - app/src/city/roads.test.ts

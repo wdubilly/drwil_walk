@@ -32,7 +32,6 @@ avant les fiches qui touchent le panneau d'infos, `champ-de-vision-casque` puis 
 `hud-suivi-comparer-marche-reelle`, les fiches de la ville avant `course-reelle-gpx`. Les fiches hud passent en dernier (décision du 2026-11-03) ; `hud-suivi-comparer-marche-reelle` porte le préfixe hud pour passer après `hud-defis-progression`. La Corniche est reportée le 2026-11-01 : à annuler si `course-reelle-gpx` couvre le besoin.
 
 - [ ] [P2] [AI] Fusion des bâtiments par cellules (en attente des mesures au Quest 3) — `docs/projects/rendu-lod-cellules.md`
-- [ ] [P3] [AI] Essai de couverture d'Overture Maps — `docs/projects/rendu-sources-donnees.md`
 - [ ] [P3] [AI] Les défis de distance et l'objectif annuel — `docs/projects/hud-defis-progression.md`
 - [ ] [P3] [AI] Le voyage guidé par étapes — `docs/projects/hud-voyage-guide.md`
 - [ ] [P3] [AI] Comparer la marche virtuelle à la vraie marche — `docs/projects/hud-suivi-comparer-marche-reelle.md`
