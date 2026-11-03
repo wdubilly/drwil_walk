@@ -64,19 +64,21 @@ export function renderProfileChoice(doc: Document, storage: ProfileStorage | und
   if (!loaded.profile && loaded.invalid !== undefined) {
     notice.textContent = `Le profil graphique gardé dans ce navigateur (« ${loaded.invalid} ») est illisible : il est ignoré, le profil de l'appareil s'applique.`;
   }
-  const readProfile = (): ProfileId => (radios.find((radio) => radio.checked)?.value as ProfileId | undefined) ?? FALLBACK_PROFILE;
-  element.addEventListener("change", () => {
+  let current: ProfileId = initial;
+  element.addEventListener("change", (event) => {
+    current = (event.target as HTMLInputElement).value as ProfileId;
     chosen = true;
     hint.textContent = "";
-    notice.textContent = saveProfile(storage, readProfile())
+    notice.textContent = saveProfile(storage, current)
       ? ""
       : "Le profil graphique ne peut pas être gardé dans ce navigateur : il sert seulement pour cette séance.";
   });
   return {
     element,
-    readProfile,
+    readProfile: () => current,
     propose: (profile) => {
       if (chosen) return;
+      current = profile;
       for (const radio of radios) radio.checked = radio.value === profile;
       hint.textContent = "Proposé d'après votre appareil.";
     },
