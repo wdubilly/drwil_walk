@@ -20,6 +20,11 @@ files:
   - app/assets/PROVENANCE.md
   - app/e2e/materiaux-souk.test.ts
   - app/package.json
+  - app/package-lock.json
+  - app/src/city/souq.ts
+  - app/src/city/souq.test.ts
+  - app/src/xr/experience.ts
+  - app/src/pc/enter-pc.ts
   - .drwil/ia-first.json
   - docs/contracts.md
   - docs/architecture.md
