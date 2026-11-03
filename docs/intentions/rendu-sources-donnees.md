@@ -2,7 +2,7 @@
 
 **Statut** : proposée le 2026-11-02 (lot 5 de `docs/intentions/rendu-jeu-video.md`) ; la moins urgente, à ne cadrer qu'après les façades.
 
-**Revu le 2026-11-03** : l'essai de couverture est fait (chantier `docs/projects/rendu-sources-donnees.md`). Le relevé
+**Revu le 2026-11-03** : l'essai de couverture est fait (entrée du 2026-11-03 dans `docs/projects/journal.md`). Le relevé
 chiffré et les licences sont ci-dessous ; restent à trancher l'intégration ou l'abandon, par le demandeur.
 
 ## Besoin

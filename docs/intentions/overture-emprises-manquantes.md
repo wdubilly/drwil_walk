@@ -1,6 +1,6 @@
 # Intention : combler les emprises de bâtiments manquantes (empreintes d'apprentissage)
 
-**Statut** : proposée le 2026-11-03 (limite du chantier `docs/projects/rendu-sources-donnees.md`).
+**Statut** : proposée le 2026-11-03, limite de l'essai de couverture d'Overture (entrée du 2026-11-03 dans `docs/projects/journal.md`).
 
 ## Besoin
 
