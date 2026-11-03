@@ -95,4 +95,19 @@ describe("bâtiments extrudés", () => {
     const geometry = buildBuildingsGeometry([{ ...square(0, 0, 8), roof: 0xff8000, roofShape: "gabled" }], TONES, route);
     expect(roofColors(geometry)).toContain(rgb(0xff8000));
   });
+  it("APP-008: les façades s'ajoutent au même maillage et retirent le motif de fenêtres du shader aux murs détaillés", () => {
+    const near = createPath([{ x: -5, z: 20 }, { x: -5, z: -20 }]);
+    const building: Building = { ...square(0, 0, 9), id: 4242, kind: "house", levels: 3 };
+    const [bare, detailed] = [buildBuildingsGeometry([building], TONES, near), buildBuildingsGeometry([building], TONES, near, { detail: "full", region: "ailleurs" })];
+    expect(detailed.getAttribute("position").count).toBeGreaterThan(bare.getAttribute("position").count);
+    expect(detailed.hasAttribute("uv")).toBe(false);
+    expect(Array.from(detailed.getAttribute("noWindows").array).every((v) => v === 1)).toBe(true);
+    expect(new Set(bare.getAttribute("noWindows").array)).toEqual(new Set([0, 1]));
+    expect(buildBuildingsGeometry([building], TONES, near, { detail: "off", region: "ailleurs" }).getAttribute("position").count).toBe(bare.getAttribute("position").count);
+  });
+
+  it("APP-008: sans façade ni toit ajouté, les murs gardent le motif de fenêtres du shader", () => {
+    const geometry = buildBuildingsGeometry([square(0, 0, 9)], TONES, FAR);
+    expect(new Set(geometry.getAttribute("noWindows").array)).toEqual(new Set([0]));
+  });
 });

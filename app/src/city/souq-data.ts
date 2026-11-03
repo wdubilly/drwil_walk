@@ -5,6 +5,12 @@ import { materialTone, parseHex } from "./tint.ts";
 import { createPath, type Path } from "../route/path.ts";
 
 export interface Building {
+  /** Identifiant OpenStreetMap : la graine déterministe des façades (APP-008) ; absent des anciennes données. */
+  id?: number;
+  /** Balise `building` (`yes`, `house`, `apartments`…) ; absente : la famille se décide par le quartier. */
+  kind?: string;
+  /** Nombre d'étages (`building:levels`) ; absent : déduit de la hauteur. */
+  levels?: number;
   /** Contour fermé, en mètres locaux. */
   footprint: Vec2[];
   heightM: number;
@@ -66,9 +72,12 @@ export interface Souq {
 
 interface FeatureFile {
   features: {
+    id?: number;
     properties: {
       kind: string;
       heightM?: number;
+      building?: string;
+      levels?: number;
       highway?: string;
       colour?: string;
       roofColour?: string;
@@ -102,6 +111,9 @@ export function loadSouq(extract: FeatureFile, loop: LoopFile, palette: Palette)
   const buildings = extract.features
     .filter((f) => f.properties.kind === "building")
     .map((f) => ({
+      ...(f.id === undefined ? {} : { id: f.id }),
+      ...(f.properties.building ? { kind: f.properties.building } : {}),
+      ...(f.properties.levels ? { levels: f.properties.levels } : {}),
       footprint: ((f.geometry.coordinates as number[][][])[0] as number[][]).map(local),
       heightM: f.properties.heightM as number,
       ...tints(f.properties),

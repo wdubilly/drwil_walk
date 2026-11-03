@@ -1,10 +1,14 @@
 // Les profils graphiques (APP-006) : trois réglages figés du rendu, sans rien de la logique de marche ni de la sécurité.
 // Aucun réglage ici ne touche l'opacité, la vignette ou la zone tapis : le réel reste visible quel que soit le profil (APP-001).
+import type { FacadeDetail } from "../city/facades.ts";
+
 export type ProfileId = "performance" | "equilibre" | "qualite";
 
 export interface RenderSettings {
   /** Les contours des bâtiments proches du parcours. */
   outlines: boolean;
+  /** Le détail des façades (fenêtres, volets, portes, balcons, corniches) : réduit ou retiré, la ville garde son motif de repli (APP-008). */
+  facades: FacadeDetail;
   /** La ville riche : verdure au sol et noms des rues. */
   richCity: boolean;
   /** Plafonds d'arbres et de mobilier (bornés par ceux des données, `props.ts`). */
@@ -26,9 +30,9 @@ export interface Profile {
 export const FALLBACK_PROFILE: ProfileId = "equilibre";
 
 export const PROFILES: readonly Profile[] = [
-  { id: "performance", label: "Performance", settings: { outlines: false, richCity: false, maxTrees: 100, maxFurniture: 120, pixelRatio: 0.75, xrScale: 0.8 } },
-  { id: "equilibre", label: "Équilibré", settings: { outlines: false, richCity: true, maxTrees: 300, maxFurniture: 400, pixelRatio: 1, xrScale: 1 } },
-  { id: "qualite", label: "Qualité", settings: { outlines: true, richCity: true, maxTrees: 300, maxFurniture: 400, pixelRatio: 2, xrScale: 1.2 } },
+  { id: "performance", label: "Performance", settings: { outlines: false, facades: "reduced", richCity: false, maxTrees: 100, maxFurniture: 120, pixelRatio: 0.75, xrScale: 0.8 } },
+  { id: "equilibre", label: "Équilibré", settings: { outlines: false, facades: "full", richCity: true, maxTrees: 300, maxFurniture: 400, pixelRatio: 1, xrScale: 1 } },
+  { id: "qualite", label: "Qualité", settings: { outlines: true, facades: "full", richCity: true, maxTrees: 300, maxFurniture: 400, pixelRatio: 2, xrScale: 1.2 } },
 ];
 
 export function isProfileId(value: unknown): value is ProfileId {
@@ -48,7 +52,7 @@ export function appliedPixelRatio(settings: RenderSettings, devicePixelRatio: nu
 }
 
 /** Les options de la scène de la ville réglées par un profil (`createSouqScene`). */
-export function sceneOptionsOf(settings: RenderSettings): Pick<RenderSettings, "outlines" | "richCity" | "maxTrees" | "maxFurniture"> {
-  const { outlines, richCity, maxTrees, maxFurniture } = settings;
-  return { outlines, richCity, maxTrees, maxFurniture };
+export function sceneOptionsOf(settings: RenderSettings): Pick<RenderSettings, "outlines" | "facades" | "richCity" | "maxTrees" | "maxFurniture"> {
+  const { outlines, facades, richCity, maxTrees, maxFurniture } = settings;
+  return { outlines, facades, richCity, maxTrees, maxFurniture };
 }

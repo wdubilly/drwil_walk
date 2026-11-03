@@ -24,6 +24,14 @@ describe("rendu cartoon", () => {
     expect(shader.fragmentShader).toContain("#include <color_fragment>");
   });
 
+  it("APP-008: le motif de fenêtres du shader s'efface là où la géométrie dessine ses fenêtres", () => {
+    const shader = { vertexShader: "#include <common>\n#include <begin_vertex>", fragmentShader: "#include <common>\n#include <color_fragment>" };
+    addWindows(shader);
+    expect(shader.vertexShader).toContain("attribute float noWindows;");
+    expect(shader.vertexShader).toContain("vNoWindows = noWindows;");
+    expect(shader.fragmentShader).toContain("if (vNoWindows < 0.5 &&");
+  });
+
   it("APP-003: le matériau des façades est toon, coloré par sommet, et compile avec les fenêtres", () => {
     const material = buildingMaterial();
     expect(material.vertexColors).toBe(true);

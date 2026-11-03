@@ -167,4 +167,17 @@ describe("données du souk", () => {
     expect(roads.filter((r) => r.name !== undefined).length).toBeGreaterThan(10);
     expect(roads.some((r) => r.footway === "crossing")).toBe(true);
   });
+  it("APP-008: chaque bâtiment garde son identifiant OSM, sa balise building et ses étages quand l'extrait les porte", () => {
+    const extract = {
+      features: [
+        { id: 77, properties: { kind: "building", heightM: 9, building: "house", levels: 3 }, geometry: { coordinates: [[[0, 0], [0.0001, 0], [0.0001, 0.0001], [0, 0]]] } },
+        { properties: { kind: "building", heightM: 7 }, geometry: { coordinates: [[[0, 0], [0.0001, 0], [0.0001, 0.0001], [0, 0]]] } },
+      ],
+    };
+    const { buildings } = loadSouq(extract, { geometry: { coordinates: [[0, 0], [0, 0.001]] } }, palette);
+    expect(buildings[0]).toMatchObject({ id: 77, kind: "house", levels: 3, heightM: 9 });
+    expect(buildings[1]).not.toHaveProperty("id");
+    expect(buildings[1]).not.toHaveProperty("kind");
+    expect(buildings[1]).not.toHaveProperty("levels");
+  });
 });

@@ -36,6 +36,18 @@ export function buildingLook(tags: Record<string, string>): { colour?: string; r
   };
 }
 
+/** La balise `building` (`yes`, `house`, `apartments`…), sans espace ; rien si elle est vide. */
+export function buildingKind(tags: Record<string, string>): string | undefined {
+  const value = (tags["building"] ?? "").trim().toLowerCase();
+  return value === "" ? undefined : value;
+}
+
+/** Le nombre d'étages (`building:levels`) : un entier de 1 à 60, arrondi ; rien si la valeur est illisible. */
+export function buildingLevels(tags: Record<string, string>): number | undefined {
+  const levels = Math.round(parseFloat(tags["building:levels"] ?? ""));
+  return levels >= 1 && levels <= 60 ? levels : undefined;
+}
+
 /** Les surfaces de sol et les haies demandées à Overpass avec les bâtiments : occupation du sol, parcs, jardins et haies. */
 export const LAND_WAYS = [
   'way["landuse"~"^(grass|meadow|forest|recreation_ground|village_green|orchard|cemetery|flowerbed)$"]',

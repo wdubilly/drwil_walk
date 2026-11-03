@@ -13,7 +13,7 @@ describe("profils graphiques", () => {
 
   it("APP-006: chaque profil règle les mêmes réglages de rendu, dans les plafonds des données", () => {
     for (const { settings } of PROFILES) {
-      expect(Object.keys(settings).sort()).toEqual(["maxFurniture", "maxTrees", "outlines", "pixelRatio", "richCity", "xrScale"]);
+      expect(Object.keys(settings).sort()).toEqual(["facades", "maxFurniture", "maxTrees", "outlines", "pixelRatio", "richCity", "xrScale"]);
       expect(settings.maxTrees).toBeLessThanOrEqual(MAX_TREES);
       expect(settings.maxFurniture).toBeLessThanOrEqual(MAX_FURNITURE);
     }
@@ -30,7 +30,7 @@ describe("profils graphiques", () => {
     for (const { settings } of PROFILES) {
       expect(Object.keys(settings).filter((key) => /opacit|vignette|zone|fondu|visib/i.test(key))).toEqual([]);
     }
-    expect(Object.keys(sceneOptionsOf(settingsOf("qualite"))).sort()).toEqual(["maxFurniture", "maxTrees", "outlines", "richCity"]);
+    expect(Object.keys(sceneOptionsOf(settingsOf("qualite"))).sort()).toEqual(["facades", "maxFurniture", "maxTrees", "outlines", "richCity"]);
   });
 
   it("APP-006: le ratio de pixels ne dépasse jamais celui de l'écran et reste lisible", () => {
@@ -40,5 +40,9 @@ describe("profils graphiques", () => {
     expect(appliedPixelRatio(quality, 0.25)).toBe(0.5);
     expect(appliedPixelRatio(quality, Number.NaN)).toBe(1);
     expect(appliedPixelRatio(settingsOf("performance"), 2)).toBe(0.75);
+  });
+  it("APP-008: le profil règle le détail des façades : réduit en performance, complet ailleurs, jamais sans le repli", () => {
+    expect(PROFILES.map((p) => [p.id, p.settings.facades])).toEqual([["performance", "reduced"], ["equilibre", "full"], ["qualite", "full"]]);
+    expect(sceneOptionsOf(settingsOf("performance")).facades).toBe("reduced");
   });
 });

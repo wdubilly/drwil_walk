@@ -42,7 +42,7 @@ niveaux de détail simples. Pas de chargement par cellules (le demandeur l'écar
 ## 2. Hors périmètre
 
 - Le chargement par cellules et le préchargement dans la direction de marche (écartés le 2026-11-03).
-- Les textures et les façades (`docs/projects/rendu-facades-batiments.md`).
+- Les textures et les façades (`docs/projects/journal.md`).
 
 ## 3. Contraintes
 
