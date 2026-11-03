@@ -43,7 +43,17 @@ visible**, et des sons d'ambiance facultatifs, coupés par défaut. Tout est ré
 
 ## Contrats modifiés
 
-*(à déterminer au lot 1 : le choix du passthrough sans ciel virtuel est tranché le 2026-10-31, `docs/intentions/rendu-ville.md`)*
+- `APP-011` (créé au lot 1) : l'ambiance ne cache jamais le réel — lumière de l'heure réelle avec repli de midi, brouillard
+  éteint par défaut et plafonné à 0,15 d'opacité au casque (rien de voilé sous 8 m, désactivable entièrement), aucun ciel ni
+  fond posé au casque, sons coupés par défaut et plafonnés, rien n'est gardé dans le navigateur, réglage par le profil avec
+  repli désactivé.
+- `APP-001` complété : l'ambiance ne touche pas à la sécurité-visibilité (aucun fond au casque, voile plafonné, rien de voilé
+  sous 8 m).
+- `APP-006` complété : le brouillard d'ambiance fait partie des réglages du profil (« performance » le refuse) et un refus
+  l'emporte sur la case de l'accueil.
+- `QUA-020` complété : chemin 25, `app/e2e/eclairage-ambiance.test.ts`.
+- Le choix du passthrough sans ciel virtuel au casque (tranché le 2026-10-31, `docs/intentions/rendu-ville.md`) est tenu :
+  `scene.background` reste nul au casque.
 
 ## 2. Hors périmètre
 
@@ -85,6 +95,11 @@ visible**, et des sons d'ambiance facultatifs, coupés par défaut. Tout est ré
 
 ## 7. Reprise
 
-- **Dernier état** (2026-11-03) : cadrage seul, aucun code.
-- **Travail non commité** : la fiche.
-- **Prochaine étape** : lot 1, le contrat `APP-011`.
+- **Dernier état** (2026-11-03) : lots 1 à 4 faits. `APP-011` écrit et contrôlé par `app-011` ; lumière de l'heure réelle
+  (`app/src/render/daylight.ts`), brouillard plafonné (`app/src/render/fog.ts`), application à la scène
+  (`app/src/xr/ambience.ts`) et sons facultatifs (`app/src/xr/ambience-sound.ts`) livrés, branchés au casque
+  (`app/src/xr/experience.ts`) et au PC (`app/src/pc/enter-pc.ts`), réglés à l'accueil (`app/src/ui/home.ts`) et par le profil
+  (`app/src/render/profiles.ts`) ; e2e `app/e2e/eclairage-ambiance.test.ts` (chemin 25) ; docs à jour.
+- **Travail non commité** : aucun.
+- **Prochaine étape** : clôture du chantier ; l'essai sur un vrai Quest 3 reste à faire
+  (`docs/intentions/essai-casque-eclairage-ambiance.md`).

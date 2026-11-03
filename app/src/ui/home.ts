@@ -12,12 +12,7 @@ import { renderProfileChoice } from "./profile-choice.ts";
 import type { ProfileId } from "../render/profiles.ts";
 import { renderRenderChoice, type Rendering } from "./render-choice.ts";
 import { renderRouteChoice } from "./route-choice.ts";
-import {
-  DEFAULT_GLOBAL_OPACITY_PCT,
-  MAX_GLOBAL_OPACITY_PCT,
-  MIN_GLOBAL_OPACITY_PCT,
-  clampGlobalOpacityPct,
-} from "../safety/visibility.ts";
+import { DEFAULT_GLOBAL_OPACITY_PCT, MAX_GLOBAL_OPACITY_PCT, MIN_GLOBAL_OPACITY_PCT, clampGlobalOpacityPct } from "../safety/visibility.ts";
 
 export const ENTER_LABEL = "Entrer en réalité mixte";
 
@@ -44,6 +39,10 @@ export interface HomeView {
   readPanelSide(): PanelSide;
   /** La vignette réelle (périphérie en passthrough), activée par défaut (APP-001). */
   readVignette(): boolean;
+  /** Le brouillard d'ambiance : éteint tant que l'utilisateur ne l'allume pas (APP-011). */
+  readFog(): boolean;
+  /** Le volume des sons d'ambiance en pour cent : 0 (coupé) par défaut (APP-011). */
+  readSoundPct(): number;
   /** Le profil graphique choisi (APP-006) : le choix gardé, sinon celui proposé par l'appareil. */
   readProfile(): ProfileId;
   /** Le profil proposé d'après l'appareil, sans effet si un choix existe. */
@@ -100,14 +99,10 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
   speed.addEventListener("change", () => {
     speed.value = formatSpeedKmh(announce()).replace(" km/h", "").replace(",", ".");
   });
-  const opacity = numberInput(
-    doc,
-    "range",
-    MIN_GLOBAL_OPACITY_PCT,
-    MAX_GLOBAL_OPACITY_PCT,
-    10,
-    String(DEFAULT_GLOBAL_OPACITY_PCT),
-  );
+  const opacity = numberInput(doc, "range", MIN_GLOBAL_OPACITY_PCT, MAX_GLOBAL_OPACITY_PCT, 10, String(DEFAULT_GLOBAL_OPACITY_PCT));
+  // Ambiance (APP-011) : rien n'est gardé d'une séance à l'autre, le brouillard arrive éteint et les sons coupés.
+  const fog = Object.assign(doc.createElement("input"), { type: "checkbox", checked: false });
+  const sound = numberInput(doc, "range", 0, 100, 10, "0");
   const vignette = Object.assign(doc.createElement("input"), { type: "checkbox", checked: true });
   const button = doc.createElement("button");
   button.type = "button";
@@ -159,6 +154,8 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
     speedLimit,
     field(doc, "Opacité de la ville (%)", opacity),
     field(doc, "Vignette réelle (le réel reste visible sur les bords)", vignette),
+    field(doc, "Brouillard (léger, jamais au point de masquer un obstacle)", fog),
+    field(doc, "Sons d'ambiance (%, coupés par défaut)", sound),
     field(doc, "Poids (kg, facultatif : pour les calories, gardé sur ce casque seulement)", weight),
     erase,
     button,
@@ -184,6 +181,8 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
     readWeightKg: () => parseWeightKg(weight.value),
     readPanelSide: panelSide.readSide,
     readVignette: () => vignette.checked,
+    readFog: () => fog.checked,
+    readSoundPct: () => Number(sound.value),
     readProfile: profile.readProfile,
     proposeProfile: profile.propose,
     showNotice: (text) => { notice.textContent = text; },

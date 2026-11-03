@@ -94,6 +94,12 @@ L'opacité de la ville se règle à l'accueil (30 à 100 %) : baissez-la si vous
    Aucun lieu ni adresse n'est enregistré : ils ne partent qu'aux services d'adresses (Photon) et de routage (Valhalla) d'OpenStreetMap.
 2. Réglez la **vitesse de départ** (à partir de 1 km/h, sans maximum, par pas de 0,1) et l'**opacité de la ville**. Le minimum est écrit sous le champ ;
    une valeur sous 1 km/h est ramenée à 1 km/h et l'écran le dit. Réglez une vitesse que vous maîtrisez, clé de sécurité du tapis attachée.
+   Facultatif : **Brouillard** (décoché) ajoute un voile de profondeur très léger : au casque il ne cache jamais rien
+   à moins de 8 m et ne voile jamais plus de 15 % des couleurs, le tapis, la rampe et le bouton d'arrêt restent aussi
+   visibles qu'avant ; décochez-le à tout moment pour le supprimer entièrement. **Sons d'ambiance** (0 %, coupés)
+   ajoute une rumeur de ville discrète : montez le curseur seulement si vous entendez encore le tapis et la pièce ;
+   les deux réglages reviennent éteints à chaque ouverture de l'accueil. La lumière de la ville, elle, suit l'heure
+   qu'il est chez vous : rien à régler.
    Facultatif : saisissez votre **poids** (en kg) pour que l'estimation de calories soit plus juste ; sans poids, 70 kg sont utilisés. Il est gardé dans le navigateur du casque seulement (rien n'est envoyé) et repris à la prochaine visite ; « Effacer mon poids » le supprime.
 3. Appuyez sur « Entrer en réalité mixte » et acceptez la demande d'autorisation du navigateur. Si le bouton est
    grisé ou affiche un message, voir la section 6.

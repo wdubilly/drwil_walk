@@ -3,6 +3,14 @@ import { describe, expect, it, vi } from "vitest";
 import { ACTIVE_STATUS, ENDED_STATUS } from "./experience.ts";
 import { poseFrame, setup } from "./experience-double.ts";
 
+/** Coche la case « Brouillard » de l'accueil (APP-011). */
+function tickFog(t: ReturnType<typeof setup>): void {
+  const label = [...t.root.querySelectorAll("label")].find((l) => l.textContent.includes("Brouillard"));
+  const box = label?.querySelector("input");
+  if (!box) throw new Error("case « Brouillard » introuvable");
+  box.checked = true;
+}
+
 describe("expérience en réalité mixte", () => {
   it("APP-001: entre en session immersive-ar et lance la marche dans le souk", async () => {
     const t = setup();
@@ -27,6 +35,24 @@ describe("expérience en réalité mixte", () => {
     await chosen.enter();
     expect(scale(chosen)).toEqual([[0.8]]);
     expect(chosen.root.dataset["profile"]).toBe("performance");
+  });
+
+  it("APP-011: le brouillard allumé à l'accueil reste plafonné au casque, et le profil le plus léger le refuse", async () => {
+    const t = setup();
+    tickFog(t);
+    await t.enter();
+    expect(t.root.dataset["ambiance"]).toBe("brouillard 15 % · sons 0 %");
+    const light = setup();
+    light.root.querySelector<HTMLInputElement>("input[value='performance']")?.click();
+    tickFog(light);
+    await light.enter();
+    expect(light.root.dataset["ambiance"]).toBe("brouillard éteint · sons 0 %");
+  });
+
+  it("APP-001: sans réglage d'ambiance, le casque garde le passthrough nu : ni brouillard, ni son", async () => {
+    const t = setup();
+    await t.enter();
+    expect(t.root.dataset["ambiance"]).toBe("brouillard éteint · sons 0 %");
   });
 
   it("APP-002: la position suit le parcours du souk à la distance marchée", async () => {
