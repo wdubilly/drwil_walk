@@ -49,20 +49,21 @@ visuellement interchangeables. Les deux sujets sont liés : c'est une décision 
 
 ## Questions à trancher
 
-- [decision] Quel quartier et quelle rue de départ exactement dans chaque ville ? Le demandeur vise les **centres
-  touristiques** (2026-11-03) ; les propositions ci-dessous attendent sa confirmation.
-- [decision] Combien d'itinéraires au total vise-t-on ? Le poids des extraits et le temps de chargement en dépendent.
 - Le plafond de poids des extraits vérifié par les tests tient-il à sept itinéraires, ou faut-il charger les villes à la
-  demande ?
-- Faut-il un ordre : une ville d'abord, jugée au casque, avant d'engager les suivantes ?
+  demande ? À mesurer au premier lot.
+- Faut-il un ordre entre les trois villes, une jugée au casque avant d'engager les suivantes ?
 
-## Quartiers proposés
+## Quartiers retenus
 
 Des centres touristiques, marchables en boucle, denses en bâtiments cartographiés :
 
 - **Rome** — le centro storico : Piazza Navona, le Panthéon, les ruelles entre les deux. Ocres et travertin.
 - **Erevan** — le centre : place de la République, rue Abovian, la Cascade. Tuf rose.
 - **Paris** — le Marais : place des Vosges et les rues alentour. Pierre de taille et toits de zinc.
+
+Paris a d'abord été envisagée au Champ de Mars, pour la tour Eiffel. Écarté le 2026-11-03 : balisée `building=tower` et
+`height=330`, elle serait extrudée en bloc plein de 330 m (`docs/intentions/tours-treillis-extrudees.md`). Le Marais en est
+libre.
 
 ## Décisions
 
@@ -72,8 +73,12 @@ Des centres touristiques, marchables en boucle, denses en bâtiments cartographi
   le modèle une quatrième fois. Fait le 2026-11-03 : `app/scripts/cities.ts` décrit les villes par des données, ajouter une ville
   n'y demande plus que ses paramètres (voir le journal, chantier `extraction-generique`).
 - 2026-11-03 : les itinéraires visés sont des **centres touristiques**.
+- 2026-11-03 : **Paris reste un itinéraire comme les autres**, dans le Marais ; aucune tour à traiter.
 
 ## Ordre
 
-`extraction-generique` → `facades-regions` → les villes. Cette intention ne sera cadrée en fiche qu'une fois les quartiers
-et la rue de départ confirmés.
+`extraction-generique` → `facades-regions` → `villes-itineraires`.
+
+## Cadrée
+
+Cette intention est cadrée en fiche : `docs/projects/villes-itineraires.md` (2026-11-03).
