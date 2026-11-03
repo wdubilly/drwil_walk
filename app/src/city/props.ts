@@ -48,8 +48,8 @@ export const nearest = (props: readonly Prop[], route: Path, max: number): Prop[
  * Les arbres, dans le plafond MAX_TREES : ceux du pack Quaternius s'il est chargé (instances par variante), sinon l'arbre
  * procédural, un seul maillage instancié.
  */
-export function buildTrees(props: readonly Prop[], route: Path, pack?: TreePack): InstancedMesh | Group {
-  const trees = nearest(props.filter((p) => p.kind === "tree"), route, MAX_TREES);
+export function buildTrees(props: readonly Prop[], route: Path, pack?: TreePack, max = MAX_TREES): InstancedMesh | Group {
+  const trees = nearest(props.filter((p) => p.kind === "tree"), route, Math.min(max, MAX_TREES));
   if (pack) return buildPackTrees(trees, pack);
   const mesh = new InstancedMesh(treeModel(), new MeshLambertMaterial({ vertexColors: true }), trees.length);
   for (const [i, tree] of trees.entries()) mesh.setMatrixAt(i, new Matrix4().makeTranslation(tree.at.x, 0, tree.at.z));
@@ -67,8 +67,8 @@ function furniture(prop: Prop): BufferGeometry[] {
 }
 
 /** Le mobilier : un seul maillage fusionné, vide s'il n'y en a pas. */
-export function buildFurniture(props: readonly Prop[], route: Path): Mesh {
-  const kept = nearest(props.filter((p) => p.kind !== "tree"), route, MAX_FURNITURE);
+export function buildFurniture(props: readonly Prop[], route: Path, max = MAX_FURNITURE): Mesh {
+  const kept = nearest(props.filter((p) => p.kind !== "tree"), route, Math.min(max, MAX_FURNITURE));
   const parts = kept.flatMap(furniture);
   const geometry = (parts.length > 0 ? mergeGeometries(parts) : null) ?? new BufferGeometry();
   const mesh = new Mesh(geometry, new MeshLambertMaterial({ vertexColors: true }));

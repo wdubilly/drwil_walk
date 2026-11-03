@@ -2,6 +2,7 @@
 // dans un canvas de la page, sans session WebXR. Elle n'applique ni le fondu tête baissée, ni la zone tapis, ni la vignette :
 // sans passthrough ni tapis, il n'y a pas de réel à protéger (APP-001 ne concerne que la réalité mixte).
 import { Color } from "three";
+import { appliedPixelRatio, sceneOptionsOf, settingsOf } from "../render/profiles.ts";
 import { createSouqScene, placeOnRoute, setCityOpacity } from "../city/souq.ts";
 import type { Souq } from "../city/souq-data.ts";
 import { pointAt } from "../route/path.ts";
@@ -39,13 +40,15 @@ export async function enterPc(deps: ExperienceDeps, home: HomeView, trees: Promi
 }
 
 function walkPc(deps: ExperienceDeps, home: HomeView, souq: Souq, trees: TreeLoad): void {
-  const souqScene = createSouqScene(deps.document, souq, { outlines: home.readOutlines(), ...(trees.pack && { trees: trees.pack }) });
+  const settings = settingsOf(home.readProfile());
+  const souqScene = createSouqScene(deps.document, souq, { ...sceneOptionsOf(settings), ...(trees.pack && { trees: trees.pack }) });
   const { scene, camera, world, city, buildingCount } = souqScene;
   scene.background = new Color(SKY);
   home.showNotice(trees.notice);
   if (home.readRendering() === "google") withTreeNotice(trees, home.showNotice)(PC_GOOGLE_NOTICE);
   const win = deps.document.defaultView as Window;
   const renderer = new deps.Renderer({ antialias: true, alpha: false });
+  renderer.setPixelRatio(appliedPixelRatio(settings, win.devicePixelRatio));
   const resize = (): void => {
     renderer.setSize(win.innerWidth, win.innerHeight);
     camera.aspect = win.innerWidth / win.innerHeight;

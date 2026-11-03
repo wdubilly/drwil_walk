@@ -1,5 +1,5 @@
 import type { Scene } from "three";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { ACTIVE_STATUS, ENDED_STATUS } from "./experience.ts";
 import { poseFrame, setup } from "./experience-double.ts";
 
@@ -14,6 +14,19 @@ describe("expérience en réalité mixte", () => {
     t.frame(1000, poseFrame(0));
     expect(Number(t.panel()?.getAttribute("data-distance-m"))).toBeCloseTo(4 / 3.6);
     expect(t.fake.render).toHaveBeenCalledTimes(2);
+  });
+
+  it("APP-006: le casque applique l'échelle d'image du profil choisi, détecté d'abord puis manuel", async () => {
+    const scale = (t: ReturnType<typeof setup>) => (t.fake.renderer as unknown as { xr: { setFramebufferScaleFactor: { mock: { calls: number[][] } } } }).xr.setFramebufferScaleFactor.mock.calls;
+    const detected = setup();
+    await vi.waitFor(() => { expect(detected.root.querySelector<HTMLInputElement>("input[value='equilibre']")?.checked).toBe(true); });
+    await detected.enter();
+    expect(scale(detected)).toEqual([[1]]);
+    const chosen = setup();
+    chosen.root.querySelector<HTMLInputElement>("input[value='performance']")?.click();
+    await chosen.enter();
+    expect(scale(chosen)).toEqual([[0.8]]);
+    expect(chosen.root.dataset["profile"]).toBe("performance");
   });
 
   it("APP-002: la position suit le parcours du souk à la distance marchée", async () => {

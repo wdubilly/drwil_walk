@@ -195,6 +195,15 @@ describe("ville riche", () => {
     expect(yellow.length).toBeGreaterThan(0);
   });
 
+  it("APP-006: sans ville riche, la verdure et les noms des rues sont vides ; les plafonds réduisent arbres et mobilier", () => {
+    const doc = withCanvasContext(new Window().document as unknown as Document);
+    const { osm } = createSouqScene(doc, souq, { richCity: false, maxTrees: 0, maxFurniture: 0 });
+    expect((osm.getObjectByName("verdure") as Mesh).geometry.getAttribute("position").count).toBe(0);
+    expect((osm.getObjectByName("noms-de-rues") as Group).children).toHaveLength(0);
+    expect((osm.getObjectByName("arbres") as InstancedMesh).count).toBe(0);
+    expect((osm.getObjectByName("mobilier") as Mesh).geometry.hasAttribute("position")).toBe(false);
+  });
+
   it("APP-001: le fondu efface verdure et noms des rues, la zone tapis les découpe, et sans ville rien n'est rendu", () => {
     const { world, osm } = setup();
     const planes = createZoneClip(DEFAULT_ZONE).planes;

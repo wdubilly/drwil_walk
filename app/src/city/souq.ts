@@ -38,10 +38,15 @@ export const MAX_CITY_MESHES = 8 + MAX_STREET_NAMES;
 const OUTLINE_COLOR = 0x1b1b2f;
 
 export interface SceneOptions {
-  /** Les contours des bâtiments proches du parcours : désactivés par défaut (QUA-020). */
+  /** Les contours des bâtiments proches du parcours : désactivés par défaut ; le profil graphique les règle (APP-006). */
   outlines?: boolean;
   /** Les arbres du pack Quaternius, chargés d'avance : absents, la ville garde l'arbre procédural (APP-003). */
   trees?: TreePack;
+  /** La ville riche (verdure au sol, noms des rues) : vraie par défaut ; un profil léger la retire (APP-006). */
+  richCity?: boolean;
+  /** Plafonds d'arbres et de mobilier, bornés par ceux des données (APP-006). */
+  maxTrees?: number;
+  maxFurniture?: number;
 }
 
 export interface SouqScene {
@@ -59,6 +64,7 @@ export interface SouqScene {
 
 /** La scène : pas de fond (le passthrough le remplace), une lumière douce, le souk. */
 export function createSouqScene(doc: Document, souq: Souq, options: SceneOptions = {}): SouqScene {
+  const rich = options.richCity !== false;
   const city = new Group();
   city.name = "ville";
   const ground = new Mesh(new PlaneGeometry(GROUND_SIZE_M, GROUND_SIZE_M), toonMaterial({ color: new Color(souq.palette.ground) }));
@@ -68,11 +74,11 @@ export function createSouqScene(doc: Document, souq: Souq, options: SceneOptions
   // Couleurs par sommet : la teinte de chaque bâtiment vient de la géométrie, le matériau reste blanc.
   const buildings = new Mesh(buildBuildingsGeometry(souq.buildings, souq.palette.buildings, souq.route), buildingMaterial());
   buildings.name = "batiments";
-  const greenery = new Mesh(buildVegetation(souq.areas, souq.hedges, souq.route), toonMaterial({ vertexColors: true, side: DoubleSide, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }));
+  const greenery = new Mesh(buildVegetation(rich ? souq.areas : [], rich ? souq.hedges : [], souq.route), toonMaterial({ vertexColors: true, side: DoubleSide, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }));
   greenery.name = "verdure";
   const osm = new Group();
   osm.name = "osm";
-  osm.add(ground, greenery, roads, buildings, buildStreetLabels(doc, souq.roads, souq.route), buildTrees(souq.props, souq.route, options.trees), buildFurniture(souq.props, souq.route));
+  osm.add(ground, greenery, roads, buildings, buildStreetLabels(doc, rich ? souq.roads : [], souq.route), buildTrees(souq.props, souq.route, options.trees, options.maxTrees), buildFurniture(souq.props, souq.route, options.maxFurniture));
   if (options.outlines === true) {
     const outlines = new LineSegments(buildOutlinesGeometry(souq.buildings, souq.route), new LineBasicMaterial({ color: OUTLINE_COLOR }));
     outlines.name = "contours";

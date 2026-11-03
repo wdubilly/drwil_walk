@@ -103,6 +103,6 @@ repli.
 
 ## 7. Reprise
 
-- **Dernier état** (2026-11-03) : fiche cadrée, rien codé.
-- **Travail non commité** : aucun.
-- **Prochaine étape** : [decision] trancher le point ouvert de la section 5, puis lancer le chantier.
+- **Dernier état** (2026-11-03) : lots 1 à 4 livrés ; reste l'essai au casque [human] (`docs/intentions/essai-casque-profils-graphiques.md`).
+- **Travail non commité** : aucun une fois la clôture commitée.
+- **Prochaine étape** : clôture, puis essai au casque par l'humain.

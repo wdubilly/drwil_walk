@@ -114,13 +114,29 @@ Non essayé sur un vrai Quest 3 (lot 6 de la fiche).
 
 Ambiance cartoon (lots 2, 3 et 5 de `docs/projects/journal.md`) : le sol, les voies et les bâtiments ont un matériau
 toon à quatre paliers de lumière ; chaque classe de voie a sa couleur, une bordure plus claire et, dès 7 m de large, une ligne
-centrale ; les façades portent un motif de fenêtres dessiné par le shader. Option d'accueil « Contours des bâtiments »,
-décochée par défaut : un trait autour des bâtiments à moins de 120 m du parcours. Les arbres sont ceux du pack Quaternius
+centrale ; les façades portent un motif de fenêtres dessiné par le shader. Les contours des bâtiments (un trait autour des bâtiments à moins de 120 m du parcours) sont réglés par le profil graphique (ci-dessous), sans case à part. Les arbres sont ceux du pack Quaternius
 « Stylized Nature MegaKit » (version Standard, CC0), embarqués dans `app/assets/` (provenance dans `app/assets/PROVENANCE.md`) : quatre
 variantes d'arbre commun retenues parmi les 15 arbres de l'archive (non les 40 du kit complet), allégées à 413-454 triangles,
 une variante, un cap et une taille par arbre tirés de sa position (donc la même forêt à chaque marche), 300 arbres au plus,
 aucun appel réseau. Si le modèle ne se charge pas, l'écran le dit (« Arbres stylisés indisponibles… ») et la marche continue avec
 l'arbre simple. Non essayé sur un vrai Quest 3 (`docs/intentions/essai-casque-ambiance-cartoon.md`).
+
+## Profils graphiques
+
+Chantier rendu-profils-graphiques (APP-006). À l'accueil, trois profils figés règlent ensemble le rendu, au casque, au PC et à la tablette :
+
+| Profil | Contours | Ville riche (verdure, noms des rues) | Arbres / mobilier au plus | Ratio de pixels (PC, tablette) | Échelle d'image (casque) |
+|---|---|---|---|---|---|
+| Performance | non | non | 100 / 120 | 0,75 | 0,8 |
+| Équilibré | non | oui | 300 / 400 | 1 | 1 |
+| Qualité | oui | oui | 300 / 400 | 2, sans dépasser l'écran | 1,2 |
+
+Le profil proposé vient des capacités de l'appareil, pas du seul user-agent : session `immersive-ar` possible (casque : équilibré), pointeur tactile
+principal (tablette : performance), WebGL 2 absent (performance), ni casque ni tactile (PC : qualité) ; une détection impossible donne « équilibré ». Le choix
+manuel l'emporte, est gardé dans le navigateur (`localStorage`, jamais envoyé) et relu à l'accueil suivant ; une valeur gardée inconnue est ignorée et dite à
+l'accueil. Aucun profil ne touche l'opacité, la vignette ni la zone tapis : le réel reste visible (APP-001). Le profil retenu est inscrit sur la page (`data-profile`).
+« Qualité » est proposé partout, sans refus fondé sur des mesures : le risque est assumé. Les images par seconde de chaque profil n'ont jamais été mesurées sur
+un vrai Quest 3 (`docs/intentions/essai-casque-profils-graphiques.md`).
 
 ## Vérifié en conditions réelles
 

@@ -23,6 +23,15 @@ describe("arbres et mobilier urbain", () => {
     expect(buildTrees([], route).count).toBe(0);
   });
 
+  it("APP-006: un plafond de profil réduit arbres et mobilier, sans dépasser celui des données", () => {
+    const many = Array.from({ length: 20 }, (_, i) => at("tree", i + 1));
+    expect(buildTrees(many, route, undefined, 5).count).toBe(5);
+    expect(buildTrees(many, route, undefined, MAX_TREES * 10).count).toBe(20);
+    const benches = Array.from({ length: 20 }, (_, i) => at("bench", i));
+    expect(buildFurniture(benches, route, 4).geometry.getAttribute("position").count).toBe(4 * 36);
+    expect(buildFurniture(benches, route, MAX_FURNITURE * 10).geometry.getAttribute("position").count).toBe(20 * 36);
+  });
+
   it("APP-003: lampadaires et bancs sont fusionnés en un seul maillage coloré, plafonné, sans arbre", () => {
     const furniture = buildFurniture([at("lamp", 3), at("bench", -3), at("tree", 1)], route);
     expect(furniture.name).toBe("mobilier");

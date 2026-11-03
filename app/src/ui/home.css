@@ -51,7 +51,8 @@ h1 {
 }
 
 .rendering,
-.panel-side {
+.panel-side,
+.profile {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
@@ -61,7 +62,8 @@ h1 {
 }
 
 .rendering legend,
-.panel-side legend {
+.panel-side legend,
+.profile legend {
   margin-bottom: 0.5rem;
   padding: 0;
   font-size: 1.5rem;
@@ -69,7 +71,8 @@ h1 {
 }
 
 .rendering label,
-.panel-side label {
+.panel-side label,
+.profile label {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -82,14 +85,21 @@ h1 {
 }
 
 .rendering label:has(input:checked),
-.panel-side label:has(input:checked) {
+.panel-side label:has(input:checked),
+.profile label:has(input:checked) {
   border-color: var(--accent);
 }
 
 .rendering input,
-.panel-side input {
+.panel-side input,
+.profile input {
   width: 1.5rem;
   height: 1.5rem;
+}
+
+.profile-hint {
+  flex-basis: 100%;
+  margin: 0;
 }
 
 .notice {

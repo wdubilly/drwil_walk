@@ -2,6 +2,8 @@
 
 **Statut** : proposée le 2026-11-02 (exigence transversale de `docs/intentions/rendu-jeu-video.md`) ; après les mesures (`docs/intentions/rendu-mesures-diagnostic.md`).
 
+**Reviewed on 2026-11-03** : l'ossature des profils (trois profils figés, détection par capacités, choix à l'accueil gardé dans le navigateur, réglages actuels branchés) est livrée par le chantier rendu-profils-graphiques ; restent vivants les effets pas encore construits (textures, niveaux de détail, distances d'affichage, ombres, reflets, façades) qui se brancheront sur les profils dans leurs fiches `rendu-*`, et l'essai au casque (`docs/intentions/essai-casque-profils-graphiques.md`).
+
 ## Besoin
 
 Un réglage de qualité indépendant de la logique métier, avec au moins un profil par cible : casque Quest 3, PC, tablette

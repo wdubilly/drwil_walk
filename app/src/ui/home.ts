@@ -8,6 +8,8 @@ import { FREE_ITINERARY_ID } from "../route/itineraries.ts";
 import { renderPcButton } from "../pc/pc-button.ts";
 import { renderFreeTrip } from "./free-trip.ts";
 import { renderPanelSide, type PanelSide } from "./panel-side.ts";
+import { renderProfileChoice } from "./profile-choice.ts";
+import type { ProfileId } from "../render/profiles.ts";
 import { renderRenderChoice, type Rendering } from "./render-choice.ts";
 import { renderRouteChoice } from "./route-choice.ts";
 import {
@@ -42,8 +44,10 @@ export interface HomeView {
   readPanelSide(): PanelSide;
   /** La vignette réelle (périphérie en passthrough), activée par défaut (APP-001). */
   readVignette(): boolean;
-  /** Les contours des bâtiments, désactivés par défaut tant que la cadence n'est pas mesurée au casque. */
-  readOutlines(): boolean;
+  /** Le profil graphique choisi (APP-006) : le choix gardé, sinon celui proposé par l'appareil. */
+  readProfile(): ProfileId;
+  /** Le profil proposé d'après l'appareil, sans effet si un choix existe. */
+  proposeProfile(profile: ProfileId): void;
   /** Une raison qui reste lisible pendant la marche (ex. repli sur OpenStreetMap) ; vide l'efface. */
   showNotice: (text: string) => void;
   onEnter(handler: () => void): void;
@@ -105,7 +109,6 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
     String(DEFAULT_GLOBAL_OPACITY_PCT),
   );
   const vignette = Object.assign(doc.createElement("input"), { type: "checkbox", checked: true });
-  const outlines = Object.assign(doc.createElement("input"), { type: "checkbox" });
   const button = doc.createElement("button");
   button.type = "button";
   button.textContent = ENTER_LABEL;
@@ -122,19 +125,16 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
   googleCredit.textContent = ` · ${GOOGLE_ATTRIBUTION}`;
   googleCredit.hidden = true;
   credit.append(googleCredit);
-  rendering.onChange(() => {
-    googleCredit.hidden = rendering.readRendering() !== "google";
-  });
+  rendering.onChange(() => { googleCredit.hidden = rendering.readRendering() !== "google"; });
   // Une alerte à part du statut : l'ouverture de la session réécrit le statut, pas ce repli.
   const notice = doc.createElement("p");
   notice.setAttribute("role", "alert");
   notice.className = "notice";
   const panelSide = renderPanelSide(doc, storage, notice);
+  const profile = renderProfileChoice(doc, storage, notice);
   const weight = numberInput(doc, "number", MIN_WEIGHT_KG, MAX_WEIGHT_KG, 0.5, String(loadWeightKg(storage) ?? ""));
   weight.placeholder = `${String(DEFAULT_WEIGHT_KG)} par défaut`;
-  const keep = (ok: boolean): void => {
-    notice.textContent = ok ? "" : "Le poids ne peut pas être gardé dans ce navigateur : il sert seulement pour cette séance.";
-  };
+  const keep = (ok: boolean): void => { notice.textContent = ok ? "" : "Le poids ne peut pas être gardé dans ce navigateur : il sert seulement pour cette séance."; };
   weight.addEventListener("change", () => {
     const kg = parseWeightKg(weight.value);
     keep(kg === undefined ? clearWeightKg(storage) : saveWeightKg(storage, kg));
@@ -152,13 +152,13 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
     freeTrip.element,
     rendering.element,
     panelSide.element,
+    profile.element,
     reminder,
     field(doc, "Vitesse de départ (km/h)", speed),
     speedHint,
     speedLimit,
     field(doc, "Opacité de la ville (%)", opacity),
     field(doc, "Vignette réelle (le réel reste visible sur les bords)", vignette),
-    field(doc, "Contours des bâtiments (à essayer : peut ralentir l'image)", outlines),
     field(doc, "Poids (kg, facultatif : pour les calories, gardé sur ce casque seulement)", weight),
     erase,
     button,
@@ -171,6 +171,7 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
   const start = (handler: () => void) => (): void => {
     root.dataset["route"] = routes.readId();
     root.dataset["panelSide"] = panelSide.readSide();
+    root.dataset["profile"] = profile.readProfile();
     handler();
   };
   return {
@@ -183,18 +184,15 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
     readWeightKg: () => parseWeightKg(weight.value),
     readPanelSide: panelSide.readSide,
     readVignette: () => vignette.checked,
-    readOutlines: () => outlines.checked,
-    showNotice: (text) => {
-      notice.textContent = text;
-    },
+    readProfile: profile.readProfile,
+    proposeProfile: profile.propose,
+    showNotice: (text) => { notice.textContent = text; },
     onEnter: (handler) => { button.addEventListener("click", start(handler)); },
     onEnterPc: (handler) => { pcButton.addEventListener("click", start(handler)); },
     setEntering: (entering) => {
       button.disabled = entering;
       pcButton.disabled = entering;
     },
-    showStatus: (text) => {
-      status.textContent = text;
-    },
+    showStatus: (text) => { status.textContent = text; },
   };
 }
