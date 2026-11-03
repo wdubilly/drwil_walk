@@ -14,6 +14,8 @@ import { chosenCity } from "./city-choice.ts";
 import { placeOf, walkDashboard } from "./dashboard.ts";
 import { createJunctions } from "./junctions.ts";
 import { createZoneControl } from "./zone-control.ts";
+import { detectProfile } from "../render/capabilities.ts";
+import { sceneOptionsOf, settingsOf } from "../render/profiles.ts";
 import { createVignette } from "./vignette.ts";
 import { headPitchDownDeg } from "../safety/visibility.ts";
 import { renderHome, type HomeView } from "../ui/home.ts";
@@ -29,7 +31,7 @@ import { NO_CALIBRATION, calibrationFrom, type HeadPose } from "./pose.ts";
 import { preloadTrees, withTreeNotice, type TreeLoad } from "./trees-load.ts";
 import { REFERENCE_SPACE, SESSION_MODE, requestMixedRealitySession, type XrSystemLike } from "./session.ts";
 
-export type RendererLike = Pick<WebGLRenderer, "xr" | "setAnimationLoop" | "render" | "domElement" | "dispose" | "localClippingEnabled" | "setSize" | "info">;
+export type RendererLike = Pick<WebGLRenderer, "xr" | "setAnimationLoop" | "render" | "domElement" | "dispose" | "localClippingEnabled" | "setSize" | "setPixelRatio" | "info">;
 export type RendererClass = new (parameters: { antialias: boolean; alpha: boolean }) => RendererLike;
 
 export interface ExperienceDeps {
@@ -56,13 +58,10 @@ export const ENDED_STATUS = "Session terminée : vous pouvez y revenir.";
 export function startExperience(deps: ExperienceDeps): HomeView {
   const planner = createTripPlanner(deps.routes);
   const home = renderHome(deps.document, deps.root, planner, deps.storage);
+  void detectProfile({ xr: deps.xr, document: deps.document }).then((profile) => { home.proposeProfile(profile); });
   const trees = preloadTrees(deps.trees);
-  home.onEnter(() => {
-    void enter(deps, home, trees);
-  });
-  home.onEnterPc(() => {
-    void enterPc(deps, home, trees);
-  });
+  home.onEnter(() => { void enter(deps, home, trees); });
+  home.onEnterPc(() => { void enterPc(deps, home, trees); });
   return home;
 }
 
@@ -83,7 +82,8 @@ async function enter(deps: ExperienceDeps, home: HomeView, trees: Promise<TreeLo
 
 async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession, souq: Souq, trees: TreeLoad): Promise<void> {
   // La scène d'abord : si elle ne se construit pas, aucun renderer ni canevas n'est laissé derrière.
-  const souqScene = createSouqScene(deps.document, souq, { outlines: home.readOutlines(), ...(trees.pack && { trees: trees.pack }) });
+  const settings = settingsOf(home.readProfile());
+  const souqScene = createSouqScene(deps.document, souq, { ...sceneOptionsOf(settings), ...(trees.pack && { trees: trees.pack }) });
   const { scene, camera, world, city, buildingCount } = souqScene;
   // Le message d'arrivée d'un trajet libre, dans le casque : il s'efface avec la ville (APP-001).
   const arrival = createAttributionLabel(deps.document, ARRIVAL_TEXT, { name: "arrivee", y: 1.4 });
@@ -99,6 +99,7 @@ async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession, so
   });
   const renderer = new deps.Renderer({ antialias: true, alpha: true });
   renderer.xr.enabled = true;
+  renderer.xr.setFramebufferScaleFactor(settings.xrScale);
   // Nécessaire à la découpe de la zone tapis, portée par les matériaux (APP-001).
   renderer.localClippingEnabled = true;
   renderer.xr.setReferenceSpaceType(REFERENCE_SPACE);

@@ -71,7 +71,7 @@ dit ni la hauteur, ni le type, ni les étages, sans jamais produire de géométr
 - Tout chantier touchant `app/` est HIGH ; `APP-001` reste un critère testé.
 - Les extraits restent légers (poids dans le navigateur du casque) ; licence ODbL et attribution conservées (`APP-003`).
 - Un fichier de code reste sous 200 lignes (`QUA-001`), couverture à 100 % (`QUA-004`).
-- Dépend des profils graphiques (`docs/projects/rendu-profils-graphiques.md`) pour son réglage.
+- Dépend des profils graphiques (`docs/projects/journal.md`) pour son réglage.
 
 ## 4. Décisions
 

@@ -1,0 +1,54 @@
+// Les profils graphiques (APP-006) : trois réglages figés du rendu, sans rien de la logique de marche ni de la sécurité.
+// Aucun réglage ici ne touche l'opacité, la vignette ou la zone tapis : le réel reste visible quel que soit le profil (APP-001).
+export type ProfileId = "performance" | "equilibre" | "qualite";
+
+export interface RenderSettings {
+  /** Les contours des bâtiments proches du parcours. */
+  outlines: boolean;
+  /** La ville riche : verdure au sol et noms des rues. */
+  richCity: boolean;
+  /** Plafonds d'arbres et de mobilier (bornés par ceux des données, `props.ts`). */
+  maxTrees: number;
+  maxFurniture: number;
+  /** Ratio de pixels de la version PC et de la tablette, borné par celui de l'écran. */
+  pixelRatio: number;
+  /** Échelle de l'image dans le casque (1 : la résolution par défaut). */
+  xrScale: number;
+}
+
+export interface Profile {
+  id: ProfileId;
+  label: string;
+  settings: RenderSettings;
+}
+
+/** Le repli : le profil qui garde le rendu d'avant les profils, utilisé quand rien ne permet de choisir. */
+export const FALLBACK_PROFILE: ProfileId = "equilibre";
+
+export const PROFILES: readonly Profile[] = [
+  { id: "performance", label: "Performance", settings: { outlines: false, richCity: false, maxTrees: 100, maxFurniture: 120, pixelRatio: 0.75, xrScale: 0.8 } },
+  { id: "equilibre", label: "Équilibré", settings: { outlines: false, richCity: true, maxTrees: 300, maxFurniture: 400, pixelRatio: 1, xrScale: 1 } },
+  { id: "qualite", label: "Qualité", settings: { outlines: true, richCity: true, maxTrees: 300, maxFurniture: 400, pixelRatio: 2, xrScale: 1.2 } },
+];
+
+export function isProfileId(value: unknown): value is ProfileId {
+  return PROFILES.some((profile) => profile.id === value);
+}
+
+/** Les réglages d'un profil ; un identifiant inconnu retombe sur le repli. */
+export function settingsOf(id: unknown): RenderSettings {
+  const found = PROFILES.find((profile) => profile.id === id) ?? PROFILES.find((profile) => profile.id === FALLBACK_PROFILE);
+  return (found as Profile).settings;
+}
+
+/** Le ratio de pixels appliqué : celui du profil, sans dépasser celui de l'écran (ni descendre sous 0,5). */
+export function appliedPixelRatio(settings: RenderSettings, devicePixelRatio: number): number {
+  const screen = Number.isFinite(devicePixelRatio) && devicePixelRatio > 0 ? devicePixelRatio : 1;
+  return Math.max(0.5, Math.min(settings.pixelRatio, screen));
+}
+
+/** Les options de la scène de la ville réglées par un profil (`createSouqScene`). */
+export function sceneOptionsOf(settings: RenderSettings): Pick<RenderSettings, "outlines" | "richCity" | "maxTrees" | "maxFurniture"> {
+  const { outlines, richCity, maxTrees, maxFurniture } = settings;
+  return { outlines, richCity, maxTrees, maxFurniture };
+}

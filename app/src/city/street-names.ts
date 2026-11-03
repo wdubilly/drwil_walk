@@ -75,6 +75,7 @@ function plate(doc: Document, label: StreetLabel): Mesh {
 export function buildStreetLabels(doc: Document, roads: readonly Road[], route: Path): Group {
   const group = new Group();
   group.name = "noms-de-rues";
-  group.add(...pickStreetLabels(roads, route).map((label) => plate(doc, label)));
+  // `add()` sans argument est une erreur pour three.js : on ajoute plaque par plaque (aucune plaque sur un réseau vide).
+  for (const label of pickStreetLabels(roads, route)) group.add(plate(doc, label));
   return group;
 }

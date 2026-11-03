@@ -38,22 +38,21 @@ async function walkWith(page: Page, outlines: boolean): Promise<Walk> {
     errors.push(e.message);
   });
   await page.goto("/");
-  const box = page.getByLabel("Contours des bâtiments");
-  await expect(box).not.toBeChecked();
-  if (outlines) await box.check();
+  await expect(page.getByLabel("Équilibré")).toBeChecked();
+  if (outlines) await page.getByLabel("Qualité").check();
   await page.getByRole("button", { name: "Entrer en réalité mixte" }).click();
   await expect(page.getByRole("status")).toHaveText("Réalité mixte active (immersive-ar)");
   await page.waitForTimeout(500);
   return { errors, foreign };
 }
 
-test("chemin 14 : la marche en rendu cartoon, sans contours (défaut), avec les arbres du pack, sans erreur ni appel réseau", async ({ page }) => {
+test("chemin 14 : la marche en rendu cartoon, sans contours (profil équilibré par défaut), avec les arbres du pack, sans erreur ni appel réseau", async ({ page }) => {
   const walk = await walkWith(page, false);
   expect(walk).toEqual({ errors: [], foreign: [] });
   await expect(page.getByRole("alert")).toHaveText("");
 });
 
-test("chemin 14 : la marche en rendu cartoon, avec les contours des bâtiments et les arbres du pack, sans erreur ni appel réseau", async ({ page }) => {
+test("chemin 14 : la marche en rendu cartoon, avec les contours des bâtiments (profil qualité) et les arbres du pack, sans erreur ni appel réseau", async ({ page }) => {
   const walk = await walkWith(page, true);
   expect(walk).toEqual({ errors: [], foreign: [] });
   await expect(page.getByRole("alert")).toHaveText("");

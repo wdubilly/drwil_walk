@@ -1,6 +1,6 @@
 import { Window } from "happy-dom";
 import { Mesh, Vector3 } from "three";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { createPath } from "../route/path.ts";
 import { withCanvasContext } from "./canvas-double.ts";
 import type { Road } from "./souq-data.ts";
@@ -16,6 +16,13 @@ const across = (name: string | undefined, z: number, x = 0, extra: Partial<Road>
 const doc = (): Document => withCanvasContext(new Window().document as unknown as Document);
 
 describe("noms des rues", () => {
+  it("APP-006: sans rue, le groupe est vide et three.js n'est appelé sans objet à ajouter", () => {
+    const error = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    expect(buildStreetLabels(doc(), [], route).children).toHaveLength(0);
+    expect(error).not.toHaveBeenCalled();
+    error.mockRestore();
+  });
+
   it("APP-003: une plaque par nom, au sommet de la rue le plus proche du parcours", () => {
     const [label] = pickStreetLabels([across("Rue du Souk", -50, 4)], route);
     expect(label).toMatchObject({ text: "Rue du Souk", at: { x: 4, z: -50 } });

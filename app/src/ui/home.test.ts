@@ -124,12 +124,16 @@ describe("écran d'accueil", () => {
     expect(limit?.textContent).toContain("0,2 km/h est sous la limite");
   });
 
-  it("QUA-020: les contours des bâtiments sont décochés par défaut et se cochent", () => {
-    const { view, input } = setup();
-    const outlines = input("Contours des bâtiments");
-    expect(view.readOutlines()).toBe(false);
-    outlines.checked = true;
-    expect(view.readOutlines()).toBe(true);
+  it("APP-006: le profil graphique remplace la case des contours : équilibré par défaut, proposé par l'appareil, choisi à la main", () => {
+    const { root, view } = setup();
+    expect(root.textContent).not.toContain("Contours des bâtiments");
+    expect(view.readProfile()).toBe("equilibre");
+    view.proposeProfile("qualite");
+    expect(view.readProfile()).toBe("qualite");
+    root.querySelector<HTMLInputElement>("input[value='performance']")?.click();
+    expect(view.readProfile()).toBe("performance");
+    view.proposeProfile("qualite");
+    expect(view.readProfile()).toBe("performance");
   });
 
   it("APP-001: la vignette réelle est cochée par défaut et se décoche", () => {

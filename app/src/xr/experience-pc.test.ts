@@ -30,6 +30,17 @@ describe("version PC (sans casque)", () => {
     expect(t.fake.render).toHaveBeenCalledTimes(2);
   });
 
+  it("APP-006: la version PC applique le ratio de pixels du profil choisi, borné par celui de l'écran", async () => {
+    const t = setup();
+    t.root.querySelector<HTMLInputElement>("input[value='performance']")?.click();
+    await t.enterPc();
+    expect(t.fake.setPixelRatio).toHaveBeenCalledWith(0.75);
+    const quality = setup();
+    quality.root.querySelector<HTMLInputElement>("input[value='qualite']")?.click();
+    await quality.enterPc();
+    expect(quality.fake.setPixelRatio).toHaveBeenCalledWith(Math.min(2, quality.win.devicePixelRatio));
+  });
+
   it("APP-002: même ville, même parcours et même vitesse que dans le casque", async () => {
     const pc = await walking();
     pc.frame(10_000);

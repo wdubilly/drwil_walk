@@ -60,16 +60,17 @@ export function setup(
     isSessionSupported: () => Promise.resolve(options.supported ?? true),
     requestSession: vi.fn(() => Promise.resolve(session)),
   } satisfies XrSystemLike;
-  const fake = { renderer: null as { localClippingEnabled: boolean } | null, loop: null as Loop, render: vi.fn(), setSize: vi.fn(), dispose: vi.fn(), canvas: doc.createElement("canvas") };
+  const fake = { renderer: null as { localClippingEnabled: boolean } | null, loop: null as Loop, render: vi.fn(), setSize: vi.fn(), setPixelRatio: vi.fn(), dispose: vi.fn(), canvas: doc.createElement("canvas") };
   const space = options.space === false ? null : ({} as XRReferenceSpace);
   class FakeRenderer {
     domElement = fake.canvas;
     localClippingEnabled = false;
-    xr = { enabled: false, getCamera: () => ({ cameras: [] }), setReferenceSpaceType: vi.fn(), setSession: vi.fn(() =>
+    xr = { enabled: false, getCamera: () => ({ cameras: [] }), setReferenceSpaceType: vi.fn(), setFramebufferScaleFactor: vi.fn(), setSession: vi.fn(() =>
         options.sessionFails ? Promise.reject(new Error("contexte WebGL refusé")) : Promise.resolve(),
       ), getReferenceSpace: () => space };
     setAnimationLoop = (cb: Loop) => (fake.loop = cb);
     setSize = fake.setSize;
+    setPixelRatio = fake.setPixelRatio;
     render = fake.render;
     constructor() {
       if ("rendererThrows" in options) throw options.rendererThrows;
