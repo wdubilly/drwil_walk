@@ -36,6 +36,7 @@ removes it when fully covered.
 | `docs/intentions/essai-casque-facades-batiments.md` | Essayer les façades procédurales sur un vrai Quest 3 (72 images par seconde, lisibilité) |
 | `docs/intentions/ville-provence.md` | Un itinéraire dans une ville de Provence pour la famille de façades provençale |
 | `docs/intentions/facades-textures-monuments.md` | Textures de façade et monuments glTF (suite des façades procédurales) |
+| `docs/intentions/identite-visuelle-quartiers.md` | L'identité visuelle locale des quartiers (couleurs, matériaux PBR) d'après des photos de rue, prototype au souk |
 | `docs/intentions/rendu-lod-cellules.md` | [P2] Niveaux de détail et fusion ou chargement par cellules, si les mesures le justifient |
 | `docs/intentions/rendu-rues-mobilier.md` | [P2] Des rues, trottoirs et du mobilier urbain crédibles (marquages, passages, bordures) |
 | `docs/intentions/extraction-mobilier-manquant.md` | Réextraire les quatre quartiers pour y amener poubelles et panneaux (bancs remplacés, pas fusionnés) |
