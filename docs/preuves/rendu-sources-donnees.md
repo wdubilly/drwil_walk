@@ -1,7 +1,7 @@
 # Preuve de clôture — rendu-sources-donnees
 
 **Clos le** : 2026-11-03
-**Commit vérifié** : `3b656540c1` — verdict `drwil verify` : PASS
+**Commit vérifié** : `1d35d44ca4` — verdict `drwil verify` : PASS
 
 critères de ce chantier, et ce qui les prouve aujourd'hui encore (rejoués par `drwil verify` après la clôture) :
 
