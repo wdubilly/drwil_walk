@@ -17,8 +17,9 @@ import {
   table,
   type Zone,
 } from "../../scripts/overture-coverage.ts";
+import { CITIES } from "../../scripts/cities.ts";
 
-const zone: Zone = { id: "essai", name: "Essai", bbox: { south: 1, west: 2, north: 3, east: 4 }, extract: "essai.json" };
+const zone: Zone = { id: "essai", name: "Essai", city: "souq", bbox: { south: 1, west: 2, north: 3, east: 4 }, extract: "essai.json" };
 
 const extract = JSON.stringify({
   features: [
@@ -49,6 +50,14 @@ describe("APP-003: essai de couverture d'Overture Maps", () => {
     expect(ZONES.map((z) => z.id)).toEqual(["pune-vieille-ville", "pune-fc-road", "doha-corniche", "doha-souq-waqif"]);
     expect(ZONES.map((z) => z.extract)).toEqual(["pune-vieille-ville.json", "pune-fc-road.json", "doha-corniche.json", "souq-waqif.json"]);
     for (const z of ZONES) expect(z.bbox.south).toBeLessThan(z.bbox.north);
+  });
+
+  it("APP-003: lit l'emprise et l'extrait de chaque zone dans la description des villes (CITIES)", () => {
+    expect(ZONES.map((z) => z.city)).toEqual(["pune", "fc-road", "corniche", "souq"]);
+    for (const z of ZONES) {
+      expect(z.bbox).toBe(CITIES[z.city].bbox);
+      expect(`data/${z.extract}`).toBe(CITIES[z.city].file);
+    }
   });
 
   it("interroge chaque zone par son seul cadre, pour que les fichiers soient élagués", () => {

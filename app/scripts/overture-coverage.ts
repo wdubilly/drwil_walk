@@ -11,23 +11,25 @@
 //     const fs=require('node:fs');const run=sql=>new Promise((ok,ko)=>execFile(process.env.DUCKDB,['-no-agent','-json','-c',sql],
 //       {maxBuffer:1e8},(e,out)=>e?ko(e):ok(out)));
 //     fs.writeFileSync(process.argv[1], await m.survey(run, f=>fs.readFileSync('data/'+f,'utf8')));})" <fichier-de-relevé>
-import { CORNICHE_BBOX } from "./extract-corniche.ts";
-import { FC_ROAD_BBOX } from "./extract-fc-road.ts";
-import { PUNE_BBOX } from "./extract-pune.ts";
-import { BBOX, DEFAULT_HEIGHT_M } from "./extract-souq.ts";
+import { CITIES, type CityId } from "./cities.ts";
+import { DEFAULT_HEIGHT_M } from "./extract-souq.ts";
 
 export interface Bbox { south: number; west: number; north: number; east: number }
-export interface Zone { id: string; name: string; bbox: Bbox; extract: string }
+export interface Zone { id: string; name: string; city: CityId; bbox: Bbox; extract: string }
 
 /** Version publiée lue : le relevé est figé sur elle, il n'est pas rejoué pendant la marche. */
 export const RELEASE = "2026-10-21.0";
 export const BUCKET = "s3://overturemaps-us-west-2/release";
 
+// L'emprise et l'extrait viennent de la description des villes (cities.ts), seule source.
+const zoneOf = (city: CityId, id: string, name: string): Zone =>
+  ({ id, name, city, bbox: CITIES[city].bbox, extract: CITIES[city].file.replace(/^data\//, "") });
+
 export const ZONES: Zone[] = [
-  { id: "pune-vieille-ville", name: "Pune Vieille ville", bbox: PUNE_BBOX, extract: "pune-vieille-ville.json" },
-  { id: "pune-fc-road", name: "Pune FC Road", bbox: FC_ROAD_BBOX, extract: "pune-fc-road.json" },
-  { id: "doha-corniche", name: "Doha Corniche", bbox: CORNICHE_BBOX, extract: "doha-corniche.json" },
-  { id: "doha-souq-waqif", name: "Doha Souq Waqif", bbox: BBOX, extract: "souq-waqif.json" },
+  zoneOf("pune", "pune-vieille-ville", "Pune Vieille ville"),
+  zoneOf("fc-road", "pune-fc-road", "Pune FC Road"),
+  zoneOf("corniche", "doha-corniche", "Doha Corniche"),
+  zoneOf("souq", "doha-souq-waqif", "Doha Souq Waqif"),
 ];
 
 /** Licence de chaque couche lue, relevée sur docs.overturemaps.org/attribution le 2026-11-03 (APP-003). */

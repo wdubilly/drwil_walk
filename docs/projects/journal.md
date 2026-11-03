@@ -346,3 +346,10 @@ One entry per closed project, most recent last.
 - Écart au cadrage : les tests vivent sous `app/src/` (Vitest ne lit pas `app/scripts/`) et `app/AGENTS.md` n'est pas dans le périmètre : les alias sont gardés tant que leurs tests les importent, et `app/AGENTS.md` décrit encore l'ancienne organisation. Intention créée : `docs/intentions/retirer-alias-extraction.md`.
 - Limites : aucune extraction réelle rejouée ; e2e rejoué ici avec des bibliothèques système extraites sans droits administrateur (Chromium n'y démarrait pas sinon).
 - Branche workstream/extraction-generique. Preuve de clôture : docs/preuves/extraction-generique.md (écrite par la clôture).
+
+## 2026-11-03 — Détour de docs/projects/retirer-alias-extraction.md : le relevé Overture lit les emprises par les alias d'extraction au lieu de CITIES
+
+- Défaut préalable, hors du cadrage de `retirer-alias-extraction` : `app/scripts/overture-coverage.ts` importait les emprises des alias d'extraction de Pune, de la Corniche et de FC Road, que ce chantier retire ; les retirer aurait cassé le relevé.
+- Corrigé : chaque zone du relevé nomme sa ville (`city`) et prend son emprise et son fichier d'extrait dans `CITIES` (`app/scripts/cities.ts`), seule source ; le commentaire de tête de `app/scripts/extract-souq.ts` renvoie à `app/scripts/cities.ts`. Test de non-régression (`app/src/city/overture-coverage.test.ts`, `APP-003`) vu échouer avant la correction.
+- Limites : aucun relevé Overture relancé (réseau) ; e2e rejoué ici avec des bibliothèques système extraites sans droits administrateur (Chromium n'y démarrait pas sinon).
+- Branche detour/overture-zones-cities.
