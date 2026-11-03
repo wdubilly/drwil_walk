@@ -1,7 +1,7 @@
 // Extraction du quartier de Souq Waqif (et, via `extract`, de tout autre quartier : voir extract-pune.ts) depuis OpenStreetMap (Overpass) : bâtiments et voies, en GeoJSON.
 // Relançable : `npm run extract` réécrit data/souq-waqif.json. Le casque, lui, ne fait aucun appel réseau :
 // il ne lit que ce fichier versionné. Données © contributeurs OpenStreetMap, licence ODbL.
-import { LAND_WAYS, areaKind, buildingLook, footwayKind, propKind, roofShape, sidewalkSides, type AreaKind, type Sidewalk } from "./osm-tags.ts";
+import { LAND_WAYS, areaKind, buildingKind, buildingLevels, buildingLook, footwayKind, propKind, roofShape, sidewalkSides, type AreaKind, type Sidewalk } from "./osm-tags.ts";
 
 export const BBOX = { south: 25.284, west: 51.529, north: 25.29, east: 51.538 };
 export const OVERPASS_URL = "https://overpass-api.de/api/interpreter";
@@ -28,7 +28,7 @@ export interface ExtractFeature {
   type: "Feature";
   id: number;
   properties:
-    | { kind: "building"; heightM: number; colour?: string; roofColour?: string; material?: string; roofShape?: "gabled" }
+    | { kind: "building"; heightM: number; building?: string; levels?: number; colour?: string; roofColour?: string; material?: string; roofShape?: "gabled" }
     | { kind: "highway"; highway: string; name?: string; sidewalk?: Sidewalk; footway?: "sidewalk" | "crossing" }
     | { kind: "area"; area: AreaKind }
     | { kind: "hedge" }
@@ -55,6 +55,13 @@ export function buildingHeightM(tags: Record<string, string>): number {
 
 const round6 = (n: number): number => Math.round(n * 1e6) / 1e6;
 
+/** La balise `building` et les étages, gardés pour les façades ; sans balise lisible, rien (repli côté rendu). */
+const kindOf = (tags: Record<string, string>): { building?: string; levels?: number } => {
+  const building = buildingKind(tags);
+  const levels = buildingLevels(tags);
+  return { ...(building ? { building } : {}), ...(levels ? { levels } : {}) };
+};
+
 const roofOf = (tags: Record<string, string>): { roofShape?: "gabled" } => {
   const shape = roofShape(tags);
   return shape ? { roofShape: shape } : {};
@@ -74,7 +81,7 @@ function feature(way: OverpassWay): ExtractFeature | undefined {
     return {
       type: "Feature",
       id: way.id,
-      properties: { kind: "building", heightM: buildingHeightM(tags), ...buildingLook(tags), ...roofOf(tags) },
+      properties: { kind: "building", heightM: buildingHeightM(tags), ...kindOf(tags), ...buildingLook(tags), ...roofOf(tags) },
       geometry: { type: "Polygon", coordinates: [line] },
     };
   }

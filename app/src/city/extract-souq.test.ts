@@ -10,7 +10,7 @@ import {
   toGeoJsonText,
   type OverpassResponse,
 } from "../../scripts/extract-souq.ts";
-import { areaKind, footwayKind, roofShape, sidewalkSides } from "../../scripts/osm-tags.ts";
+import { areaKind, buildingKind, buildingLevels, footwayKind, roofShape, sidewalkSides } from "../../scripts/osm-tags.ts";
 
 const ring = [
   { lat: 25.287, lon: 51.5331234567 },
@@ -59,8 +59,8 @@ describe("extraction du souk depuis OpenStreetMap", () => {
       { kind: "hedge" },
       { kind: "highway", highway: "residential", name: "Rue du Souk", sidewalk: "both" },
       { kind: "highway", highway: "footway", footway: "crossing" },
-      { kind: "building", heightM: 7, roofShape: "gabled" },
-      { kind: "building", heightM: 7 },
+      { kind: "building", heightM: 7, building: "yes", roofShape: "gabled" },
+      { kind: "building", heightM: 7, building: "yes" },
     ]);
   });
 
@@ -101,10 +101,10 @@ describe("extraction du souk depuis OpenStreetMap", () => {
     expect(parsed.extractedFrom).toBe("2026-10-31T06:43:47Z");
     // Le bâtiment sans anneau, la voie d'un seul point, la voie sans géométrie et l'entité sans balise utile sont écartés.
     expect(parsed.features.map((f) => f.id)).toEqual([1, 3, 7, 8, 9]);
-    expect(parsed.features[0]?.properties).toEqual({ kind: "building", heightM: 6 });
+    expect(parsed.features[0]?.properties).toEqual({ kind: "building", heightM: 6, building: "yes", levels: 2 });
     expect(parsed.features[0]?.geometry.coordinates).toEqual([[[51.533123, 25.287], [51.534, 25.287], [51.534, 25.288], [51.533123, 25.287]]]);
     expect(parsed.features[1]?.properties).toEqual({ kind: "highway", highway: "pedestrian" });
-    expect(parsed.features[2]?.properties).toEqual({ kind: "building", heightM: 7, colour: "#c8785a", roofColour: "#cc3333", material: "brick" });
+    expect(parsed.features[2]?.properties).toEqual({ kind: "building", heightM: 7, building: "yes", colour: "#c8785a", roofColour: "#cc3333", material: "brick" });
     expect(parsed.features[3]).toMatchObject({ properties: { kind: "tree" }, geometry: { type: "Point", coordinates: [51.533123, 25.2871] } });
     expect(parsed.features[4]?.properties).toEqual({ kind: "lamp" });
     expect(text.split("\n")).toHaveLength(8);
@@ -125,6 +125,28 @@ describe("extraction du souk depuis OpenStreetMap", () => {
   it("dit l'échec d'Overpass au lieu d'écrire un fichier vide", async () => {
     const fetchFn = vi.fn(() => Promise.resolve(new Response("", { status: 429 })));
     await expect(extract(fetchFn)).rejects.toThrow("Overpass a répondu 429");
+  });
+});
+
+describe("APP-008: balises des façades", () => {
+  it("APP-008: garde la balise building et les étages, et écarte les valeurs illisibles", () => {
+    expect(buildingKind({ building: " House " })).toBe("house");
+    expect(buildingKind({ building: "" })).toBeUndefined();
+    expect(buildingKind({})).toBeUndefined();
+    expect(buildingLevels({ "building:levels": "3" })).toBe(3);
+    expect(buildingLevels({ "building:levels": "2.6" })).toBe(3);
+    expect(["0", "61", "haut", ""].map((v) => buildingLevels({ "building:levels": v }))).toEqual([undefined, undefined, undefined, undefined]);
+    expect(buildingLevels({})).toBeUndefined();
+  });
+
+  it("APP-008: une balise building vide ne laisse aucune valeur dans l'extrait", () => {
+    const { features } = JSON.parse(toGeoJsonText({ elements: [{ type: "way", id: 40, tags: { building: " " }, geometry: ring }] })) as { features: { properties: object }[] };
+    expect(features[0]?.properties).toEqual({ kind: "building", heightM: 7 });
+  });
+
+  it("APP-008: garde l'identifiant OSM de chaque bâtiment dans l'extrait", () => {
+    const { features } = JSON.parse(toGeoJsonText(osm)) as { features: { id: number; properties: { kind: string } }[] };
+    expect(features.filter((f) => f.properties.kind === "building").map((f) => f.id)).toEqual([1, 7]);
   });
 });
 
