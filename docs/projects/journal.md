@@ -350,6 +350,6 @@ One entry per closed project, most recent last.
 ## 2026-11-03 — Détour de docs/projects/retirer-alias-extraction.md : le relevé Overture lit les emprises par les alias d'extraction au lieu de CITIES
 
 - Défaut préalable, hors du cadrage de `retirer-alias-extraction` : `app/scripts/overture-coverage.ts` importait les emprises des alias d'extraction de Pune, de la Corniche et de FC Road, que ce chantier retire ; les retirer aurait cassé le relevé.
-- Corrigé : chaque zone du relevé nomme sa ville (`city`) et prend son emprise et son fichier d'extrait dans `CITIES` (`app/scripts/cities.ts`), seule source ; le commentaire de tête de `app/scripts/extract-souq.ts` renvoie à `cities.ts`. Test de non-régression (`app/src/city/overture-coverage.test.ts`, `APP-003`) vu échouer avant la correction.
+- Corrigé : chaque zone du relevé nomme sa ville (`city`) et prend son emprise et son fichier d'extrait dans `CITIES` (`app/scripts/cities.ts`), seule source ; le commentaire de tête de `app/scripts/extract-souq.ts` renvoie à `app/scripts/cities.ts`. Test de non-régression (`app/src/city/overture-coverage.test.ts`, `APP-003`) vu échouer avant la correction.
 - Limites : aucun relevé Overture relancé (réseau) ; e2e rejoué ici avec des bibliothèques système extraites sans droits administrateur (Chromium n'y démarrait pas sinon).
 - Branche detour/overture-zones-cities.
