@@ -1,7 +1,9 @@
 # Intention : l'identité visuelle locale des quartiers, d'après des photos de rue
 
-**Statut** : proposée le 2026-11-03 ; cadrée le 2026-11-03 en fiche `docs/projects/facades-materiaux-souk.md` (décisions
-reportées dans la fiche).
+**Statut** : proposée le 2026-11-03 ; cadrée le 2026-11-03 ; prototype du souk Waqif livré le 2026-11-04 (chantier
+facades-materiaux-souk, entrée du journal `docs/projects/journal.md`, contrat `APP-012`). Reste ouverte pour la suite : les
+couleurs tirées de vraies photos (`docs/intentions/couleurs-photos-souk.md`) et la généralisation aux autres quartiers,
+après le jugement au casque (`docs/intentions/essai-casque-materiaux-souk.md`).
 
 ## Besoin
 

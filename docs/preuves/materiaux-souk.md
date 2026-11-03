@@ -1,6 +1,6 @@
 # Preuve du chantier facades-materiaux-souk : inventaire des photos, couleurs et budget
 
-Relevés du 2026-11-04, sur la branche du chantier (`docs/projects/facades-materiaux-souk.md`, contrat `APP-012`). La preuve
+Relevés du 2026-11-04 par le chantier facades-materiaux-souk (`docs/projects/journal.md`, contrat `APP-012`). La preuve
 de clôture du chantier est écrite à part par `node .githooks/close.mjs`.
 
 ## Inventaire des photos de rue du souk Waqif (`SEC-007`)

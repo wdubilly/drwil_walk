@@ -106,6 +106,8 @@ l'accueil pour le souk seulement »)*
 
 ## 7. Reprise
 
-- **Dernier état** (2026-11-03) : cadrage seul, aucun code.
-- **Travail non commité** : la fiche.
-- **Prochaine étape** : lot 1, l'inventaire.
+- **Dernier état** (2026-11-04) : lots 1 à 3 livrés sur la branche `chantier/facades-materiaux-souk`, `drwil verify` PASS ;
+  couleurs provisoires faute de photo de rue (Panoramax vide, Mapillary sans jeton).
+- **Travail non commité** : aucun.
+- **Prochaine étape** : relecture des couleurs (avec un jeton Mapillary du demandeur, `docs/intentions/couleurs-photos-souk.md`)
+  et lot 4 au casque (`docs/intentions/essai-casque-materiaux-souk.md`) [human].
