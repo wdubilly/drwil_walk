@@ -2,7 +2,8 @@
 
 **Statut** : cadré le 2026-11-03.
 **Risque** : HIGH
-**Maturité** : prêt
+**Maturité** : à affiner — en attente de la validation du prototype `docs/projects/facades-materiaux-souk.md` (décision du
+2026-11-04)
 **Intention** : `docs/intentions/villes-a-parcourir.md`
 
 <!-- scope
@@ -69,10 +70,15 @@ C'est aussi ce qui limite le risque : aucun changement de structure, seulement d
 - 2026-11-03 : **une famille par région**, avant les villes.
 - 2026-11-03 : la région porte les **palettes**, pas une famille de plus : les familles décrivent des types de bâtiment et
   restent valables partout.
+- 2026-11-04 : fiche **mise en attente** jusqu'à la validation du prototype photos
+  (`docs/projects/facades-materiaux-souk.md`) : ses palettes, choisies à la main au lot 2, recouvrent les couleurs relevées
+  sur les photos. Le lot 1 (régions) reste valable tel quel.
 
 ## 5. Points à trancher
 
-*(aucun)*
+- [decision] Après le prototype : les palettes par région viennent-elles des couleurs relevées sur les photos (script du
+  prototype), à la main seulement pour les villes sans couverture, ou cette fiche se fond-elle dans la généralisation des
+  matériaux locaux ?
 
 ## 6. Lots
 
@@ -86,6 +92,6 @@ C'est aussi ce qui limite le risque : aucun changement de structure, seulement d
 
 ## 7. Reprise
 
-- **Dernier état** (2026-11-03) : cadrage seul, aucun code.
-- **Travail non commité** : la fiche.
-- **Prochaine étape** : lot 1, les régions.
+- **Dernier état** (2026-11-04) : cadrage seul, aucun code ; fiche à affiner après le prototype photos.
+- **Travail non commité** : aucun.
+- **Prochaine étape** : [decision] revoir le lot 2 une fois `facades-materiaux-souk` validé.
