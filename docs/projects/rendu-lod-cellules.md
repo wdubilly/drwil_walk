@@ -2,7 +2,7 @@
 
 **Statut** : cadré le 2026-11-03.
 **Risque** : HIGH
-**Maturité** : à affiner
+**Maturité** : prêt
 **Intention** : `docs/intentions/rendu-lod-cellules.md`
 
 <!-- scope
@@ -54,11 +54,13 @@ niveaux de détail simples. Pas de chargement par cellules (le demandeur l'écar
 ## 4. Décisions
 
 - 2026-11-03 : **fusion par cellules de l'extrait déjà chargé** ; pas de chargement par cellules.
+- 2026-11-03 : budget serré, **150 appels de rendu et 500 000 triangles** au plus par image, sur chacune des quatre
+  villes. Repères usuels du Quest 3 pour tenir 72 images par seconde avec de la marge. Ce sont des **objectifs
+  provisoires** : le chantier ne démarre pas avant les mesures réelles au Quest 3, qui peuvent les corriger.
+- 2026-11-03 : le chantier vient **après les façades détaillées**, livrées le 2026-11-03.
 
 ## 5. Points à trancher
 
-- [decision] Le budget d'appels de rendu et de triangles, à fixer après les premières mesures au casque.
-- [decision] Attendre les façades détaillées avant de démarrer, ou faire la fusion par cellules avant ?
 - [human] Mesurer les images par seconde sur un vrai Quest 3 avec le diagnostic de rendu.
 
 ## 6. Lots
@@ -71,4 +73,4 @@ niveaux de détail simples. Pas de chargement par cellules (le demandeur l'écar
 
 - **Dernier état** (2026-11-03) : cadrage seul, aucun code.
 - **Travail non commité** : la fiche.
-- **Prochaine étape** : [decision] fixer le budget et trancher l'ordre avec les façades.
+- **Prochaine étape** : [human] relever les mesures au casque, puis démarrer si le budget est dépassé.

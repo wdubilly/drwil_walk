@@ -2,7 +2,7 @@
 
 **Statut** : cadré le 2026-11-03.
 **Risque** : HIGH
-**Maturité** : à affiner
+**Maturité** : prêt
 **Intention** : `docs/intentions/rendu-sources-donnees.md`
 
 <!-- scope
@@ -50,15 +50,18 @@ les licences ; il n'intègre rien dans l'application et ne remplace aucune donn�
 
 - 2026-11-03 : **OpenStreetMap reste la source principale** ; Overture est évalué en complément, sans rien remplacer sans
   vérification de cohérence et de licence.
+- 2026-11-03 : l'essai lit les **fichiers publiés d'Overture (Parquet, sans compte ni clé)**, pas l'API en ligne.
+- 2026-11-03 : le demandeur autorise **l'agent à lancer le script de relevé**, avec l'accès réseau que cela demande,
+  pour ce **seul relevé ponctuel**. Aucun flux réseau pendant l'utilisation de l'application : la ville reste figée
+  dans le dépôt.
 
 ## 5. Points à trancher
 
-- [decision] Quel accès à Overture pour l'essai (fichiers publiés, requête) et qui lance le script (accès réseau) ?
 - [human] Décider d'après le relevé s'il faut une fiche d'intégration.
 
 ## 6. Lots
 
-- **Lot 1 — accès et licences** [decision] : choisir l'accès, vérifier les licences par couche.
+- **Lot 1 — licences** [AI] : vérifier les licences par couche des fichiers publiés.
 - **Lot 2 — relevé de couverture** [AI] : script et relevé chiffré dans une intention. Sortie : tests verts, relevé lu.
 - **Lot 3 — décision** [human] : intégrer ou abandonner.
 
@@ -66,4 +69,4 @@ les licences ; il n'intègre rien dans l'application et ne remplace aucune donn�
 
 - **Dernier état** (2026-11-03) : cadrage seul, aucun code.
 - **Travail non commité** : la fiche.
-- **Prochaine étape** : [decision] accès à Overture, après les façades.
+- **Prochaine étape** : lot 1, les licences par couche des fichiers publiés.
