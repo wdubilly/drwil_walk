@@ -1,6 +1,7 @@
 # Intention : des bâtiments détaillés, plus des blocs extrudés
 
 **Statut** : proposée le 2026-11-02 (lot 3 de `docs/intentions/rendu-jeu-video.md`) ; le lot le plus important du rendu.
+**Reviewed on 2026-11-03** : livré en grande partie par le chantier rendu-facades-batiments (façades procédurales, `APP-008`, extraits avec `building` et étages) ; restent l'essai au casque (`docs/intentions/essai-casque-facades-batiments.md`), la ville de Provence (`docs/intentions/ville-provence.md`), les textures et les monuments glTF (`docs/intentions/facades-textures-monuments.md`).
 
 ## Besoin
 

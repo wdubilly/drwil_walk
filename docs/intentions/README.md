@@ -33,6 +33,9 @@ removes it when fully covered.
 | `docs/intentions/rendu-profils-graphiques.md` | [P1] Des profils graphiques (casque, PC, tablette) et la détection des capacités |
 | `docs/intentions/rendu-tablette-tactile.md` | [P1] La tablette et le tactile, dans le périmètre dès les premiers lots |
 | `docs/intentions/rendu-facades-batiments.md` | [P2] Des bâtiments détaillés (façades, fenêtres, vitrines), plus des blocs extrudés |
+| `docs/intentions/essai-casque-facades-batiments.md` | Essayer les façades procédurales sur un vrai Quest 3 (72 images par seconde, lisibilité) |
+| `docs/intentions/ville-provence.md` | Un itinéraire dans une ville de Provence pour la famille de façades provençale |
+| `docs/intentions/facades-textures-monuments.md` | Textures de façade et monuments glTF (suite des façades procédurales) |
 | `docs/intentions/rendu-lod-cellules.md` | [P2] Niveaux de détail et fusion ou chargement par cellules, si les mesures le justifient |
 | `docs/intentions/rendu-rues-mobilier.md` | [P2] Des rues, trottoirs et du mobilier urbain crédibles (marquages, passages, bordures) |
 | `docs/intentions/rendu-eclairage-ambiance.md` | [P3] Éclairage, ombres, reflets, ambiance et sons (tension avec le réel visible, `APP-001`) |

@@ -50,9 +50,9 @@ dit ni la hauteur, ni le type, ni les étages, sans jamais produire de géométr
 - Les bâtiments gardent leur provenance OpenStreetMap et leur attribution — `APP-003`
 - Les façades se règlent par le profil graphique (détail réduit ou supprimé en « performance ») et gardent un repli sans
   détail — `APP-008`
-- Les façades ne masquent pas le réel visible : tête baissée, la ville s'efface comme avant — `APP-001`
+- Les façades ne masquent pas le réel visible : tête baissée, la ville s'efface comme avant [human] — `APP-001`
 - La marche se rejoue sur les quatre itinéraires avec les façades, sans erreur WebGL, sous les budgets de triangles — `QUA-020`
-- Le rendu des façades à hauteur d'homme sur un vrai Quest 3, à 72 images par seconde [human] — `APP-008`
+- Le rendu des façades à hauteur d'homme sur un vrai Quest 3, à 72 images par seconde [human] — `APP-001`
 
 ## Contrats modifiés
 
@@ -101,6 +101,6 @@ dit ni la hauteur, ni le type, ni les étages, sans jamais produire de géométr
 
 ## 7. Reprise
 
-- **Dernier état** (2026-11-03) : cadrage seul, aucun code.
-- **Travail non commité** : la fiche.
-- **Prochaine étape** : [AI] lot 1, après les profils graphiques.
+- **Dernier état** (2026-11-03) : lots 1 à 4 livrés sur la branche `workstream/rendu-facades-batiments` (données, moteur, familles et voisinage, profils, e2e chemin 23, docs, contrat `APP-008`) ; le lot 5 (monuments glTF) reste [human].
+- **Travail non commité** : voir `git status` ; le commit, la clôture et la PR suivent.
+- **Prochaine étape** : [human] essai au casque (`docs/intentions/essai-casque-facades-batiments.md`), choix des monuments (`docs/intentions/facades-textures-monuments.md`).
