@@ -56,7 +56,7 @@ dit ni la hauteur, ni le type, ni les étages, sans jamais produire de géométr
 
 ## Contrats modifiés
 
-*(aucun : les façades enrichissent la géométrie sans changer le parcours ni la sécurité)*
+- `QUA-020` — ajout, sans retrait : critère 23 (la marche se rejoue sur les quatre itinéraires avec les façades, sous un budget de triangles, ville effacée tête baissée), demandé par le critère « La marche se rejoue sur les quatre itinéraires avec les façades » de cette fiche ; aucun critère existant n'est changé ni affaibli — à confirmer par le demandeur à la validation de la fiche
 
 ## 2. Hors périmètre
 
