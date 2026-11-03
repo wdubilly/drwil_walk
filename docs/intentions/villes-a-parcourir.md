@@ -14,8 +14,7 @@ Lu le 2026-11-03.
 
 - Quatre itinéraires livrés : Souq Waqif, Doha Corniche, Pune Vieille ville, Pune FC Road. Chacun tient en **deux fichiers**
   (`app/data/<ville>.json` et `app/data/<ville>-boucle.json`) et **un script d'extraction** dédié
-  (`app/scripts/extract-souq.ts`, `app/scripts/extract-pune.ts`, `app/scripts/extract-corniche.ts`,
-  `app/scripts/extract-fc-road.ts`), lancé par une commande
+  (`app/scripts/extract-souq.ts` et un script par ville, retirés depuis : voir plus bas), lancé par une commande
   `npm run extract:*`. Rien n'est partagé entre eux : chaque ville est recopiée à l'identique.
 - Les quatre extraits pèsent **2,9 Mo** au total. Un plafond de poids est vérifié par les tests.
 - Un test de non-régression exige que **chaque point du tracé de boucle soit un sommet d'une voie de l'extrait** : un
@@ -71,7 +70,8 @@ libre.
   génériques de Pune et Doha. Chantier : `docs/projects/facades-regions.md`.
 - 2026-11-03 : **généraliser l'extraction en un seul script paramétré** avant d'ajouter des villes, plutôt que de recopier
   le modèle une quatrième fois. Fait le 2026-11-03 : `app/scripts/cities.ts` décrit les villes par des données, ajouter une ville
-  n'y demande plus que ses paramètres (voir le journal, chantier `extraction-generique`).
+  n'y demande plus que ses paramètres (voir le journal, chantier `extraction-generique`) ; les alias par ville sont retirés
+  le 2026-11-03, un seul test paramétré sur `CITIES` vérifie chaque ville (chantier `retirer-alias-extraction`).
 - 2026-11-03 : les itinéraires visés sont des **centres touristiques**.
 - 2026-11-03 : **Paris reste un itinéraire comme les autres**, dans le Marais ; aucune tour à traiter.
 

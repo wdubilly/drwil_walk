@@ -4,7 +4,7 @@
 
 ## Besoin
 
-Après le chantier `extraction-generique`, `app/scripts/extract-pune.ts`, `app/scripts/extract-corniche.ts` et `app/scripts/extract-fc-road.ts` ne sont
+Après le chantier `extraction-generique`, app/scripts/extract-pune.ts, app/scripts/extract-corniche.ts et app/scripts/extract-fc-road.ts ne sont
 plus que des alias de `app/scripts/cities.ts`. Ils n'existent que parce que leurs tests (`app/src/city/extract-*.test.ts`),
 hors du périmètre de ce chantier, les importent. Les retirer finit la généralisation : un seul test paramétré par ville.
 

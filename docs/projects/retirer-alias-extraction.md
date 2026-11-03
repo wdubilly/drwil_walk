@@ -23,8 +23,8 @@ files:
 
 ## 1. Besoin
 
-Depuis le chantier `extraction-generique`, `app/scripts/extract-pune.ts`, `app/scripts/extract-corniche.ts` et
-`app/scripts/extract-fc-road.ts` ne sont que des alias de `app/scripts/cities.ts`. Ils ne survivent que parce que leurs
+Depuis le chantier `extraction-generique`, app/scripts/extract-pune.ts, app/scripts/extract-corniche.ts et
+app/scripts/extract-fc-road.ts ne sont que des alias de `app/scripts/cities.ts`. Ils ne survivent que parce que leurs
 trois tests (`app/src/city/extract-*.test.ts`) les importent. Les retirer finit la généralisation : un seul test, paramétré
 sur `CITIES`, vérifie chaque ville.
 
@@ -41,8 +41,8 @@ sur `CITIES`, vérifie chaque ville.
 
 ## Contrats modifiés
 
-- `APP-003` — ancien critère : sa **Source of truth** et ses **Tests** citent `app/scripts/extract-pune.ts`,
-  `app/scripts/extract-corniche.ts`, `app/scripts/extract-fc-road.ts` et leurs trois tests — raison : ces fichiers sont
+- `APP-003` — ancien critère : sa **Source of truth** et ses **Tests** citent app/scripts/extract-pune.ts,
+  app/scripts/extract-corniche.ts, app/scripts/extract-fc-road.ts et leurs trois tests — raison : ces fichiers sont
   retirés, `app/scripts/cities.ts` et le test paramétré les remplacent ; la règle elle-même ne change pas (approuvé le
   2026-11-03)
 
@@ -81,6 +81,7 @@ sur `CITIES`, vérifie chaque ville.
 
 ## 7. Reprise
 
-- **Dernier état** (2026-11-03) : cadrage seul, aucun code.
-- **Travail non commité** : la fiche.
-- **Prochaine étape** : lot 1, le test paramétré.
+- **Dernier état** (2026-11-03) : lots 1 et 2 faits sur `workstream/retirer-alias-extraction` ; détour
+  `overture-zones-cities` (PR #68, fusionnée) : le relevé Overture lisait les emprises par les alias. `run-checks` vert.
+- **Travail non commité** : aucun.
+- **Prochaine étape** : `npx drwil verify --agent`, puis clôture.
