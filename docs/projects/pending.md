@@ -29,10 +29,11 @@ Ordre de lancement : par priorité (`[P0]` d'abord), puis par ordre alphabétiqu
 de sondage : quatre niveaux). Les dépendances sont respectées : `ambiance-cartoon` avant `rendu-ville-riche`, `panneau-discret`
 avant les fiches qui touchent le panneau d'infos, `champ-de-vision-casque` puis `panneau-heure-hors-vue` avant elles aussi
 (le panneau doit tenir dans la vue avant d'y ajouter du contenu), `tableau-allure-progression` et `hud-defis-progression` avant
-`hud-suivi-comparer-marche-reelle`, les fiches de la ville avant `course-reelle-gpx`. `extraction-generique` puis `facades-regions` avant toute nouvelle ville (décision du 2026-11-03 : une famille de façades par région, et une seule extraction paramétrée, avant d'ajouter Rome, Erevan ou Paris). Les fiches hud passent en dernier (décision du 2026-11-03) ; `hud-suivi-comparer-marche-reelle` porte le préfixe hud pour passer après `hud-defis-progression`. La Corniche est reportée le 2026-11-01 : à annuler si `course-reelle-gpx` couvre le besoin.
+`hud-suivi-comparer-marche-reelle`, les fiches de la ville avant `course-reelle-gpx`. `extraction-generique` puis `facades-regions` avant `villes-itineraires` (décision du 2026-11-03 : une famille de façades par région, et une seule extraction paramétrée, avant d'ajouter Rome, Erevan ou Paris). Les fiches hud passent en dernier (décision du 2026-11-03) ; `hud-suivi-comparer-marche-reelle` porte le préfixe hud pour passer après `hud-defis-progression`. La Corniche est reportée le 2026-11-01 : à annuler si `course-reelle-gpx` couvre le besoin.
 
 - [ ] [P2] [AI] Une seule extraction paramétrée par ville — `docs/projects/extraction-generique.md`
 - [ ] [P2] [AI] Une teinte de façades par région — `docs/projects/facades-regions.md`
+- [ ] [P2] [AI] Trois itinéraires de plus (Rome, Erevan, Paris) — `docs/projects/villes-itineraires.md`
 - [ ] [P2] [AI] Réextraire les quatre quartiers (poubelles et panneaux) — `docs/projects/extraction-mobilier.md`
 - [ ] [P2] [AI] Des lampadaires produits par règle le long des rues — `docs/projects/lampadaires-generes.md`
 - [ ] [P2] [AI] Fusion des bâtiments par cellules (en attente d'une séance au casque : `docs/intentions/seance-casque-parcours.md`) — `docs/projects/rendu-lod-cellules.md`
