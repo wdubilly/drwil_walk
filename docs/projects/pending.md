@@ -31,7 +31,6 @@ avant les fiches qui touchent le panneau d'infos, `champ-de-vision-casque` puis 
 (le panneau doit tenir dans la vue avant d'y ajouter du contenu), `tableau-allure-progression` et `hud-defis-progression` avant
 `hud-suivi-comparer-marche-reelle`, les fiches de la ville avant `course-reelle-gpx`. Les fiches hud passent en dernier (décision du 2026-11-03) ; `hud-suivi-comparer-marche-reelle` porte le préfixe hud pour passer après `hud-defis-progression`. La Corniche est reportée le 2026-11-01 : à annuler si `course-reelle-gpx` couvre le besoin.
 
-- [ ] [P1] [AI] Des profils graphiques (casque, PC, tablette) — `docs/projects/rendu-profils-graphiques.md`
 - [ ] [P1] [AI] La tablette et le tactile — `docs/projects/rendu-tablette-tactile.md`
 - [ ] [P2] [AI] Des bâtiments détaillés (façades procédurales) — `docs/projects/rendu-facades-batiments.md`
 - [ ] [P2] [AI] Fusion des bâtiments par cellules (à affiner : budget à fixer) — `docs/projects/rendu-lod-cellules.md`

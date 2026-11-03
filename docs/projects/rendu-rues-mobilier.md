@@ -58,7 +58,7 @@ propres, rien de flottant ni de posé au hasard.
 - Tout chantier touchant `app/` est HIGH ; `APP-001` reste un critère testé.
 - Un fichier de code reste sous 200 lignes (`QUA-001`), couverture à 100 % (`QUA-004`).
 - Tout modèle glTF documente sa licence et sa provenance (`app/src/city/licence.ts`, `APP-003`).
-- Dépend des profils graphiques (`docs/projects/rendu-profils-graphiques.md`).
+- Dépend des profils graphiques (`docs/projects/journal.md`).
 
 ## 4. Décisions
 
