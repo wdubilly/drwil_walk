@@ -47,9 +47,12 @@ Le jugement de crédibilité au casque sort des tests : il est porté par `docs/
 
 ## Contrats modifiés
 
-- **APP-009** (nouveau, 2026-11-03) : mobilier urbain et marquages au sol posés d'après les balises OpenStreetMap, aux
+- `APP-009` — nouveau (2026-11-03) : mobilier urbain et marquages au sol posés d'après les balises OpenStreetMap, aux
   dimensions réelles, plafonnés et réglés par le profil ; les critères d'acceptation ci-dessus le citaient déjà. Le parcours
-  et la sécurité ne changent pas (APP-001, APP-002 inchangés) ; APP-006 gagne le réglage `markings` et QUA-020 le chemin 24.
+  et la sécurité ne changent pas (`APP-001`, `APP-002` inchangés).
+- `APP-006` — le profil graphique gagne le réglage des marquages au sol (`markings`), absent en « performance » ; la
+  sécurité reste hors de son périmètre.
+- `QUA-020` — chemin 24 : la marche avec le mobilier et les marquages sur les quatre itinéraires.
 
 ## 2. Hors périmètre
 
