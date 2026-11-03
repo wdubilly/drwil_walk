@@ -106,6 +106,8 @@ files:
   - app/src/ui/panel.test.ts
   - app/src/ui/panel.ts
   - app/src/ui/pune-fc-road.svg
+  - app/src/ui/profile-choice.test.ts
+  - app/src/ui/profile-choice.ts
   - app/src/ui/pune-vieille-ville.svg
   - app/src/ui/render-choice.test.ts
   - app/src/ui/render-choice.ts
