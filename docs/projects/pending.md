@@ -35,6 +35,7 @@ avant les fiches qui touchent le panneau d'infos, `champ-de-vision-casque` puis 
 - [ ] [P2] [AI] Trois itinéraires de plus (Rome, Erevan, Paris) — `docs/projects/villes-itineraires.md`
 - [ ] [P2] [AI] Réextraire les quatre quartiers (poubelles et panneaux) — `docs/projects/extraction-mobilier.md`
 - [ ] [P2] [AI] Des lampadaires produits par règle le long des rues — `docs/projects/lampadaires-generes.md`
+- [ ] [P2] [AI] Retirer les alias d'extraction par ville (un seul test paramétré) — `docs/projects/retirer-alias-extraction.md`
 - [ ] [P2] [AI] Fusion des bâtiments par cellules (en attente d'une séance au casque : `docs/intentions/seance-casque-parcours.md`) — `docs/projects/rendu-lod-cellules.md`
 - [ ] [P3] [AI] Les défis de distance et l'objectif annuel — `docs/projects/hud-defis-progression.md`
 - [ ] [P3] [AI] Le voyage guidé par étapes — `docs/projects/hud-voyage-guide.md`

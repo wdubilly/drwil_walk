@@ -40,6 +40,7 @@ removes it when fully covered.
 | `docs/intentions/rendu-rues-mobilier.md` | [P2] Des rues, trottoirs et du mobilier urbain crédibles (marquages, passages, bordures) |
 | `docs/intentions/extraction-mobilier-manquant.md` | Réextraire les quatre quartiers pour y amener poubelles et panneaux (bancs remplacés, pas fusionnés) |
 | `docs/intentions/lampadaires-generes.md` | Des lampadaires produits par règle le long des rues, absents d'OpenStreetMap dans les quatre quartiers |
+| `docs/intentions/retirer-alias-extraction.md` | Retirer les alias d'extraction par ville : un seul test paramétré sur `CITIES` |
 | `docs/intentions/villes-a-parcourir.md` | D'autres villes à parcourir (Rome, Erevan, Paris…) : poids des extraits et familles de façades à décider ensemble |
 | `docs/intentions/tours-treillis-extrudees.md` | Les tours en treillis (`building=tower`) extrudées en blocs pleins : la tour Eiffel ferait un bloc de 330 m |
 | `docs/intentions/rendu-eclairage-ambiance.md` | [P3] Éclairage, ombres, reflets, ambiance et sons (tension avec le réel visible, `APP-001`) |
