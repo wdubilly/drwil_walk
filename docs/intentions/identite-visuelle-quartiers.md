@@ -1,6 +1,7 @@
 # Intention : l'identité visuelle locale des quartiers, d'après des photos de rue
 
-**Statut** : proposée le 2026-11-03.
+**Statut** : proposée le 2026-11-03 ; cadrée le 2026-11-03 en fiche `docs/projects/facades-materiaux-souk.md` (décisions
+reportées dans la fiche).
 
 ## Besoin
 
