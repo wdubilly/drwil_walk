@@ -1,6 +1,7 @@
 # Intention : la tablette et le tactile
 
 **Statut** : proposée le 2026-11-02 (décision du demandeur : la tablette est dans le périmètre dès les premiers lots) ; prolonge `docs/intentions/version-pc-suites.md`.
+Traitée le 2026-11-03 par le chantier rendu-tablette-tactile (`APP-007`) : gestes tranchés (boutons à l'écran et glisser pour regarder), aucun appareil précis, tableau de bord en surimpression ; reste l'essai sur une vraie tablette : `docs/intentions/essai-tablette-tactile.md`.
 
 ## Besoin
 

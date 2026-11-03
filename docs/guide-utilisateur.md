@@ -130,6 +130,8 @@ tapis en regardant un écran sans la même vigilance (clé de sécurité, main p
 | glisser la souris | regarder autour |
 | Échap | quitter la version PC |
 
+**Sur une tablette** : ouvrez l'application dans le navigateur et touchez « Version PC ». Des boutons en bas de l'écran règlent la vitesse (« Moins vite », « Plus vite » : 0,1 km/h par appui), mettent en pause ou reprennent, recalent le parcours sur le regard et quittent ; glissez un doigt sur la scène pour regarder autour, relâchez-le pour arrêter. Le tableau de bord s'affiche par-dessus la scène. Même vigilance qu'au PC : regarder un écran en marchant sur un tapis demande clé de sécurité et main près de la rampe. Jamais essayé sur une vraie tablette (émulation tactile de Chromium seulement).
+
 Le rendu Google 3D n'existe pas en version PC : la marche se fait en OpenStreetMap et l'accueil le dit. Un trajet libre s'arrête à l'arrivée et le dit.
 
 ## 6. Ennuis connus et remèdes

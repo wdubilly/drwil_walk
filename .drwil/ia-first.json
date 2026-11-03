@@ -129,6 +129,16 @@
       "degradable": false
     },
     {
+      "id": "app-007",
+      "name": "APP-007 tablette et tactile : boutons à l'écran, glisser pour regarder : tests nommés par l'ID (Vitest)",
+      "run": "npm test -- -t \"APP-007\"",
+      "cwd": "app",
+      "paths": [
+        "app/**"
+      ],
+      "degradable": false
+    },
+    {
       "id": "app-006",
       "name": "APP-006 profil graphique : réglages de rendu sans toucher à la sécurité : tests nommés par l'ID (Vitest)",
       "run": "npm test -- -t \"APP-006\"",
