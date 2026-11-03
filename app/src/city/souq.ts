@@ -19,6 +19,8 @@ import {
 import { headingAt, pointAt, type Path } from "../route/path.ts";
 import { createAttributionLabel, type AttributionLabel } from "./attribution.ts";
 import { buildBuildingsGeometry } from "./buildings.ts";
+import { regionOf } from "./facade-family.ts";
+import type { FacadeDetail } from "./facades.ts";
 import { buildFurniture, buildTrees } from "./props.ts";
 import { buildOutlinesGeometry } from "./outlines.ts";
 import { buildRoadsGeometry } from "./roads.ts";
@@ -42,6 +44,8 @@ export interface SceneOptions {
   outlines?: boolean;
   /** Les arbres du pack Quaternius, chargés d'avance : absents, la ville garde l'arbre procédural (APP-003). */
   trees?: TreePack;
+  /** Le détail des façades procédurales : absent, aucun détail (repli) ; le profil graphique le règle (APP-008, APP-006). */
+  facades?: FacadeDetail;
   /** La ville riche (verdure au sol, noms des rues) : vraie par défaut ; un profil léger la retire (APP-006). */
   richCity?: boolean;
   /** Plafonds d'arbres et de mobilier, bornés par ceux des données (APP-006). */
@@ -72,7 +76,7 @@ export function createSouqScene(doc: Document, souq: Souq, options: SceneOptions
   const roads = new Mesh(buildRoadsGeometry(souq.roads, souq.palette.road, buildWalkways(souq.roads, souq.route)), toonMaterial({ vertexColors: true, side: DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }));
   roads.name = "voies";
   // Couleurs par sommet : la teinte de chaque bâtiment vient de la géométrie, le matériau reste blanc.
-  const buildings = new Mesh(buildBuildingsGeometry(souq.buildings, souq.palette.buildings, souq.route), buildingMaterial());
+  const buildings = new Mesh(buildBuildingsGeometry(souq.buildings, souq.palette.buildings, souq.route, { detail: options.facades ?? "off", region: regionOf(souq.origin) }), buildingMaterial());
   buildings.name = "batiments";
   const greenery = new Mesh(buildVegetation(rich ? souq.areas : [], rich ? souq.hedges : [], souq.route), toonMaterial({ vertexColors: true, side: DoubleSide, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }));
   greenery.name = "verdure";

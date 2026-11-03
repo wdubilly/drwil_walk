@@ -216,4 +216,16 @@ describe("ville riche", () => {
     setCityOpacity(world, 0, planes);
     expect(world.visible).toBe(false);
   });
+  it("APP-008: les façades sont dans le maillage des bâtiments, sans maillage ni matériau de plus, et s'effacent avec la ville (APP-001)", () => {
+    const doc = withCanvasContext(new Window().document as unknown as Document);
+    const [bare, detailed] = [createSouqScene(doc, souq), createSouqScene(doc, souq, { facades: "full" })];
+    const count = (s: typeof bare): number => (s.city.getObjectByName("batiments") as Mesh).geometry.getAttribute("position").count;
+    expect(count(detailed)).toBeGreaterThan(count(bare));
+    expect(materials(detailed.world)).toHaveLength(materials(bare.world).length);
+    expect(detailed.osm.children).toHaveLength(bare.osm.children.length);
+    setCityOpacity(detailed.world, 0, []);
+    expect(detailed.world.visible).toBe(false);
+    setCityOpacity(detailed.world, 0.4, []);
+    expect(materials(detailed.world).every((m) => m.transparent && m.opacity === 0.4)).toBe(true);
+  });
 });

@@ -27,12 +27,15 @@ export const WINDOW_CELL_M = 3;
 export const WINDOW_SHADE = 0.55;
 
 /** Le shader de sommets passe la position et la normale locales : le motif suit le bâtiment, pas l'écran. */
-const VERTEX_DECL = "varying vec3 vLocalPos;\nvarying vec3 vLocalNormal;\n#include <common>";
-const VERTEX_SET = "#include <begin_vertex>\nvLocalPos = transformed;\nvLocalNormal = objectNormal;";
-const FRAGMENT_DECL = "varying vec3 vLocalPos;\nvarying vec3 vLocalNormal;\n#include <common>";
-/** Sur un mur seulement (normale presque horizontale), au-dessus du rez-de-chaussée : une fenêtre au centre de chaque case. */
+const VERTEX_DECL = "attribute float noWindows;\nvarying float vNoWindows;\nvarying vec3 vLocalPos;\nvarying vec3 vLocalNormal;\n#include <common>";
+const VERTEX_SET = "#include <begin_vertex>\nvLocalPos = transformed;\nvLocalNormal = objectNormal;\nvNoWindows = noWindows;";
+const FRAGMENT_DECL = "varying float vNoWindows;\nvarying vec3 vLocalPos;\nvarying vec3 vLocalNormal;\n#include <common>";
+/**
+ * Sur un mur seulement (normale presque horizontale), au-dessus du rez-de-chaussée : une fenêtre au centre de chaque case.
+ * Jamais là où la géométrie dessine ses propres fenêtres (attribut `noWindows`, façades détaillées et ajouts).
+ */
 const FRAGMENT_WINDOWS = `#include <color_fragment>
-if (abs(vLocalNormal.y) < 0.5 && vLocalPos.y > ${WINDOW_CELL_M.toFixed(1)}) {
+if (vNoWindows < 0.5 && abs(vLocalNormal.y) < 0.5 && vLocalPos.y > ${WINDOW_CELL_M.toFixed(1)}) {
   float along = dot(vLocalPos.xz, vec2(-vLocalNormal.z, vLocalNormal.x)) / ${WINDOW_CELL_M.toFixed(1)};
   vec2 cell = vec2(fract(along), fract(vLocalPos.y / ${WINDOW_CELL_M.toFixed(1)}));
   if (cell.x > 0.25 && cell.x < 0.75 && cell.y > 0.3 && cell.y < 0.75) diffuseColor.rgb *= ${WINDOW_SHADE.toFixed(2)};
