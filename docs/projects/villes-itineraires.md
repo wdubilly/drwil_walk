@@ -53,7 +53,7 @@ Rome, Erevan et Paris, dans leurs centres touristiques.
 
 ## 3. Contraintes
 
-- **Deux chantiers d'abord**, dans cet ordre : `docs/projects/extraction-generique.md` (une seule extraction paramétrée,
+- **Deux chantiers d'abord**, dans cet ordre : `docs/projects/journal.md` (une seule extraction paramétrée,
   sinon trois copies de plus du même script) puis `docs/projects/facades-regions.md` (sinon ces trois villes s'affichent
   avec les façades de Pune et Doha).
 - L'extraction demande un **accès réseau** à Overpass : hors marche, jamais depuis l'application.

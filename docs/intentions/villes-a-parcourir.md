@@ -70,7 +70,8 @@ libre.
 - 2026-11-03 : **une famille de façades par région** avant les villes, pour qu'aucune ville n'arrive avec les façades
   génériques de Pune et Doha. Chantier : `docs/projects/facades-regions.md`.
 - 2026-11-03 : **généraliser l'extraction en un seul script paramétré** avant d'ajouter des villes, plutôt que de recopier
-  le modèle une quatrième fois. Chantier : `docs/projects/extraction-generique.md`.
+  le modèle une quatrième fois. Fait le 2026-11-03 : `app/scripts/cities.ts` décrit les villes par des données, ajouter une ville
+  n'y demande plus que ses paramètres (voir le journal, chantier `extraction-generique`).
 - 2026-11-03 : les itinéraires visés sont des **centres touristiques**.
 - 2026-11-03 : **Paris reste un itinéraire comme les autres**, dans le Marais ; aucune tour à traiter.
 
