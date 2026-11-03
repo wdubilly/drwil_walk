@@ -1,4 +1,4 @@
-// Extraction du quartier de Souq Waqif (et, via `extract`, de tout autre quartier : voir extract-pune.ts) depuis OpenStreetMap (Overpass) : bâtiments et voies, en GeoJSON.
+// Extraction du quartier de Souq Waqif (et, via `extract`, de tout autre quartier : voir cities.ts) depuis OpenStreetMap (Overpass) : bâtiments et voies, en GeoJSON.
 // Relançable : `npm run extract` réécrit data/souq-waqif.json. Le casque, lui, ne fait aucun appel réseau :
 // il ne lit que ce fichier versionné. Données © contributeurs OpenStreetMap, licence ODbL.
 import { LAND_WAYS, areaKind, buildingKind, buildingLevels, buildingLook, footwayKind, propKind, roofShape, sidewalkSides, type AreaKind, type Sidewalk } from "./osm-tags.ts";
