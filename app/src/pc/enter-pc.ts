@@ -20,6 +20,7 @@ import { initialWalkState, nextWalkState } from "../xr/frame.ts";
 import { NO_CALIBRATION, calibrationFrom } from "../xr/pose.ts";
 import { type TreeLoad, withTreeNotice } from "../xr/trees-load.ts";
 import { createPcInput } from "./input.ts";
+import { renderTouchControls } from "./touch-controls.ts";
 import { EYE_HEIGHT_M, lookOrientation } from "./look.ts";
 
 export const PC_ACTIVE_STATUS = "Version PC active : marche dans la page, sans casque.";
@@ -63,6 +64,7 @@ function walkPc(deps: ExperienceDeps, home: HomeView, souq: Souq, trees: TreeLoa
   const diagnostics = createDiagnosticsUi({ doc: deps.document, target: "pc", city: place, now, renderer, scene });
   const panel = renderWalkPanel(deps.document, deps.root, true, diagnostics.element);
   const input = createPcInput(deps.document, renderer.domElement);
+  const touchControls = renderTouchControls(deps.document, deps.root, input.push);
   const weightKg = home.readWeightKg() ?? DEFAULT_WEIGHT_KG;
   let calibration = NO_CALIBRATION;
   // Opacité pleine : aucun fondu à appliquer sans réel à montrer.
@@ -75,6 +77,7 @@ function walkPc(deps: ExperienceDeps, home: HomeView, souq: Souq, trees: TreeLoa
     renderer.domElement.remove();
     renderer.dispose();
     panel.remove();
+    touchControls.remove();
     home.setEntering(false);
     home.showStatus(PC_ENDED_STATUS);
   };

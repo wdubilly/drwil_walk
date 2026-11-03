@@ -48,7 +48,7 @@ Ouvrir l'application sur une tablette, dans un navigateur : la même marche que 
 - Le tableau de bord s'affiche en surimpression à l'écran (HTML de la page), pas dans la scène — `APP-007`
 - La version PC au clavier et à la souris marche comme avant — `APP-002`
 - La marche tactile est rejouée de bout en bout dans un navigateur en émulation tactile — `QUA-020`
-- L'essai sur une vraie tablette [human] — `APP-007`
+- L'essai sur une vraie tablette [human] — `APP-001`
 
 ## Contrats modifiés
 
@@ -93,6 +93,6 @@ Ouvrir l'application sur une tablette, dans un navigateur : la même marche que 
 
 ## 7. Reprise
 
-- **Dernier état** (2026-11-03) : fiche cadrée, rien codé.
-- **Travail non commité** : aucun.
-- **Prochaine étape** : [AI] lancer le chantier (`/drwil-start`).
+- **Dernier état** (2026-11-03) : lots 1 à 4 faits ; boutons, glisser et interface petit écran livrés, e2e tactile (`app/e2e/tablette-tactile.test.ts`) ; `APP-007` créé, `APP-002` modifié.
+- **Travail non commité** : voir `git status` (commit de clôture à faire).
+- **Prochaine étape** : [human] l'essai sur une vraie tablette (`docs/intentions/essai-tablette-tactile.md`).

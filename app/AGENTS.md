@@ -47,7 +47,7 @@ session `immersive-ar`, rue simple, marche en ligne droite, joystick, fondu têt
   écrite) : garder `pool: "threads"` dans `vite.config.ts`.
 - 2026-10-30 : c8 compte des branches sur des commentaires si le code passe par le module runner de Vite (positions
   décalées) : garder `experimental.viteModuleRunner: false`.
-- 2026-11-02 : l'e2e de la version PC (`e2e/version-pc.test.ts`) tourne SANS IWER : `navigator.xr` n'y est pas émulé, et le test compte les appels à `requestSession` (zéro attendu). Les touches se lisent sur `document` : tester avec `page.keyboard`, la souris par glisser sur le canvas `.pc-canvas`.
+- 2026-11-02 : l'e2e de la version PC (`e2e/version-pc.test.ts`) tourne SANS IWER : `navigator.xr` n'y est pas émulé, et le test compte les appels à `requestSession` (zéro attendu). Les touches se lisent sur `document` : tester avec `page.keyboard`, la souris par glisser sur le canvas `.pc-canvas`. Le tactile (`e2e/tablette-tactile.test.ts`) : `test.use({ hasTouch: true, isMobile: true, viewport })`, boutons par `.tap()`, glisser par `Input.dispatchTouchEvent` (session CDP) hors du panneau de marche, qui couvre le haut de l'écran.
 - Le point d'entrée s'exécute à l'import : son test fournit un `document` (happy-dom) et un `navigator` de
   substitution (`vi.stubGlobal`) puis l'importe dynamiquement.
 - 2026-10-30 : les e2e sont nommés `*.test.ts` dans e2e/ : c8 exclut les fichiers de test par défaut (pas les
@@ -70,6 +70,7 @@ session `immersive-ar`, rue simple, marche en ligne droite, joystick, fondu têt
 | APP-003 | Bâtiments (extrait OpenStreetMap figé, ou chargés pour un trajet libre) et attribution | `src/city/licence.ts` |
 | APP-004 | Champ de vision du casque simulé : un objet de la scène est-il dans la vue (cible Quest 3, marge) | `src/xr/fov.ts` |
 | APP-005 | Le panneau d'infos du casque reste dans le champ de vision, texte compris | `src/xr/pose.ts` |
+| APP-007 | La tablette se commande au toucher : boutons à l'écran, glisser pour regarder, interface petit écran | `src/pc/touch.ts` |
 
 ## Style guide and recipes
 
@@ -91,7 +92,7 @@ Depuis `app/`, après `npm ci` :
 - `npm run build` : typecheck puis build Vite, hors de la couche, dans le dossier dist/app de la racine (ignoré par
   Git) : sous app/, c8 compterait le bundle généré comme du code non couvert.
 
-- `npm test -- -t "APP-001"` : les seuls tests du contrat APP-001 (contrôle `app-001`) ; de même `APP-002` (`app-002`), `APP-003` (`app-003`), `APP-004` (`app-004`) et `APP-005` (`app-005`).
+- `npm test -- -t "APP-001"` : les seuls tests du contrat APP-001 (contrôle `app-001`) ; de même `APP-002` (`app-002`), `APP-007` (`app-007`), `APP-003` (`app-003`), `APP-004` (`app-004`) et `APP-005` (`app-005`).
 - `npm run extract` : relance l'extraction Overpass du souk et réécrit `data/souq-waqif.json` (réseau, hors casque) ; le tracé `data/souq-waqif-boucle.json` est versionné à part (voir sa description) et un test vérifie que chacun de ses points est un sommet d'une voie de l'extrait.
 - `npm run extract:fc-road` : de même pour FC Road à Pune (`data/pune-fc-road.json`, tracé `data/pune-fc-road-boucle.json`, aller-retour vérifié par le même test de sommets).
 - `npm run extract:corniche` : de même pour la Corniche de Doha (`data/doha-corniche.json`, tracé `data/doha-corniche-boucle.json`, aller-retour versionné à part et vérifié par le même test de sommets).

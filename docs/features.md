@@ -91,8 +91,13 @@ Commandes : Espace (ou P) pause et reprise ; ↑ ou + et ↓ ou − règlent la 
 R recale le parcours sur le regard sans toucher à la distance ; H masque le tableau (les mentions de données restent) ; D affiche ou masque le diagnostic de rendu ; glisser la souris tourne le regard ;
 Échap quitte. Une pression ne déclenche qu'une action : une touche tenue ne répète pas. Les itinéraires figés bouclent ; le trajet libre s'arrête à l'arrivée et le dit.
 
-Limites : OpenStreetMap seulement (le rendu Google 3D choisi est dit indisponible), ni minicarte, ni manette de jeu, ni tactile ;
+Limites : OpenStreetMap seulement (le rendu Google 3D choisi est dit indisponible), ni minicarte, ni manette de jeu ;
 le tableau de bord est celui de la page ; jamais essayé sur un autre navigateur que Chromium (e2e). Voir `docs/intentions/version-pc-suites.md`.
+
+Tablette (chantier rendu-tablette-tactile, APP-007) : ouverte sur une tablette, la même version PC se commande au toucher. Des boutons en bas de l'écran
+(« Moins vite », « Pause ou reprise », « Plus vite », « Recaler », « Quitter ») font les mêmes actions que le clavier ; glisser un doigt sur la scène tourne le regard,
+relâcher l'arrête. Le tableau de bord reste du HTML en surimpression, et l'accueil comme le panneau tiennent dans la largeur d'un petit écran. Limites : rejoué en émulation
+tactile de Chromium seulement ; l'essai sur une vraie tablette reste à faire (`docs/intentions/essai-tablette-tactile.md`) ; pas de pincement ni de gyroscope.
 
 ## Sécurité : le réel reste visible
 
