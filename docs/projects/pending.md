@@ -38,8 +38,8 @@ avant les fiches qui touchent le panneau d'infos, `champ-de-vision-casque` puis 
 - [ ] [P2] [AI] Des rues, trottoirs et mobilier urbain crédibles — `docs/projects/rendu-rues-mobilier.md`
 - [ ] [P3] [AI] Éclairage et ambiance de la ville (à affiner : sécurité au casque) — `docs/projects/rendu-eclairage-ambiance.md`
 - [ ] [P3] [AI] Essai de couverture d'Overture Maps (à affiner : accès) — `docs/projects/rendu-sources-donnees.md`
-- [ ] [P2] [AI] Les défis de distance et l'objectif annuel — `docs/projects/hud-defis-progression.md`
-- [ ] [P2] [AI] Le voyage guidé par étapes — `docs/projects/hud-voyage-guide.md`
+- [ ] [P3] [AI] Les défis de distance et l'objectif annuel — `docs/projects/hud-defis-progression.md`
+- [ ] [P3] [AI] Le voyage guidé par étapes — `docs/projects/hud-voyage-guide.md`
 - [ ] [P3] [AI] Comparer la marche virtuelle à la vraie marche — `docs/projects/comparer-marche-reelle.md`
 - [ ] [P3] [AI] La Corniche de Doha jusqu'à West Bay, départ au musée (reportée, à annuler si le GPX suffit) — `docs/projects/corniche-west-bay.md`
 - [ ] [P3] [AI] Rejouer une vraie course : GPX ou points intermédiaires, longue distance — `docs/projects/course-reelle-gpx.md`
