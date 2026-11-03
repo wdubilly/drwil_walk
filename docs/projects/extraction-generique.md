@@ -25,13 +25,13 @@ Une seule extraction, paramétrée par ville, supprime cette répétition avant 
 
 ## Critères d'acceptation
 
-- Une seule fonction d'extraction, paramétrée par ville (emprise, origine, nom du fichier)
-- Les quatre villes existantes sont décrites par des données, non par du code recopié
+- Une seule fonction d'extraction, paramétrée par ville (emprise, origine, nom du fichier) — `QUA-004`
+- Les quatre villes existantes sont décrites par des données, non par du code recopié — `APP-003`
 - **Les quatre extraits produits sont identiques à ceux du dépôt** : même contenu, à l'octet près si la source n'a pas
-  changé entre deux appels — c'est la preuve que le refactor n'a rien modifié
-- Les commandes `npm run extract`, `extract:pune`, `extract:corniche`, `extract:fc-road` continuent de fonctionner
-- Ajouter une ville ne demande que ses paramètres, aucun code nouveau
-- Les tests existants des scripts restent verts, sans réseau
+  changé entre deux appels — c'est la preuve que le refactor n'a rien modifié — `APP-003`
+- Les commandes `npm run extract`, `extract:pune`, `extract:corniche`, `extract:fc-road` continuent de fonctionner — `QUA-011`
+- Ajouter une ville ne demande que ses paramètres, aucun code nouveau — `QUA-011`
+- Les tests existants des scripts restent verts, sans réseau — `QUA-004`
 
 ## Contrats modifiés
 
