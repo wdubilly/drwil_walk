@@ -1,6 +1,6 @@
 # Intention : rejouer le parcours d'une vraie course chez soi
 
-**Statut** : proposée le 2026-11-01, à partir d'un retour du demandeur ; cadrée en partie le 2026-11-01 par `docs/projects/course-reelle-gpx.md` (GPX, points intermédiaires, longue distance, ville par bandes) ; la comparaison avec la vraie marche est cadrée par `docs/projects/comparer-marche-reelle.md` ; restent à trancher la reprise de séance, l'allure ou le temps cible et le dénivelé.
+**Statut** : proposée le 2026-11-01, à partir d'un retour du demandeur ; cadrée en partie le 2026-11-01 par `docs/projects/course-reelle-gpx.md` (GPX, points intermédiaires, longue distance, ville par bandes) ; la comparaison avec la vraie marche est cadrée par `docs/projects/hud-suivi-comparer-marche-reelle.md` ; restent à trancher la reprise de séance, l'allure ou le temps cible et le dénivelé.
 
 ## Besoin
 

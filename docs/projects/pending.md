@@ -29,7 +29,7 @@ Ordre de lancement : par priorité (`[P0]` d'abord), puis par ordre alphabétiqu
 de sondage : quatre niveaux). Les dépendances sont respectées : `ambiance-cartoon` avant `rendu-ville-riche`, `panneau-discret`
 avant les fiches qui touchent le panneau d'infos, `champ-de-vision-casque` puis `panneau-heure-hors-vue` avant elles aussi
 (le panneau doit tenir dans la vue avant d'y ajouter du contenu), `tableau-allure-progression` et `hud-defis-progression` avant
-`comparer-marche-reelle`, les fiches de la ville avant `course-reelle-gpx`. La Corniche est reportée le 2026-11-01 : à annuler si `course-reelle-gpx` couvre le besoin.
+`hud-suivi-comparer-marche-reelle`, les fiches de la ville avant `course-reelle-gpx`. Les fiches hud passent en dernier (décision du 2026-11-03) ; `hud-suivi-comparer-marche-reelle` porte le préfixe hud pour passer après `hud-defis-progression`. La Corniche est reportée le 2026-11-01 : à annuler si `course-reelle-gpx` couvre le besoin.
 
 - [ ] [P1] [AI] Des profils graphiques (casque, PC, tablette) — `docs/projects/rendu-profils-graphiques.md`
 - [ ] [P1] [AI] La tablette et le tactile — `docs/projects/rendu-tablette-tactile.md`
@@ -40,7 +40,7 @@ avant les fiches qui touchent le panneau d'infos, `champ-de-vision-casque` puis 
 - [ ] [P3] [AI] Essai de couverture d'Overture Maps (à affiner : accès) — `docs/projects/rendu-sources-donnees.md`
 - [ ] [P3] [AI] Les défis de distance et l'objectif annuel — `docs/projects/hud-defis-progression.md`
 - [ ] [P3] [AI] Le voyage guidé par étapes — `docs/projects/hud-voyage-guide.md`
-- [ ] [P3] [AI] Comparer la marche virtuelle à la vraie marche — `docs/projects/comparer-marche-reelle.md`
+- [ ] [P3] [AI] Comparer la marche virtuelle à la vraie marche — `docs/projects/hud-suivi-comparer-marche-reelle.md`
 - [ ] [P3] [AI] La Corniche de Doha jusqu'à West Bay, départ au musée (reportée, à annuler si le GPX suffit) — `docs/projects/corniche-west-bay.md`
 - [ ] [P3] [AI] Rejouer une vraie course : GPX ou points intermédiaires, longue distance — `docs/projects/course-reelle-gpx.md`
 
