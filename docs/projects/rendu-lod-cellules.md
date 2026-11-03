@@ -73,4 +73,4 @@ niveaux de détail simples. Pas de chargement par cellules (le demandeur l'écar
 
 - **Dernier état** (2026-11-03) : cadrage seul, aucun code.
 - **Travail non commité** : la fiche.
-- **Prochaine étape** : [human] relever les mesures au casque, puis démarrer si le budget est dépassé.
+- **Prochaine étape** : [human] relever les mesures au casque (parcours groupé : `docs/intentions/seance-casque-parcours.md`), puis démarrer si le budget est dépassé.
