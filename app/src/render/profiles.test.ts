@@ -13,7 +13,7 @@ describe("profils graphiques", () => {
 
   it("APP-006: chaque profil règle les mêmes réglages de rendu, dans les plafonds des données", () => {
     for (const { settings } of PROFILES) {
-      expect(Object.keys(settings).sort()).toEqual(["facades", "markings", "maxFurniture", "maxTrees", "outlines", "pixelRatio", "richCity", "xrScale"]);
+      expect(Object.keys(settings).sort()).toEqual(["facades", "fog", "markings", "maxFurniture", "maxTrees", "outlines", "pixelRatio", "richCity", "xrScale"]);
       expect(settings.maxTrees).toBeLessThanOrEqual(MAX_TREES);
       expect(settings.maxFurniture).toBeLessThanOrEqual(MAX_FURNITURE);
     }
@@ -22,6 +22,13 @@ describe("profils graphiques", () => {
     expect(PROFILES.map((p) => p.settings.markings)).toEqual([false, true, true]);
     expect(settingsOf("qualite").outlines).toBe(true);
     expect(settingsOf("equilibre")).toMatchObject({ outlines: false, richCity: true, maxTrees: MAX_TREES, maxFurniture: MAX_FURNITURE });
+  });
+
+  it("APP-011: le profil règle le brouillard et garde le repli désactivé sur le profil le plus léger", () => {
+    expect(PROFILES.map((p) => p.settings.fog)).toEqual([false, true, true]);
+    expect(settingsOf("n'importe quoi").fog).toBe(true);
+    // Le brouillard n'est pas une option de la scène : l'ambiance l'applique à part (APP-001).
+    expect(Object.keys(sceneOptionsOf(settingsOf("qualite")))).not.toContain("fog");
   });
 
   it("APP-006: un identifiant inconnu retombe sur le réglage équilibré", () => {

@@ -41,6 +41,18 @@ describe("version PC (sans casque)", () => {
     expect(quality.fake.setPixelRatio).toHaveBeenCalledWith(Math.min(2, quality.win.devicePixelRatio));
   });
 
+  it("APP-011: sur l'écran PC, le ciel suit l'heure et le brouillard choisi va plus loin qu'au casque", async () => {
+    const t = setup({ now: () => new Date(2026, 10, 3, 13, 0) });
+    const label = [...t.root.querySelectorAll("label")].find((l) => l.textContent.includes("Brouillard"));
+    const box = label?.querySelector("input");
+    if (!box) throw new Error("case « Brouillard » introuvable");
+    box.checked = true;
+    await t.enterPc();
+    expect(t.root.dataset["ambiance"]).toBe("brouillard 90 % · sons 0 %");
+    const plain = await walking();
+    expect(plain.root.dataset["ambiance"]).toBe("brouillard éteint · sons 0 %");
+  });
+
   it("APP-002: même ville, même parcours et même vitesse que dans le casque", async () => {
     const pc = await walking();
     pc.frame(10_000);

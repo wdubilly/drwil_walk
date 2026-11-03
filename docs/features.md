@@ -13,7 +13,7 @@ de la rampe), bouton « Entrer en réalité mixte ». Une seule personne utilise
 Codé : accueil sombre à grandes cibles (48 px au moins, contraste prouvé par QUA-014, contraste du texte et de son
 fond) ; quatre cartes d'itinéraire avec une illustration, Doha Souq Waqif choisi par défaut, choix d'un clic ou à la
 manette ; un itinéraire sans ville dans le dépôt serait marqué « Bientôt » et ne se choisirait pas (plus aucun aujourd'hui) ;
-vitesse de départ (à partir de 1 km/h, sans maximum, défaut 4,0 ; le minimum est écrit sous le champ ; une saisie sous 1 km/h est ramenée à 1 km/h et une saisie illisible à 4,0 km/h, en le disant), opacité de la ville (30 à 100 %), rappel de sécurité, mention « © contributeurs OpenStreetMap » (suivie de « Google » quand ce rendu est choisi), bouton d'entrée ; rendu OpenStreetMap par défaut, Google 3D en option : sans clé, ou si les tuiles ne se chargent pas, la marche se fait en OpenStreetMap et la raison s'affiche sur l'accueil ; un
+vitesse de départ (à partir de 1 km/h, sans maximum, défaut 4,0 ; le minimum est écrit sous le champ ; une saisie sous 1 km/h est ramenée à 1 km/h et une saisie illisible à 4,0 km/h, en le disant), opacité de la ville (30 à 100 %), brouillard d'ambiance (décoché) et sons d'ambiance (0 %), rappel de sécurité, mention « © contributeurs OpenStreetMap » (suivie de « Google » quand ce rendu est choisi), bouton d'entrée ; rendu OpenStreetMap par défaut, Google 3D en option : sans clé, ou si les tuiles ne se chargent pas, la marche se fait en OpenStreetMap et la raison s'affiche sur l'accueil ; un
 échec (navigateur sans WebXR, réalité mixte non prise en charge) s'affiche sur la page, pour le bouton du casque seulement : le bouton « Version PC » reste utilisable. Les itinéraires qui démarrent sont le souk
 de Doha, la Vieille ville de Pune, la Corniche de Doha et FC Road à Pune ; le choisi est inscrit sur la page (`data-route`) .
 
@@ -154,11 +154,11 @@ l'arbre simple. Non essayé sur un vrai Quest 3 (`docs/intentions/essai-casque-a
 
 Chantier rendu-profils-graphiques (APP-006). À l'accueil, trois profils figés règlent ensemble le rendu, au casque, au PC et à la tablette :
 
-| Profil | Contours | Ville riche (verdure, noms des rues) | Marquages au sol | Arbres / mobilier au plus | Ratio de pixels (PC, tablette) | Échelle d'image (casque) |
-|---|---|---|---|---|---|---|
-| Performance | non | non | non | 100 / 120 | 0,75 | 0,8 |
-| Équilibré | non | oui | oui | 300 / 400 | 1 | 1 |
-| Qualité | oui | oui | oui | 300 / 400 | 2, sans dépasser l'écran | 1,2 |
+| Profil | Contours | Ville riche (verdure, noms des rues) | Marquages au sol | Brouillard d'ambiance | Arbres / mobilier au plus | Ratio de pixels (PC, tablette) | Échelle d'image (casque) |
+|---|---|---|---|---|---|---|---|
+| Performance | non | non | non | non | 100 / 120 | 0,75 | 0,8 |
+| Équilibré | non | oui | oui | oui | 300 / 400 | 1 | 1 |
+| Qualité | oui | oui | oui | oui | 300 / 400 | 2, sans dépasser l'écran | 1,2 |
 
 Le profil proposé vient des capacités de l'appareil, pas du seul user-agent : session `immersive-ar` possible (casque : équilibré), pointeur tactile
 principal (tablette : performance), WebGL 2 absent (performance), ni casque ni tactile (PC : qualité) ; une détection impossible donne « équilibré ». Le choix
@@ -166,6 +166,28 @@ manuel l'emporte, est gardé dans le navigateur (`localStorage`, jamais envoyé)
 l'accueil. Aucun profil ne touche l'opacité, la vignette ni la zone tapis : le réel reste visible (APP-001). Le profil retenu est inscrit sur la page (`data-profile`).
 « Qualité » est proposé partout, sans refus fondé sur des mesures : le risque est assumé. Les images par seconde de chaque profil n'ont jamais été mesurées sur
 un vrai Quest 3 (`docs/intentions/essai-casque-profils-graphiques.md`).
+
+## Éclairage et ambiance
+
+Chantier rendu-eclairage-ambiance (APP-011). La lumière de la ville suit l'heure réelle de l'appareil : le soleil monte de 6 h à
+18 h, sa couleur passe de l'orange rasant au blanc de midi, le ciel et le brouillard suivent la même courbe ; la nuit, la ville
+reste éclairée doucement (le soleil ne passe jamais sous l'horizon) et une heure illisible retombe sur midi. Rien ne se règle :
+l'heure n'est pas un réglage de l'accueil.
+
+Deux réglages facultatifs s'ajoutent à l'accueil, tous deux éteints à chaque ouverture (rien n'est gardé dans le navigateur) :
+
+- **Brouillard** (décoché) : un voile de profondeur. Au casque, il ne dépasse jamais 15 % d'opacité, même à 1000 m, et rien
+  n'est voilé en deçà de 8 m : la zone tapis, le panneau d'infos, la minicarte et tout obstacle à portée de pas gardent leurs
+  couleurs (APP-001). Sur la version PC, où il n'y a pas de réel à voir, le voile peut aller plus loin (90 %). Le profil
+  « performance » le refuse, même coché.
+- **Sons d'ambiance** (0 %) : une rumeur produite par code (bruit filtré, bouclé). Tant que le volume est à 0, aucun contexte
+  audio n'est ouvert ; au plus fort, le gain reste à 0,2, de quoi entendre le tapis, la pièce et une personne qui parle.
+  Quitter la marche coupe le son.
+
+Au casque, aucun ciel ni fond n'est posé : le fond est le passthrough, donc le réel. Sur la version PC, le ciel suit l'heure.
+Ce qui est appliqué est inscrit sur la page (`data-ambiance`, par exemple « brouillard 15 % · sons 20 % »). Limites : jamais
+essayé sur un vrai Quest 3 (`docs/intentions/essai-casque-eclairage-ambiance.md`) ; les sons sont un murmure produit par code,
+pas une ville enregistrée (`docs/intentions/sons-ambiance-ville.md`) ; la courbe du jour ignore la saison et la latitude.
 
 ## Vérifié en conditions réelles
 

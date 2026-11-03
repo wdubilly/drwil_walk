@@ -5,6 +5,7 @@ import { createAttributionLabel } from "../city/attribution.ts";
 import { createTripPlanner } from "../city/free-route.ts";
 import type { TreePack } from "../city/tree-pack.ts";
 import { createSouqScene, setCityOpacity } from "../city/souq.ts";
+import { startAmbience } from "./ambience.ts";
 import type { Souq } from "../city/souq-data.ts";
 import type { Providers } from "../route/providers.ts";
 import { DEFAULT_WEIGHT_KG, type WeightStorage } from "../route/stats.ts";
@@ -112,6 +113,9 @@ async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession, so
   const minimap = createMinimap(deps.document, souq.route.points);
   scene.add(hud.mesh, minimap.mesh);
   // La zone tapis (découpe) et la vignette réelle (bords de l'image) : elles ne font que retirer du rendu (APP-001).
+  // L'ambiance (APP-011) : lumière de l'heure réelle, brouillard plafonné au casque et éteint par défaut, sons coupés par défaut.
+  const ambience = startAmbience({ scene, target: "casque", fog: settings.fog && home.readFog(), soundPct: home.readSoundPct(), now, window: deps.document.defaultView });
+  deps.root.dataset["ambiance"] = ambience.summary;
   const zone = createZoneControl(deps.storage);
   const vignette = createVignette();
   const vignetteOn = home.readVignette();
@@ -162,21 +166,14 @@ async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession, so
     // La case du point, lue par l'e2e : la minicarte est dans la scène, pas dans la page.
     deps.root.dataset["minimap"] = minimap.update(walking.at, view);
     panel.update({
-      ...state,
-      ...dashboard,
-      calibration,
-      position: walking.at,
+      ...state, ...dashboard, calibration, position: walking.at, buildingCount, zone: zone.zone(), vignette: vignetteOn,
       junction: { distanceM: walking.crossingM, choices: walking.choices, offRoute: walking.offRoute },
-      buildingCount,
-      zone: zone.zone(),
-      vignette: vignetteOn,
-      rendering: mode.rendering(),
-      tileCount: mode.tileCount(),
-      attribution: mode.attribution(),
+      rendering: mode.rendering(), tileCount: mode.tileCount(), attribution: mode.attribution(),
     });
     renderer.render(scene, camera);
   });
   const stop = () => {
+    ambience.stop();
     renderer.setAnimationLoop(null);
     renderer.domElement.remove();
     renderer.dispose();

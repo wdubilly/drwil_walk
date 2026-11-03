@@ -217,6 +217,32 @@ describe("écran d'accueil", () => {
     expect(root.querySelector("[role='alert']")?.textContent).toBe("");
   });
 
+  it("APP-011: le brouillard arrive éteint et les sons coupés, et se règlent à l'accueil", () => {
+    const { view, input } = setup();
+    expect(view.readFog()).toBe(false);
+    expect(view.readSoundPct()).toBe(0);
+    const fog = input("Brouillard");
+    fog.checked = true;
+    expect(view.readFog()).toBe(true);
+    const sound = input("Sons d'ambiance");
+    expect(sound.min).toBe("0");
+    sound.value = "40";
+    expect(view.readSoundPct()).toBe(40);
+    // Coupés d'un geste : le curseur revient à zéro, le son avec lui.
+    sound.value = "0";
+    expect(view.readSoundPct()).toBe(0);
+  });
+
+  it("APP-011: aucun réglage d'ambiance n'est gardé : un nouvel accueil arrive sans brouillard ni son", () => {
+    const storage = memory();
+    const first = setup(storage);
+    first.input("Brouillard").checked = true;
+    first.input("Sons d'ambiance").value = "100";
+    const second = setup(storage);
+    expect(second.view.readFog()).toBe(false);
+    expect(second.view.readSoundPct()).toBe(0);
+  });
+
   it("QUA-002: dit que le poids ne sera pas gardé si le navigateur refuse ou n'a pas de stockage", () => {
     const { root, view, input } = setup();
     const weight = input("Poids");

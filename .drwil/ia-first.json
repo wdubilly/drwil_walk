@@ -149,6 +149,16 @@
       "degradable": false
     },
     {
+      "id": "app-011",
+      "name": "APP-011 ambiance (lumière de l'heure réelle, brouillard plafonné, sons coupés par défaut) : tests nommés par l'ID (Vitest)",
+      "run": "npm test -- -t \"APP-011\"",
+      "cwd": "app",
+      "paths": [
+        "app/**"
+      ],
+      "degradable": false
+    },
+    {
       "id": "app-007",
       "name": "APP-007 tablette et tactile : boutons à l'écran, glisser pour regarder : tests nommés par l'ID (Vitest)",
       "run": "npm test -- -t \"APP-007\"",

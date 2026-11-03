@@ -16,6 +16,8 @@ sur son environnement réel.
 - La vitesse se règle à la manette pour correspondre à celle du tapis (pas de Bluetooth dans la v0.1), à partir de 1 km/h, sans maximum : une saisie sous 1 km/h est ramenée à 1 km/h et l'écran le dit.
 - Sécurité : la ville s'efface quand on baisse la tête, la zone du tapis (boîte réglée à la manette gauche) reste toujours transparente, la périphérie du champ de vision reste
   en passthrough (vignette réelle) et l'opacité de la ville est réglable.
+- Une ambiance éclairée par l'heure qu'il est chez vous, avec un brouillard facultatif (éteint par défaut, plafonné à
+  15 % d'opacité au casque, désactivable d'un clic) et des sons d'ambiance facultatifs (coupés par défaut).
 
 Le détail de la v0.1 est dans `MISSION.md`.
 
