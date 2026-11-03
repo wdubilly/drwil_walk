@@ -27,7 +27,7 @@ session `immersive-ar`, rue simple, marche en ligne droite, joystick, fondu têt
 - Le rendu three.js est injecté (classe `Renderer` passée à `startExperience`) : les tests passent une doublure,
   seul `src/main.ts` branche le vrai `WebGLRenderer`.
 - Les fichiers de `data/` sont importés comme JSON (attribut d'import de type JSON) : l'extrait est du GeoJSON dans un fichier d'extension json, que Vite et Node lisent sans configuration.
-- Le script `scripts/extract-souq.ts` n'a pas de point d'entrée à lui (il ne serait pas couvert) : `npm run extract` l'appelle en ligne, et son test vit dans `src/city/` (Vitest ne lit que `src/` et la racine).
+- Les scripts d'extraction n'ont pas de point d'entrée à eux (ils ne seraient pas couverts) : `scripts/cities.ts` décrit les villes par des données (emprise, identification Overpass, fichier de sortie) et expose `extractCity`, que les commandes `npm run extract*` appellent en ligne ; la requête et la conversion vivent dans `scripts/extract-souq.ts`. `scripts/extract-pune.ts`, `scripts/extract-corniche.ts` et `scripts/extract-fc-road.ts` ne sont que des alias, gardés tant que leurs tests (`src/city/`, car Vitest ne lit que `src/` et la racine) les importent.
 - Rendu par défaut sans clé ni réseau : la ville vient d'un extrait OpenStreetMap figé dans le dépôt. Rendu Google 3D en
   option (`docs/projects/journal.md`) : clé `VITE_GOOGLE_MAPS_API_KEY` lue de `.env.local` (dans `app/`) par `src/main.ts` (jamais
   commitée, SEC-007), tuiles par `3d-tiles-renderer` dans `src/city/google-tiles.ts`, injectées dans `startExperience`
@@ -96,7 +96,7 @@ Depuis `app/`, après `npm ci` :
   Git) : sous app/, c8 compterait le bundle généré comme du code non couvert.
 
 - `npm test -- -t "APP-001"` : les seuls tests du contrat APP-001 (contrôle `app-001`) ; de même `APP-002` (`app-002`), `APP-007` (`app-007`), `APP-008` (`app-008`), `APP-003` (`app-003`), `APP-004` (`app-004`), `APP-005` (`app-005`) `APP-009` (`app-009`) et `APP-011` (`app-011`).
-- `npm run extract` : relance l'extraction Overpass du souk et réécrit `data/souq-waqif.json` (réseau, hors casque) ; le tracé `data/souq-waqif-boucle.json` est versionné à part (voir sa description) et un test vérifie que chacun de ses points est un sommet d'une voie de l'extrait.
+- `npm run extract` : relance l'extraction Overpass du souk (via `extractCity`, voir `scripts/cities.ts` ; ajouter une ville = une entrée de `CITIES` et sa commande npm) et réécrit `data/souq-waqif.json` (réseau, hors casque) ; le tracé `data/souq-waqif-boucle.json` est versionné à part (voir sa description) et un test vérifie que chacun de ses points est un sommet d'une voie de l'extrait.
 - `npm run extract:fc-road` : de même pour FC Road à Pune (`data/pune-fc-road.json`, tracé `data/pune-fc-road-boucle.json`, aller-retour vérifié par le même test de sommets).
 - `npm run extract:corniche` : de même pour la Corniche de Doha (`data/doha-corniche.json`, tracé `data/doha-corniche-boucle.json`, aller-retour versionné à part et vérifié par le même test de sommets).
 - `npm run extract:pune` : de même pour la Vieille ville de Pune (`data/pune-vieille-ville.json`, tracé `data/pune-vieille-ville-boucle.json`, versionné à part et vérifié par le même test de sommets).

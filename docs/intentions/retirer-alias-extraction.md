@@ -14,9 +14,15 @@ Lu le 2026-11-03.
 
 - Les alias exportent `PUNE_BBOX`, `CORNICHE_BBOX`, `FC_ROAD_BBOX`, leurs agents et `extractPune`, `extractCorniche`, `extractFcRoad`.
 - Les tests ne s'exécutent que sous `app/src/` (Vitest ne lit pas `app/scripts/`).
-- `app/AGENTS.md` (lignes sur `app/scripts/extract-souq.ts` et les commandes `npm run extract*`) décrit encore l'ancienne organisation.
+- `app/AGENTS.md` décrivait encore l'ancienne organisation : corrigé le 2026-11-03, hors chantier.
 
 ## Questions à trancher
 
-- Un seul test paramétré sur `CITIES` remplace-t-il les trois fichiers de test sans perdre la vérification de l'emprise ?
-- `app/AGENTS.md` doit être mis à jour dans le même chantier.
+*(aucune : tranchées le 2026-11-03)*
+
+- Un seul test paramétré sur `CITIES` remplace les trois fichiers de test, sans perdre la vérification de l'emprise
+  (décision du demandeur, 2026-11-03).
+
+## Cadrée
+
+Cette intention est cadrée en fiche : `docs/projects/retirer-alias-extraction.md` (2026-11-03).

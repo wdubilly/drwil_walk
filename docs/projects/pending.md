@@ -31,6 +31,7 @@ avant les fiches qui touchent le panneau d'infos, `champ-de-vision-casque` puis 
 (le panneau doit tenir dans la vue avant d'y ajouter du contenu), `tableau-allure-progression` et `hud-defis-progression` avant
 `hud-suivi-comparer-marche-reelle`, les fiches de la ville avant `course-reelle-gpx`. `extraction-generique` puis `facades-regions` avant `villes-itineraires` (décision du 2026-11-03 : une famille de façades par région, et une seule extraction paramétrée, avant d'ajouter Rome, Erevan ou Paris). Les fiches hud passent en dernier (décision du 2026-11-03) ; `hud-suivi-comparer-marche-reelle` porte le préfixe hud pour passer après `hud-defis-progression`. La Corniche est reportée le 2026-11-01 : à annuler si `course-reelle-gpx` couvre le besoin.
 
+- [ ] [P1] [AI] Retirer les alias d'extraction par ville (un seul test paramétré) — `docs/projects/retirer-alias-extraction.md`
 - [ ] [P2] [AI] Une teinte de façades par région — `docs/projects/facades-regions.md`
 - [ ] [P2] [AI] Trois itinéraires de plus (Rome, Erevan, Paris) — `docs/projects/villes-itineraires.md`
 - [ ] [P2] [AI] Réextraire les quatre quartiers (poubelles et panneaux) — `docs/projects/extraction-mobilier.md`
