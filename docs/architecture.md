@@ -65,6 +65,13 @@ Décidée le 2026-10-30 par le demandeur :
   - `app/scripts/extract-souq.ts` : l'extraction Overpass qui produit l'extrait (`npm run extract`), `app/scripts/osm-tags.ts` (balises retenues : couleurs, matériau, arbres, mobilier urbain, trottoirs et passages), `app/scripts/extract-pune.ts`, `app/scripts/extract-corniche.ts` et `app/scripts/extract-fc-road.ts`
     (`npm run extract:pune`, `npm run extract:corniche`, `npm run extract:fc-road`, même fonction sur un autre cadre) ; elles ne sont jamais exécutées dans le casque, qui ne fait
     aucun appel réseau. Leurs tests sont `app/src/city/extract-souq.test.ts`, `app/src/city/extract-pune.test.ts`, `app/src/city/extract-corniche.test.ts` et `app/src/city/extract-fc-road.test.ts`.
+  - `app/scripts/overture-coverage.ts` : l'essai de couverture d'Overture Maps (chantier rendu-sources-donnees), un
+    **relevé ponctuel**, lancé à la main, jamais par l'application : il compare les quatre extraits figés aux fichiers
+    publiés d'Overture (Parquet du bucket public, sans compte ni clé), couches `buildings/building` (ODbL) et
+    `addresses/address` (licences ouvertes par pays), et rend le relevé en Markdown. Rien d'Overture n'entre dans
+    `app/data/` : la ville reste celle d'OpenStreetMap (APP-003). L'exécuteur de requêtes (DuckDB, gardé hors du
+    dépôt) et la lecture des extraits lui sont injectés : son test (`app/src/city/overture-coverage.test.ts`)
+    n'ouvre ni réseau ni fichier. Ligne de commande et relevé : `docs/intentions/rendu-sources-donnees.md`.
   - `app/src/render/` : les profils graphiques (`app/src/render/profiles.ts` : trois réglages figés, repli équilibré, ratio de pixels borné) et la détection des capacités de l'appareil (`app/src/render/capabilities.ts` : casque, tactile, WebGL 2, jamais le user-agent seul), contrat APP-006 ; lus par `app/src/xr/experience.ts` et `app/src/pc/enter-pc.ts`, appliqués par `createSouqScene` (`app/src/city/souq.ts`) ; le choix à l'accueil est `app/src/ui/profile-choice.ts` (gardé dans le navigateur, valeur illisible dite). Aucun réglage de sécurité-visibilité n'y entre (APP-001). La lumière de l'heure réelle et le brouillard y vivent aussi (contrat APP-011) : `app/src/render/daylight.ts` (courbe du jour, repli de midi, couleurs du soleil, du ciel et du brouillard) et `app/src/render/fog.ts` (voile plafonné à 0,15 au casque, rien de voilé sous 8 m), deux modules purs appliqués à la scène par `app/src/xr/ambience.ts`.
   - `app/src/ui/` : l'écran d'accueil (`app/src/ui/home.ts` : vitesse, opacité, rappel de sécurité, bouton « Entrer en réalité
     mixte » ; `app/src/ui/route-choice.ts` : cartes d'itinéraire en boutons radio ; `app/src/ui/render-choice.ts` : rendu OpenStreetMap ou Google 3D ; `app/src/ui/home.css` : thème sombre et
