@@ -49,13 +49,30 @@ visuellement interchangeables. Les deux sujets sont liés : c'est une décision 
 
 ## Questions à trancher
 
-- [decision] Quelles villes exactement, et surtout **quel quartier et quelle rue de départ** dans chacune ? Un itinéraire se
-  choisit au niveau du quartier, pas de la ville (le Trastevere n'est pas l'EUR).
+- [decision] Quel quartier et quelle rue de départ exactement dans chaque ville ? Le demandeur vise les **centres
+  touristiques** (2026-11-03) ; les propositions ci-dessous attendent sa confirmation.
 - [decision] Combien d'itinéraires au total vise-t-on ? Le poids des extraits et le temps de chargement en dépendent.
-- [decision] Ajoute-t-on une famille de façades par région avant ces villes, en même temps, ou accepte-t-on des quartiers
-  génériques dans un premier temps ?
-- [decision] Généralise-t-on l'extraction en un seul script paramétré avant d'ajouter des villes, ou recopie-t-on le modèle
-  existant une fois de plus ?
 - Le plafond de poids des extraits vérifié par les tests tient-il à sept itinéraires, ou faut-il charger les villes à la
   demande ?
 - Faut-il un ordre : une ville d'abord, jugée au casque, avant d'engager les suivantes ?
+
+## Quartiers proposés
+
+Des centres touristiques, marchables en boucle, denses en bâtiments cartographiés :
+
+- **Rome** — le centro storico : Piazza Navona, le Panthéon, les ruelles entre les deux. Ocres et travertin.
+- **Erevan** — le centre : place de la République, rue Abovian, la Cascade. Tuf rose.
+- **Paris** — le Marais : place des Vosges et les rues alentour. Pierre de taille et toits de zinc.
+
+## Décisions
+
+- 2026-11-03 : **une famille de façades par région** avant les villes, pour qu'aucune ville n'arrive avec les façades
+  génériques de Pune et Doha. Chantier : `docs/projects/facades-regions.md`.
+- 2026-11-03 : **généraliser l'extraction en un seul script paramétré** avant d'ajouter des villes, plutôt que de recopier
+  le modèle une quatrième fois. Chantier : `docs/projects/extraction-generique.md`.
+- 2026-11-03 : les itinéraires visés sont des **centres touristiques**.
+
+## Ordre
+
+`extraction-generique` → `facades-regions` → les villes. Cette intention ne sera cadrée en fiche qu'une fois les quartiers
+et la rue de départ confirmés.
