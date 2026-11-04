@@ -18,6 +18,7 @@ files:
   - docs/features.md
   - docs/guide-utilisateur.md
   - docs/intentions/*
+  - .drwil/ia-first.json
 -->
 
 ## 1. Besoin
