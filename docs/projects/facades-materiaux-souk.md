@@ -107,7 +107,8 @@ l'accueil pour le souk seulement »)*
 ## 7. Reprise
 
 - **Dernier état** (2026-11-04) : lots 1 à 3 livrés sur la branche `chantier/facades-materiaux-souk`, `drwil verify` PASS ;
-  couleurs provisoires faute de photo de rue (Panoramax vide, Mapillary sans jeton).
+  couleurs provisoires faute de photo de rue (Panoramax vide, Mapillary sans jeton). Rouvert après la CI rouge de la PR #73
+  (données de `app/assets/materials/` hors de toute fiche après la clôture), corrigé par la fiche `docs/projects/socle-app.md`.
 - **Travail non commité** : aucun.
 - **Prochaine étape** : relecture des couleurs (avec un jeton Mapillary du demandeur, `docs/intentions/couleurs-photos-souk.md`)
   et lot 4 au casque (`docs/intentions/essai-casque-materiaux-souk.md`) [human].
