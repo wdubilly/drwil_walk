@@ -71,6 +71,11 @@ que les fichiers de `app/data/` n'auront pas été réécrits. Les relancer amè
 
 ## 7. Reprise
 
-- **Dernier état** (2026-11-03) : cadrage seul, aucune extraction lancée.
-- **Travail non commité** : la fiche.
-- **Prochaine étape** : lot 1, le relevé avant extraction.
+- **Dernier état** (2026-11-04) : lots 1 à 3 faits. Relevé avant (extraits du 2026-11-03) : bancs 19 (souk), 8 (Corniche),
+  aucune poubelle ni panneau. Après (extraits du 2026-11-04) : mêmes bancs, 14 poubelles (Corniche), aucun panneau ; un
+  comptage Overpass confirme zéro `traffic_sign` et zéro `highway=stop|give_way` dans les quatre emprises. Seul diff des
+  données : la date d'extraction et les 14 poubelles. Poids total de `app/data/` : 2 941 654 octets (Corniche 1 346 480,
+  plafond 1 500 000 par extrait). Détour mobilier-hauteur-test (PR #76, fusionnée) : le test APP-009 des extraits
+  plafonnait la hauteur au dossier d'un banc.
+- **Travail non commité** : aucun.
+- **Prochaine étape** : vérification, PR, clôture.

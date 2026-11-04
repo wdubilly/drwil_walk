@@ -1,6 +1,7 @@
 # Intention : juger le mobilier urbain et les marquages sur un vrai Quest 3 (lot 4 de rendu-rues-mobilier)
 
 **Statut** : proposée le 2026-11-03.
+**Réexaminée le 2026-11-04** : la réextraction a apporté 14 poubelles réelles sur la Corniche ; aucun panneau ni lampadaire dans les quatre extraits. Le reste vaut toujours.
 
 ## Besoin
 
