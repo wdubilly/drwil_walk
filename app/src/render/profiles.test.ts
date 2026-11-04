@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { MAX_FURNITURE, MAX_TREES } from "../city/props.ts";
+import { MAX_FURNITURE, MAX_GENERATED_LAMPS, MAX_TREES } from "../city/props.ts";
 import { FALLBACK_PROFILE, PROFILES, appliedPixelRatio, isProfileId, sceneOptionsOf, settingsOf } from "./profiles.ts";
 
 describe("profils graphiques", () => {
@@ -13,9 +13,10 @@ describe("profils graphiques", () => {
 
   it("APP-006: chaque profil règle les mêmes réglages de rendu, dans les plafonds des données", () => {
     for (const { settings } of PROFILES) {
-      expect(Object.keys(settings).sort()).toEqual(["facades", "fog", "markings", "maxFurniture", "maxTrees", "outlines", "pixelRatio", "richCity", "xrScale"]);
+      expect(Object.keys(settings).sort()).toEqual(["facades", "fog", "markings", "maxFurniture", "maxGeneratedLamps", "maxTrees", "outlines", "pixelRatio", "richCity", "xrScale"]);
       expect(settings.maxTrees).toBeLessThanOrEqual(MAX_TREES);
       expect(settings.maxFurniture).toBeLessThanOrEqual(MAX_FURNITURE);
+      expect(settings.maxGeneratedLamps).toBeLessThanOrEqual(MAX_GENERATED_LAMPS);
     }
     expect(settingsOf("performance").richCity).toBe(false);
     // APP-009 : le profil le plus léger retire les marquages au sol, les autres les gardent.
@@ -31,6 +32,11 @@ describe("profils graphiques", () => {
     expect(Object.keys(sceneOptionsOf(settingsOf("qualite")))).not.toContain("fog");
   });
 
+  it("APP-006 APP-013: les lampadaires produits ont leur plafond par profil, distinct de celui du mobilier, le plus bas en performance", () => {
+    expect(PROFILES.map((p) => p.settings.maxGeneratedLamps)).toEqual([100, 300, 300]);
+    expect(sceneOptionsOf(settingsOf("performance"))).toMatchObject({ maxFurniture: 120, maxGeneratedLamps: 100 });
+  });
+
   it("APP-006: un identifiant inconnu retombe sur le réglage équilibré", () => {
     expect(settingsOf("n'importe quoi")).toBe(settingsOf("equilibre"));
   });
@@ -39,7 +45,7 @@ describe("profils graphiques", () => {
     for (const { settings } of PROFILES) {
       expect(Object.keys(settings).filter((key) => /opacit|vignette|zone|fondu|visib/i.test(key))).toEqual([]);
     }
-    expect(Object.keys(sceneOptionsOf(settingsOf("qualite"))).sort()).toEqual(["facades", "markings", "maxFurniture", "maxTrees", "outlines", "richCity"]);
+    expect(Object.keys(sceneOptionsOf(settingsOf("qualite"))).sort()).toEqual(["facades", "markings", "maxFurniture", "maxGeneratedLamps", "maxTrees", "outlines", "richCity"]);
   });
 
   it("APP-006: le ratio de pixels ne dépasse jamais celui de l'écran et reste lisible", () => {

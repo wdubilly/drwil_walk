@@ -4,7 +4,7 @@ import type { Prop } from "./souq-data.ts";
 import { buildPackTrees, treeLook, treeSeed } from "./tree-instances.ts";
 import { testPack } from "./tree-pack-double.ts";
 
-const trees = (count: number): Prop[] => Array.from({ length: count }, (_, i) => ({ kind: "tree", at: { x: i * 7.3, z: -i * 3.1 } }));
+const trees = (count: number): Prop[] => Array.from({ length: count }, (_, i) => ({ kind: "tree", source: "osm", at: { x: i * 7.3, z: -i * 3.1 } }));
 
 describe("arbres du pack posés dans la ville", () => {
   it("APP-003: le même endroit donne toujours la même variante, le même cap et la même taille", () => {
@@ -31,7 +31,7 @@ describe("arbres du pack posés dans la ville", () => {
   it("APP-003: chaque arbre est posé sur son point, au sol, tourné et mis à l'échelle", async () => {
     const pack = await testPack();
     const [tree] = trees(1);
-    const group = buildPackTrees([{ kind: "tree", at: { x: 40, z: -12 } }], pack);
+    const group = buildPackTrees([{ kind: "tree", source: "osm", at: { x: 40, z: -12 } }], pack);
     const mesh = group.children[0] as InstancedMesh;
     const matrix = new Matrix4();
     mesh.getMatrixAt(0, matrix);

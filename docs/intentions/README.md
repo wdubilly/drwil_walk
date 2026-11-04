@@ -46,6 +46,8 @@ removes it when fully covered.
 | `docs/intentions/requete-panneaux-stop.md` | Demander à Overpass les nœuds `highway=stop|give_way` que la lecture reconnaît déjà |
 | `docs/intentions/couverture-ci-intermittente.md` | La couverture de `app` échoue par intermittence dans la CI, tous les tests verts |
 | `docs/intentions/lampadaires-generes.md` | Des lampadaires produits par règle le long des rues, absents d'OpenStreetMap dans les quatre quartiers |
+| `docs/intentions/essai-casque-lampadaires.md` | Essayer les lampadaires produits par règle sur un vrai Quest 3 (densité, hauteur, images par seconde) |
+| `docs/intentions/lampadaires-carrefours-reglage.md` | Lampadaires produits : mâts à un carrefour et chemin du réglage d'accueil jusqu'à la scène |
 | `docs/intentions/villes-a-parcourir.md` | D'autres villes à parcourir (Rome, Erevan, Paris…) : poids des extraits et familles de façades à décider ensemble |
 | `docs/intentions/tours-treillis-extrudees.md` | Les tours en treillis (`building=tower`) extrudées en blocs pleins : la tour Eiffel ferait un bloc de 330 m |
 | `docs/intentions/rendu-eclairage-ambiance.md` | [P3] Éclairage, ombres, reflets, ambiance et sons (tension avec le réel visible, `APP-001`) |

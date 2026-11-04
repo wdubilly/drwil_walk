@@ -27,9 +27,9 @@ const souq: Souq = {
   areas: [{ kind: "park", ring: [{ x: -20, z: -10 }, { x: -10, z: -10 }, { x: -10, z: -20 }, { x: -20, z: -20 }, { x: -20, z: -10 }] }],
   hedges: [{ points: [{ x: -8, z: -10 }, { x: -8, z: -30 }] }],
   props: [
-    { kind: "tree", at: { x: 3, z: -10 } },
-    { kind: "lamp", at: { x: -3, z: -20 } },
-    { kind: "bench", at: { x: -3, z: -30 } },
+    { kind: "tree", source: "osm", at: { x: 3, z: -10 } },
+    { kind: "lamp", source: "osm", at: { x: -3, z: -20 } },
+    { kind: "bench", source: "osm", at: { x: -3, z: -30 } },
   ],
   buildings: [
     {
@@ -198,7 +198,7 @@ describe("ville riche", () => {
 
   it("APP-006: sans ville riche, la verdure et les noms des rues sont vides ; les plafonds réduisent arbres et mobilier", () => {
     const doc = withCanvasContext(new Window().document as unknown as Document);
-    const { osm } = createSouqScene(doc, souq, { richCity: false, maxTrees: 0, maxFurniture: 0 });
+    const { osm } = createSouqScene(doc, souq, { richCity: false, maxTrees: 0, maxFurniture: 0, maxGeneratedLamps: 0 });
     expect((osm.getObjectByName("verdure") as Mesh).geometry.getAttribute("position").count).toBe(0);
     expect((osm.getObjectByName("noms-de-rues") as Group).children).toHaveLength(0);
     expect((osm.getObjectByName("arbres") as InstancedMesh).count).toBe(0);

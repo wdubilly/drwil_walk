@@ -1,5 +1,6 @@
 // Écran d'accueil (MISSION.md, « Écran d'accueil ») : vitesse de départ, opacité de la ville,
 // choix de l'itinéraire, rappel de sécurité et bouton d'entrée en réalité mixte. Construit en DOM simple, sans framework.
+import { renderLampsChoice } from "./lamps-choice.ts";
 import { DEFAULT_SPEED_KMH, MIN_SPEED_KMH, SPEED_RANGE_TEXT, SPEED_STEP_KMH, clampSpeedKmh, speedLimitMessage, formatSpeedKmh } from "../route/speed.ts";
 import { GOOGLE_ATTRIBUTION, OSM_ATTRIBUTION } from "../city/licence.ts";
 import type { TripPlanner, PlannedTrip } from "../city/free-route.ts";
@@ -152,6 +153,7 @@ export function renderHome(doc: Document, root: HTMLElement, planner: TripPlanne
     field(doc, "Opacité de la ville (%)", opacity),
     field(doc, "Vignette réelle (le réel reste visible sur les bords)", vignette),
     field(doc, "Brouillard (léger, jamais au point de masquer un obstacle)", fog),
+    renderLampsChoice(doc),
     field(doc, "Sons d'ambiance (%, coupés par défaut)", sound),
     field(doc, "Poids (kg, facultatif : pour les calories, gardé sur ce casque seulement)", weight),
     erase,

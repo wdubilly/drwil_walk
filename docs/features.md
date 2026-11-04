@@ -169,6 +169,22 @@ l'accueil. Aucun profil ne touche l'opacité, la vignette ni la zone tapis : le 
 « Qualité » est proposé partout, sans refus fondé sur des mesures : le risque est assumé. Les images par seconde de chaque profil n'ont jamais été mesurées sur
 un vrai Quest 3 (`docs/intentions/essai-casque-profils-graphiques.md`).
 
+## Lampadaires produits par règle
+
+Chantier lampadaires-generes (APP-013). Aucun extrait ne porte de lampadaire : la ville en produit le long des rues, sans jamais
+les faire passer pour des relevés. L'intervalle dépend de la classe de voie (voie passante 27,5 m, rue de quartier 37,5 m,
+ruelle 17,5 m ; ni sentier, ni escalier, ni cheminement piéton), varié de ±20 % par une graine tirée de l'identifiant
+OpenStreetMap de la voie : jamais régulier, mais identique à chaque promenade. Le côté de la rue est choisi par tronçon, le
+mât est posé à 0,6 m de la bordure, bras tendu vers la chaussée. Trois refus : dans un bâtiment, sur un trottoir de moins de
+1,2 m, à moins de 2 m d'un autre objet ; les objets du relevé sont posés d'abord et jamais écartés.
+
+Chaque objet porte sa provenance (`osm` ou `generated`) et la page dit combien de chaque sorte sont dessinés (`data-mobilier`,
+par exemple « 12 d'OpenStreetMap · 300 produits »). Les lampadaires produits ont leur plafond par profil graphique (100 en
+performance, 300 ailleurs), distinct de celui du mobilier du relevé, et partagent son maillage : aucun appel de rendu en plus
+(environ 21 600 triangles pour 300 mâts, calculé et non mesuré). À l'accueil, la case **Lampadaires produits par règle**
+(cochée) les éteint quand on la décoche ; rien n'en est gardé. Ils s'effacent tête baissée avec la ville (APP-001). Non jugé
+au casque (densité, hauteur, images par seconde) : `docs/intentions/seance-casque-parcours.md`.
+
 ## Éclairage et ambiance
 
 Chantier rendu-eclairage-ambiance (APP-011). La lumière de la ville suit l'heure réelle de l'appareil : le soleil monte de 6 h à
