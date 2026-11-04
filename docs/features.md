@@ -90,9 +90,9 @@ inventé : une pièce n'est posée que là où l'extrait porte la balise exacte 
 en bandes blanches (`footway=crossing`) avec une ligne d'arrêt de chaque côté, trottoirs et leurs bordures (`footway=sidewalk`,
 `sidewalk=both|left|right`) ; une balise absente ne produit rien.
 
-Relevé des quatre extraits figés (2026-11-03) : bancs 19 (souk) et 8 (Corniche), aucun ailleurs ; **aucun lampadaire**, aucune
-poubelle ni panneau (ces deux balises n'étaient pas demandées à Overpass avant ce chantier : le code les lit désormais, mais
-elles resteront absentes jusqu'à une nouvelle extraction, `docs/intentions/extraction-mobilier-manquant.md`). Passages piétons :
+Relevé des quatre extraits figés, réextraits le 2026-11-04 avec les poubelles et les panneaux : bancs 19 (souk) et 8
+(Corniche), aucun ailleurs ; poubelles 14 (Corniche), aucune ailleurs ; **aucun lampadaire** ni **aucun panneau**
+(OpenStreetMap n'en porte aucun dans les quatre emprises, ni `traffic_sign` ni `highway=stop|give_way`). Passages piétons :
 31 (souk), 18 (Vieille ville), 30 (FC Road), 104 (Corniche) ; trottoirs tracés à part : 40 (Vieille ville), 69 (FC Road),
 18 (Corniche), 0 (souk) ; voies portant une balise `sidewalk` : 1 (FC Road), 8 (Corniche).
 

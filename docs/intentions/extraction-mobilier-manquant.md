@@ -1,6 +1,7 @@
 # Intention : réextraire les quatre quartiers pour y amener lampadaires, poubelles et panneaux
 
 **Statut** : proposée le 2026-11-03.
+**Réexaminée le 2026-11-04** : réextraction faite (chantier extraction-mobilier, voir `docs/projects/journal.md`) : 14 poubelles sur la Corniche, aucun panneau ni lampadaire dans OpenStreetMap pour les quatre emprises, bancs inchangés. Reste vivant : les lampadaires (`docs/intentions/lampadaires-generes.md`) et la requête des nœuds `highway=stop|give_way` (`docs/intentions/requete-panneaux-stop.md`).
 
 ## Besoin
 
