@@ -7,6 +7,7 @@ import { DEFAULT_ZONE } from "../safety/zone.ts";
 import { createZoneClip } from "./zone-clip.ts";
 import { MAX_CITY_MESHES, createSouqScene, placeOnRoute, setCityOpacity } from "./souq.ts";
 import type { Souq } from "./souq-data.ts";
+import { testMaterials } from "./material-double.ts";
 
 const route = createPath([
   { x: 0, z: 0 },
@@ -235,5 +236,29 @@ describe("ville riche", () => {
     expect(detailed.world.visible).toBe(false);
     setCityOpacity(detailed.world, 0.4, []);
     expect(materials(detailed.world).every((m) => m.transparent && m.opacity === 0.4)).toBe(true);
+  });
+
+  it("APP-012: les matériaux locaux habillent la ville OpenStreetMap, dans le budget de maillages, et s'effacent avec elle (APP-001)", () => {
+    const doc = withCanvasContext(new Window().document as unknown as Document);
+    const planes = createZoneClip(DEFAULT_ZONE).planes;
+    const { world, osm } = createSouqScene(doc, souq, { facades: "full", outlines: true, materials: testMaterials() });
+    const local = osm.getObjectByName("materiaux-locaux") as Group;
+    expect(local.children.length).toBeGreaterThan(0);
+    let meshes = 0;
+    osm.traverse((o) => {
+      if (o instanceof Mesh || o instanceof LineSegments) meshes++;
+    });
+    expect(meshes).toBeLessThanOrEqual(MAX_CITY_MESHES);
+    setCityOpacity(world, 0.4, planes);
+    for (const mesh of local.children as Mesh[]) {
+      const material = mesh.material as Material;
+      expect(material.transparent && material.opacity === 0.4).toBe(true);
+      expect(material.clippingPlanes).toBe(planes);
+    }
+    setCityOpacity(world, 0, planes);
+    expect(world.visible).toBe(false);
+    expect(createSouqScene(doc, souq, { facades: "full" }).osm.getObjectByName("materiaux-locaux")).toBeUndefined();
+    // Sans détail de façade (repli), aucun placage : les matériaux suivent le profil (APP-006).
+    expect((createSouqScene(doc, souq, { materials: testMaterials() }).osm.getObjectByName("materiaux-locaux") as Group).children).toEqual([]);
   });
 });

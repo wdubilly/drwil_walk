@@ -41,7 +41,7 @@ export async function enterPc(deps: ExperienceDeps, home: HomeView, trees: Promi
 
 function walkPc(deps: ExperienceDeps, home: HomeView, souq: Souq, trees: TreeLoad): void {
   const settings = settingsOf(home.readProfile());
-  const souqScene = createSouqScene(deps.document, souq, { ...sceneOptionsOf(settings), ...(trees.pack && { trees: trees.pack }) });
+  const souqScene = createSouqScene(deps.document, souq, { ...sceneOptionsOf(settings), ...(trees.pack && { trees: trees.pack }), materials: home.readMaterials() });
   const { scene, camera, world, city, buildingCount } = souqScene;
   home.showNotice(trees.notice);
   if (home.readRendering() === "google") withTreeNotice(trees, home.showNotice)(PC_GOOGLE_NOTICE);

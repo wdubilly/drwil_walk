@@ -18,9 +18,11 @@ import {
 } from "three";
 import { headingAt, pointAt, type Path } from "../route/path.ts";
 import { createAttributionLabel, type AttributionLabel } from "./attribution.ts";
-import { buildBuildingsGeometry } from "./buildings.ts";
+import { FOOT_LIGHT, buildBuildingsGeometry } from "./buildings.ts";
 import { regionOf } from "./facade-family.ts";
 import type { FacadeDetail } from "./facades.ts";
+import { MAX_LOCAL_MATERIALS, type LocalMaterials } from "./material-library.ts";
+import { buildLocalMaterials } from "./material-mesh.ts";
 import { buildFurniture, buildTrees } from "./props.ts";
 import { buildOutlinesGeometry } from "./outlines.ts";
 import { pushMarkings } from "./markings.ts";
@@ -34,8 +36,8 @@ import type { TreePack } from "./tree-pack.ts";
 
 const GROUND_SIZE_M = 3000;
 
-/** Budget de maillages de la ville en OpenStreetMap, sans le pack d'arbres : sol, verdure, voies, bâtiments, arbres, mobilier, contours, noms des rues. */
-export const MAX_CITY_MESHES = 8 + MAX_STREET_NAMES;
+/** Budget de maillages de la ville en OpenStreetMap, sans le pack d'arbres : sol, verdure, voies, bâtiments, arbres, mobilier, contours, noms des rues, matériaux locaux. */
+export const MAX_CITY_MESHES = 8 + MAX_STREET_NAMES + MAX_LOCAL_MATERIALS;
 
 /** Le trait des contours : un bleu nuit presque noir, lisible sur toutes les teintes de bâtiments. */
 const OUTLINE_COLOR = 0x1b1b2f;
@@ -54,6 +56,8 @@ export interface SceneOptions {
   maxFurniture?: number;
   /** Les marquages au sol lus des balises de voie (bordures, lignes d'arrêt) : vrais par défaut ; un profil léger les retire (APP-009, APP-006). */
   markings?: boolean;
+  /** Les matériaux locaux du quartier, choisis à l'accueil : posés sur les façades détaillées seulement (prototype du souk). */
+  materials?: LocalMaterials | undefined;
 }
 
 export interface SouqScene {
@@ -88,6 +92,7 @@ export function createSouqScene(doc: Document, souq: Souq, options: SceneOptions
   const osm = new Group();
   osm.name = "osm";
   osm.add(ground, greenery, roads, buildings, buildStreetLabels(doc, rich ? souq.roads : [], souq.route), buildTrees(souq.props, souq.route, options.trees, options.maxTrees), buildFurniture(souq.props, souq.route, options.maxFurniture));
+  if (options.materials) osm.add(buildLocalMaterials(souq.buildings, options.materials, { detail: options.facades ?? "off", region: regionOf(souq.origin), route: souq.route, footLight: FOOT_LIGHT }));
   if (options.outlines === true) {
     const outlines = new LineSegments(buildOutlinesGeometry(souq.buildings, souq.route), new LineBasicMaterial({ color: OUTLINE_COLOR }));
     outlines.name = "contours";
