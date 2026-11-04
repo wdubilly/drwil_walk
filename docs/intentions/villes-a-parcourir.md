@@ -67,7 +67,9 @@ libre.
 ## Décisions
 
 - 2026-11-03 : **une famille de façades par région** avant les villes, pour qu'aucune ville n'arrive avec les façades
-  génériques de Pune et Doha. Chantier : `docs/projects/facades-regions.md`.
+  génériques de Pune et Doha. Chantier : `docs/projects/journal.md`. Fait le 2026-11-04 : la région se déduit de
+  l'origine (Italie, Caucase, France du Nord, Inde, Golfe, Provence) et porte ses palettes (`app/src/city/facade-palettes.ts`,
+  `APP-008`) ; Rome, Erevan et Paris recevront leurs teintes dès leur ajout (voir le journal, chantier `facades-regions`).
 - 2026-11-03 : **généraliser l'extraction en un seul script paramétré** avant d'ajouter des villes, plutôt que de recopier
   le modèle une quatrième fois. Fait le 2026-11-03 : `app/scripts/cities.ts` décrit les villes par des données, ajouter une ville
   n'y demande plus que ses paramètres (voir le journal, chantier `extraction-generique`) ; les alias par ville sont retirés

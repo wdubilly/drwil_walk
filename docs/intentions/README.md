@@ -86,6 +86,7 @@ removes it when fully covered.
 | `docs/intentions/mobilier-remarquable-gltf.md` | Des éléments remarquables en glTF CC0 (point à trancher de rendu-rues-mobilier) |
 | `docs/intentions/sons-ambiance-ville.md` | Des sons de ville enregistrés plutôt qu'un murmure produit par code |
 | `docs/intentions/source-champ-de-vision-quest3.md` | Sourcer le champ de vision du Quest 3 |
+| `docs/intentions/palettes-regions-references.md` | Appuyer les palettes de façades par région sur des références, affiner les fenêtres de région |
 
 A one-line idea, too light for a brief, is noted with one command:
 `node .githooks/note.mjs "<text>"` appends a dated line to
