@@ -32,7 +32,6 @@ avant les fiches qui touchent le panneau d'infos, `champ-de-vision-casque` puis 
 `hud-suivi-comparer-marche-reelle`, les fiches de la ville avant `course-reelle-gpx`. `extraction-generique` puis `facades-regions` avant `villes-itineraires` (décision du 2026-11-03 : une famille de façades par région, et une seule extraction paramétrée, avant d'ajouter Rome, Erevan ou Paris). `facades-materiaux-souk` avant `facades-regions` (décision du 2026-11-03 : les palettes par région pourront reprendre les couleurs relevées sur les photos). Les fiches hud passent en dernier (décision du 2026-11-03) ; `hud-suivi-comparer-marche-reelle` porte le préfixe hud pour passer après `hud-defis-progression`. La Corniche est reportée le 2026-11-01 : à annuler si `course-reelle-gpx` couvre le besoin.
 
 - [ ] [P2] [AI] Trois itinéraires de plus (Rome, Erevan, Paris) — `docs/projects/villes-itineraires.md`
-- [ ] [P2] [AI] Réextraire les quatre quartiers (poubelles et panneaux) — `docs/projects/extraction-mobilier.md`
 - [ ] [P2] [AI] Des lampadaires produits par règle le long des rues — `docs/projects/lampadaires-generes.md`
 - [ ] [P2] [AI] Fusion des bâtiments par cellules (en attente d'une séance au casque : `docs/intentions/seance-casque-parcours.md`) — `docs/projects/rendu-lod-cellules.md`
 - [ ] [P3] [AI] Les défis de distance et l'objectif annuel — `docs/projects/hud-defis-progression.md`

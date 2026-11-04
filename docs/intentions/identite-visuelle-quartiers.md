@@ -40,7 +40,7 @@ et `building:material` dans les extraits figés (`APP-003`). Aucune mention de P
 ## Ordre proposé
 
 Avant `docs/projects/journal.md` : les palettes par région en découlent. Indépendante de
-`docs/projects/extraction-mobilier.md`. Répond à la question « textures » de `docs/intentions/facades-textures-monuments.md`
+`docs/projects/journal.md`. Répond à la question « textures » de `docs/intentions/facades-textures-monuments.md`
 (dont la partie monuments reste à part).
 
 ## Questions à trancher

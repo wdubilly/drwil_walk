@@ -42,7 +42,9 @@ removes it when fully covered.
 | `docs/intentions/essai-casque-materiaux-souk.md` | Juger les matériaux locaux du souk sur un vrai Quest 3 avant de les généraliser |
 | `docs/intentions/rendu-lod-cellules.md` | [P2] Niveaux de détail et fusion ou chargement par cellules, si les mesures le justifient |
 | `docs/intentions/rendu-rues-mobilier.md` | [P2] Des rues, trottoirs et du mobilier urbain crédibles (marquages, passages, bordures) |
-| `docs/intentions/extraction-mobilier-manquant.md` | Réextraire les quatre quartiers pour y amener poubelles et panneaux (bancs remplacés, pas fusionnés) |
+| `docs/intentions/extraction-mobilier-manquant.md` | Réextraire les quatre quartiers pour y amener poubelles et panneaux : faite le 2026-11-04 ; restent lampadaires et nœuds stop |
+| `docs/intentions/requete-panneaux-stop.md` | Demander à Overpass les nœuds `highway=stop|give_way` que la lecture reconnaît déjà |
+| `docs/intentions/couverture-ci-intermittente.md` | La couverture de `app` échoue par intermittence dans la CI, tous les tests verts |
 | `docs/intentions/lampadaires-generes.md` | Des lampadaires produits par règle le long des rues, absents d'OpenStreetMap dans les quatre quartiers |
 | `docs/intentions/villes-a-parcourir.md` | D'autres villes à parcourir (Rome, Erevan, Paris…) : poids des extraits et familles de façades à décider ensemble |
 | `docs/intentions/tours-treillis-extrudees.md` | Les tours en treillis (`building=tower`) extrudées en blocs pleins : la tour Eiffel ferait un bloc de 330 m |
