@@ -39,7 +39,7 @@ removes it when fully covered.
 | `docs/intentions/identite-visuelle-quartiers.md` | L'identité visuelle locale des quartiers (couleurs, matériaux PBR) d'après des photos de rue, prototype au souk |
 | `docs/intentions/couleurs-photos-souk.md` | Relever les couleurs du souk sur des photos de rue (Mapillary, jeton du demandeur) et les faire relire |
 | `docs/intentions/textures-compressees-quest.md` | Compresser les textures des matériaux locaux pour le Quest 3 (KTX2 / Basis) |
-| `docs/intentions/essai-casque-materiaux-souk.md` | Juger les matériaux locaux du souk sur un vrai Quest 3 avant de les généraliser |
+| `docs/intentions/essai-casque-materiaux-souk.md` | [P1] Juger les matériaux locaux du souk sur un vrai Quest 3 avant de les généraliser |
 | `docs/intentions/rendu-lod-cellules.md` | [P2] Niveaux de détail et fusion ou chargement par cellules, si les mesures le justifient |
 | `docs/intentions/rendu-rues-mobilier.md` | [P2] Des rues, trottoirs et du mobilier urbain crédibles (marquages, passages, bordures) |
 | `docs/intentions/extraction-mobilier-manquant.md` | Réextraire les quatre quartiers pour y amener poubelles et panneaux : faite le 2026-11-04 ; restent lampadaires et nœuds stop |
@@ -50,6 +50,8 @@ removes it when fully covered.
 | `docs/intentions/lampadaires-carrefours-reglage.md` | Lampadaires produits : mâts à un carrefour et chemin du réglage d'accueil jusqu'à la scène |
 | `docs/intentions/villes-a-parcourir.md` | D'autres villes à parcourir (Rome, Erevan, Paris…) : poids des extraits et familles de façades à décider ensemble |
 | `docs/intentions/tours-treillis-extrudees.md` | Les tours en treillis (`building=tower`) extrudées en blocs pleins : la tour Eiffel ferait un bloc de 330 m |
+| `docs/intentions/generateur-ville-complet.md` | [P1] Un générateur de ville complet : `npm run city` donne une ville prête, mis au point au Souq Waqif (fiche d'ensemble, ordre) |
+| `docs/intentions/ville-vivante.md` | [P1] Une ville vivante : circulation, piétons et lampadaires allumés, par un moteur générique testé au Souq Waqif |
 | `docs/intentions/rendu-eclairage-ambiance.md` | [P3] Éclairage, ombres, reflets, ambiance et sons (tension avec le réel visible, `APP-001`) |
 | `docs/intentions/rendu-sources-donnees.md` | [P3] Plusieurs sources géographiques (Overture, autres) : relevé de couverture fait le 2026-11-03, décision à prendre |
 | `docs/intentions/overture-emprises-manquantes.md` | Combler les emprises de bâtiments manquantes (empreintes d'apprentissage d'Overture) |
@@ -78,8 +80,8 @@ removes it when fully covered.
 | `docs/intentions/essai-casque-vitesse-haute.md` | Essayer la marche à haute vitesse et un trajet libre de plus de 5 km sur un vrai Quest 3 |
 | `docs/intentions/nettoyer-gardes-longueur-routeurs.md` | Retirer les gardes de longueur devenues sans effet des routeurs |
 | `docs/intentions/carrefours-retour-au-trace.md` | Revenir au tracé d'origine après un détour aux carrefours |
-| `docs/intentions/inscrire-une-ville-creee.md` | Inscrire dans l'application une ville créée par `npm run city`, et rattraper les docs hors périmètre |
-| `docs/intentions/essai-commande-creation-reseau.md` | Essayer la commande de création d'itinéraire contre les vrais services |
+| `docs/intentions/inscrire-une-ville-creee.md` | [P1] Inscrire dans l'application une ville créée par `npm run city`, et rattraper les docs hors périmètre |
+| `docs/intentions/essai-commande-creation-reseau.md` | [P1] Essayer la commande de création d'itinéraire contre les vrais services |
 | `docs/intentions/carrefours-version-pc.md` | Le choix de la rue aux carrefours dans la version PC |
 | `docs/intentions/essai-casque-commandes-panneau.md` | Juger les commandes de la manette et le panneau d'infos sur un vrai Quest 3 |
 | `docs/intentions/essai-casque-eclairage-ambiance.md` | Juger l'éclairage, le brouillard et les sons d'ambiance sur un vrai Quest 3 |
