@@ -1,6 +1,6 @@
 # Chantier : une teinte de façades par région
 
-**Statut** : cadré le 2026-11-03.
+**Statut** : cadré le 2026-11-03 ; en cours (lots 1 à 3 livrés le 2026-11-04 sur la branche `workstream/facades-regions`, lot 4 humain reporté).
 **Risque** : HIGH
 **Maturité** : prêt
 **Intention** : `docs/intentions/villes-a-parcourir.md`
@@ -39,9 +39,9 @@ C'est aussi ce qui limite le risque : aucun changement de structure, seulement d
 - Chaque région porte son jeu de palettes ; deux villes de régions différentes ne se ressemblent pas — `APP-008`
 - Une ville d'une région inconnue retombe sur les palettes actuelles, sans rien casser — `APP-008`
 - Les quatre itinéraires livrés (Pune, Doha) gardent une ville cohérente : si leur région reçoit ses propres teintes, le
-  changement est **voulu, montré et documenté**, jamais subi
+  changement est **voulu, montré et documenté**, jamais subi — `APP-008`
 - Les bâtiments voisins continuent de partager famille et palette (le quartier reste lisible) — `APP-008`
-- Le coût reste nul : les palettes ne sont que des couleurs de sommets, aucun triangle ni appel de rendu en plus
+- Le coût reste nul : les palettes ne sont que des couleurs de sommets, aucun triangle ni appel de rendu en plus — `APP-008`
 - Les teintes jugées sur un vrai Quest 3 [human] — `APP-001`
 
 ## Contrats modifiés
@@ -86,6 +86,12 @@ C'est aussi ce qui limite le risque : aucun changement de structure, seulement d
 
 ## 7. Reprise
 
-- **Dernier état** (2026-11-03) : cadrage seul, aucun code.
-- **Travail non commité** : la fiche.
-- **Prochaine étape** : lot 1, les régions.
+- **Dernier état** (2026-11-04) : lots 1 à 3 livrés — `regionOf` à six fenêtres (Provence, France du Nord, Italie, Caucase,
+  Inde, Golfe ; repli « ailleurs »), palettes par région dans `app/src/city/facade-palettes.ts`, Pune en teintes de l'Inde
+  et Doha en teintes du Golfe (voulu, documenté dans `docs/features.md`, capture jointe par l'e2e chemin 23), `APP-008`
+  complété. Les deux critères « villes cohérentes » et « coût nul » citent désormais `APP-008`, dont les tests les prouvent
+  (`app/src/city/facades-data.test.ts`).
+- **Travail non commité** : aucun après la clôture.
+- **Prochaine étape** : lot 4 [human], jugement des teintes au casque, dans la séance groupée
+  (`docs/intentions/seance-casque-parcours.md`) ; références photographiques et fenêtres plus fines :
+  `docs/intentions/palettes-regions-references.md`.
