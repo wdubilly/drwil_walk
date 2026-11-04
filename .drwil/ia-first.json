@@ -211,7 +211,7 @@
   ],
   "scopeReminder": "blocking",
   "transitions": "human",
-  "scopeGate": "warning",
+  "scopeGate": "blocking",
   "newRequirements": "blocking",
   "layerPrefixes": [
     "app",
