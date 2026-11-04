@@ -53,7 +53,7 @@ paraît vide. Il faut donc les produire par règle, sans jamais faire passer l'i
 - **Un lampadaire qui éclaire réellement** (une source lumineuse par mât) : bien plus coûteux qu'un objet posé, cela relève
   de `docs/intentions/rendu-eclairage-ambiance.md`.
 - Produire par règle des poubelles ou des panneaux : à décider plus tard, après cette première règle.
-- La réextraction des quartiers (`docs/projects/extraction-mobilier.md`).
+- La réextraction des quartiers (`docs/projects/journal.md`).
 
 ## 3. Contraintes
 
