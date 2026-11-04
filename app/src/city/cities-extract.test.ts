@@ -18,7 +18,7 @@ describe("extraction de chaque ville depuis OpenStreetMap (CITIES)", () => {
     async (id, { name, points }) => {
       const city = CITIES[id];
       const fetchFn = vi.fn(() => Promise.resolve(Response.json({ elements: [] })));
-      await extractCity(fetchFn, id);
+      await extractCity(fetchFn, city);
       const [, init] = fetchFn.mock.calls[0] as unknown as [string, RequestInit];
       expect((init.headers as Record<string, string>)["User-Agent"]).toBe(city.userAgent);
       expect(city.userAgent).toContain(name);

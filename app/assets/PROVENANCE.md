@@ -53,3 +53,16 @@ quartier, réencodées en JPEG (qualité 80) et embarquées en base64 dans le fi
 Les couleurs sont aujourd'hui **provisoires** (la palette du souk) : aucune photo de rue n'a encore été relevée
 (`docs/preuves/materiaux-souk.md`). Les photos de rue ne sont jamais embarquées : l'inventaire
 `materials/doha-souq-waqif-photos.json` n'en garde que le lien, l'identifiant, l'auteur et la licence.
+
+## Matériaux locaux de toute ville créée par `npm run city`
+
+La commande unique de création d'un itinéraire (`app/scripts/create-city.ts`) habille chaque ville avec les **trois mêmes
+textures ambientCG (CC0 1.0)** que le souk : `Plaster001` (enduit), `Bricks106A` (pierre) et `Planks037A` (bois), réduites,
+recolorées et embarquées de la même façon (`app/scripts/materials-textures.ts`) ; la table ci-dessus vaut donc pour toute
+bibliothèque `app/assets/materials/<itinéraire>.json`. Aucune autre texture n'entre sans que sa licence CC0 et sa page
+soient ajoutées ici (`APP-012`).
+
+Les couleurs de chaque bibliothèque viennent de photos de rue (Panoramax, Mapillary, photos fournies par le demandeur) ou, à
+défaut, de la palette de la région (`APP-008`) : la bibliothèque porte, pour chaque couleur, sa provenance (photo, distance au
+tracé, auteur, licence, lien). Les photos ne sont jamais embarquées ; l'inventaire `<itinéraire>-photos.json` n'en garde que
+les liens, auteurs et licences. Panoramax publie ses photos sous licence ouverte indiquée par photo ; Mapillary sous CC BY-SA 4.0.

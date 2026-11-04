@@ -1,7 +1,9 @@
-// Les quartiers dotés d'une bibliothèque de matériaux locaux, décrits par des données (préparation, hors casque) : étendre
-// à un autre quartier, c'est une entrée ici (tracé, matériaux CC0, familles), sa préparation, puis son activation
-// (`app/src/city/material-library.ts`). Aucun code propre à un quartier.
+// Le quartier d'une ville décrite dans `data/villes.json`, pour la préparation de sa bibliothèque de matériaux locaux (hors
+// casque) : tracé, photos, bibliothèque et matériaux CC0 se déduisent de la ville, sans entrée ni code propre à un quartier ;
+// son activation dans l'application reste à part (`app/src/city/material-library.ts`).
 import type { FamilyId } from "../src/city/facade-family.ts";
+import type { LonLat } from "../src/route/geo.ts";
+import { CITIES, loopFileOf, type CityDescription } from "./cities.ts";
 
 /** Le ton relevé sur les photos qui recolore un matériau : le plus clair, le médian ou le plus sombre. */
 export type Tone = "clair" | "moyen" | "sombre";
@@ -23,33 +25,35 @@ export interface MaterialArea {
   photos: string;
   library: string;
   userAgent: string;
+  /** Le départ de l'itinéraire : il décide de la région dont la palette sert de repli. */
+  start: LonLat;
   materials: readonly MaterialSource[];
   /** Les matériaux possibles pour chaque famille de façades (APP-008), le premier le plus fréquent. */
   families: Record<FamilyId, readonly string[]>;
-  /** Les couleurs de repli tant qu'aucune photo n'est relevée : la bibliothèque le dit (source « provisoire »). */
-  provisional: { source: string; colours: readonly string[] };
 }
 
-export const MATERIAL_AREAS = {
-  "doha-souq-waqif": {
-    loop: "data/souq-waqif-boucle.json",
-    photos: "assets/materials/doha-souq-waqif-photos.json",
-    library: "assets/materials/doha-souq-waqif.json",
-    userAgent: "drwil_walk/0.1 (inventaire des photos de rue du souk Waqif)",
-    materials: [
-      { id: "enduit", label: "Enduit", asset: "Plaster001", sizeM: 2.5, tone: "clair" },
-      { id: "pierre", label: "Pierre", asset: "Bricks106A", sizeM: 2, tone: "moyen" },
-      { id: "bois", label: "Bois", asset: "Planks037A", sizeM: 1.5, tone: "sombre" },
-    ],
-    families: { ancien: ["pierre", "enduit", "bois"], village: ["enduit", "bois"], recent: ["enduit", "pierre"], provencale: ["enduit"] },
-    provisional: { source: "palette du souk (app/src/city/cities.ts), en attendant des photos", colours: ["#e3cfa5", "#d2b48c", "#c99a6b", "#efe0c0"] },
-  },
-} as const satisfies Record<string, MaterialArea>;
+const MATERIALS: readonly MaterialSource[] = [
+  { id: "enduit", label: "Enduit", asset: "Plaster001", sizeM: 2.5, tone: "clair" },
+  { id: "pierre", label: "Pierre", asset: "Bricks106A", sizeM: 2, tone: "moyen" },
+  { id: "bois", label: "Bois", asset: "Planks037A", sizeM: 1.5, tone: "sombre" },
+];
+const FAMILIES = { ancien: ["pierre", "enduit", "bois"], village: ["enduit", "bois"], recent: ["enduit", "pierre"], provencale: ["enduit"] } as const;
 
-export type AreaId = keyof typeof MATERIAL_AREAS;
+export function areaFor(city: CityDescription): MaterialArea {
+  const [lat, lon] = city.route.points[0] as number[];
+  return {
+    loop: loopFileOf(city),
+    photos: `assets/materials/${city.itinerary}-photos.json`,
+    library: `assets/materials/${city.itinerary}.json`,
+    userAgent: city.userAgent,
+    start: [lon as number, lat as number],
+    materials: MATERIALS,
+    families: FAMILIES,
+  };
+}
 
 export function areaOf(id: string): MaterialArea {
-  const area = (MATERIAL_AREAS as Record<string, MaterialArea>)[id];
-  if (!area) throw new Error(`quartier « ${id} » : aucune bibliothèque de matériaux décrite`);
-  return area;
+  const city = Object.values(CITIES).find((c) => c.itinerary === id);
+  if (!city) throw new Error(`quartier « ${id} » : aucune ville décrite dans data/villes.json`);
+  return areaFor(city);
 }

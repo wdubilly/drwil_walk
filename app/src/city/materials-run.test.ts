@@ -1,13 +1,14 @@
 import { encode } from "jpeg-js";
 import { describe, expect, it, vi } from "vitest";
-import { MATERIAL_AREAS, areaOf } from "../../scripts/materials-areas.ts";
+import { areaFor, areaOf } from "../../scripts/materials-areas.ts";
+import { CITIES } from "../../scripts/cities.ts";
 import { DISK, coloursOf, runInventory, runLibrary, toneOf, type Files } from "../../scripts/materials-run.ts";
 import { TEXTURE_PX } from "../../scripts/materials-textures.ts";
 import type { StreetPhoto } from "../../scripts/panoramax.ts";
 import { parseLibrary } from "./material-library.ts";
 import { makeZip } from "./zip-double.ts";
 
-const area = MATERIAL_AREAS["doha-souq-waqif"];
+const area = areaOf("doha-souq-waqif");
 
 function memory(initial: Record<string, string>): Files & { files: Record<string, string> } {
   const files = { ...initial };
@@ -35,9 +36,11 @@ const photo: StreetPhoto = { source: "panoramax", id: "p", lon: 51.53, lat: 25.2
 const loop = JSON.stringify({ geometry: { coordinates: [[51.53, 25.287], [51.531, 25.287]] } });
 
 describe("préparation des matériaux d'un quartier (hors casque)", () => {
-  it("décrit le souk par des données : tracé, matériaux CC0, familles qui citent des matériaux connus", () => {
-    expect(areaOf("doha-souq-waqif")).toBe(area);
-    expect(() => areaOf("pune-fc-road")).toThrow("quartier « pune-fc-road » : aucune bibliothèque de matériaux décrite");
+  it("déduit le quartier de la ville décrite dans data/villes.json : tracé, matériaux CC0, familles qui citent des matériaux connus", () => {
+    expect(area).toEqual(areaFor(CITIES.souq));
+    expect(area.loop).toBe("data/souq-waqif-boucle.json");
+    expect(areaOf("pune-fc-road").library).toBe("assets/materials/pune-fc-road.json");
+    expect(() => areaOf("inconnu")).toThrow("quartier « inconnu » : aucune ville décrite dans data/villes.json");
     const ids = new Set(area.materials.map((m) => m.id));
     for (const list of Object.values(area.families)) for (const id of list) expect(ids.has(id)).toBe(true);
   });
@@ -56,11 +59,12 @@ describe("préparation des matériaux d'un quartier (hors casque)", () => {
     expect(toneOf(colours, "sombre")).toEqual({ colour: "#c99a6b", tints: ["#c99a6b", "#d2b48c", "#e3cfa5"] });
   });
 
-  it("dit provisoires les couleurs de repli quand aucune photo n'est relevée", async () => {
+  it("APP-012: dit provisoires les couleurs de repli — la palette de la région — quand aucune photo n'est relevée", async () => {
     const fetchFn = network();
     const colours = await coloursOf(fetchFn, area, []);
     expect(colours.source).toBe("provisoire");
-    expect(colours.list.map((c) => c.hex)).toEqual(area.provisional.colours);
+    expect(colours.note).toContain("« golfe »");
+    expect(colours.list.map((c) => c.hex)).toEqual(["#d6c09a", "#cab28a", "#e0caa4", "#9a7a52", "#8e6e48", "#a6845a"]);
     expect(fetchFn).not.toHaveBeenCalled();
   });
 
@@ -77,7 +81,7 @@ describe("préparation des matériaux d'un quartier (hors casque)", () => {
   it("APP-012: écrit une bibliothèque embarquable : textures en data URI, couleurs dites, lisible par l'application", async () => {
     const files = memory({ [area.photos]: "[]" });
     const summary = await runLibrary(network(), "doha-souq-waqif", files);
-    expect(summary).toBe("provisoire : #e3cfa5, #d2b48c, #c99a6b, #efe0c0");
+    expect(summary).toMatch(/^provisoire : #[0-9a-f]{6}(, #[0-9a-f]{6})+$/);
     const library = parseLibrary(JSON.parse(files.files[area.library] as string));
     expect(library.provisional).toBe(true);
     expect(library.materials.map((m) => m.asset)).toEqual(["Plaster001", "Bricks106A", "Planks037A"]);
