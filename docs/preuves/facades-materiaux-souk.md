@@ -1,7 +1,7 @@
 # Preuve de clôture — facades-materiaux-souk
 
 **Clos le** : 2026-11-04
-**Commit vérifié** : `c8971069ea` — verdict `drwil verify` : PASS
+**Commit vérifié** : `a4213e3286` — verdict `drwil verify` : PASS
 
 critères de ce chantier, et ce qui les prouve aujourd'hui encore (rejoués par `drwil verify` après la clôture) :
 
