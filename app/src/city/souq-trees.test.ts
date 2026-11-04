@@ -17,7 +17,7 @@ const souq: Souq = {
   roads: [],
   areas: [],
   hedges: [],
-  props: Array.from({ length: MAX_TREES + 40 }, (_, i) => ({ kind: "tree", at: { x: 3 + i, z: -(i % 90) } })),
+  props: Array.from({ length: MAX_TREES + 40 }, (_, i) => ({ kind: "tree", source: "osm", at: { x: 3 + i, z: -(i % 90) } })),
   buildings: [],
 };
 

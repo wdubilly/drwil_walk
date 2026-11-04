@@ -121,7 +121,7 @@ Autres commandes de la **manette droite** : **gâchette** = pause / reprise (la 
 **Mobilier urbain et marquages** : les bancs, lampadaires, poubelles et panneaux de la rue sont dessinés à leur taille réelle et
 posés dans l'axe de la rue, uniquement là où les données OpenStreetMap en signalent ; les passages piétons, les bordures de
 trottoir et les lignes d'arrêt suivent les mêmes données. Les extraits livrés ne contiennent aujourd'hui ni lampadaire, ni
-poubelle, ni panneau : vous ne verrez donc que les bancs du souk de Doha et de la Corniche. Le profil **Performance** réduit le
+poubelle, ni panneau : vous ne verrez donc que les bancs du souk de Doha et de la Corniche. Des **lampadaires** sont en revanche produits par règle le long des rues (inventés, pas relevés) : décochez « Lampadaires produits par règle » à l'accueil pour ne garder que le mobilier réel ; le profil Performance en pose moins. Le profil **Performance** réduit le
 mobilier et retire les marquages. Rien de tout cela ne masque le réel : tête baissée, la ville et son mobilier s'effacent. Non
 vérifié au casque.
 

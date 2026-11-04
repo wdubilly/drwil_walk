@@ -169,6 +169,16 @@
       "degradable": false
     },
     {
+      "id": "app-013",
+      "name": "APP-013 lampadaires produits par règle (placement, reproductibilité, priorité du réel, provenance, plafond, réglage) : tests nommés par l'ID (Vitest)",
+      "run": "npm test -- -t \"APP-013\"",
+      "cwd": "app",
+      "paths": [
+        "app/**"
+      ],
+      "degradable": false
+    },
+    {
       "id": "app-007",
       "name": "APP-007 tablette et tactile : boutons à l'écran, glisser pour regarder : tests nommés par l'ID (Vitest)",
       "run": "npm test -- -t \"APP-007\"",

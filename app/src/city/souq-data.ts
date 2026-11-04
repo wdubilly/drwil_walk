@@ -26,6 +26,10 @@ export interface Building {
 export interface Prop {
   kind: "tree" | "lamp" | "bench" | "bin" | "sign";
   at: Vec2;
+  /** D'où vient l'objet : relevé dans OpenStreetMap, ou produit par règle (APP-013) ; jamais l'un pour l'autre. */
+  source: "osm" | "generated";
+  /** Cap imposé par la règle qui l'a produit (le bras du lampadaire vers la chaussée) ; absent : l'axe du parcours. */
+  yaw?: number;
 }
 
 /** Les couleurs d'une ville : sol, voies, et quelques tons de bâtiments (un par bâtiment, sans donnée en plus). */
@@ -37,6 +41,8 @@ export interface Palette {
 
 /** Une voie : sa classe OpenStreetMap (`highway`) et son tracé en mètres locaux. */
 export interface Road {
+  /** Identifiant OpenStreetMap : la graine des lampadaires produits (APP-013) ; absent des anciennes données. */
+  id?: number;
   highway: string;
   points: Vec2[];
   /** Balise `name`, affichée sur le sol. */
@@ -122,6 +128,7 @@ export function loadSouq(extract: FeatureFile, loop: LoopFile, palette: Palette)
   const roads = extract.features
     .filter((f) => f.properties.kind === "highway")
     .map((f) => ({
+      ...(f.id === undefined ? {} : { id: f.id }),
       highway: f.properties.highway as string,
       points: (f.geometry.coordinates as number[][]).map(local),
       ...(f.properties.name ? { name: f.properties.name } : {}),
@@ -136,6 +143,6 @@ export function loadSouq(extract: FeatureFile, loop: LoopFile, palette: Palette)
     .map((f) => ({ points: (f.geometry.coordinates as number[][]).map(local) }));
   const props = extract.features
     .filter((f) => ["tree", "lamp", "bench", "bin", "sign"].includes(f.properties.kind))
-    .map((f) => ({ kind: f.properties.kind as Prop["kind"], at: local(f.geometry.coordinates as number[]) }));
+    .map((f) => ({ kind: f.properties.kind as Prop["kind"], source: "osm" as const, at: local(f.geometry.coordinates as number[]) }));
   return { origin, route: createPath(loop.geometry.coordinates.map(local)), buildings, roads, props, areas, hedges, palette };
 }

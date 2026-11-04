@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { BENCH_BACK_M, BENCH_SEAT_M, BIN_HEIGHT_M, LAMP_HEIGHT_M, SIGN_HEIGHT_M, furnitureParts, mergeParts } from "./furniture.ts";
 import type { Prop } from "./souq-data.ts";
 
-const at = (kind: Prop["kind"], x = 0, z = 0): Prop => ({ kind, at: { x, z } });
+const at = (kind: Prop["kind"], x = 0, z = 0): Prop => ({ kind, at: { x, z }, source: "osm" });
 /** La boîte englobante des pièces d'un mobilier, posé à l'origine, sans rotation. */
 function box(kind: Prop["kind"], yaw = 0): { x: number; y: number; z: number; minY: number } {
   const geometry = mergeParts(furnitureParts(at(kind), yaw));
@@ -35,7 +35,7 @@ describe("mobilier urbain produit par code", () => {
     const turned = box("bench", Math.PI / 2);
     expect(turned.z).toBeCloseTo(1.8, 1);
     expect(turned.x).toBeCloseTo(box("bench").z, 1);
-    const moved = mergeParts(furnitureParts({ kind: "bin", at: { x: 12, z: -4 } }, 0));
+    const moved = mergeParts(furnitureParts({ kind: "bin", at: { x: 12, z: -4 }, source: "osm" }, 0));
     moved.computeBoundingBox();
     expect(moved.boundingBox?.max.x).toBeLessThan(13);
     expect(moved.boundingBox?.min.z).toBeGreaterThan(-5);

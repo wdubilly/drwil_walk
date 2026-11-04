@@ -7,7 +7,7 @@ import type { Prop } from "./souq-data.ts";
 import { testPack } from "./tree-pack-double.ts";
 
 const route = createPath([{ x: 0, z: 0 }, { x: 0, z: -100 }]);
-const at = (kind: Prop["kind"], x: number): Prop => ({ kind, at: { x, z: -50 } });
+const at = (kind: Prop["kind"], x: number): Prop => ({ kind, source: "osm", at: { x, z: -50 } });
 /** Nombre de sommets du mobilier produit : le modèle de chaque pièce est un détail de `furniture.ts`. */
 const vertices = (props: Prop[], max?: number): number => buildFurniture(props, route, max).geometry.getAttribute("position").count;
 const BENCH_VERTICES = vertices([at("bench", 1)]);

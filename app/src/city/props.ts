@@ -17,6 +17,19 @@ export const MAX_TREES = 300;
 export const MAX_TREE_TRIANGLES = MAX_TREES * MAX_MODEL_TRIANGLES;
 /** Plafond du mobilier (lampadaires, bancs, poubelles, panneaux) fusionné dans un maillage. */
 export const MAX_FURNITURE = 400;
+/** Plafond propre aux lampadaires produits par règle (APP-013) : le mobilier du relevé n'est jamais évincé par du mobilier inventé. */
+export const MAX_GENERATED_LAMPS = 300;
+
+/** Combien d'objets viennent d'OpenStreetMap, combien sont produits par règle. */
+export interface Sources {
+  osm: number;
+  generated: number;
+}
+
+export const countSources = (props: readonly Prop[]): Sources => ({
+  osm: props.filter((p) => p.source === "osm").length,
+  generated: props.filter((p) => p.source === "generated").length,
+});
 
 /** Un arbre : tronc brun et couronne verte. */
 export const treeModel = (): BufferGeometry =>
@@ -49,11 +62,16 @@ export function routeYaw(at: Vec2, route: Path): number {
   return Math.atan2(-(to.z - from.z), to.x - from.x);
 }
 
-/** Le mobilier : un seul maillage fusionné, vide s'il n'y en a pas. */
-export function buildFurniture(props: readonly Prop[], route: Path, max = MAX_FURNITURE): Mesh {
-  const kept = nearest(props.filter((p) => p.kind !== "tree"), route, Math.min(max, MAX_FURNITURE));
-  const parts: BufferGeometry[] = kept.flatMap((prop) => furnitureParts(prop, routeYaw(prop.at, route)));
+/**
+ * Le mobilier : un seul maillage fusionné, vide s'il n'y en a pas. Les objets du relevé et les lampadaires produits ont chacun
+ * leur plafond ; `userData.sources` dit combien de chaque provenance sont dessinés.
+ */
+export function buildFurniture(props: readonly Prop[], route: Path, max = MAX_FURNITURE, generated: readonly Prop[] = [], maxGenerated = MAX_GENERATED_LAMPS): Mesh {
+  const real = nearest(props.filter((p) => p.kind !== "tree"), route, Math.min(max, MAX_FURNITURE));
+  const kept = [...real, ...nearest(generated, route, Math.min(maxGenerated, MAX_GENERATED_LAMPS))];
+  const parts: BufferGeometry[] = kept.flatMap((prop) => furnitureParts(prop, prop.yaw ?? routeYaw(prop.at, route)));
   const mesh = new Mesh(mergeParts(parts), new MeshLambertMaterial({ vertexColors: true }));
   mesh.name = "mobilier";
+  mesh.userData["sources"] = countSources(kept);
   return mesh;
 }

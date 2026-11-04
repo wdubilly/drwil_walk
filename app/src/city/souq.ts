@@ -23,7 +23,9 @@ import { regionOf } from "./facade-family.ts";
 import type { FacadeDetail } from "./facades.ts";
 import { MAX_LOCAL_MATERIALS, type LocalMaterials } from "./material-library.ts";
 import { buildLocalMaterials } from "./material-mesh.ts";
-import { buildFurniture, buildTrees } from "./props.ts";
+import { generatedLampsOn } from "../ui/lamps-choice.ts";
+import { generateLamps } from "./lamp-rule.ts";
+import { buildFurniture, buildTrees, type Sources } from "./props.ts";
 import { buildOutlinesGeometry } from "./outlines.ts";
 import { pushMarkings } from "./markings.ts";
 import { buildRoadsGeometry } from "./roads.ts";
@@ -54,6 +56,10 @@ export interface SceneOptions {
   /** Plafonds d'arbres et de mobilier, bornés par ceux des données (APP-006). */
   maxTrees?: number;
   maxFurniture?: number;
+  /** Plafond des lampadaires produits par règle, distinct de celui du mobilier du relevé (APP-013, APP-006). */
+  maxGeneratedLamps?: number;
+  /** Les lampadaires produits par règle : absent, la case de l'accueil décide, et sans accueil ils sont posés (APP-013). */
+  generatedLamps?: boolean;
   /** Les marquages au sol lus des balises de voie (bordures, lignes d'arrêt) : vrais par défaut ; un profil léger les retire (APP-009, APP-006). */
   markings?: boolean;
   /** Les matériaux locaux du quartier, choisis à l'accueil : posés sur les façades détaillées seulement (prototype du souk). */
@@ -71,6 +77,8 @@ export interface SouqScene {
   osm: Group;
   label: AttributionLabel;
   buildingCount: number;
+  /** Combien d'objets du mobilier viennent d'OpenStreetMap, combien sont produits par règle (APP-013, APP-003). */
+  furnitureSources: Sources;
 }
 
 /** La scène : pas de fond (le passthrough le remplace), une lumière douce, le souk. */
@@ -89,9 +97,15 @@ export function createSouqScene(doc: Document, souq: Souq, options: SceneOptions
   buildings.name = "batiments";
   const greenery = new Mesh(buildVegetation(rich ? souq.areas : [], rich ? souq.hedges : [], souq.route), toonMaterial({ vertexColors: true, side: DoubleSide, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }));
   greenery.name = "verdure";
+  const lamps = (options.generatedLamps ?? generatedLampsOn(doc)) ? generateLamps(souq.roads, souq.buildings, souq.props, souq.route) : [];
+  const furniture = buildFurniture(souq.props, souq.route, options.maxFurniture, lamps, options.maxGeneratedLamps);
+  const sources = furniture.userData["sources"] as Sources;
+  // Le relevé est écrit sur la page, comme l'ambiance : on y lit ce qui est réel et ce qui est produit.
+  const page = doc.getElementById("app");
+  if (page) page.dataset["mobilier"] = `${String(sources.osm)} d'OpenStreetMap · ${String(sources.generated)} produits`;
   const osm = new Group();
   osm.name = "osm";
-  osm.add(ground, greenery, roads, buildings, buildStreetLabels(doc, rich ? souq.roads : [], souq.route), buildTrees(souq.props, souq.route, options.trees, options.maxTrees), buildFurniture(souq.props, souq.route, options.maxFurniture));
+  osm.add(ground, greenery, roads, buildings, buildStreetLabels(doc, rich ? souq.roads : [], souq.route), buildTrees(souq.props, souq.route, options.trees, options.maxTrees), furniture);
   if (options.materials) osm.add(buildLocalMaterials(souq.buildings, options.materials, { detail: options.facades ?? "off", region: regionOf(souq.origin), route: souq.route, footLight: FOOT_LIGHT }));
   if (options.outlines === true) {
     const outlines = new LineSegments(buildOutlinesGeometry(souq.buildings, souq.route), new LineBasicMaterial({ color: OUTLINE_COLOR }));
@@ -110,7 +124,7 @@ export function createSouqScene(doc: Document, souq: Souq, options: SceneOptions
   sun.position.set(0.4, 1, 0.3);
   scene.add(sun);
   scene.add(world);
-  return { scene, camera: new PerspectiveCamera(70, 1, 0.1, 1000), world, city, osm, label, buildingCount: souq.buildings.length };
+  return { scene, camera: new PerspectiveCamera(70, 1, 0.1, 1000), world, city, osm, label, buildingCount: souq.buildings.length, furnitureSources: sources };
 }
 
 /**

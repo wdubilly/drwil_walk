@@ -85,6 +85,14 @@ describe("données du souk", () => {
     expect(souq.buildings.map((b) => [b.wall, b.roof])).toEqual([[0x102030, 0xff8000], [0xa4513b, undefined], [undefined, undefined]]);
     expect(souq.props.map((q) => q.kind)).toEqual(["tree", "lamp", "bench"]);
     expect(souq.props[1]?.at.z).toBeCloseTo(-111.2, 0);
+    // Tout ce que l'extrait donne est marqué comme venant d'OpenStreetMap (APP-013).
+    expect(souq.props.map((q) => q.source)).toEqual(["osm", "osm", "osm"]);
+  });
+
+  it("APP-013: garde l'identifiant OpenStreetMap de la voie, graine des lampadaires produits", () => {
+    const road = (id?: number) => ({ ...(id === undefined ? {} : { id }), properties: { kind: "highway", highway: "residential" }, geometry: { coordinates: [[51.5, 25.3], [51.5, 25.301]] } });
+    const souq = loadSouq({ features: [road(42), road()] }, { geometry: { coordinates: [[51.5, 25.3], [51.5, 25.301]] } }, palette);
+    expect(souq.roads.map((r) => r.id)).toEqual([42, undefined]);
   });
 
   it("lit n'importe quel couple extrait / boucle", () => {

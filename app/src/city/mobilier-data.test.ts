@@ -25,7 +25,7 @@ const topOf = (props: readonly Prop[], route: Path): number => {
 
 /** Rien ne dépasse la plus haute des pièces que l'extrait porte, chacune dessinée seule. */
 const allowedTop = (props: readonly Prop[], route: Path): number =>
-  Math.max(0, ...[...new Set(props.map((p) => p.kind))].map((kind) => topOf([{ kind, at: route.points[0] as Prop["at"] }], route)));
+  Math.max(0, ...[...new Set(props.map((p) => p.kind))].map((kind) => topOf([{ kind, at: route.points[0] as Prop["at"], source: "osm" as const }], route)));
 
 const read = (file: string): { features: { properties: { kind: string; footway?: string; sidewalk?: string } }[] } =>
   JSON.parse(readFileSync(new URL(`../../data/${file}`, import.meta.url), "utf8")) as ReturnType<typeof read>;
@@ -43,7 +43,7 @@ describe("mobilier et marquages des quatre itinéraires", () => {
 
     it(`APP-009: ${id}, une poubelle relevée dans l'extrait est dessinée à sa hauteur, sans faire échouer le relevé`, () => {
       const city = cityFor(id);
-      const props: Prop[] = [...city.props, { kind: "bin", at: city.route.points[0] as Prop["at"] }];
+      const props: Prop[] = [...city.props, { kind: "bin", at: city.route.points[0] as Prop["at"], source: "osm" }];
       expect(topOf(props, city.route)).toBeGreaterThan(BENCH_BACK_M);
       expect(topOf(props, city.route)).toBeLessThanOrEqual(allowedTop(props, city.route));
     });

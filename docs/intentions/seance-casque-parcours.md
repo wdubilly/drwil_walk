@@ -1,6 +1,7 @@
 # Intention : un parcours unique à dérouler quand le testeur est disponible au casque
 
 **Statut** : proposée le 2026-11-03.
+**Reviewed on 2026-11-04**: `essai-casque-lampadaires.md` s'ajoute aux seize intentions à dérouler (lampadaires produits, `APP-013`), au point 3 du parcours.
 
 ## Besoin
 
