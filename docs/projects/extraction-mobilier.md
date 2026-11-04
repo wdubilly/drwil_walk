@@ -25,12 +25,12 @@ que les fichiers de `app/data/` n'auront pas été réécrits. Les relancer amè
 ## Critères d'acceptation
 
 - Les quatre extraits sont réécrits par les scripts existants, avec les balises complètes — `APP-003`
-- Le mobilier nouvellement apporté (poubelles, panneaux) est relevé par ville, avant et après, dans la preuve du chantier
+- Le mobilier nouvellement apporté (poubelles, panneaux) est relevé par ville, avant et après, dans la preuve du chantier — `APP-009`
 - Les bancs existants sont **remplacés** par ceux de l'extraction, jamais fusionnés : aucune donnée ne survit à sa
   suppression dans OpenStreetMap — `APP-003`
-- Chaque point des tracés `app/data/*-boucle.json` reste un sommet d'une voie de son extrait (test existant, non-régression)
-- Le poids total de `app/data/` reste sous le plafond vérifié par les tests
-- Les quatre villes se chargent et se parcourent comme avant, sans trou ni bâtiment disparu
+- Chaque point des tracés `app/data/*-boucle.json` reste un sommet d'une voie de son extrait (test existant, non-régression) — `APP-002`
+- Le poids total de `app/data/` reste sous le plafond vérifié par les tests — `APP-008`
+- Les quatre villes se chargent et se parcourent comme avant, sans trou ni bâtiment disparu — `APP-003`
 
 ## Contrats modifiés
 
