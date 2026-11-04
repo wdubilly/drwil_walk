@@ -20,7 +20,7 @@ Waqif, sans modifier les quatre quartiers ni le moteur général avant validatio
 
 Lu le 2026-11-03 : les façades sont des triangles à couleurs par sommet, **sans texture**, par décision du demandeur du
 2026-11-03 (`docs/intentions/facades-textures-monuments.md`, qui pose la question « textures photographiques ou PBR ») ;
-`app/src/city/facade-family.ts` ne connaît que deux régions (`provence`, `ailleurs`) et `docs/projects/facades-regions.md`
+`app/src/city/facade-family.ts` ne connaît que deux régions (`provence`, `ailleurs`) et `docs/projects/journal.md`
 prévoit une palette par région, choisie sans référence documentée ; le rendu enrichi lit `building:colour`, `roof:colour`
 et `building:material` dans les extraits figés (`APP-003`). Aucune mention de Panoramax dans le dépôt.
 
@@ -39,7 +39,7 @@ et `building:material` dans les extraits figés (`APP-003`). Aucune mention de P
 
 ## Ordre proposé
 
-Avant `docs/projects/facades-regions.md` : les palettes par région en découlent. Indépendante de
+Avant `docs/projects/journal.md` : les palettes par région en découlent. Indépendante de
 `docs/projects/extraction-mobilier.md`. Répond à la question « textures » de `docs/intentions/facades-textures-monuments.md`
 (dont la partie monuments reste à part).
 
