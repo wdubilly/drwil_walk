@@ -3,23 +3,24 @@ import { describe, expect, it } from "vitest";
 import { cityFor } from "./cities.ts";
 import { buildBuildingsGeometry } from "./buildings.ts";
 import { regionOf } from "./facade-family.ts";
+import { palettesOf } from "./facade-palettes.ts";
 import { FACADE_BUDGETS } from "./facades.ts";
 import { planAll } from "./facades.ts";
 import { closest } from "./near-route.ts";
 import type { Vec2 } from "../route/geo.ts";
 
 const ITINERARIES = [
-  { id: "doha-souq-waqif", file: "souq-waqif.json" },
-  { id: "pune-vieille-ville", file: "pune-vieille-ville.json" },
-  { id: "doha-corniche", file: "doha-corniche.json" },
-  { id: "pune-fc-road", file: "pune-fc-road.json" },
-];
+  { id: "doha-souq-waqif", file: "souq-waqif.json", region: "golfe" },
+  { id: "pune-vieille-ville", file: "pune-vieille-ville.json", region: "inde" },
+  { id: "doha-corniche", file: "doha-corniche.json", region: "golfe" },
+  { id: "pune-fc-road", file: "pune-fc-road.json", region: "inde" },
+] as const;
 const MAX_EXTRACT_BYTES = 1_500_000;
 const read = (file: string): { features: { id: number; properties: { kind: string; building?: string; levels?: number } }[] } =>
   JSON.parse(readFileSync(new URL(`../../data/${file}`, import.meta.url), "utf8")) as ReturnType<typeof read>;
 
 describe("façades des quatre itinéraires", () => {
-  for (const { id, file } of ITINERARIES) {
+  for (const { id, file, region: expected } of ITINERARIES) {
     it(`APP-008: ${id}, l'extrait garde identifiant, balise building et étages, sous le plafond de poids`, () => {
       const buildings = read(file).features.filter((f) => f.properties.kind === "building");
       expect(buildings.length).toBeGreaterThan(100);
@@ -33,7 +34,7 @@ describe("façades des quatre itinéraires", () => {
       const [first, second] = [cityFor(id), cityFor(id)];
       expect(first.buildings.every((b) => b.id !== undefined)).toBe(true);
       const region = regionOf(first.origin);
-      expect(region).toBe("ailleurs");
+      expect(region).toBe(expected);
       const options = { detail: "full", region } as const;
       const a = buildBuildingsGeometry(first.buildings, first.palette.buildings, first.route, options);
       const b = buildBuildingsGeometry(second.buildings, second.palette.buildings, second.route, options);
@@ -50,5 +51,28 @@ describe("façades des quatre itinéraires", () => {
       expect(families.has("provencale")).toBe(false);
       expect(families.size).toBeGreaterThan(1);
     });
+
+    it(`APP-008: ${id}, les teintes de sa région sans un triangle de plus que les palettes de base`, () => {
+      const city = cityFor(id);
+      const own = buildBuildingsGeometry(city.buildings, city.palette.buildings, city.route, { detail: "full", region: expected });
+      const base = buildBuildingsGeometry(city.buildings, city.palette.buildings, city.route, { detail: "full", region: "ailleurs" });
+      expect(Array.from(own.getAttribute("position").array)).toEqual(Array.from(base.getAttribute("position").array));
+      expect(Array.from(own.getAttribute("color").array)).not.toEqual(Array.from(base.getAttribute("color").array));
+      const near = closest(city.buildings, city.route, FACADE_BUDGETS.full.maxBuildings, (x) => x.footprint[0] as Vec2);
+      for (const plan of planAll(near, expected).values()) expect(palettesOf(expected)[plan.family]).toContain(plan.palette);
+    });
   }
+});
+
+describe("façades de deux régions", () => {
+  it("APP-008: Pune et Doha, de régions différentes, ne portent aucune palette de détails en commun", () => {
+    const used = (id: string): Set<string> => {
+      const city = cityFor(id);
+      const near = closest(city.buildings, city.route, FACADE_BUDGETS.full.maxBuildings, (x) => x.footprint[0] as Vec2);
+      return new Set([...planAll(near, regionOf(city.origin)).values()].map((p) => JSON.stringify(p.palette)));
+    };
+    const [pune, doha] = [used("pune-vieille-ville"), used("doha-souq-waqif")];
+    expect(pune.size).toBeGreaterThan(1);
+    expect([...pune].filter((p) => doha.has(p))).toEqual([]);
+  });
 });

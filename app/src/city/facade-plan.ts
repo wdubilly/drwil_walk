@@ -1,6 +1,7 @@
 // Le plan d'une façade (APP-008) : tout ce qui la distingue d'une autre, tiré d'une graine et des balises du bâtiment, avec des
 // valeurs de repli cohérentes quand OpenStreetMap ne dit ni les étages, ni le type, ni la hauteur.
-import { PALETTES, SHOP_KINDS, familyFor, paletteIndexOf, type DetailPalette, type FamilyId, type Region } from "./facade-family.ts";
+import { SHOP_KINDS, familyFor, paletteIndexOf, type FamilyId, type Region } from "./facade-family.ts";
+import { palettesOf, type DetailPalette } from "./facade-palettes.ts";
 import { buildingSeed, seededRandom } from "./facade-seed.ts";
 import type { Building } from "./souq-data.ts";
 
@@ -51,7 +52,7 @@ export function planFacade(building: Building, region: Region, variant: number):
   const digit = (i: number): number => Math.floor(variant / 3 ** i) % 3;
   const [windowStyle, shutterDigit, doorDigit, balconyDigit, corniceDigit] = [0, 1, 2, 3, 4].map(digit) as [number, number, number, number, number];
   const paletteIndex = paletteIndexOf(building);
-  const palette = (PALETTES[family])[paletteIndex] as DetailPalette;
+  const palette = palettesOf(region)[family][paletteIndex] as DetailPalette;
   const hasShutters = family === "provencale" || family === "village" || (family === "ancien" && shutterDigit !== 2);
   const cornice = family === "provencale" ? Math.max(corniceDigit, 1) : family === "recent" ? (corniceDigit === 2 ? 1 : 0) : corniceDigit;
   return {

@@ -1,6 +1,7 @@
 // e2e des façades procédurales (QUA-020, APP-008, APP-001), dans Chromium : sur chacun des quatre itinéraires figés, la marche se
 // rejoue avec les façades (profil équilibré, par défaut) sans erreur WebGL ni requête hors de la page servie, sous le budget de
-// triangles ; tête baissée dans le Quest 3 émulé (IWER), la ville et ses façades s'effacent comme avant.
+// triangles ; tête baissée dans le Quest 3 émulé (IWER), la ville et ses façades s'effacent comme avant. Chaque ville porte les
+// teintes de sa région (Pune : Inde, Doha : Golfe) : une capture de la marche est jointe au rapport pour montrer le changement.
 import { createRequire } from "node:module";
 import { expect, test, type Page } from "@playwright/test";
 
@@ -18,10 +19,10 @@ interface E2eWindow {
 const MAX_TRIANGLES = 1_200_000;
 
 const ITINERARIES = [
-  { card: "Doha Souq Waqif", route: "doha-souq-waqif" },
-  { card: "Pune Vieille ville", route: "pune-vieille-ville" },
-  { card: "Doha Corniche", route: "doha-corniche" },
-  { card: "Pune FC Road", route: "pune-fc-road" },
+  { card: "Doha Souq Waqif", route: "doha-souq-waqif", region: "Golfe" },
+  { card: "Pune Vieille ville", route: "pune-vieille-ville", region: "Inde" },
+  { card: "Doha Corniche", route: "doha-corniche", region: "Golfe" },
+  { card: "Pune FC Road", route: "pune-fc-road", region: "Inde" },
 ];
 
 const panel = (page: Page) => page.getByRole("region", { name: "Marche" });
@@ -41,8 +42,8 @@ function watch(page: Page) {
   return seen;
 }
 
-for (const { card, route } of ITINERARIES) {
-  test(`chemin 23 : ${card}, la marche avec les façades procédurales, sous le budget de triangles, sans erreur WebGL`, async ({ page }) => {
+for (const { card, route, region } of ITINERARIES) {
+  test(`chemin 23 : ${card}, la marche avec les façades procédurales aux teintes ${region}, sous le budget de triangles, sans erreur WebGL`, async ({ page }, info) => {
     const seen = watch(page);
     await page.goto("/");
     await page.locator("label.card", { hasText: card }).click();
@@ -55,6 +56,7 @@ for (const { card, route } of ITINERARIES) {
     await expect.poll(async () => Number(await triangles.textContent())).toBeGreaterThan(0);
     expect(Number(await triangles.textContent())).toBeLessThan(MAX_TRIANGLES);
     await expect(page.getByRole("alert")).toHaveText("");
+    await info.attach(`teintes ${region} : ${card}`, { body: await page.locator(".pc-canvas").screenshot(), contentType: "image/png" });
     expect(seen).toEqual({ errors: [], foreign: [] });
   });
 

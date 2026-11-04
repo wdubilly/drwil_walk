@@ -54,7 +54,8 @@ L'ordre compte : la sécurité d'abord, la mesure ensuite (avant que la fatigue 
 2. **Les quatre mesures** — une par ville (Pune Vieille ville, Pune FC Road, Doha Corniche, Doha Souq Waqif), **en marchant**
    et non à l'arrêt : c'est en mouvement que le champ de vision change et que les appels de rendu montent. Quatre fichiers
    JSON enregistrés depuis le casque. Ce sont eux qui débloquent ou annulent `rendu-lod-cellules`.
-3. **Le rendu, dans la même marche** — façades, mobilier et marquages, éclairage et brouillard, profils graphiques : tout se
+3. **Le rendu, dans la même marche** — façades et leurs teintes par région (Pune : Inde, Doha : Golfe ; chantier
+   facades-regions, `APP-008` : sont-elles crédibles pour chaque ville ?), mobilier et marquages, éclairage et brouillard, profils graphiques : tout se
    regarde pendant les mêmes quatre marches, sans y revenir séparément.
 4. **Le confort et les commandes** — tableau de bord, panneau d'infos, commandes de la manette, carrefours.
 5. **Les cas longs** — haute vitesse, très long trajet, trajet libre : à part, car ils demandent du temps de marche.
