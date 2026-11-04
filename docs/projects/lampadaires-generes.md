@@ -41,12 +41,13 @@ paraît vide. Il faut donc les produire par règle, sans jamais faire passer l'i
   `APP-003`
 - Les lampadaires produits ont leur propre plafond, réglé par profil graphique, distinct de celui du mobilier — `APP-006`
 - Un réglage éteint les lampadaires produits et ne laisse que le mobilier réel ; ils sont visibles par défaut — `APP-013`
-- Les lampadaires s'effacent comme le reste de la ville tête baissée — `APP-001`
+- Les lampadaires s'effacent comme le reste de la ville tête baissée [humain] — `APP-001`
 - Les images par seconde avant et après sur un vrai Quest 3 [human] — `APP-001`
 
 ## Contrats modifiés
 
 - `APP-013` (nouveau) : le mobilier produit par règle — placement, reproductibilité, priorité du réel, provenance.
+- `QUA-020` (complété) : l'e2e du chemin 27 (`app/e2e/lampadaires-generes.test.ts`) rejoint les tests cités par le contrat.
 
 ## 2. Hors périmètre
 
