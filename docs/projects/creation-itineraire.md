@@ -32,8 +32,8 @@ sans code propre à la ville, avec des couleurs et des matériaux inspirés de p
 - Une seule commande hors marche prend un nom, une emprise et un départ/arrivée, et écrit l'extrait, le tracé de boucle et
   la bibliothèque de matériaux de la ville ; aucun code, aucun script npm propre à la ville — `APP-003`
 - Les quatre itinéraires existants sont **reproductibles** avec cette commande (ses entrées remplacent les entrées de
-  `app/scripts/cities.ts` et les scripts `extract:*`) et leurs rendus restent inchangés
-- Chaque point du tracé de boucle produit est un sommet d'une voie de l'extrait (test existant, appliqué à toute ville)
+  `app/scripts/cities.ts` et les scripts `extract:*`) et leurs rendus restent inchangés — `APP-003`
+- Chaque point du tracé de boucle produit est un sommet d'une voie de l'extrait (test existant, appliqué à toute ville) — `APP-002`
 - Les photos viennent de Panoramax puis de Mapillary (jeton lu dans l'environnement, jamais écrit dans le dépôt) et des
   photos fournies par le demandeur ; la commande en tire les couleurs dominantes et les textures — `APP-012`, `SEC-007`
 - Sans photo à moins de 30 m du tracé, la commande **élargit** la recherche aux quartiers voisins (jusqu'à 1 km du tracé), et le rapport dit pour chaque couleur d'où elle vient (photo, distance, auteur, licence) ; si rien ne se trouve
@@ -41,7 +41,7 @@ sans code propre à la ville, avec des couleurs et des matériaux inspirés de p
 - Les textures embarquées sont CC0 ou recolorées, leur provenance écrite dans `app/assets/PROVENANCE.md` ; aucun appel
   réseau pendant la marche — `APP-012`, `APP-003`
 - L'attribution OpenStreetMap couvre toute ville créée — `APP-003`
-- Le plafond de poids de `app/data/` reste tenu par les tests existants (ce chantier ne les contourne pas)
+- Le plafond de poids de `app/data/` reste tenu par les tests existants (ce chantier ne les contourne pas) — `APP-003`
 - Les couleurs et les matériaux sont jugés sur un vrai Quest 3, a posteriori [human] — `APP-001`
 
 ## Contrats modifiés
