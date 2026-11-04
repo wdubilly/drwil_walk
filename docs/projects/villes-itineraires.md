@@ -70,7 +70,7 @@ Rome, Erevan et Paris, dans leurs centres touristiques.
 - 2026-11-03 : **Paris reste un itinéraire comme les autres**. Le Champ de Mars est écarté : la tour Eiffel, balisée
   `building=tower` et `height=330`, serait extrudée en bloc plein de 330 m.
 - 2026-11-03 : les deux chantiers préalables passent d'abord.
-- 2026-11-04 : un troisième chantier passe avant, `docs/projects/creation-itineraire.md` : les trois villes sont créées avec
+- 2026-11-04 : un troisième chantier passe avant, `docs/projects/journal.md` : les trois villes sont créées avec
   la commande unique, et non avec un script de plus par ville.
 
 ## 5. Points à trancher
