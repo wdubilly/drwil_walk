@@ -380,3 +380,10 @@ One entry per closed project, most recent last.
 - Choix techniques de l'agent : bornes des fenêtres de région ; les 45 palettes régionales (aucune référence photographique).
 - Limites : teintes choisies sans photo de référence, fenêtres grossières (débordements sur la Turquie, l'Iran, la Corse ; Lyon sans région) (`docs/intentions/palettes-regions-references.md`) ; jamais jugées sur un vrai Quest 3 (point ajouté à `docs/intentions/seance-casque-parcours.md`) ; e2e rejoué ici avec des bibliothèques système extraites sans droits administrateur (`LD_LIBRARY_PATH`, Chromium n'y démarrait pas sinon).
 - Branche workstream/facades-regions. Preuve de clôture : docs/preuves/facades-regions.md (écrite par la clôture).
+
+## 2026-11-04 — Détour de docs/projects/extraction-mobilier.md : le test APP-009 des extraits plafonne la hauteur du mobilier à celle d'un banc
+
+- Défaut préalable, hors du cadrage d'`extraction-mobilier` : `app/src/city/mobilier-data.test.ts` exigeait qu'aucune pièce dessinée ne dépasse le dossier d'un banc (0,85 m) ; la réextraction apporte des poubelles réelles sur la Corniche (0,94 m couvercle compris), légitimes selon `APP-009`, et le test échouait.
+- Corrigé : le plafond est désormais la plus haute des pièces que l'extrait porte, chacune dessinée seule ; l'absence de lampadaire reste vérifiée. Test de non-régression (une poubelle ajoutée au mobilier de chaque itinéraire, `APP-009`) vu échouer avant la correction.
+- Limites : aucune.
+- Branche detour/mobilier-hauteur-test.
