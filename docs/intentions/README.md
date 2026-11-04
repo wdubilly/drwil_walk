@@ -78,6 +78,8 @@ removes it when fully covered.
 | `docs/intentions/essai-casque-vitesse-haute.md` | Essayer la marche à haute vitesse et un trajet libre de plus de 5 km sur un vrai Quest 3 |
 | `docs/intentions/nettoyer-gardes-longueur-routeurs.md` | Retirer les gardes de longueur devenues sans effet des routeurs |
 | `docs/intentions/carrefours-retour-au-trace.md` | Revenir au tracé d'origine après un détour aux carrefours |
+| `docs/intentions/inscrire-une-ville-creee.md` | Inscrire dans l'application une ville créée par `npm run city`, et rattraper les docs hors périmètre |
+| `docs/intentions/essai-commande-creation-reseau.md` | Essayer la commande de création d'itinéraire contre les vrais services |
 | `docs/intentions/carrefours-version-pc.md` | Le choix de la rue aux carrefours dans la version PC |
 | `docs/intentions/essai-casque-commandes-panneau.md` | Juger les commandes de la manette et le panneau d'infos sur un vrai Quest 3 |
 | `docs/intentions/essai-casque-eclairage-ambiance.md` | Juger l'éclairage, le brouillard et les sons d'ambiance sur un vrai Quest 3 |

@@ -106,7 +106,7 @@ export function parseMapillary(json: unknown): StreetPhoto[] {
   });
 }
 
-async function getJson(fetchFn: typeof fetch, url: string, init: RequestInit): Promise<unknown> {
+export async function getJson(fetchFn: typeof fetch, url: string, init: RequestInit): Promise<unknown> {
   const response = await fetchFn(url, init);
   if (!response.ok) throw new Error(`${new URL(url).host} a répondu ${String(response.status)}`);
   return response.json() as Promise<unknown>;

@@ -6,6 +6,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { decode } from "jpeg-js";
 import type { LonLat } from "../src/route/geo.ts";
 import { areaOf, type MaterialArea, type Tone } from "./materials-areas.ts";
+import { regionColours } from "./city-colours.ts";
 import { dominantColours, fromHex, luma, type DominantColour, type Rgba } from "./materials-colours.ts";
 import { TEXTURE_PX, ambientCgUrl, prepareMaterial } from "./materials-textures.ts";
 import { inventory, inventoryMarkdown, type StreetPhoto } from "./panoramax.ts";
@@ -37,28 +38,30 @@ export function toneOf(colours: readonly string[], tone: Tone): { colour: string
   return { colour, tints };
 }
 
-async function download(fetchFn: typeof fetch, url: string, userAgent: string): Promise<Uint8Array> {
+export async function download(fetchFn: typeof fetch, url: string, userAgent: string): Promise<Uint8Array> {
   const response = await fetchFn(url, { headers: { "User-Agent": userAgent } });
   if (!response.ok) throw new Error(`${url} : réponse ${String(response.status)}`);
   return new Uint8Array(await response.arrayBuffer());
 }
 
-const readPhoto = (bytes: Uint8Array): Rgba => decode(bytes, { useTArray: true, formatAsRGBA: true, maxMemoryUsageInMB: 256 });
+export const readPhoto = (bytes: Uint8Array): Rgba => decode(bytes, { useTArray: true, formatAsRGBA: true, maxMemoryUsageInMB: 256 });
+
+/** Les couleurs relevées, chacune avec sa provenance quand elle est connue. */
+export type ColourList = (DominantColour & { from?: string })[];
+export interface Colours { source: "photos" | "provisoire"; note: string; list: ColourList }
 
 /** Les couleurs relevées sur les photos de l'inventaire, ou les couleurs provisoires du quartier s'il n'y en a aucune. */
-export async function coloursOf(fetchFn: typeof fetch, area: MaterialArea, photos: readonly StreetPhoto[]) {
+export async function coloursOf(fetchFn: typeof fetch, area: MaterialArea, photos: readonly StreetPhoto[]): Promise<Colours> {
   if (photos.length === 0) {
-    const list: DominantColour[] = area.provisional.colours.map((hex) => ({ hex, share: 1 / area.provisional.colours.length }));
-    return { source: "provisoire" as const, note: area.provisional.source, list };
+    const { region, list } = regionColours(area.start);
+    return { source: "provisoire" as const, note: `palette de la région « ${region} » (APP-008), en attendant des photos`, list: list };
   }
   const images = await Promise.all(photos.map(async (p) => readPhoto(await download(fetchFn, p.thumb, area.userAgent))));
   return { source: "photos" as const, note: `${String(photos.length)} photo(s) de l'inventaire`, list: dominantColours(images) };
 }
 
 /** La bibliothèque du quartier : couleurs, matériaux (textures embarquées) et familles ; écrite dans `app/assets/materials/`. */
-export async function runLibrary(fetchFn: typeof fetch, id: string, files: Files): Promise<string> {
-  const area = areaOf(id);
-  const colours = await coloursOf(fetchFn, area, JSON.parse(files.read(area.photos)) as StreetPhoto[]);
+export async function writeLibrary(fetchFn: typeof fetch, id: string, area: MaterialArea, colours: Colours, files: Files): Promise<string> {
   const hexes = colours.list.map((c) => c.hex);
   const materials = [];
   for (const source of area.materials) {
@@ -69,4 +72,9 @@ export async function runLibrary(fetchFn: typeof fetch, id: string, files: Files
   const library = { schema: 1, itinerary: id, colours, textureSizePx: TEXTURE_PX, materials, families: area.families };
   files.write(area.library, `${JSON.stringify(library)}\n`);
   return `${colours.source} : ${hexes.join(", ")}`;
+}
+
+export async function runLibrary(fetchFn: typeof fetch, id: string, files: Files): Promise<string> {
+  const area = areaOf(id);
+  return writeLibrary(fetchFn, id, area, await coloursOf(fetchFn, area, JSON.parse(files.read(area.photos)) as StreetPhoto[]), files);
 }

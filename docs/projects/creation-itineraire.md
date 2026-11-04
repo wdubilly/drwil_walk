@@ -97,6 +97,6 @@ sans code propre à la ville, avec des couleurs et des matériaux inspirés de p
 
 ## 7. Reprise
 
-- **Dernier état** (2026-11-04) : cadrage seul, aucun code écrit.
-- **Travail non commité** : cette fiche, l'intention mise à jour, l'index `pending.md`.
-- **Prochaine étape** : lot 1 une fois le chantier lancé par le demandeur.
+- **Dernier état** (2026-11-04) : lots 1 à 4 faits, tests verts à 100 % de couverture ; lot 5 (jugement au casque) à faire par l'humain.
+- **Travail non commité** : aucun une fois le commit fait.
+- **Prochaine étape** : essai réseau réel (`docs/intentions/essai-commande-creation-reseau.md`) et inscription d'une ville créée (`docs/intentions/inscrire-une-ville-creee.md`).

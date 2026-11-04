@@ -46,6 +46,26 @@ Gardez ce terminal ouvert pendant toute la marche. Pour arrêter : `Ctrl+C` dans
   dont le début ressemble à l'adresse de votre poste sur le réseau du casque, souvent `192.168.…`.
 - L'adresse commence par `https://` (et non `http://`) : le mode réalité mixte du navigateur l'exige.
 
+### Créer un nouvel itinéraire (hors casque, réseau nécessaire)
+
+Une seule commande, depuis `app/`, prépare une ville : l'extrait OpenStreetMap, le tracé de boucle et les matériaux colorés
+d'après des photos de rue.
+
+```bash
+npm run city -- rome --nom "Rome, centre" --emprise 41.89,12.47,41.91,12.50 --depart 41.8986,12.4768 --arrivee 41.9029,12.4534
+```
+
+- L'identifiant (`rome`) sert de nom aux fichiers ; `--emprise` s'écrit sud,ouest,nord,est et `--depart`, `--arrivee`,
+  `--via` en latitude,longitude. `--retour boucle` revient par un autre chemin (par défaut : aller-retour).
+- `npm run city -- souq` rejoue une ville déjà décrite dans `app/data/villes.json`.
+- Photos : Panoramax, puis Mapillary si la variable d'environnement `MAPILLARY_TOKEN` contient votre jeton (ne l'écrivez
+  jamais dans un fichier du dépôt), puis vos propres photos avec `--photos <dossier>` (le dossier reste hors du dépôt, seules
+  les couleurs en sont tirées). Sans photo à moins de 30 m du tracé, la recherche s'élargit jusqu'à 1 km, puis la
+  palette de la région sert de repli ; la commande l'écrit.
+- La commande affiche un rapport : pour chaque couleur, la photo d'où elle vient (distance, auteur, licence). Les
+  services publics sont interrogés avec des pauses : ne la relancez pas en boucle.
+- La ville créée n'apparaît pas encore à l'accueil : son inscription dans l'application reste à faire.
+
 ## 3. Ouvrir la page dans le Quest 3 (non vérifié sur casque)
 
 1. Dans le Quest 3, ouvrez le navigateur (Meta Quest Browser).
