@@ -7,6 +7,8 @@
 files:
   - app/assets/quaternius-licence.txt
   - app/assets/quaternius-trees.json
+  - app/assets/materials/doha-souq-waqif.json
+  - app/assets/materials/doha-souq-waqif-photos.json
   - app/data/doha-corniche-boucle.json
   - app/data/doha-corniche.json
   - app/data/pune-fc-road-boucle.json
