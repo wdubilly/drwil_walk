@@ -27,12 +27,12 @@ removes it when fully covered.
 | `docs/intentions/commandes-panneau.md` | Pause, recalibrage et panneau d'infos dans le casque |
 | `docs/intentions/corniche-west-bay.md` | La Corniche de Doha jusqu'à West Bay, départ au musée |
 | `docs/intentions/rendu-jeu-video.md` | Un rendu de jeu vidéo moderne : fiche d'ensemble, ordre et règles des intentions `rendu-*` |
-| `docs/intentions/rendu-mesures-diagnostic.md` | [P0] Mesurer le rendu (images par seconde, appels de rendu, triangles) : à faire en premier |
+| `docs/intentions/rendu-mesures-diagnostic.md` | Mesurer le rendu (images par seconde, appels de rendu, triangles) : livrée ; restent l'essai et l'enregistrement au casque |
 | `docs/intentions/essai-casque-diagnostic-rendu.md` | Essayer le diagnostic de rendu sur un vrai Quest 3 (72 images par seconde, lisibilité) |
 | `docs/intentions/diagnostic-casque-enregistrer.md` | Enregistrer les mesures de rendu depuis le casque (le bouton de la page n'y est pas atteignable) |
-| `docs/intentions/rendu-profils-graphiques.md` | [P1] Des profils graphiques (casque, PC, tablette) et la détection des capacités |
-| `docs/intentions/rendu-tablette-tactile.md` | [P1] La tablette et le tactile, dans le périmètre dès les premiers lots |
-| `docs/intentions/rendu-facades-batiments.md` | [P2] Des bâtiments détaillés (façades, fenêtres, vitrines), plus des blocs extrudés |
+| `docs/intentions/rendu-profils-graphiques.md` | Des profils graphiques (casque, PC, tablette) : ossature livrée ; restent les effets à brancher et l'essai au casque |
+| `docs/intentions/rendu-tablette-tactile.md` | La tablette et le tactile : traitée (`APP-007`) ; reste l'essai sur une vraie tablette |
+| `docs/intentions/rendu-facades-batiments.md` | Des bâtiments détaillés (façades, fenêtres, vitrines) : livrée en grande partie (`APP-008`) ; restes suivis par d'autres intentions |
 | `docs/intentions/essai-casque-facades-batiments.md` | Essayer les façades procédurales sur un vrai Quest 3 (72 images par seconde, lisibilité) |
 | `docs/intentions/ville-provence.md` | Un itinéraire dans une ville de Provence pour la famille de façades provençale |
 | `docs/intentions/facades-textures-monuments.md` | Textures de façade et monuments glTF (suite des façades procédurales) |
@@ -69,6 +69,23 @@ removes it when fully covered.
 | `docs/intentions/essai-casque-ambiance-cartoon.md` | Juger l'ambiance cartoon (style, 72 images par seconde, contours) sur un vrai Quest 3 (lot 7) |
 | `docs/intentions/budget-temps-e2e-longs.md` | Donner aux e2e de marche longs un budget de temps qui tienne sur une machine chargée |
 | `docs/intentions/seance-casque-parcours.md` | Le parcours unique à dérouler quand le testeur est disponible au casque (regroupe les seize `essai-casque-*`) |
+| `docs/intentions/entree-npm-pack-arbres.md` | Une entrée npm pour préparer les arbres du pack Quaternius |
+| `docs/intentions/essai-casque-carrefours.md` | Juger le choix de la rue aux carrefours (pointage, prise, flèches) sur un vrai Quest 3 |
+| `docs/intentions/essai-casque-vitesse-haute.md` | Essayer la marche à haute vitesse et un trajet libre de plus de 5 km sur un vrai Quest 3 |
+| `docs/intentions/nettoyer-gardes-longueur-routeurs.md` | Retirer les gardes de longueur devenues sans effet des routeurs |
+| `docs/intentions/carrefours-retour-au-trace.md` | Revenir au tracé d'origine après un détour aux carrefours |
+| `docs/intentions/carrefours-version-pc.md` | Le choix de la rue aux carrefours dans la version PC |
+| `docs/intentions/essai-casque-commandes-panneau.md` | Juger les commandes de la manette et le panneau d'infos sur un vrai Quest 3 |
+| `docs/intentions/essai-casque-eclairage-ambiance.md` | Juger l'éclairage, le brouillard et les sons d'ambiance sur un vrai Quest 3 |
+| `docs/intentions/essai-casque-mobilier-urbain.md` | Juger le mobilier urbain et les marquages sur un vrai Quest 3 |
+| `docs/intentions/essai-casque-profils-graphiques.md` | Juger les trois profils graphiques sur un vrai Quest 3 |
+| `docs/intentions/essai-casque-ville-riche.md` | Juger le rendu de la ville riche sur un vrai Quest 3 |
+| `docs/intentions/essai-casque-zone-tapis.md` | Juger la zone tapis et la vignette réelle sur un vrai Quest 3 |
+| `docs/intentions/essai-tablette-tactile.md` | Essayer la marche tactile sur une vraie tablette |
+| `docs/intentions/limite-vitesse-casque.md` | Dire la limite de vitesse dans la scène du casque |
+| `docs/intentions/mobilier-remarquable-gltf.md` | Des éléments remarquables en glTF CC0 (point à trancher de rendu-rues-mobilier) |
+| `docs/intentions/sons-ambiance-ville.md` | Des sons de ville enregistrés plutôt qu'un murmure produit par code |
+| `docs/intentions/source-champ-de-vision-quest3.md` | Sourcer le champ de vision du Quest 3 |
 
 A one-line idea, too light for a brief, is noted with one command:
 `node .githooks/note.mjs "<text>"` appends a dated line to
@@ -96,9 +113,3 @@ and its line is then removed.
 
 - [decision] ...
 ```
-| `docs/intentions/entree-npm-pack-arbres.md` | Une entrée npm pour préparer les arbres du pack Quaternius |
-| `docs/intentions/essai-casque-carrefours.md` | Juger le choix de la rue aux carrefours (pointage, prise, flèches) sur un vrai Quest 3 |
-| `docs/intentions/essai-casque-vitesse-haute.md` | Essayer la marche à haute vitesse et un trajet libre de plus de 5 km sur un vrai Quest 3 |
-| `docs/intentions/nettoyer-gardes-longueur-routeurs.md` | Retirer les gardes de longueur devenues sans effet des routeurs |
-| `docs/intentions/carrefours-retour-au-trace.md` | Revenir au tracé d'origine après un détour aux carrefours |
-| `docs/intentions/carrefours-version-pc.md` | Le choix de la rue aux carrefours dans la version PC |
