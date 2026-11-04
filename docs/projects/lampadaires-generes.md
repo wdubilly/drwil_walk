@@ -97,5 +97,5 @@ paraît vide. Il faut donc les produire par règle, sans jamais faire passer l'i
   e2e `lampadaires-generes` et `mobilier-urbain` verts, chemin 27). Contrat `APP-013` écrit (l'identifiant `APP-012` du cadrage
   était déjà pris par les matériaux locaux, `APP-010` est réservé par `rendu-lod-cellules` : `APP-013` est le suivant libre).
   Lot 4 [human] reste ouvert, reporté dans `docs/intentions/essai-casque-lampadaires.md`.
-- **Travail non commité** : voir `git status` ; sinon rien.
-- **Prochaine étape** : clôture (journal, clôture, `verify`, PR, fusion automatique).
+- **Travail non commité** : voir `git status` ; sinon rien (code commité, hooks verts).
+- **Prochaine étape** : clôture en cours (journal écrit ; `verify`, PR, fusion automatique).

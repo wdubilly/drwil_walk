@@ -85,4 +85,6 @@ Ces chiffres sont calculés, jamais mesurés au casque : ils valent d'être conf
 
 ## Cadrée
 
-Cette intention est cadrée en fiche : `docs/projects/lampadaires-generes.md` (2026-11-03).
+Cette intention est cadrée en fiche (2026-11-03), puis livrée le 2026-11-04 : voir l'entrée « lampadaires-generes » de `docs/projects/journal.md`.
+Relue le 2026-11-04 : règle, plafond séparé, provenance et réglage d'accueil livrés (`APP-013`). Restent le jugement au casque
+(`docs/intentions/essai-casque-lampadaires.md`) et les carrefours et le réglage hors DOM (`docs/intentions/lampadaires-carrefours-reglage.md`).
