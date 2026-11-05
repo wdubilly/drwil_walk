@@ -204,6 +204,15 @@ Deux réglages facultatifs s'ajoutent à l'accueil, tous deux éteints à chaque
   audio n'est ouvert ; au plus fort, le gain reste à 0,2, de quoi entendre le tapis, la pièce et une personne qui parle.
   Quitter la marche coupe le son.
 
+**Lampadaires allumés la nuit** (chantier ville-vivante-souk, lot 1, APP-011) : quand le soleil est sous l'horizon (avant 6 h,
+après 18 h), les lanternes de tous les lampadaires dessinés, relevés comme produits par règle, brillent et posent un halo chaud
+au sol ; le jour, elles sont éteintes. L'état est lu une fois à l'entrée dans la marche et inscrit sur la page
+(`data-lanternes` : « allumées », « éteintes » ou « absentes »). Aucune source de lumière par mât : deux maillages instanciés
+de plus (lanternes et halos, environ 12 + 20 triangles par mât, calculé et non mesuré). Le halo éclaircit le sol sans jamais
+toucher à l'alpha de l'image : il ne masque rien du passthrough ; lanternes et halos s'effacent tête baissée et sont découpés
+dans la zone tapis (APP-001). La case **Lampadaires allumés la nuit** (cochée, jamais gardée) les retire quand on la décoche.
+Non jugé au casque : `docs/intentions/seance-casque-parcours.md`.
+
 Au casque, aucun ciel ni fond n'est posé : le fond est le passthrough, donc le réel. Sur la version PC, le ciel suit l'heure.
 Ce qui est appliqué est inscrit sur la page (`data-ambiance`, par exemple « brouillard 15 % · sons 20 % »). Limites : jamais
 essayé sur un vrai Quest 3 (`docs/intentions/essai-casque-eclairage-ambiance.md`) ; les sons sont un murmure produit par code,

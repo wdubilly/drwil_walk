@@ -116,6 +116,7 @@ async function walk(deps: ExperienceDeps, home: HomeView, session: XRSession, so
   // L'ambiance (APP-011) : lumière de l'heure réelle, brouillard plafonné au casque et éteint par défaut, sons coupés par défaut.
   const ambience = startAmbience({ scene, target: "casque", fog: settings.fog && home.readFog(), soundPct: home.readSoundPct(), now, window: deps.document.defaultView });
   deps.root.dataset["ambiance"] = ambience.summary;
+  deps.root.dataset["lanternes"] = ambience.lanterns;
   const zone = createZoneControl(deps.storage);
   const vignette = createVignette();
   const vignetteOn = home.readVignette();

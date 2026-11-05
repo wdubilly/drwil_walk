@@ -40,4 +40,9 @@ describe("lumière du jour", () => {
       expect(light.hemiIntensity).toBeGreaterThan(0);
     }
   });
+
+  it("APP-011: la nuit commence quand le soleil passe sous l'horizon, et finit à son lever", () => {
+    expect([daylightAt(12).night, daylightAt(6.5).night, daylightAt(17.5).night]).toEqual([false, false, false]);
+    expect([daylightAt(18.5).night, daylightAt(0).night, daylightAt(5.5).night]).toEqual([true, true, true]);
+  });
 });

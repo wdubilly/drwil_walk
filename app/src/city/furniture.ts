@@ -10,6 +10,9 @@ export const BENCH_SEAT_M = 0.45;
 export const BENCH_BACK_M = 0.85;
 export const BIN_HEIGHT_M = 0.9;
 export const SIGN_HEIGHT_M = 2.2;
+/** La lanterne d'un lampadaire : sa taille et sa place sur le bras, au-dessus de la chaussée (axe Z local). */
+export const LANTERN_SIZE_M = { x: 0.28, y: 0.14, z: 0.6 } as const;
+export const LANTERN_AT_M = { y: LAMP_HEIGHT_M - 0.1, z: 1.1 } as const;
 
 const STEEL = 0x4d5156;
 const LIGHT = 0xf2e6a8;
@@ -33,7 +36,7 @@ const lamp = (): BufferGeometry[] => [
   colored(new CylinderGeometry(0.16, 0.2, 0.3, 6), STEEL, 0, 0.15, 0),
   colored(new CylinderGeometry(0.06, 0.09, LAMP_HEIGHT_M, 6), STEEL, 0, LAMP_HEIGHT_M / 2, 0),
   colored(new BoxGeometry(0.08, 0.08, 1.2), STEEL, 0, LAMP_HEIGHT_M, 0.6),
-  colored(new BoxGeometry(0.28, 0.14, 0.6), LIGHT, 0, LAMP_HEIGHT_M - 0.1, 1.1),
+  colored(new BoxGeometry(LANTERN_SIZE_M.x, LANTERN_SIZE_M.y, LANTERN_SIZE_M.z), LIGHT, 0, LANTERN_AT_M.y, LANTERN_AT_M.z),
 ];
 
 /** Banc : assise à 45 cm, dossier incliné à 85 cm, deux piètements ; long de 1,8 m dans l'axe de la rue (axe X). */

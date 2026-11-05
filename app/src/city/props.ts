@@ -20,6 +20,12 @@ export const MAX_FURNITURE = 400;
 /** Plafond propre aux lampadaires produits par règle (APP-013) : le mobilier du relevé n'est jamais évincé par du mobilier inventé. */
 export const MAX_GENERATED_LAMPS = 300;
 
+/** Un lampadaire dessiné, à sa place et tourné comme son mât : ses lanternes s'allument la nuit (`street-lights.ts`). */
+export interface PlacedLamp {
+  at: Vec2;
+  yaw: number;
+}
+
 /** Combien d'objets viennent d'OpenStreetMap, combien sont produits par règle. */
 export interface Sources {
   osm: number;
@@ -73,5 +79,6 @@ export function buildFurniture(props: readonly Prop[], route: Path, max = MAX_FU
   const mesh = new Mesh(mergeParts(parts), new MeshLambertMaterial({ vertexColors: true }));
   mesh.name = "mobilier";
   mesh.userData["sources"] = countSources(kept);
+  mesh.userData["lamps"] = kept.filter((p) => p.kind === "lamp").map((p): PlacedLamp => ({ at: p.at, yaw: p.yaw ?? routeYaw(p.at, route) }));
   return mesh;
 }

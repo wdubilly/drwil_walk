@@ -23,9 +23,10 @@ import { regionOf } from "./facade-family.ts";
 import type { FacadeDetail } from "./facades.ts";
 import { MAX_LOCAL_MATERIALS, type LocalMaterials } from "./material-library.ts";
 import { buildLocalMaterials } from "./material-mesh.ts";
-import { generatedLampsOn } from "../ui/lamps-choice.ts";
+import { generatedLampsOn, streetLightsOn } from "../ui/lamps-choice.ts";
 import { generateLamps } from "./lamp-rule.ts";
-import { buildFurniture, buildTrees, type Sources } from "./props.ts";
+import { buildFurniture, buildTrees, type PlacedLamp, type Sources } from "./props.ts";
+import { buildStreetLights } from "./street-lights.ts";
 import { buildOutlinesGeometry } from "./outlines.ts";
 import { pushMarkings } from "./markings.ts";
 import { buildRoadsGeometry } from "./roads.ts";
@@ -38,8 +39,8 @@ import type { TreePack } from "./tree-pack.ts";
 
 const GROUND_SIZE_M = 3000;
 
-/** Budget de maillages de la ville en OpenStreetMap, sans le pack d'arbres : sol, verdure, voies, bâtiments, arbres, mobilier, contours, noms des rues, matériaux locaux. */
-export const MAX_CITY_MESHES = 8 + MAX_STREET_NAMES + MAX_LOCAL_MATERIALS;
+/** Budget de maillages de la ville en OpenStreetMap, sans le pack d'arbres : sol, verdure, voies, bâtiments, arbres, mobilier, lanternes et halos, contours, noms des rues, matériaux locaux. */
+export const MAX_CITY_MESHES = 10 + MAX_STREET_NAMES + MAX_LOCAL_MATERIALS;
 
 /** Le trait des contours : un bleu nuit presque noir, lisible sur toutes les teintes de bâtiments. */
 const OUTLINE_COLOR = 0x1b1b2f;
@@ -60,6 +61,8 @@ export interface SceneOptions {
   maxGeneratedLamps?: number;
   /** Les lampadaires produits par règle : absent, la case de l'accueil décide, et sans accueil ils sont posés (APP-013). */
   generatedLamps?: boolean;
+  /** Les lanternes allumées la nuit : absent, la case de l'accueil décide, et sans accueil elles sont posées (APP-011). */
+  streetLights?: boolean;
   /** Les marquages au sol lus des balises de voie (bordures, lignes d'arrêt) : vrais par défaut ; un profil léger les retire (APP-009, APP-006). */
   markings?: boolean;
   /** Les matériaux locaux du quartier, choisis à l'accueil : posés sur les façades détaillées seulement (prototype du souk). */
@@ -106,6 +109,7 @@ export function createSouqScene(doc: Document, souq: Souq, options: SceneOptions
   const osm = new Group();
   osm.name = "osm";
   osm.add(ground, greenery, roads, buildings, buildStreetLabels(doc, rich ? souq.roads : [], souq.route), buildTrees(souq.props, souq.route, options.trees, options.maxTrees), furniture);
+  if (options.streetLights ?? streetLightsOn(doc)) osm.add(buildStreetLights(furniture.userData["lamps"] as PlacedLamp[]));
   if (options.materials) osm.add(buildLocalMaterials(souq.buildings, options.materials, { detail: options.facades ?? "off", region: regionOf(souq.origin), route: souq.route, footLight: FOOT_LIGHT }));
   if (options.outlines === true) {
     const outlines = new LineSegments(buildOutlinesGeometry(souq.buildings, souq.route), new LineBasicMaterial({ color: OUTLINE_COLOR }));

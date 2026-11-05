@@ -20,6 +20,8 @@ export interface Daylight {
   /** Le ciel des écrans sans passthrough (PC, tablette) : au casque, le ciel reste le réel (APP-001). */
   skyColor: number;
   fogColor: number;
+  /** La nuit : le soleil est sous l'horizon, les lanternes des lampadaires s'allument. */
+  night: boolean;
 }
 
 /** Heure décimale locale (0 à 24) ; une date illisible retombe sur l'heure de repli. */
@@ -55,6 +57,7 @@ export function daylightAt(hour: number): Daylight {
     hemiIntensity: 0.35 + 0.85 * day,
     skyColor: sky,
     fogColor: sky,
+    night: elevation < 0,
   };
 }
 
