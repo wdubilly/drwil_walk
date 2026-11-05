@@ -19,7 +19,13 @@ Lu le 2026-11-04 :
 - `docs/intentions/villes-a-parcourir.md` et `docs/intentions/entree-npm-pack-arbres.md` citent `npm run extract:*` pour le
   contexte d'alors.
 
+## Décisions (2026-11-05)
+
+- Inscription par lecture du catalogue `app/data/villes.json` à la construction.
+- Palette déduite de la région (`APP-008`).
+
+Cadrée en chantier : `docs/projects/inscrire-ville-creee.md`.
+
 ## Questions à trancher
 
-- [decision] L'inscription se fait-elle par un fichier généré par la commande, ou par une lecture du catalogue `app/data/villes.json` à la construction (les tests tournent sans transformation de Vite, donc sans `import.meta.glob`) ?
-- [decision] Où vit la palette d'une ville créée : dans `app/data/villes.json`, ou déduite de la région (`APP-008`) ?
+*(aucune)*

@@ -70,10 +70,14 @@ Décidé le 2026-11-04 (le souk d'abord, puis la généralisation) et complété
 6. **Une fiche par ville**, qui ne fait que lancer la commande et juger le rendu : la Corniche, Pune Vieille ville, FC
    Road, puis les villes nouvelles (`docs/intentions/villes-a-parcourir.md`).
 
+## Décisions du demandeur (2026-11-05)
+
+- Les quatre quartiers existants sont **régénérés par la commande** : leurs boucles rejouées, valides mais différentes des
+  boucles versionnées, remplacent celles-ci.
+- Une ville **complète** pour apparaître à l'accueil : la palette de repli est acceptée quand les photos manquent, et la
+  ville vivante de la région `ailleurs` (défaut) est acceptée.
+- Une fiche de ville **se clôt avant** le jugement au casque, qui est reporté dans une intention.
+
 ## Questions à trancher
 
-- [decision] Les quatre quartiers figés sont-ils régénérés par la commande (boucles rejouées, aujourd'hui valides mais
-  différentes des boucles versionnées), ou gardent-ils leurs données actuelles et ne reçoivent-ils que les matériaux ?
-- [decision] Critère de « ville complète » : quels éléments une ville doit-elle avoir pour apparaître à l'accueil
-  (matériaux tirés des photos ou palette de repli acceptée, ville vivante réglée ou désactivée) ?
-- Le jugement au casque reste humain à chaque ville : une fiche de ville peut-elle se clore avant lui ?
+*(aucune)*
