@@ -2,7 +2,7 @@
 
 **Statut** : cadré le 2026-11-05.
 **Risque** : HIGH
-**Maturité** : à affiner
+**Maturité** : prêt
 **Intention** : `docs/intentions/recentrer-generateur-itineraire.md`, `docs/intentions/generateur-ville-complet.md`
 
 <!-- scope
@@ -37,7 +37,7 @@ files:
 
 Le produit se resserre sur un **générateur complet d'itinéraire** (décision du demandeur, 2026-11-05) : un accueil réduit à
 l'itinéraire et à la vitesse, un seul rendu (OpenStreetMap), plus de parcours libre, plus de Google 3D (pas de licence). Les
-préférences (qualité, piétons, circulation…) se règlent **pendant la marche** et se retiennent d'une marche à l'autre.
+préférences (qualité, ville vivante…) se règlent **pendant la marche** et se retiennent d'une marche à l'autre.
 
 ## Critères d'acceptation
 
@@ -50,9 +50,9 @@ préférences (qualité, piétons, circulation…) se règlent **pendant la marc
   brouillard, sons, côté et opacité du panneau, vignette n'y sont plus ; chacun prend sa valeur par défaut (le poids,
   `DEFAULT_WEIGHT_KG`) ou celle de la région, puis le dernier choix de l'utilisateur quand il est réglable en marche — `APP-006`, `APP-008`, `APP-011`, `APP-012`, `APP-013`, `APP-014`
 - **Préférences en marche** : l'utilisateur règle pendant la marche, sur Quest, PC et tablette, sans la quitter, les
-  préférences retenues (qualité, piétons, circulation, lampadaires, arbres, brouillard, sons) ; chaque choix devient son
+  préférences retenues (qualité, ville vivante, lampadaires, arbres, brouillard, sons, côté et opacité du panneau) ; chaque choix devient son
   dernier choix, repris au départ de la marche suivante ; la première marche part des valeurs par défaut (qualité
-  Équilibré) — `APP-006`, `APP-011`, `APP-013`, `APP-014`
+  Équilibré) ; chaque changement s'applique à chaud, sans reconstruire la ville — `APP-006`, `APP-011`, `APP-013`, `APP-014`
 - La **sécurité-visibilité ne bouge pas** : aucun niveau ni retrait d'option n'affecte le passthrough, et le changement de
   qualité en marche ne cache jamais le réel — `APP-001`
 - Les e2e des chemins critiques sont **réécrits** pour le parcours réduit (sans Google ni parcours libre), pas supprimés — `QUA-011`
@@ -87,17 +87,15 @@ préférences (qualité, piétons, circulation…) se règlent **pendant la marc
 - 2026-11-05 : l'accueil ne garde que l'itinéraire et la vitesse.
 - 2026-11-05 : les préférences se règlent en marche et le dernier choix est gardé pour la marche suivante (qualité
   Équilibré la première fois) ; pas de réglage avancé caché.
+- 2026-11-05 : préférences réglables en marche : qualité, ville vivante (une seule, piétons et circulation ensemble),
+  lampadaires, arbres, brouillard, sons, côté et opacité du panneau ; fixes : matériaux locaux, poids, vignette.
+- 2026-11-05 : tout changement s'applique à chaud, sans reconstruire la ville.
+- 2026-11-05 : les anciens réglages mémorisés sont ignorés, sauf le profil.
 - 2026-11-05 : ce chantier passe avant la parité et l'inscription.
 
 ## 5. Points à trancher
 
-- [decision] Les anciens réglages mémorisés (matériaux, brouillard, sons…) sont-ils ignorés ? (proposé : oui ; seul le profil
-  mémorisé est repris.)
-- [decision] Quelles préférences sont réglables en marche (proposé : qualité, piétons, circulation, lampadaires, arbres,
-  brouillard, sons) ; matériaux locaux et poids restent fixes ?
-- [decision] Piétons et circulation : deux préférences séparées (aujourd'hui une seule case) ?
-- [decision] Un changement en marche reconstruit-il la ville ou ne règle-t-il que ce qui se règle à chaud ? (à chiffrer au
-  lot 3, sans coupure qui cache le réel.)
+*(aucun)*
 
 ## 6. Lots
 

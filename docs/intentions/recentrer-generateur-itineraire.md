@@ -15,8 +15,9 @@ pas opportun ; Google 3D doit disparaître faute de licence.
   autre intention.
 - **Accueil** : ne restent visibles que l'**itinéraire** et la **vitesse**. Tout le reste quitte l'accueil.
 - **Préférences en marche** (décision du 2026-11-05) : l'utilisateur règle ses préférences **pendant la marche** et elles sont
-  **gardées d'une marche à l'autre** : le dernier choix devient le départ de la marche suivante. Exemples : pas de piétons,
-  pas de circulation, qualité (Performance, Équilibré, Qualité), lampadaires, arbres, brouillard, sons. Première marche :
+  **gardées d'une marche à l'autre** : le dernier choix devient le départ de la marche suivante. Exemples : pas de ville vivante
+  (ni piétons ni circulation), qualité (Performance, Équilibré, Qualité), lampadaires, arbres, brouillard, sons, côté et
+  opacité du panneau. Première marche :
   valeurs par défaut (qualité **Équilibré**, le poids `DEFAULT_WEIGHT_KG`, le reste selon la région). Sur Quest, PC et
   tablette. Pas de réglage avancé caché : juger un profil en développement n'est pas nécessaire.
 - **Ordre** : ce recentrage passe **avant** la parité des plateformes et l'inscription des villes, car il change ce qu'elles
@@ -38,12 +39,14 @@ pas opportun ; Google 3D doit disparaître faute de licence.
 - Les e2e des chemins critiques (`docs/contracts.md`, ligne « chemins critiques ») citent Google et le parcours libre : ils
   sont à réécrire, pas à supprimer sans remplaçant.
 
+## Précisions du demandeur (2026-11-05)
+
+- **Préférences réglables en marche** : qualité, ville vivante, lampadaires, arbres, brouillard, sons, côté et opacité du
+  panneau. Restent fixes : matériaux locaux, poids (valeur par défaut), vignette.
+- **Ville vivante** : **une seule** préférence, qui couvre piétons et circulation (pas deux cases).
+- **Application** : **toujours à chaud** ; toute préférence retenue s'applique sans reconstruire la ville.
+- **Anciens réglages mémorisés** : ignorés ; on repart des valeurs par défaut, sauf le profil mis en mémoire.
+
 ## Questions à trancher
 
-- [decision] Les anciens réglages mémorisés (matériaux, brouillard, sons…) sont-ils simplement ignorés ? (proposé : oui ; seul
-  le profil mémorisé est repris comme dernier niveau de qualité.)
-- [decision] **Quelles préférences** sont réglables en marche (proposé : qualité, piétons, circulation, lampadaires, arbres,
-  brouillard, sons) et lesquelles restent fixes (matériaux locaux, poids) ?
-- [decision] Un changement **en marche** reconstruit-il la ville (coupure visible) ou ne règle-t-il que ce qui se règle à
-  chaud (affichage ou masquage, résolution, plafonds) ? À chiffrer par le chantier, sans rien qui cache le réel (`APP-001`).
-- [decision] **Piétons et circulation** : deux préférences séparées (aujourd'hui une seule case) ?
+Aucune.
