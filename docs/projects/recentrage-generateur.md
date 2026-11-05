@@ -20,9 +20,12 @@ files:
   - app/src/render/*
   - app/src/render/*.test.ts
   - app/src/main.ts
+  - app/src/main.test.ts
   - app/scripts/*.ts
   - app/e2e/*
   - app/package.json
+  - app/package-lock.json
+  - app/playwright.config.ts
   - app/AGENTS.md
   - README.md
   - docs/contracts.md
@@ -47,8 +50,10 @@ préférences (qualité, ville vivante…) se règlent **pendant la marche** et 
   `app/src/city/free-route.ts`, `app/src/route/geocoding.ts`, `app/src/route/routes-api.ts`, fournisseurs de trajets, e2e
   `itineraire-libre`), plus de clé ni de réseau à la marche ; la marche reste une boucle d'itinéraire — `APP-002`
 - **Accueil réduit** : seuls l'itinéraire et la vitesse sont visibles ; poids, matériaux, lampadaires, ville vivante, arbres,
-  brouillard, sons, côté et opacité du panneau, vignette n'y sont plus ; chacun prend sa valeur par défaut (le poids,
-  `DEFAULT_WEIGHT_KG`) ou celle de la région, puis le dernier choix de l'utilisateur quand il est réglable en marche — `APP-006`, `APP-008`, `APP-011`, `APP-012`, `APP-013`, `APP-014`
+  brouillard, sons, côté et opacité du panneau, vignette n'y sont plus ; les préférences réglables en marche reprennent
+  le dernier choix, sinon leur valeur initiale (qualité Équilibré). Les anciens réglages sont ignorés sauf le profil déjà
+  mémorisé. Matériaux locaux, poids et vignette ne sont pas exposés comme préférences ; aucune calorie personnalisée
+  calculée avec un poids supposé ne doit être présentée comme exacte — `APP-006`, `APP-008`, `APP-011`, `APP-012`, `APP-013`, `APP-014`
 - **Préférences en marche** : l'utilisateur règle pendant la marche, sur Quest, PC et tablette, sans la quitter, les
   préférences retenues (qualité, ville vivante, lampadaires, arbres, brouillard, sons, côté et opacité du panneau) ; chaque choix devient son
   dernier choix, repris au départ de la marche suivante ; la première marche part des valeurs par défaut (qualité
@@ -82,6 +87,9 @@ préférences (qualité, ville vivante…) se règlent **pendant la marche** et 
 
 ## 4. Décisions
 
+- 2026-11-05 : le demandeur autorise l'ajout au périmètre de `app/package-lock.json`, `app/playwright.config.ts` et
+  `app/src/main.test.ts`, nécessaires au retrait complet des dépendances, de la configuration e2e et des branchements.
+
 - 2026-11-05 : Google 3D est supprimé (code, tests, contrats).
 - 2026-11-05 : le parcours libre est supprimé pour l'instant.
 - 2026-11-05 : l'accueil ne garde que l'itinéraire et la vitesse.
@@ -111,6 +119,17 @@ préférences (qualité, ville vivante…) se règlent **pendant la marche** et 
 
 ## 7. Reprise
 
-- **Dernier état** (2026-11-05) : cadrage seul, aucun code écrit.
-- **Travail non commité** : cette fiche, l'intention, l'index.
-- **Prochaine étape** : trancher les deux points, puis lot 1 une fois le chantier lancé par le demandeur.
+- **Dernier état** (2026-11-05, Hand-off) : BUILD lu sur disque ; branche `chantier/recentrage-generateur` créée dans
+  le dossier du projet, sans worktree. Aucun code modifié. Skills écran et refactor chargés ; contrats et intentions lus.
+- **Preuve initiale** : `cd app && npm test -- src/ui/home.test.ts src/xr/experience.test.ts src/xr/experience-controls.test.ts src/xr/experience-pc.test.ts` :
+  `Test Files 4 passed (4)`, `Tests 65 passed (65)`.
+- **Blocage de périmètre** : le retrait complet demandé nécessite `app/package-lock.json` (dépendance
+  `3d-tiles-renderer`), `app/playwright.config.ts` (configuration et mentions Google/parcours libre), et potentiellement
+  `app/src/main.test.ts` (signature du point d'entrée). Ces trois fichiers ne sont pas couverts par le scope actuel ;
+  le contrôle du périmètre compare chaque commit à la fiche dans son parent. Aucun élargissement ni contournement
+  effectué ; aucun détour lancé, puisque le demandeur interdit de lancer un autre chantier.
+- **Travail non commité** : cette fiche uniquement (formulation des choix repris et présent Hand-off).
+- **Prochaine étape** : décision humaine, conservée par la session principale, sur l'ajout des fichiers directement
+  couplés au scope, dans un commit de cadrage distinct avant implémentation. Les décisions produit sont déjà prises ;
+  aucun nouveau point produit à trancher. Reprendre ensuite le lot 1 et les contrôles, sans `next`.
+- **Non vérifié** : contrôles complets, couverture, build, typecheck, e2e, `verify`, clôture, push et fusion. Aucune PR créée.
