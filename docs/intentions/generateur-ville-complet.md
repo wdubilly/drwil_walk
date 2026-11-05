@@ -82,6 +82,12 @@ Décidé le 2026-11-04 (le souk d'abord, puis la généralisation) et complété
   générateur doit encore savoir faire.
 - Une fiche de ville **se clôt avant** le jugement au casque, qui est reporté dans une intention.
 
+- **Où se génère (2026-11-05)** : la génération reste la **commande sur le PC de développement**, la promenade étant ensuite
+  livrée avec l'appli. Une génération **dans l'appli** (PC ou casque), sans passer par la commande, est acceptée **si elle
+  paraît réaliste** : à étudier plus tard, dans une intention à part (réseau à la marche, services tiers, durée de calcul sur
+  le casque, licence des données). Le retrait du parcours libre (`docs/intentions/recentrer-generateur-itineraire.md`)
+  n'engage pas ce choix.
+
 ## Questions à trancher
 
 *(aucune)*
