@@ -76,6 +76,10 @@ Décidé le 2026-11-04 (le souk d'abord, puis la généralisation) et complété
   boucles versionnées, remplacent celles-ci.
 - Une ville **complète** pour apparaître à l'accueil : la palette de repli est acceptée quand les photos manquent, et la
   ville vivante de la région `ailleurs` (défaut) est acceptée.
+- **Mise à niveau (2026-11-05)** : aucune mise en conformité à la main ; les quatre itinéraires sont tous régénérés par la
+  commande. Le souk, aujourd'hui la référence manuelle, est **régénéré tout de suite** (sans attendre le jugement au casque)
+  et **comparé à l'existant** : les écarts avec ses couleurs tirées des photos et sa ville vivante dictent ce que le
+  générateur doit encore savoir faire.
 - Une fiche de ville **se clôt avant** le jugement au casque, qui est reporté dans une intention.
 
 ## Questions à trancher
