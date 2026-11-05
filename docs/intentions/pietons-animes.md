@@ -1,6 +1,6 @@
 # Intention : des piétons à la marche animée
 
-**Statut** : proposée le 2026-11-05, à la clôture du chantier `docs/projects/ville-vivante-souk.md`.
+**Statut** : proposée le 2026-11-05, à la clôture du chantier ville-vivante-souk (entrée du `docs/projects/journal.md`).
 
 ## Besoin
 

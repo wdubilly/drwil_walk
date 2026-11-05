@@ -1,7 +1,7 @@
 # Intention : une ville vivante — circulation, piétons et lampadaires allumés, par un moteur générique
 
-**Statut** : proposée le 2026-11-04 ; cadrée le 2026-11-05 pour le souk (`docs/projects/ville-vivante-souk.md`).
-**Reviewed on 2026-11-05**: moteur livré au souk (`APP-014`, `docs/projects/ville-vivante-souk.md`) ; le catalogue des types et la table par région sont des données (`app/assets/figurants-catalogue.json`), sans type en dur. Restent vivants : le réglage de la région `inde` (valeurs provisoires), les rickshaws (un modèle CC0, une ligne de catalogue, un poids de région), l'extension aux autres itinéraires (la liste `itineraires` du catalogue, une fiche par ville) et aux villes créées par `npm run city`, le jugement au casque (`essai-casque-ville-vivante.md`) et les piétons animés (`pietons-animes.md`).
+**Statut** : proposée le 2026-11-04 ; cadrée le 2026-11-05 pour le souk (chantier ville-vivante-souk, clos ; entrée du `docs/projects/journal.md`).
+**Reviewed on 2026-11-05**: moteur livré au souk (`APP-014`, chantier ville-vivante-souk) ; le catalogue des types et la table par région sont des données (`app/assets/figurants-catalogue.json`), sans type en dur. Restent vivants : le réglage de la région `inde` (valeurs provisoires), les rickshaws (un modèle CC0, une ligne de catalogue, un poids de région), l'extension aux autres itinéraires (la liste `itineraires` du catalogue, une fiche par ville) et aux villes créées par `npm run city`, le jugement au casque (`essai-casque-ville-vivante.md`) et les piétons animés (`pietons-animes.md`).
 
 ## Besoin
 
@@ -68,7 +68,7 @@ premier lot, plafonds par profil.
 
 ## Questions à trancher
 
-Tranchées le 2026-11-05 pour le souk (détail dans `docs/projects/ville-vivante-souk.md`, section Décisions) : pack de
+Tranchées le 2026-11-05 pour le souk (chantier ville-vivante-souk : détail dans son entrée du `docs/projects/journal.md`) : pack de
 modèles gratuit, deux cases à l'accueil (lampadaires allumés cochée, circulation et piétons décochée), réextraction avec
 `lanes`, `oneway` et `sidewalk`, une fiche en trois lots. Reste ouverte, à juger au casque :
 

@@ -1,6 +1,6 @@
 # Intention : essayer la ville vivante du souk sur un vrai Quest 3
 
-**Statut** : proposée le 2026-11-05, à la clôture du chantier `docs/projects/ville-vivante-souk.md` (lot 4, humain).
+**Statut** : proposée le 2026-11-05, à la clôture du chantier ville-vivante-souk (lot 4, humain ; entrée du `docs/projects/journal.md`).
 
 ## Besoin
 

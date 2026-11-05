@@ -108,6 +108,8 @@ autres villes, chacune par sa fiche.
 
 ## 7. Reprise
 
-- **Dernier état** (2026-11-05) : cadrage seul, aucun code.
-- **Travail non commité** : la fiche.
-- **Prochaine étape** : lancer le chantier (`/drwil-start`), puis le lot 1.
+- **Dernier état** (2026-11-05) : lots 1 à 3 livrés sur `workstream/ville-vivante-souk`, PR #83 ; `GOVERNANCE: PASS` ;
+  clôture en cours.
+- **Travail non commité** : aucun.
+- **Prochaine étape** : CI verte et fusion automatique de la PR #83 ; le lot 4 (jugement au casque) est humain
+  (`docs/intentions/essai-casque-ville-vivante.md`, dans la séance `docs/intentions/seance-casque-parcours.md`).
