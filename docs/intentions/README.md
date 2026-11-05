@@ -52,6 +52,8 @@ removes it when fully covered.
 | `docs/intentions/tours-treillis-extrudees.md` | Les tours en treillis (`building=tower`) extrudées en blocs pleins : la tour Eiffel ferait un bloc de 330 m |
 | `docs/intentions/generateur-ville-complet.md` | [P1] Un générateur de ville complet : `npm run city` donne une ville prête, mis au point au Souq Waqif (fiche d'ensemble, ordre) |
 | `docs/intentions/ville-vivante.md` | [P1] Une ville vivante : circulation, piétons et lampadaires allumés, par un moteur générique testé au Souq Waqif |
+| `docs/intentions/essai-casque-ville-vivante.md` | Essayer la ville vivante du souk sur un vrai Quest 3 (densité, vitesses, sens des modèles, images par seconde) |
+| `docs/intentions/pietons-animes.md` | Des piétons à la marche animée, au lieu de glisser, si les budgets la tiennent |
 | `docs/intentions/rendu-eclairage-ambiance.md` | [P3] Éclairage, ombres, reflets, ambiance et sons (tension avec le réel visible, `APP-001`) |
 | `docs/intentions/rendu-sources-donnees.md` | [P3] Plusieurs sources géographiques (Overture, autres) : relevé de couverture fait le 2026-11-03, décision à prendre |
 | `docs/intentions/overture-emprises-manquantes.md` | Combler les emprises de bâtiments manquantes (empreintes d'apprentissage d'Overture) |

@@ -1,6 +1,9 @@
 // e2e de l'éclairage et de l'ambiance (QUA-020 chemin 25, APP-011, APP-001), dans Chromium avec un Meta Quest 3 émulé
 // (IWER) : brouillard et sons arrivent éteints, s'allument à l'accueil, le voile du casque reste plafonné à 15 %, il se
-// coupe d'un geste, et tête baissée la ville s'efface comme toujours, brouillard et sons actifs.
+// coupe d'un geste, et tête baissée la ville s'efface comme toujours, brouillard et sons actifs. La nuit, les lanternes des
+// lampadaires s'allument (case cochée par défaut), s'éteignent d'une case décochée, et s'effacent elles aussi tête baissée.
+// La ville vivante (APP-014) : décochée par défaut, la case « Circulation et piétons » pose véhicules et piétons au souk,
+// qui s'effacent eux aussi tête baissée.
 import { createRequire } from "node:module";
 import { expect, test, type Page } from "@playwright/test";
 
@@ -75,4 +78,64 @@ test("chemin 25 : le profil le plus léger refuse le brouillard, même coché à
   await page.getByLabel("Brouillard").check();
   await enter(page);
   await expect(page.locator("#app")).toHaveAttribute("data-ambiance", "brouillard éteint · sons 0 %");
+});
+
+const CAPTURES = "../dist/e2e-captures";
+
+test("chemin 25 : la nuit au souk, les lanternes s'allument, se photographient, et s'effacent avec la ville tête baissée", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => {
+    errors.push(e.message);
+  });
+  await page.clock.setFixedTime(new Date(2026, 10, 5, 22, 30));
+  await page.goto("/");
+  await expect(page.getByLabel("Lampadaires allumés la nuit")).toBeChecked();
+  await enter(page);
+  await expect(page.locator("#app")).toHaveAttribute("data-lanternes", "allumées");
+  await expect.poll(async () => Number(await panel(page).getAttribute("data-distance-m")), { timeout: 20_000 }).toBeGreaterThan(5);
+  await page.screenshot({ path: `${CAPTURES}/souk-nuit.png` });
+  await page.evaluate(() => {
+    (window as unknown as E2eWindow).quest.quaternion.set(Math.sin((-45 * Math.PI) / 360), 0, 0, Math.cos((-45 * Math.PI) / 360));
+  });
+  await expect(panel(page).locator("[data-field='opacity']")).toHaveText("0 %");
+  expect(errors).toEqual([]);
+});
+
+test("chemin 25 : de jour les lanternes sont éteintes, et la case décochée les retire la nuit", async ({ page }) => {
+  await page.clock.setFixedTime(new Date(2026, 10, 5, 12, 0));
+  await page.goto("/");
+  await enter(page);
+  await expect(page.locator("#app")).toHaveAttribute("data-lanternes", "éteintes");
+  await page.clock.setFixedTime(new Date(2026, 10, 5, 22, 30));
+  await page.reload();
+  await page.getByLabel("Lampadaires allumés la nuit").uncheck();
+  await enter(page);
+  await expect(page.locator("#app")).toHaveAttribute("data-lanternes", "absentes");
+});
+
+test("chemin 25 : la case « Circulation et piétons », décochée par défaut, pose véhicules et piétons au souk, effacés tête baissée", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => {
+    errors.push(e.message);
+  });
+  await page.clock.setFixedTime(new Date(2026, 10, 5, 16, 0));
+  await page.goto("/");
+  await expect(page.getByLabel("Circulation et piétons")).not.toBeChecked();
+  await page.getByLabel("Circulation et piétons").check();
+  await enter(page);
+  await expect(page.locator("#app")).toHaveAttribute("data-figurants", /^[1-9]\d* véhicules · [1-9]\d* piétons$/, { timeout: 20_000 });
+  await expect.poll(async () => Number(await panel(page).getAttribute("data-distance-m")), { timeout: 20_000 }).toBeGreaterThan(5);
+  await page.screenshot({ path: `${CAPTURES}/souk-circulation.png` });
+  await page.evaluate(() => {
+    (window as unknown as E2eWindow).quest.quaternion.set(Math.sin((-45 * Math.PI) / 360), 0, 0, Math.cos((-45 * Math.PI) / 360));
+  });
+  await expect(panel(page).locator("[data-field='opacity']")).toHaveText("0 %");
+  expect(errors).toEqual([]);
+});
+
+test("chemin 25 : sans cocher la case, la marche au souk n'a aucun figurant", async ({ page }) => {
+  await page.goto("/");
+  await enter(page);
+  await expect.poll(async () => Number(await panel(page).getAttribute("data-distance-m")), { timeout: 20_000 }).toBeGreaterThan(1);
+  await expect(page.locator("#app")).not.toHaveAttribute("data-figurants", /.*/);
 });

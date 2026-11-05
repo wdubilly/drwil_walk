@@ -410,3 +410,52 @@ One entry per closed project, most recent last.
 - Limites : jamais essayée contre les vrais services (`docs/intentions/essai-commande-creation-reseau.md`) ; une ville créée n'est pas inscrite dans l'application, et `app/AGENTS.md` et `README.md` citent encore `npm run extract*` (`docs/intentions/inscrire-une-ville-creee.md`) ; couleurs à juger au casque (`docs/intentions/seance-casque-parcours.md`).
 - Intention creation-itineraire-fiable résumée ici et retirée (couverte ; limites dans les deux nouvelles intentions).
 - Branche workstream/creation-itineraire. Preuve de clôture : docs/preuves/creation-itineraire.md (écrite par la clôture).
+
+## 2026-11-05 — ville-vivante-souk (lots 1 à 3)
+
+- Livré :
+  - **lot 1** : lanternes émissives et halo au sol la nuit, sans source de lumière (`APP-011`), avec la case « Lampadaires
+    allumés la nuit », cochée ;
+  - **lots 2 et 3** : la ville vivante du souk (nouveau contrat `APP-014`). Les figurants sont décrits en données
+    (`app/assets/figurants-catalogue.json`) :
+    - un catalogue de types : modèles, lieu, vitesse, gabarit ;
+    - les classes de voie de chaque lieu ;
+    - une table par région : `golfe` réglé, `inde` provisoire, `ailleurs` par défaut.
+  - **Moteur** : il ne connaît aucun type en dur. Il est pur, et sa graine vient de l'identifiant OSM. Les véhicules roulent
+    dans le sens `oneway`, du côté de conduite de la région, sur autant de files que `lanes` ; les piétons marchent sur
+    `sidewalk` et les voies piétonnes. Aucun tronçon ne passe dans un bâtiment.
+  - **Sécurité et rendu** : retrait à moins de 10 m de l'utilisateur, plafonds par profil (8/16, 20/40, 30/60), un
+    maillage instancié par modèle. La case « Circulation et piétons » est décochée par défaut.
+- Données :
+  - **extraction commune** : elle lit `oneway` et `lanes` (`sidewalk` était déjà lu). Le souk a été réextrait d'Overpass
+    le 2026-11-05, avec bâtiments, mobilier et boucle inchangés (`APP-002`, `APP-003`) ;
+  - **trajets au souk** : 494, dont 359 sur la chaussée et 135 sur des voies piétonnes. Aucun `sidewalk` n'est balisé au
+    souk, donc le type « pieton » n'y paraît pas, seul le « flaneur » y figure.
+- Décisions du demandeur pendant le chantier (2026-11-05) :
+  - les balises de voie passent dans l'extraction commune, pas dans un traitement propre au souk ;
+  - les figurants sont décrits par un catalogue de types et une table par région ;
+  - les packs CC0 sont cherchés par l'agent : Kenney « Car Kit » 3.1 et « Mini Characters » 1.0 (licences copiées), et une
+    moto d'AliceCassie (Poly Pizza, CC0 relevé sur sa page) ;
+  - empreintes, tailles et préparation sont dans `app/assets/PROVENANCE.md`.
+- Mesures relevées par le test `app/src/city/traffic-budget.test.ts`, sur la scène du souk entière :
+  - en qualité, de 15 à 27 appels de rendu et de 90 865 à 203 618 triangles ;
+  - en performance, de 8 à 18 appels et de 45 908 à 75 774 triangles ;
+  - les budgets (150 appels, 500 000 triangles) sont tenus. Images par seconde non mesurées.
+- Écarts au cadrage :
+  - les piétons glissent, figés dans la première image de leur animation `idle` (un appel par modèle) ;
+  - l'import dynamique du JSON des modèles passe par un module (`app/src/city/traffic-models.ts`), car Vite et Node
+    n'acceptent pas le même import dynamique d'un JSON.
+- Limites :
+  - le jugement au casque (lot 4, humain) : densité, vitesses, sens et taille des modèles, images par seconde
+    (`docs/intentions/essai-casque-ville-vivante.md`, ajoutée à `docs/intentions/seance-casque-parcours.md`) ;
+  - l'avant de la moto et des voitures (supposé +Z) n'est pas lisible sur la capture e2e ;
+  - les piétons ne sont pas animés (`docs/intentions/pietons-animes.md`) ;
+  - restent dans `docs/intentions/ville-vivante.md` : le réglage `inde`, les rickshaws, les autres villes et les villes
+    créées ;
+  - l'e2e a été rejoué ici avec des bibliothèques système extraites (`LD_LIBRARY_PATH`), dans un espace réseau isolé, car
+    le port 5174 était occupé.
+- Remarque hors périmètre, non corrigée : `AGENTS.md` dit « Pune Vieille ville par défaut », alors que l'itinéraire par
+  défaut du code est le Souq Waqif (`DEFAULT_ITINERARY_ID`).
+- Périmètre de la fiche de référence `docs/projects/socle-app.md` élargi aux quatre fichiers de données des figurants (`app/assets/`), comme à la clôture d'arbres-pack-quaternius.
+- Branche `workstream/ville-vivante-souk`, PR #83. Preuve de clôture : `docs/preuves/ville-vivante-souk.md` (écrite par la
+  clôture).

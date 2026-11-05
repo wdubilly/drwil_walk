@@ -10,7 +10,7 @@ import {
   toGeoJsonText,
   type OverpassResponse,
 } from "../../scripts/extract-souq.ts";
-import { areaKind, buildingKind, buildingLevels, footwayKind, roofShape, sidewalkSides } from "../../scripts/osm-tags.ts";
+import { areaKind, buildingKind, buildingLevels, footwayKind, lanesOf, onewayOf, roofShape, sidewalkSides } from "../../scripts/osm-tags.ts";
 
 const ring = [
   { lat: 25.287, lon: 51.5331234567 },
@@ -44,7 +44,7 @@ const richOsm: OverpassResponse = {
     { type: "way", id: 23, tags: { barrier: "hedge" }, geometry: ring.slice(0, 2) },
     { type: "way", id: 24, tags: { barrier: "hedge" }, geometry: ring.slice(0, 1) },
     { type: "way", id: 25, tags: { landuse: "residential" }, geometry: ring },
-    { type: "way", id: 26, tags: { highway: "residential", name: "Rue du Souk", sidewalk: "yes" }, geometry: ring.slice(0, 2) },
+    { type: "way", id: 26, tags: { highway: "residential", name: "Rue du Souk", sidewalk: "yes", oneway: "-1", lanes: "2" }, geometry: ring.slice(0, 2) },
     { type: "way", id: 27, tags: { highway: "footway", footway: "crossing" }, geometry: ring.slice(0, 2) },
     { type: "way", id: 28, tags: { building: "yes", "roof:shape": "hipped" }, geometry: ring },
     { type: "way", id: 29, tags: { building: "yes", "roof:shape": "dome" }, geometry: ring },
@@ -52,14 +52,14 @@ const richOsm: OverpassResponse = {
 };
 
 describe("extraction du souk depuis OpenStreetMap", () => {
-  it("APP-003: garde les balises de sol, de haie, de nom, de trottoir, de passage piéton et de toit", () => {
+  it("APP-003 APP-014: garde les balises de sol, de haie, de nom, de trottoir, de passage piéton, de sens unique, de voies et de toit", () => {
     const features = JSON.parse(toGeoJsonText(richOsm)) as { features: { id: number; properties: object }[] };
     // Le jardin sans anneau, la haie d'un point et l'occupation du sol sans rapport sont écartés.
     expect(features.features.map((f) => f.id)).toEqual([21, 23, 26, 27, 28, 29]);
     expect(features.features.map((f) => f.properties)).toEqual([
       { kind: "area", area: "park" },
       { kind: "hedge" },
-      { kind: "highway", highway: "residential", name: "Rue du Souk", sidewalk: "both" },
+      { kind: "highway", highway: "residential", name: "Rue du Souk", sidewalk: "both", oneway: "backward", lanes: 2 },
       { kind: "highway", highway: "footway", footway: "crossing" },
       { kind: "building", heightM: 7, building: "yes", roofShape: "gabled" },
       { kind: "building", heightM: 7, building: "yes" },
@@ -164,11 +164,13 @@ describe("APP-003: familles de balises du rendu riche", () => {
     expect(kinds).toEqual(["park", "park", "garden", "garden", "wood", "wood", "grass", "grass", undefined]);
   });
 
-  it("APP-003: lit trottoirs et passages piétons, et refuse le reste", () => {
+  it("APP-003 APP-014: lit trottoirs, passages piétons, sens unique et nombre de voies, et refuse le reste", () => {
     expect(["both", "yes", "left", "right", "no", undefined].map((sidewalk) => sidewalkSides(sidewalk ? { sidewalk } : {}))).toEqual(["both", "both", "left", "right", undefined, undefined]);
     expect(footwayKind({ footway: "sidewalk" })).toBe("sidewalk");
     expect(footwayKind({ highway: "crossing" })).toBe("crossing");
     expect(footwayKind({ footway: "path" })).toBeUndefined();
+    expect(["yes", "1", "true", "-1", "no", "reversible", undefined].map((oneway) => onewayOf(oneway ? { oneway } : {}))).toEqual(["forward", "forward", "forward", "backward", undefined, undefined, undefined]);
+    expect(["2", "1", "8", "0", "9", "1.5", "deux", undefined].map((lanes) => lanesOf(lanes ? { lanes } : {}))).toEqual([2, 1, 8, undefined, undefined, undefined, undefined, undefined]);
     expect(roofShape({ "roof:shape": "gabled" })).toBe("gabled");
     expect(roofShape({})).toBeUndefined();
   });

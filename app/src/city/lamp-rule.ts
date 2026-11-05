@@ -69,18 +69,18 @@ function candidates(road: Road, spacing: number): Candidate[] {
 }
 
 /** Un bâtiment et son rectangle englobant, calculé une fois : l'essentiel du coût est d'écarter les bâtiments éloignés. */
-interface Footprint {
+export interface Footprint {
   ring: readonly Vec2[];
   box: [number, number, number, number];
 }
-const footprintOf = ({ footprint }: Building): Footprint => {
+export const footprintOf = ({ footprint }: Building): Footprint => {
   const xs = footprint.map((q) => q.x);
   const zs = footprint.map((q) => q.z);
   return { ring: footprint, box: [Math.min(...xs), Math.min(...zs), Math.max(...xs), Math.max(...zs)] };
 };
 
 /** Vrai si le point est dans l'emprise d'un bâtiment ou à moins de `r` mètres de l'un de ses murs. */
-function nearBuilding(p: Vec2, buildings: readonly Footprint[], r: number): boolean {
+export function nearBuilding(p: Vec2, buildings: readonly Footprint[], r: number): boolean {
   return buildings.some(({ ring, box: [x0, z0, x1, z1] }) => {
     if (p.x < x0 - r || p.x > x1 + r || p.z < z0 - r || p.z > z1 + r) return false;
     let inside = false;

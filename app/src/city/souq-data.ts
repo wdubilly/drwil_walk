@@ -51,6 +51,10 @@ export interface Road {
   sidewalk?: "both" | "left" | "right";
   /** Un cheminement piéton tracé à part : trottoir ou passage piéton (`footway`). */
   footway?: "sidewalk" | "crossing";
+  /** Sens unique (`oneway`) : dans le sens du tracé, ou à rebours ; absent : double sens (APP-014). */
+  oneway?: "forward" | "backward";
+  /** Nombre de voies (`lanes`) ; absent : une par sens. */
+  lanes?: number;
 }
 
 /** Une surface verte (herbe, parc, jardin, bois) : son contour fermé, en mètres locaux. */
@@ -92,6 +96,8 @@ interface FeatureFile {
       name?: string;
       sidewalk?: string;
       footway?: string;
+      oneway?: string;
+      lanes?: number;
       area?: string;
     };
     geometry: { coordinates: unknown };
@@ -134,6 +140,8 @@ export function loadSouq(extract: FeatureFile, loop: LoopFile, palette: Palette)
       ...(f.properties.name ? { name: f.properties.name } : {}),
       ...(f.properties.sidewalk ? { sidewalk: f.properties.sidewalk as NonNullable<Road["sidewalk"]> } : {}),
       ...(f.properties.footway ? { footway: f.properties.footway as NonNullable<Road["footway"]> } : {}),
+      ...(f.properties.oneway ? { oneway: f.properties.oneway as NonNullable<Road["oneway"]> } : {}),
+      ...(f.properties.lanes ? { lanes: f.properties.lanes } : {}),
     }));
   const areas = extract.features
     .filter((f) => f.properties.kind === "area")

@@ -1,0 +1,43 @@
+{
+  "itineraires": ["doha-souq-waqif"],
+  "lieux": {
+    "chaussee": ["primary", "primary_link", "secondary", "secondary_link", "tertiary", "tertiary_link", "unclassified", "residential", "living_street", "service"],
+    "voie-pietonne": ["pedestrian", "footway"]
+  },
+  "types": {
+    "berline": { "modeles": ["sedan"], "lieu": "chaussee", "vitesseKmh": 18, "gabarit": { "longueurM": 4.6, "largeurM": 1.8, "hauteurM": 1.45 } },
+    "taxi": { "modeles": ["taxi"], "lieu": "chaussee", "vitesseKmh": 18, "gabarit": { "longueurM": 4.7, "largeurM": 1.8, "hauteurM": 1.55 } },
+    "4x4": { "modeles": ["suv"], "lieu": "chaussee", "vitesseKmh": 18, "gabarit": { "longueurM": 4.9, "largeurM": 1.95, "hauteurM": 1.8 } },
+    "utilitaire": { "modeles": ["van", "delivery"], "lieu": "chaussee", "vitesseKmh": 15, "gabarit": { "longueurM": 5.2, "largeurM": 2, "hauteurM": 2.2 } },
+    "deux-roues": { "modeles": ["motorcycle"], "lieu": "chaussee", "vitesseKmh": 20, "gabarit": { "longueurM": 2, "largeurM": 0.8, "hauteurM": 1.2 } },
+    "pieton": {
+      "modeles": ["character-female-a", "character-female-b", "character-female-d", "character-male-a", "character-male-c", "character-male-e"],
+      "lieu": "trottoir",
+      "vitesseKmh": 4.5,
+      "gabarit": { "longueurM": 0.5, "largeurM": 0.55, "hauteurM": 1.7 }
+    },
+    "flaneur": {
+      "modeles": ["character-female-a", "character-female-b", "character-female-d", "character-male-a", "character-male-c", "character-male-e"],
+      "lieu": "voie-pietonne",
+      "vitesseKmh": 3.5,
+      "gabarit": { "longueurM": 0.5, "largeurM": 0.55, "hauteurM": 1.7 }
+    }
+  },
+  "regions": {
+    "golfe": {
+      "conduite": "droite",
+      "densites": { "chaussee": 1.2, "trottoir": 1.5, "voie-pietonne": 2.5 },
+      "poids": { "berline": 4, "4x4": 4, "taxi": 2, "utilitaire": 1, "deux-roues": 1, "pieton": 1, "flaneur": 1 }
+    },
+    "inde": {
+      "conduite": "gauche",
+      "densites": { "chaussee": 2, "trottoir": 2, "voie-pietonne": 3 },
+      "poids": { "berline": 2, "taxi": 1, "utilitaire": 1, "deux-roues": 6, "pieton": 1, "flaneur": 1 }
+    },
+    "ailleurs": {
+      "conduite": "droite",
+      "densites": { "chaussee": 1, "trottoir": 1, "voie-pietonne": 2 },
+      "poids": { "berline": 4, "4x4": 1, "taxi": 1, "utilitaire": 1, "deux-roues": 1, "pieton": 1, "flaneur": 1 }
+    }
+  }
+}

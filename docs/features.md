@@ -204,6 +204,47 @@ Deux réglages facultatifs s'ajoutent à l'accueil, tous deux éteints à chaque
   audio n'est ouvert ; au plus fort, le gain reste à 0,2, de quoi entendre le tapis, la pièce et une personne qui parle.
   Quitter la marche coupe le son.
 
+**Lampadaires allumés la nuit** (chantier ville-vivante-souk, lot 1, APP-011) : quand le soleil est sous l'horizon (avant 6 h,
+après 18 h), les lanternes de tous les lampadaires dessinés, relevés comme produits par règle, brillent et posent un halo chaud
+au sol ; le jour, elles sont éteintes. L'état est lu une fois à l'entrée dans la marche et inscrit sur la page
+(`data-lanternes` : « allumées », « éteintes » ou « absentes »). Aucune source de lumière par mât : deux maillages instanciés
+de plus (lanternes et halos, environ 12 + 20 triangles par mât, calculé et non mesuré). Le halo éclaircit le sol sans jamais
+toucher à l'alpha de l'image : il ne masque rien du passthrough ; lanternes et halos s'effacent tête baissée et sont découpés
+dans la zone tapis (APP-001). La case **Lampadaires allumés la nuit** (cochée, jamais gardée) les retire quand on la décoche.
+Non jugé au casque : `docs/intentions/seance-casque-parcours.md`.
+
+**Circulation et piétons** (chantier ville-vivante-souk, lots 2 et 3, APP-014) : la case **Circulation et piétons**, à l'accueil,
+est décochée par défaut et n'est jamais gardée. Cochée, elle peuple de figurants les itinéraires listés par le catalogue,
+aujourd'hui le seul Souq Waqif. Sur les autres itinéraires, la case est sans effet.
+
+- **Où ils circulent** : les véhicules (berlines, taxis, 4x4, utilitaires, deux-roues) roulent sur les voies carrossables,
+  dans le sens de la voie (`oneway` lu de l'extrait) et du côté de la conduite de la région, sur autant de files que la
+  balise `lanes`. Les piétons marchent sur les trottoirs (`sidewalk`) et les voies piétonnes. Les tronçons qui frôlent un
+  bâtiment sont retirés : aucun figurant n'y entre.
+- **Moteur** : il est pur et reproductible. La graine vient de l'identifiant OSM de la voie. Le moteur ne connaît aucun
+  type en dur. Il lit deux tables dans `app/assets/figurants-catalogue.json` :
+  - le **catalogue des types** : modèles, lieu de circulation, vitesse, gabarit ;
+  - la **table par région** : côté de conduite, densités par lieu, poids des types. `golfe` y est réglé, `inde` a des
+    valeurs provisoires, `ailleurs` sert par défaut.
+- **Vitesses** : plafonnées à 30 km/h pour un véhicule et 6 km/h pour un piéton, quelle que soit la donnée.
+- **Plafonds par profil** (véhicules / piétons) : 8 / 16 en performance, 20 / 40 en équilibré, 30 / 60 en qualité. Les
+  figurants gardés sont les plus proches du parcours.
+- **Sécurité** : un figurant à moins de 10 m de l'utilisateur est retiré de l'image, avec un fondu sur 4 m. Il ne passe
+  donc jamais devant lui et n'entre pas dans la zone tapis. Les figurants s'effacent tête baissée et sont découpés dans la
+  zone tapis comme le reste de la ville (APP-001).
+- **Rendu** : un maillage instancié par modèle, soit 12 modèles au plus. Les piétons glissent, sans marche animée.
+- **Coût mesuré** (scène du souk entière, test `app/src/city/traffic-budget.test.ts`) :
+  - en qualité, de 15 appels et 90 865 triangles à 27 appels et 203 618 triangles ;
+  - en performance, de 8 appels et 45 908 triangles à 18 appels et 75 774 triangles ;
+  - dans les budgets de 150 appels et 500 000 triangles.
+- **Relevé sur la page** (`data-figurants`) : « N véhicules · M piétons », « aucun : itinéraire hors du catalogue », ou
+  « refusés : <raison> » si les modèles ne se chargent pas.
+
+Les modèles viennent de packs CC0 (Kenney « Car Kit » et « Mini Characters », une moto de Poly Pizza). Leur provenance est
+dans `app/assets/PROVENANCE.md`.
+
+Non jugé au casque (densité, vitesses, gabarits et orientation des modèles) : `docs/intentions/seance-casque-parcours.md`.
+
 Au casque, aucun ciel ni fond n'est posé : le fond est le passthrough, donc le réel. Sur la version PC, le ciel suit l'heure.
 Ce qui est appliqué est inscrit sur la page (`data-ambiance`, par exemple « brouillard 15 % · sons 20 % »). Limites : jamais
 essayé sur un vrai Quest 3 (`docs/intentions/essai-casque-eclairage-ambiance.md`) ; les sons sont un murmure produit par code,

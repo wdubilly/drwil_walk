@@ -5,6 +5,10 @@
 
 <!-- scope
 files:
+  - app/assets/figurants-catalogue.json
+  - app/assets/figurants.json
+  - app/assets/kenney-car-kit-licence.txt
+  - app/assets/kenney-mini-characters-licence.txt
   - app/assets/quaternius-licence.txt
   - app/assets/quaternius-trees.json
   - app/assets/materials/doha-souq-waqif.json
