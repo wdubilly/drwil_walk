@@ -66,3 +66,49 @@ Les couleurs de chaque bibliothèque viennent de photos de rue (Panoramax, Mapil
 défaut, de la palette de la région (`APP-008`) : la bibliothèque porte, pour chaque couleur, sa provenance (photo, distance au
 tracé, auteur, licence, lien). Les photos ne sont jamais embarquées ; l'inventaire `<itinéraire>-photos.json` n'en garde que
 les liens, auteurs et licences. Panoramax publie ses photos sous licence ouverte indiquée par photo ; Mapillary sous CC BY-SA 4.0.
+
+# Provenance des figurants : véhicules et piétons (`figurants.json`)
+
+Ces modèles servent à la ville vivante (`APP-014`, chantier ville-vivante-souk). Ils viennent de trois sources gratuites
+sous licence CC0 1.0 (domaine public). La mention n'est pas obligatoire ; elle est écrite pour qu'on retrouve l'origine.
+Les fichiers ont été téléchargés le 2026-11-05 par l'agent du chantier, sans vérification anti-robot, et sont restés
+hors du dépôt.
+
+| Source | Page | Fichier, taille, empreinte sha256 | Licence |
+|---|---|---|---|
+| « Car Kit » 3.1, par Kenney | https://kenney.nl/assets/car-kit | `kenney_car-kit.zip`, 4 814 237 o, `fac7dacac5c7874348cf19729af3ef205f3d366493edaf0a827d93f4fdf3d0c4` | CC0 : le `License.txt` de l'archive est copié dans `kenney-car-kit-licence.txt` |
+| « Mini Characters » 1.0, par Kenney | https://kenney.nl/assets/mini-characters | `kenney_mini-characters.zip`, 2 403 059 o, `9e1d48e6d7b8479ebbe84df71eb5bd8e1b3f0da546dea641890dccc8a02d0999` | CC0 : le `License.txt` de l'archive est copié dans `kenney-mini-characters-licence.txt` |
+| « Cartoony Purple Motorcycle », par AliceCassie | https://poly.pizza/m/j20srJUjpB | `polypizza_cartoony-purple-motorcycle.glb` (servi par https://static.poly.pizza/3ff04d85-dfe6-487c-b01d-5ce92103cf30.glb), 91 144 o, `86219f3bd3c14d50f822def3ce080db11b3d0f45123db5f3b9ace4d7b44a8124` | « Licence: CC0 1.0 » sur la page du modèle (relevée le 2026-11-05) ; le modèle est un `.glb` seul, livré sans fichier de licence |
+
+## Modèles retenus
+
+Le catalogue `figurants-catalogue.json` désigne chaque modèle par son nom. Pour chacun, le nombre de triangles après
+préparation (plafond de 3 000, testé) :
+
+- Car Kit : `sedan` (2 032), `taxi` (2 072), `suv` (2 474), `van` (2 082), `delivery` (2 476).
+- Mini Characters : `character-female-a` (876), `-female-b` (742), `-female-d` (797), `character-male-a` (723),
+  `-male-c` (793), `-male-e` (710).
+- La moto : `motorcycle` (1 500).
+
+Écartés : les autres modèles du Car Kit (véhicules de secours, camions, tracteurs, karts, voitures de course ou de
+sport, roues, débris, cônes), qui ne relèvent pas d'une rue ordinaire ou ne sont pas des véhicules ; les six autres
+personnages (`female-c`, `-e`, `-f`, `male-b`, `-d`, `-f`) et les accessoires (cannes, fauteuils roulants) du pack Mini
+Characters, pour rester sous le plafond de 16 modèles.
+
+## Ce qui a été changé (script `app/scripts/prepare-traffic-pack.ts`)
+
+Le script lit les archives et le `.glb` en mémoire, comme des données non fiables : rien n'y est exécuté, aucun appel
+réseau n'est fait. Il produit `figurants.json` (environ 430 Ko) :
+
+- **couleurs** : la texture de chaque modèle est remplacée par une couleur par sommet (la texture lue au point du
+  sommet, multipliée par la couleur du matériau), regroupée en une palette par modèle ;
+- **sommets** : les sommets identiques sont fusionnés ;
+- **position** : chaque modèle est posé au sol et centré ;
+- **personnages** : ils sont posés dans la première image de leur animation `idle`, puis figés, sans squelette. Ils
+  glissent donc sans marche animée : cela coûte un seul appel de rendu par modèle.
+
+La taille réelle vient du gabarit du catalogue. La hauteur est exacte ; la longueur et la largeur sont étirées d'un
+facteur 1,6 au plus.
+
+Relancer (depuis `app/`, les trois fichiers étant réunis dans un dossier hors du dépôt) :
+`node --experimental-strip-types -e "import('./scripts/prepare-traffic-pack.ts').then(m=>m.prepareFiles(process.argv[1],'assets'))" "<dossier des packs>"`.

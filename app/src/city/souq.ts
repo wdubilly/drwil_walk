@@ -36,11 +36,16 @@ import { buildWalkways } from "./walkways.ts";
 import type { Souq } from "./souq-data.ts";
 import { buildingMaterial, toonMaterial } from "./toon.ts";
 import type { TreePack } from "./tree-pack.ts";
+import { trafficOn } from "../ui/traffic-choice.ts";
+import { buildTraffic } from "./traffic.ts";
+import { bundledCatalogue, loadBundledModels } from "./traffic-assets.ts";
+import { MAX_TRAFFIC_MODELS } from "./traffic-pack.ts";
+import { DEFAULT_CAPS } from "./traffic-rule.ts";
 
 const GROUND_SIZE_M = 3000;
 
-/** Budget de maillages de la ville en OpenStreetMap, sans le pack d'arbres : sol, verdure, voies, bâtiments, arbres, mobilier, lanternes et halos, contours, noms des rues, matériaux locaux. */
-export const MAX_CITY_MESHES = 10 + MAX_STREET_NAMES + MAX_LOCAL_MATERIALS;
+/** Budget de maillages de la ville en OpenStreetMap, sans le pack d'arbres : sol, verdure, voies, bâtiments, arbres, mobilier, lanternes et halos, contours, noms des rues, matériaux locaux, figurants. */
+export const MAX_CITY_MESHES = 10 + MAX_STREET_NAMES + MAX_LOCAL_MATERIALS + MAX_TRAFFIC_MODELS;
 
 /** Le trait des contours : un bleu nuit presque noir, lisible sur toutes les teintes de bâtiments. */
 const OUTLINE_COLOR = 0x1b1b2f;
@@ -67,6 +72,13 @@ export interface SceneOptions {
   markings?: boolean;
   /** Les matériaux locaux du quartier, choisis à l'accueil : posés sur les façades détaillées seulement (prototype du souk). */
   materials?: LocalMaterials | undefined;
+  /** Les figurants de la ville vivante : absent, la case de l'accueil décide, et sans accueil il n'y en a aucun (APP-014). */
+  traffic?: boolean;
+  /** Leurs plafonds, réglés par le profil graphique (APP-006). */
+  maxVehicles?: number;
+  maxPedestrians?: number;
+  /** Les modèles des figurants : ceux du dépôt par défaut, une doublure dans les tests. */
+  trafficModels?: () => Promise<unknown>;
 }
 
 export interface SouqScene {
@@ -82,6 +94,8 @@ export interface SouqScene {
   buildingCount: number;
   /** Combien d'objets du mobilier viennent d'OpenStreetMap, combien sont produits par règle (APP-013, APP-003). */
   furnitureSources: Sources;
+  /** Résolue une fois les figurants posés ou refusés ; aussitôt s'il n'y en a pas (APP-014). */
+  trafficReady: Promise<void>;
 }
 
 /** La scène : pas de fond (le passthrough le remplace), une lumière douce, le souk. */
@@ -116,6 +130,9 @@ export function createSouqScene(doc: Document, souq: Souq, options: SceneOptions
     outlines.name = "contours";
     osm.add(outlines);
   }
+  const caps = { vehicles: options.maxVehicles ?? DEFAULT_CAPS.vehicles, pedestrians: options.maxPedestrians ?? DEFAULT_CAPS.pedestrians };
+  const traffic = (options.traffic ?? trafficOn(doc)) ? buildTraffic(doc, souq, { caps, catalogue: bundledCatalogue, loadModels: options.trafficModels ?? loadBundledModels }) : undefined;
+  if (traffic) osm.add(traffic.group);
   city.add(osm);
   const label = createAttributionLabel(doc);
   const world = new Group();
@@ -128,7 +145,7 @@ export function createSouqScene(doc: Document, souq: Souq, options: SceneOptions
   sun.position.set(0.4, 1, 0.3);
   scene.add(sun);
   scene.add(world);
-  return { scene, camera: new PerspectiveCamera(70, 1, 0.1, 1000), world, city, osm, label, buildingCount: souq.buildings.length, furnitureSources: sources };
+  return { scene, camera: new PerspectiveCamera(70, 1, 0.1, 1000), world, city, osm, label, buildingCount: souq.buildings.length, furnitureSources: sources, trafficReady: traffic?.ready ?? Promise.resolve() };
 }
 
 /**

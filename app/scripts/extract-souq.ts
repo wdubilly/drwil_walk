@@ -1,7 +1,7 @@
 // Extraction du quartier de Souq Waqif (et, via `extract`, de tout autre quartier : voir cities.ts) depuis OpenStreetMap (Overpass) : bâtiments et voies, en GeoJSON.
 // Relançable : `npm run extract` réécrit data/souq-waqif.json. Le casque, lui, ne fait aucun appel réseau :
 // il ne lit que ce fichier versionné. Données © contributeurs OpenStreetMap, licence ODbL.
-import { LAND_WAYS, areaKind, buildingKind, buildingLevels, buildingLook, footwayKind, propKind, roofShape, sidewalkSides, type AreaKind, type Sidewalk } from "./osm-tags.ts";
+import { LAND_WAYS, areaKind, buildingKind, buildingLevels, buildingLook, footwayKind, lanesOf, onewayOf, propKind, roofShape, sidewalkSides, type AreaKind, type Sidewalk } from "./osm-tags.ts";
 
 export const BBOX = { south: 25.284, west: 51.529, north: 25.29, east: 51.538 };
 export const OVERPASS_URL = "https://overpass-api.de/api/interpreter";
@@ -29,7 +29,7 @@ export interface ExtractFeature {
   id: number;
   properties:
     | { kind: "building"; heightM: number; building?: string; levels?: number; colour?: string; roofColour?: string; material?: string; roofShape?: "gabled" }
-    | { kind: "highway"; highway: string; name?: string; sidewalk?: Sidewalk; footway?: "sidewalk" | "crossing" }
+    | { kind: "highway"; highway: string; name?: string; sidewalk?: Sidewalk; footway?: "sidewalk" | "crossing"; oneway?: "forward" | "backward"; lanes?: number }
     | { kind: "area"; area: AreaKind }
     | { kind: "hedge" }
     | { kind: "tree" | "lamp" | "bench" | "bin" | "sign" };
@@ -97,6 +97,8 @@ function feature(way: OverpassWay): ExtractFeature | undefined {
   if (line.length < 2) return undefined;
   const sidewalk = sidewalkSides(tags);
   const footway = footwayKind(tags);
+  const oneway = onewayOf(tags);
+  const lanes = lanesOf(tags);
   return {
     type: "Feature",
     id: way.id,
@@ -106,6 +108,8 @@ function feature(way: OverpassWay): ExtractFeature | undefined {
       ...(tags["name"] ? { name: tags["name"] } : {}),
       ...(sidewalk ? { sidewalk } : {}),
       ...(footway ? { footway } : {}),
+      ...(oneway ? { oneway } : {}),
+      ...(lanes ? { lanes } : {}),
     },
     geometry: { type: "LineString", coordinates: line },
   };

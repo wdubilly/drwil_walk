@@ -13,7 +13,7 @@ describe("profils graphiques", () => {
 
   it("APP-006: chaque profil règle les mêmes réglages de rendu, dans les plafonds des données", () => {
     for (const { settings } of PROFILES) {
-      expect(Object.keys(settings).sort()).toEqual(["facades", "fog", "markings", "maxFurniture", "maxGeneratedLamps", "maxTrees", "outlines", "pixelRatio", "richCity", "xrScale"]);
+      expect(Object.keys(settings).sort()).toEqual(["facades", "fog", "markings", "maxFurniture", "maxGeneratedLamps", "maxPedestrians", "maxTrees", "maxVehicles", "outlines", "pixelRatio", "richCity", "xrScale"]);
       expect(settings.maxTrees).toBeLessThanOrEqual(MAX_TREES);
       expect(settings.maxFurniture).toBeLessThanOrEqual(MAX_FURNITURE);
       expect(settings.maxGeneratedLamps).toBeLessThanOrEqual(MAX_GENERATED_LAMPS);
@@ -37,6 +37,11 @@ describe("profils graphiques", () => {
     expect(sceneOptionsOf(settingsOf("performance"))).toMatchObject({ maxFurniture: 120, maxGeneratedLamps: 100 });
   });
 
+  it("APP-006 APP-014: les figurants ont leur plafond par profil, véhicules et piétons, le plus bas en performance", () => {
+    expect(PROFILES.map((p) => [p.settings.maxVehicles, p.settings.maxPedestrians])).toEqual([[8, 16], [20, 40], [30, 60]]);
+    expect(sceneOptionsOf(settingsOf("performance"))).toMatchObject({ maxVehicles: 8, maxPedestrians: 16 });
+  });
+
   it("APP-006: un identifiant inconnu retombe sur le réglage équilibré", () => {
     expect(settingsOf("n'importe quoi")).toBe(settingsOf("equilibre"));
   });
@@ -45,7 +50,7 @@ describe("profils graphiques", () => {
     for (const { settings } of PROFILES) {
       expect(Object.keys(settings).filter((key) => /opacit|vignette|zone|fondu|visib/i.test(key))).toEqual([]);
     }
-    expect(Object.keys(sceneOptionsOf(settingsOf("qualite"))).sort()).toEqual(["facades", "markings", "maxFurniture", "maxGeneratedLamps", "maxTrees", "outlines", "richCity"]);
+    expect(Object.keys(sceneOptionsOf(settingsOf("qualite"))).sort()).toEqual(["facades", "markings", "maxFurniture", "maxGeneratedLamps", "maxPedestrians", "maxTrees", "maxVehicles", "outlines", "richCity"]);
   });
 
   it("APP-006: le ratio de pixels ne dépasse jamais celui de l'écran et reste lisible", () => {

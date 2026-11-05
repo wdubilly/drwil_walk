@@ -81,6 +81,19 @@ export function sidewalkSides(tags: Record<string, string>): Sidewalk | undefine
   return value === "left" || value === "right" ? value : undefined;
 }
 
+/** Le sens unique d'une voie : `oneway=yes|1|true` dans le sens du tracé, `-1` à rebours ; le reste : double sens. */
+export function onewayOf(tags: Record<string, string>): "forward" | "backward" | undefined {
+  const value = tags["oneway"];
+  if (value === "yes" || value === "1" || value === "true") return "forward";
+  return value === "-1" ? "backward" : undefined;
+}
+
+/** Le nombre de voies (`lanes`) : un entier de 1 à 8 ; rien si la valeur est illisible. */
+export function lanesOf(tags: Record<string, string>): number | undefined {
+  const lanes = Number(tags["lanes"]);
+  return Number.isInteger(lanes) && lanes >= 1 && lanes <= 8 ? lanes : undefined;
+}
+
 /** Un chemin piéton tracé à part : trottoir ou passage piéton (`footway=sidewalk|crossing`). */
 export function footwayKind(tags: Record<string, string>): "sidewalk" | "crossing" | undefined {
   const value = tags["footway"] ?? (tags["highway"] === "crossing" ? "crossing" : undefined);

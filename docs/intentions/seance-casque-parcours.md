@@ -2,6 +2,7 @@
 
 **Statut** : proposée le 2026-11-03.
 **Reviewed on 2026-11-04**: `essai-casque-lampadaires.md` s'ajoute aux seize intentions à dérouler (lampadaires produits, `APP-013`), au point 3 du parcours.
+**Reviewed on 2026-11-05**: `essai-casque-ville-vivante.md` s'ajoute aux intentions à dérouler (lanternes allumées la nuit, véhicules et piétons, `APP-014`), au point 3 du parcours, à la marche du souk.
 
 ## Besoin
 
@@ -37,6 +38,7 @@ Lu le 2026-11-03. Seize intentions attendent un vrai Quest 3, soit une cinquanta
 | `essai-casque-carrefours.md` | Le choix de la rue aux carrefours |
 | `essai-casque-itineraire-libre.md` | Un trajet libre, avec une vraie clé |
 | `essai-casque-vitesse-haute.md` | La marche à haute vitesse et un très long trajet |
+| `essai-casque-ville-vivante.md` | La ville vivante du souk : lanternes la nuit, véhicules et piétons |
 | `relecture-guide-casque.md` | Le guide d'utilisation relu au casque |
 
 Une fiche de chantier est **bloquée** faute de ces mesures : `docs/projects/rendu-lod-cellules.md` (fusion des bâtiments par
