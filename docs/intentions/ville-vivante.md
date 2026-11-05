@@ -1,6 +1,6 @@
 # Intention : une ville vivante — circulation, piétons et lampadaires allumés, par un moteur générique
 
-**Statut** : proposée le 2026-11-04.
+**Statut** : proposée le 2026-11-04 ; cadrée le 2026-11-05 pour le souk (`docs/projects/ville-vivante-souk.md`).
 
 ## Besoin
 
@@ -67,15 +67,11 @@ premier lot, plafonds par profil.
 
 ## Questions à trancher
 
-- [decision] Les modèles : formes simples produites par code (comme le mobilier), ou un pack CC0 (comme les arbres
-  Quaternius) ? Les piétons sont-ils animés (marche) ou glissent-ils ?
-- [decision] Une case unique « ville vivante » à l'accueil, ou une par élément (circulation, piétons, lampadaires
-  allumés) ? Cochée ou décochée par défaut ?
-- [decision] Faut-il lire de nouvelles balises OSM (`lanes`, `oneway`, `sidewalk`) dans l'extrait, donc réextraire les
-  villes, ou les déduire de la classe `highway` ?
-- [decision] Un premier lot avec tout (véhicules, piétons, lampadaires), ou les lampadaires allumés d'abord (plus simples),
-  puis la circulation ?
-- Quelle densité reste supportable en vision périphérique sur le tapis ? Se juge-t-elle seulement au casque ?
+Tranchées le 2026-11-05 pour le souk (détail dans `docs/projects/ville-vivante-souk.md`, section Décisions) : pack de
+modèles gratuit, deux cases à l'accueil (lampadaires allumés cochée, circulation et piétons décochée), réextraction avec
+`lanes`, `oneway` et `sidewalk`, une fiche en trois lots. Reste ouverte, à juger au casque :
+
+- Quelle densité reste supportable en vision périphérique sur le tapis ?
 
 ## Ordre proposé
 
