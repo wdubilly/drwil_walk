@@ -8,7 +8,7 @@ Les essais sur Quest 3, PC autre que Chromium et vraie tablette restent **humain
 
 Seuls l'itinéraire et la vitesse sont des choix d'accueil :
 
-- Quatre cartes illustrées : Doha Souq Waqif (par défaut), Pune Vieille ville, Pune FC Road et Doha Corniche.
+- Les cartes viennent du catalogue des villes (une ville créée y ajoute la sienne, avec un visuel commun) ; quatre sont illustrées : Doha Souq Waqif (par défaut), Pune Vieille ville, Pune FC Road et Doha Corniche.
 - Vitesse de départ : 4,0 km/h, minimum 1 km/h, sans maximum, pas de 0,1. Une valeur trop basse est ramenée à 1 ;
   une valeur illisible à 4,0, avec un message.
 - Rappel de sécurité : clé de sécurité du tapis attachée, main près de la rampe ; attribution OpenStreetMap.
@@ -176,7 +176,7 @@ Sur écran, « Enregistrer les mesures » télécharge du JSON, sans envoi.
 ## Créer un itinéraire
 
 `npm run city -- <identifiant> [options]` prépare extrait, boucle et matériaux **sur le PC de développement uniquement**,
-avec réseau ; rien n'est généré dans le casque. Villes décrites dans `app/data/villes.json`, pas de script par ville.
+avec réseau ; rien n'est généré dans le casque. Villes décrites dans `app/data/villes.json` (source unique, lue par l'application : la ville créée apparaît à l'accueil sans code), pas de script par ville.
 Photos Panoramax, Mapillary (jeton dans l'environnement), photos fournies ; recherche jusqu'à 1 km puis palette régionale,
 rapport de provenance. Arguments : `docs/guide-utilisateur.md`. Tests à réponses simulées, pas de services réels validés.
 Inscription à l'accueil encore manuelle : `docs/intentions/inscrire-une-ville-creee.md`.

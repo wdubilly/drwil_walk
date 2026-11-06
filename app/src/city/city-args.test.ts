@@ -17,12 +17,16 @@ describe("lecture des options de la commande de création de ville", () => {
     expect(request.described).toBe(true);
     expect(request.city).toEqual({
       itinerary: "rome",
+      label: "Essai",
+      place: "Itinéraire à pied : Essai",
       name: "Essai",
       bbox: { south: 49.99, west: 9.99, north: 50.01, east: 10.01 },
       userAgent: "drwil_walk/0.1 (extraction OpenStreetMap de Essai)",
       file: "data/rome.json",
       route: { points: [[50, 10], [50.001, 10.001], [50, 10.002]], return: "boucle" },
     });
+    const titled = parseCityArgs(["rome", ...NEW, "--libelle", "Rome antique", "--lieu", "Le Forum"], CITIES).city;
+    expect(titled).toMatchObject({ label: "Rome antique", place: "Le Forum", name: "Essai" });
     expect(parseCityArgs(["rome", ...NEW], CITIES).city.route).toEqual({ points: [[50, 10], [50, 10.002]], return: "aller-retour" });
   });
 

@@ -500,3 +500,27 @@ One entry per closed project, most recent last.
   ergonomie dans `docs/intentions/essai-casque-commandes-panneau.md`, réglage du tapis dans
   `docs/intentions/essai-casque-zone-tapis.md`. L'attestation de sécurité ne vaut pas mesure de performance.
 - Preuve de clôture : docs/preuves/recentrage-generateur.md (écrite par la clôture).
+
+## 2026-11-06 — inscrire-ville-creee : une ville créée apparaît à l'accueil sans code
+
+- Livré sur la branche `chantier/inscrire-ville-creee` : le catalogue `app/data/villes.json` est la source unique ;
+  `app/src/city/cities.ts` en charge extrait et boucle par `import()` dynamique (await de tête, sans `import.meta.glob`,
+  les tests tournant sans Vite) et `app/src/route/itineraries.ts` en tire les cartes d'accueil, dans l'ordre du catalogue.
+- Le catalogue porte maintenant `label` (titre de carte) et `place` (ligne de lieu) ; la commande les écrit
+  (`--libelle`, `--lieu`, par défaut le nom et « Itinéraire à pied : <nom> »). Une carte sans illustration propre
+  prend le visuel commun `app/src/ui/libre.svg`.
+- Palette déduite de la région (`app/src/city/region-palette.ts`, golfe, Inde, sinon « ailleurs ») : les palettes de Doha
+  Corniche et de Pune FC Road deviennent celles de leur région (légère différence de teintes de sol et de voies, décidée
+  le 2026-11-05 : jamais de palette par ville).
+- Test unique paramétré sur le catalogue (`app/src/city/catalogue-villes.test.ts`) : extrait attribué, boucle sur sommets de
+  voie, chargement, carte d'accueil, palette. Docs et intentions relues (`npm run extract*` retiré des contextes cités).
+- Preuves avant clôture : `npx vitest run` 122 fichiers, 766 tests passés ; `tsc --noEmit`, `eslint` et `vite build` sans
+  erreur ; `npx playwright test` 66 passés et 1 échec (`eclairage-ambiance`, préférences Quest à chaud), qui passe seul
+  (3 sur 3) : délai sous charge, déjà rencontré au chantier précédent.
+- Limites : aucun e2e sur une ville de test (le poids de `app/data/` ne doit pas bouger) ; le visuel de repli est couvert
+  par un test unitaire. Régénération des quatre quartiers par la commande : chantier à part.
+- Le dernier critère de la fiche (quatre quartiers inchangés) n'avait pas de contrat lié : `APP-003` (ville affichée depuis
+  son extrait versionné, extraits non touchés) y est cité pour que le verdict le prouve.
+- Preuve finale : `VITEST_MAX_WORKERS=1 npx drwil verify --evidence`, sortie 0, 34 contrats : 27 PASS, 7 ATTESTED, 0 FAIL,
+  0 MANUAL, 0 ERROR, `GOVERNANCE: PASS` (un premier verdict FAIL venait du critère sans contrat lié, corrigé ci-dessus).
+- Preuve de clôture : docs/preuves/inscrire-ville-creee.md (écrite par la clôture).

@@ -9,6 +9,9 @@ export type Retour = "aller-retour" | "boucle";
 export interface CityDescription {
   /** L'identifiant de l'itinéraire dans l'application, aussi celui de sa bibliothèque de matériaux. */
   itinerary: string;
+  /** Le titre de la carte d'accueil (par défaut le nom) et la ligne qui situe la balade sous ce titre. */
+  label: string;
+  place: string;
   name: string;
   bbox: { south: number; west: number; north: number; east: number };
   userAgent: string;

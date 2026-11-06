@@ -29,6 +29,9 @@ function card(doc: Document, itinerary: Itinerary): HTMLLabelElement {
   const image = doc.createElement("img");
   // Illustration versionnée à côté du code, sans réseau : Vite la livre avec l'application.
   image.src = new URL(`./${itinerary.id}.svg`, import.meta.url).href;
+  // Une ville créée par la commande n'a pas d'illustration propre : un visuel commun la remplace, une seule fois.
+  const fallback = new URL("./libre.svg", import.meta.url).href;
+  image.addEventListener("error", () => { if (image.src !== fallback) image.src = fallback; }, { once: true });
   // Décorative : le nom de la carte dit déjà l'itinéraire.
   image.alt = "";
   label.append(radio, image, text(doc, "card-name", itinerary.name), text(doc, "card-place", itinerary.place));

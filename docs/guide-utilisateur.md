@@ -64,7 +64,9 @@ npm run city -- rome --nom "Rome, centre" --emprise 41.89,12.47,41.91,12.50 --de
   palette de la région sert de repli ; la commande l'écrit.
 - La commande affiche un rapport : pour chaque couleur, la photo d'où elle vient (distance, auteur, licence). Les
   services publics sont interrogés avec des pauses : ne la relancez pas en boucle.
-- La ville créée n'apparaît pas encore à l'accueil : son inscription dans l'application reste à faire.
+- La ville créée apparaît à l'accueil (après `npm run dev` ou un nouveau build) avec son nom, son lieu et un visuel commun
+  (sa palette vient de sa région) ; `--libelle "<titre>"` et `--lieu "<ligne>"` règlent le texte de sa carte, par défaut le
+  nom donné par `--nom` et « Itinéraire à pied : <nom> ».
 
 ## 3. Ouvrir la page dans le Quest 3 (non vérifié sur casque)
 

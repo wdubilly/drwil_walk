@@ -12,6 +12,8 @@ import { makeZip } from "./zip-double.ts";
 
 const city: CityDescription = {
   itinerary: "essai",
+  label: "Essai",
+  place: "Un lieu d'essai",
   name: "Essai",
   bbox: { south: 49.99, west: 9.99, north: 50.01, east: 10.01 },
   userAgent: "drwil_walk test",

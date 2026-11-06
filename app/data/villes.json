@@ -1,34 +1,42 @@
 {
-  "souq": {
-    "itinerary": "doha-souq-waqif",
-    "name": "Souk Waqif à Doha",
-    "bbox": {"south":25.284,"west":51.529,"north":25.29,"east":51.538},
-    "userAgent": "drwil_walk/0.1 (extraction OpenStreetMap du quartier de Souq Waqif)",
-    "file": "data/souq-waqif.json",
-    "route": {"points":[[25.2869,51.5312],[25.2878,51.5336],[25.28949,51.53397],[25.28953,51.53062]],"return":"boucle"}
-  },
   "pune": {
     "itinerary": "pune-vieille-ville",
+    "label": "Pune Vieille ville",
+    "place": "Shaniwar Wada, temple Dagdusheth Ganpati",
     "name": "Vieille ville de Pune",
     "bbox": {"south":18.5125,"west":73.852,"north":18.5215,"east":73.8615},
     "userAgent": "drwil_walk/0.1 (extraction OpenStreetMap de la Vieille ville de Pune)",
     "file": "data/pune-vieille-ville.json",
     "route": {"points":[[18.51941,73.855338],[18.516359,73.855958]],"return":"boucle"}
   },
+  "fc-road": {
+    "itinerary": "pune-fc-road",
+    "label": "Pune FC Road",
+    "place": "Ferguson College Road",
+    "name": "FC Road à Pune",
+    "bbox": {"south":18.513,"west":73.838,"north":18.531,"east":73.848},
+    "userAgent": "drwil_walk/0.1 (extraction OpenStreetMap de FC Road à Pune)",
+    "file": "data/pune-fc-road.json",
+    "route": {"points":[[18.529658,73.843611],[18.514942,73.842331]],"return":"aller-retour"}
+  },
   "corniche": {
     "itinerary": "doha-corniche",
+    "label": "Doha Corniche",
+    "place": "Musée d'art islamique, West Bay",
     "name": "Corniche de Doha",
     "bbox": {"south":25.292,"west":51.515,"north":25.328,"east":51.545},
     "userAgent": "drwil_walk/0.1 (extraction OpenStreetMap de la Corniche de Doha)",
     "file": "data/doha-corniche.json",
     "route": {"points":[[25.293429,51.537301],[25.297356,51.521196]],"return":"aller-retour"}
   },
-  "fc-road": {
-    "itinerary": "pune-fc-road",
-    "name": "FC Road à Pune",
-    "bbox": {"south":18.513,"west":73.838,"north":18.531,"east":73.848},
-    "userAgent": "drwil_walk/0.1 (extraction OpenStreetMap de FC Road à Pune)",
-    "file": "data/pune-fc-road.json",
-    "route": {"points":[[18.529658,73.843611],[18.514942,73.842331]],"return":"aller-retour"}
+  "souq": {
+    "itinerary": "doha-souq-waqif",
+    "label": "Doha Souq Waqif",
+    "place": "Le souk et ses ruelles, de la place Al Koot aux écuries",
+    "name": "Souk Waqif à Doha",
+    "bbox": {"south":25.284,"west":51.529,"north":25.29,"east":51.538},
+    "userAgent": "drwil_walk/0.1 (extraction OpenStreetMap du quartier de Souq Waqif)",
+    "file": "data/souq-waqif.json",
+    "route": {"points":[[25.2869,51.5312],[25.2878,51.5336],[25.28949,51.53397],[25.28953,51.53062]],"return":"boucle"}
   }
 }

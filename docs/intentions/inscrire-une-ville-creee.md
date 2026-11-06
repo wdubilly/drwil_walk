@@ -1,6 +1,6 @@
 # Intention : inscrire dans l'application une ville créée par la commande, et rattraper les docs hors périmètre
 
-**Statut** : proposée le 2026-11-04 (limite du chantier `creation-itineraire`).
+**Statut** : proposée le 2026-11-04 (limite du chantier `creation-itineraire`) ; réalisée par le chantier `inscrire-ville-creee` (2026-11-06).
 
 ## Besoin
 
@@ -24,7 +24,7 @@ Lu le 2026-11-04 :
 - Inscription par lecture du catalogue `app/data/villes.json` à la construction.
 - Palette déduite de la région (`APP-008`).
 
-Cadrée en chantier : `docs/projects/inscrire-ville-creee.md`.
+Cadrée en chantier : `docs/projects/journal.md`.
 
 ## Questions à trancher
 
