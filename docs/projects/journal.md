@@ -519,4 +519,6 @@ One entry per closed project, most recent last.
   (3 sur 3) : délai sous charge, déjà rencontré au chantier précédent.
 - Limites : aucun e2e sur une ville de test (le poids de `app/data/` ne doit pas bouger) ; le visuel de repli est couvert
   par un test unitaire. Régénération des quatre quartiers par la commande : chantier à part.
+- Le dernier critère de la fiche (quatre quartiers inchangés) n'avait pas de contrat lié : `APP-003` (ville affichée depuis
+  son extrait versionné, extraits non touchés) y est cité pour que le verdict le prouve.
 - Preuve de clôture : docs/preuves/inscrire-ville-creee.md (écrite par la clôture).

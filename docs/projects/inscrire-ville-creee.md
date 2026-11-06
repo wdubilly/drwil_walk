@@ -45,7 +45,7 @@ apparaître à l'accueil, sans code propre à elle (`docs/intentions/generateur-
 - `app/AGENTS.md` et `README.md` ne citent plus les commandes `npm run extract*` retirées, mais `npm run city` ; les
   intentions qui les citent pour le contexte d'alors sont relues — `QUA-011`
 - Les quatre quartiers existants ne changent pas dans ce chantier : leur régénération est un autre chantier
-  (décision du 2026-11-05)
+  (décision du 2026-11-05) — `APP-003`
 
 ## Contrats modifiés
 
