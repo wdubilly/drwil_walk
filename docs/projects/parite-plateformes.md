@@ -49,7 +49,7 @@ Les trois plateformes (Quest 3, PC, tablette) doivent afficher la **même ville*
   (bâtiments, arbres, mobilier, lampadaires, figurants) — `APP-015`
 - Une option qui n'atteint pas un mode est **corrigée** dans ce chantier ; l'écart du rendu Google 3D reste déclaré et testé
   comme exception (repli annoncé) — `APP-015`
-- `APP-001` reste vérifié sur le casque, inchangé — `APP-001`
+- `APP-001` reste vérifié sur le casque, inchangé [humain] — `APP-001`
 - La recette de chantier (`docs/recipes/`) et `app/AGENTS.md` disent : toute fonction d'accueil se vérifie sur les trois
   modes ; `docs/features.md` et `docs/architecture.md` listent ce qui est propre à chaque plateforme — `QUA-011`
 
