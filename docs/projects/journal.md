@@ -521,4 +521,6 @@ One entry per closed project, most recent last.
   par un test unitaire. Régénération des quatre quartiers par la commande : chantier à part.
 - Le dernier critère de la fiche (quatre quartiers inchangés) n'avait pas de contrat lié : `APP-003` (ville affichée depuis
   son extrait versionné, extraits non touchés) y est cité pour que le verdict le prouve.
+- Preuve finale : `VITEST_MAX_WORKERS=1 npx drwil verify --evidence`, sortie 0, 34 contrats : 27 PASS, 7 ATTESTED, 0 FAIL,
+  0 MANUAL, 0 ERROR, `GOVERNANCE: PASS` (un premier verdict FAIL venait du critère sans contrat lié, corrigé ci-dessus).
 - Preuve de clôture : docs/preuves/inscrire-ville-creee.md (écrite par la clôture).

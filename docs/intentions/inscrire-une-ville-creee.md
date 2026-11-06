@@ -24,7 +24,7 @@ Lu le 2026-11-04 :
 - Inscription par lecture du catalogue `app/data/villes.json` à la construction.
 - Palette déduite de la région (`APP-008`).
 
-Cadrée en chantier : `docs/projects/inscrire-ville-creee.md`.
+Cadrée en chantier : `docs/projects/journal.md`.
 
 ## Questions à trancher
 
