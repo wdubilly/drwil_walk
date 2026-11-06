@@ -21,6 +21,8 @@ Tout chantier qui touche cette couche est HIGH (risque physique de chute).
 - Sécurité inchangée : fondu tête baissée, zone tapis transparente, vignette toujours active (APP-001).
 - Les figurants CC0 viennent d'un catalogue en données, actifs au Souq Waqif seulement (APP-014) ;
   lampadaires produits distingués du mobilier OSM (APP-013), lanternes/halos sans effet sur l'alpha (APP-011).
+- Parité (APP-015) : casque, PC et tablette montrent la même ville avec les mêmes options. Toute fonction d'accueil qui agit
+  sur la ville se vérifie sur les trois modes dans `src/xr/parity.test.ts` ; seuls diffèrent commandes, passthrough, ciel, profils par défaut.
 - Génération `npm run city` sur **PC de développement uniquement**, jamais dans le casque.
   Description des villes dans `data/villes.json`, pas de code ni de commande par ville ;
   `scripts/create-city.ts` écrit extrait, boucle et matériaux. Le catalogue est la source unique : `src/city/cities.ts` et la liste d'accueil le lisent, la palette se déduit de la région (`app/src/city/region-palette.ts`), une ville créée apparaît à l'accueil sans code.
@@ -60,7 +62,7 @@ Tout chantier qui touche cette couche est HIGH (risque physique de chute).
 
 Recettes : `docs/recipes/add-a-frontend-screen.md`, `docs/recipes/refactor-without-breaking.md`,
 `docs/recipes/run-locally.md`. Contrats de la couche : APP-001 à APP-009 (hors APP-010),
-APP-011 à APP-014 et QUA-014 ; titres/détails par `.githooks/glossary.mjs`.
+APP-011 à APP-015 et QUA-014 ; titres/détails par `.githooks/glossary.mjs`.
 
 ## Check
 

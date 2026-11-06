@@ -14,6 +14,8 @@ Génération `npm run city` exclusivement sur PC de développement. Tests Vitest
 - `app/index.html`, `app/src/main.ts` : montage du DOM, vrai `WebGLRenderer`, WebXR et chargement local des arbres.
 - `app/src/xr/experience.ts` : accueil → session → boucle XR ; renderer, document, horloge et arbres injectés.
 - `app/src/pc/enter-pc.ts` : même ville et marche, canvas de page, sans zone tapis, vignette ni fondu sur écran.
+- `app/src/xr/parity.test.ts` : test unique de parité (APP-015) casque / PC / tablette ; propre à chaque plateforme :
+  commandes, passthrough et zone tapis (casque), ciel, profils par défaut.
 - `app/src/xr/city-choice.ts`, `app/src/city/cities.ts`, `app/src/city/region-palette.ts` : les villes lues dans le catalogue
   `app/data/villes.json` (extrait et boucle chargés par `import()` dynamique), palette déduite de la région.
 - `app/src/city/live-city.ts` : prépare une variante par profil avant la marche, conserve le groupe ville,

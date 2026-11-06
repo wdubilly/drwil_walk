@@ -1,6 +1,6 @@
 # Chantier : la même ville et les mêmes options sur Quest, PC et tablette, garanties par un contrat
 
-**Statut** : cadré le 2026-11-05.
+**Statut** : réalisé le 2026-11-06.
 **Risque** : HIGH
 **Maturité** : prêt
 **Intention** : `docs/intentions/parite-plateformes.md`, `docs/intentions/generateur-ville-complet.md`
@@ -88,6 +88,6 @@ Les trois plateformes (Quest 3, PC, tablette) doivent afficher la **même ville*
 
 ## 7. Reprise
 
-- **Dernier état** (2026-11-05) : cadrage seul, aucun code écrit.
-- **Travail non commité** : cette fiche et l'index.
-- **Prochaine étape** : lot 1 une fois le chantier lancé par le demandeur.
+- **Dernier état** (2026-11-06) : lots 1 à 3 faits. Le test révèle **aucun écart** de scène : les trois modes passent par `createLiveCity` et `bindLivePreferences`. Seule différence relevée : les repères de carrefour (commandes), admise.
+- **Travail non commité** : aucun une fois la clôture faite.
+- **Prochaine étape** : fusion de la PR.
