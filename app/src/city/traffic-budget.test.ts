@@ -2,7 +2,6 @@ import { Window } from "happy-dom";
 import { InstancedMesh, Mesh, type BufferGeometry, type Object3D } from "three";
 import { describe, expect, it } from "vitest";
 import { settingsOf, sceneOptionsOf } from "../render/profiles.ts";
-import { renderTrafficChoice } from "../ui/traffic-choice.ts";
 import { withCanvasContext } from "./canvas-double.ts";
 import { cityFor } from "./cities.ts";
 import { createSouqScene } from "./souq.ts";
@@ -14,9 +13,6 @@ const page = (): Document => {
   const doc = withCanvasContext(new Window().document as unknown as Document);
   const app = Object.assign(doc.createElement("div"), { id: "app" });
   app.dataset["route"] = "doha-souq-waqif";
-  const choice = renderTrafficChoice(doc);
-  (choice.querySelector("input") as HTMLInputElement).checked = true;
-  app.append(choice);
   doc.body.append(app);
   return doc;
 };
@@ -36,7 +32,7 @@ describe("budgets de rendu de la ville vivante", () => {
   it("APP-006 APP-014: au souk, profil le plus riche, les figurants restent dans les budgets, relevés avant et après", async () => {
     const options = sceneOptionsOf(settingsOf("qualite"));
     const without = measure(createSouqScene(page(), cityFor("doha-souq-waqif"), { ...options, traffic: false }).osm);
-    const scene = createSouqScene(page(), cityFor("doha-souq-waqif"), options);
+    const scene = createSouqScene(page(), cityFor("doha-souq-waqif"), { ...options, traffic: true });
     await scene.trafficReady;
     const withTraffic = measure(scene.osm);
     const added = { calls: withTraffic.calls - without.calls, triangles: withTraffic.triangles - without.triangles };

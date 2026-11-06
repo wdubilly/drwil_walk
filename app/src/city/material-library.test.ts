@@ -3,8 +3,20 @@ import { describe, expect, it, vi } from "vitest";
 import { MAX_LOCAL_MATERIALS, MAX_TEXTURE_BYTES, hasLocalMaterials, localMaterialsFor, parseLibrary, textureBytes } from "./material-library.ts";
 import { ITINERARIES } from "../route/itineraries.ts";
 import { materialEntry as entry, rawLibrary as raw } from "./material-double.ts";
+import { Window } from "happy-dom";
+import { documentTexture } from "./material-library.ts";
 
 describe("bibliothèque de matériaux locaux", () => {
+  it("APP-012: charge les images embarquées dans le document injecté et met la texture à jour", () => {
+    const doc = new Window().document as unknown as Document;
+    const texture = documentTexture(doc, "data:image/jpeg;base64,factice");
+    const image = texture.image as HTMLImageElement;
+    expect(image.ownerDocument).toBe(doc);
+    expect(image.src).toBe("data:image/jpeg;base64,factice");
+    const before = texture.version;
+    image.dispatchEvent(new (doc.defaultView as unknown as Window).Event("load") as unknown as Event);
+    expect(texture.version).toBe(before + 1);
+  });
   it("APP-012: seul le souk a une bibliothèque embarquée, lisible, aux couleurs dites provisoires, dans le budget de mémoire", () => {
     expect(ITINERARIES.filter((i) => hasLocalMaterials(i.id)).map((i) => i.id)).toEqual(["doha-souq-waqif"]);
     const local = localMaterialsFor("doha-souq-waqif", () => new Texture());

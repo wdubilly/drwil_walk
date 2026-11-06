@@ -1,6 +1,6 @@
 # Intention : retirer les gardes de longueur devenues sans effet des routeurs
 
-**Statut** : proposée le 2026-11-02 (limite du chantier limites-vitesse-distance).
+**Statut** : couverte le 2026-11-05 par le retrait des fournisseurs du parcours libre.
 
 ## Besoin
 
@@ -8,9 +8,9 @@ Supprimer entièrement la notion de limite de longueur d'un trajet libre dans le
 
 ## Existant
 
-Lu le 2026-11-02 : `assertCrowFlies` et `assertRouteLength` (`app/src/route/providers.ts`) ne refusent plus rien mais sont
-encore appelées par `app/src/route/valhalla.ts` et `app/src/route/routes-api.ts`, hors du périmètre du chantier.
+Le retrait des fournisseurs a supprimé les gardes `assertCrowFlies` et `assertRouteLength` et leurs appels.
+Il n'y a plus de code de routage libre à nettoyer.
 
 ## Questions à trancher
 
-- [decision] Retirer ces deux fonctions et leurs appels, dans un chantier qui inclut les deux routeurs ?
+Aucune : le retrait demandé les couvre.

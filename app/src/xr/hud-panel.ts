@@ -3,7 +3,7 @@
 // le même fondu que la ville (APP-001) : il disparaît tête baissée et ne masque jamais le tapis.
 import { CanvasTexture, Mesh, MeshBasicMaterial, PlaneGeometry } from "three";
 import { formatSpeedKmh } from "../route/speed.ts";
-import { formatKcal, formatProgress } from "../route/stats.ts";
+import { DEFAULT_WEIGHT_KG, formatKcal, formatProgress } from "../route/stats.ts";
 import { formatDistanceM, formatDurationS } from "../route/walk.ts";
 import type { Zone } from "../safety/zone.ts";
 import type { PanelSide } from "../ui/panel-side.ts";
@@ -49,7 +49,7 @@ interface Cell {
 export interface HudPanel {
   mesh: Mesh;
   /** Redessine le texte seulement si une valeur affichée a changé, applique le fondu et suit le regard. */
-  update(info: HudInfo, view: { show: boolean; opacity: number; pose: HeadPose | undefined; side: PanelSide; zone: Zone }): void;
+  update(info: HudInfo, view: { show: boolean; opacity: number; backgroundAlpha?: number; pose: HeadPose | undefined; side: PanelSide; zone: Zone }): void;
 }
 
 export function createHudPanel(doc: Document): HudPanel {
@@ -65,10 +65,10 @@ export function createHudPanel(doc: Document): HudPanel {
   mesh.name = "panneau-infos";
   mesh.visible = false;
   let drawn = "";
-  const draw = (cells: Cell[]): void => {
+  const draw = (cells: Cell[], alpha: number): void => {
     // « copy » remplace l'image précédente : sans cela, chaque redessin empilerait une couche de fond translucide.
     context.globalCompositeOperation = "copy";
-    context.fillStyle = `rgba(${HUD_BACKGROUND_RGB.join(", ")}, ${String(HUD_BACKGROUND_ALPHA)})`;
+    context.fillStyle = `rgba(${HUD_BACKGROUND_RGB.join(", ")}, ${String(alpha)})`;
     context.fillRect(0, 0, WIDTH_PX, HEIGHT_PX);
     context.globalCompositeOperation = "source-over";
     context.fillStyle = HUD_TEXT;
@@ -94,15 +94,16 @@ export function createHudPanel(doc: Document): HudPanel {
         { text: formatDistanceM(info.distanceM), y: 230, sizePx: 40, align: "right" },
         ...(info.diagnostics === undefined
           ? [
-              { text: formatKcal(info.kcal), y: 288, sizePx: 30, align: "left" as const },
+              { text: `${formatKcal(info.kcal)} · ${String(DEFAULT_WEIGHT_KG)} kg`, y: 288, sizePx: 30, align: "left" as const },
               { text: formatProgress(info.remainingM, info.progressPct), y: 288, sizePx: 30, align: "right" as const },
             ]
           : [{ text: info.diagnostics, y: 288, sizePx: 30, align: "left" as const }]),
       ];
-      const key = cells.map((cell) => cell.text).join("\n");
+      const alpha = Math.max(HUD_BACKGROUND_ALPHA, Math.min(1, view.backgroundAlpha ?? HUD_BACKGROUND_ALPHA));
+      const key = `${String(alpha)}\n${cells.map((cell) => cell.text).join("\n")}`;
       if (key !== drawn) {
         drawn = key;
-        draw(cells);
+        draw(cells, alpha);
       }
       material.opacity = view.opacity;
       // Sans pose, ou sans place hors de la zone tapis, le panneau reste caché plutôt que posé n'importe où (APP-001).

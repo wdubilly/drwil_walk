@@ -1,141 +1,78 @@
-// e2e de l'éclairage et de l'ambiance (QUA-020 chemin 25, APP-011, APP-001), dans Chromium avec un Meta Quest 3 émulé
-// (IWER) : brouillard et sons arrivent éteints, s'allument à l'accueil, le voile du casque reste plafonné à 15 %, il se
-// coupe d'un geste, et tête baissée la ville s'efface comme toujours, brouillard et sons actifs. La nuit, les lanternes des
-// lampadaires s'allument (case cochée par défaut), s'éteignent d'une case décochée, et s'effacent elles aussi tête baissée.
-// La ville vivante (APP-014) : décochée par défaut, la case « Circulation et piétons » pose véhicules et piétons au souk,
-// qui s'effacent eux aussi tête baissée.
-import { createRequire } from "node:module";
 import { expect, test, type Page } from "@playwright/test";
+import { installQuest, toggleQuestPreferences, questPreference, lookDown } from "./quest-preferences-helper.ts";
+import { remembered } from "./preferences-helper.ts";
 
-const iwerBuild = createRequire(import.meta.url).resolve("iwer/build/iwer.min.js");
-
-interface EmulatedQuest {
-  quaternion: { set(x: number, y: number, z: number, w: number): void };
-}
-interface E2eWindow {
-  quest: EmulatedQuest;
-  IWER: { XRDevice: new (config: unknown) => EmulatedQuest & { installRuntime(o: object): void }; metaQuest3: unknown };
-}
-
-test.beforeEach(async ({ page }) => {
-  await page.addInitScript({ path: iwerBuild });
-  await page.addInitScript(() => {
-    const w = window as unknown as E2eWindow;
-    const quest = new w.IWER.XRDevice(w.IWER.metaQuest3);
-    quest.installRuntime({ forceInstall: true });
-    w.quest = quest;
-  });
-});
-
+test.beforeEach(async ({ page }) => { await installQuest(page); });
 const panel = (page: Page) => page.getByRole("region", { name: "Marche" });
-
 async function enter(page: Page): Promise<void> {
   await page.getByRole("button", { name: "Entrer en réalité mixte" }).click();
   await expect(page.getByRole("status")).toHaveText("Réalité mixte active (immersive-ar)");
 }
 
-test("chemin 25 : brouillard et sons allumés à l'accueil, voile plafonné à 15 % au casque, ville effacée tête baissée", async ({ page }) => {
+test("QUA-020 APP-001 APP-006 APP-011 APP-014: préférences Quest à chaud, marche continue, plafonds et mémoire", async ({ page }) => {
+  // Les nombreux fronts de manette et la seconde entrée XR dépassent ensemble les 30 s en rendu logiciel.
+  test.setTimeout(60_000);
   const errors: string[] = [];
   const foreign: string[] = [];
-  page.on("request", (r) => {
-    if (!/^(https:\/\/localhost:|data:|blob:)/.test(r.url())) foreign.push(r.url());
-  });
-  page.on("console", (m) => {
-    if (m.type() === "error") errors.push(m.text());
-  });
-  page.on("pageerror", (e) => {
-    errors.push(e.message);
-  });
+  page.on("pageerror", (e) => { errors.push(e.message); });
+  page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
+  page.on("request", (r) => { if (!/^(https:\/\/localhost:|data:|blob:)/.test(r.url())) foreign.push(r.url()); });
   await page.goto("/");
-  await expect(page.getByLabel("Brouillard")).not.toBeChecked();
-  await expect(page.getByLabel("Sons d'ambiance")).toHaveValue("0");
-  await page.getByLabel("Brouillard").check();
-  await page.getByLabel("Sons d'ambiance").fill("100");
+  await expect(page.getByLabel("Brouillard")).toHaveCount(0);
   await enter(page);
+  await expect(page.locator("#app")).toHaveAttribute("data-ambiance", "brouillard éteint · sons 0 %");
+  await expect(page.locator("#app")).toHaveAttribute("data-figurants", "aucun : ville vivante désactivée");
+  const before = Number(await panel(page).getAttribute("data-distance-m"));
+  await toggleQuestPreferences(page, true);
+  await questPreference(page, 4, { fog: true });
+  for (const soundPct of [25, 50, 75, 100]) await questPreference(page, 5, { soundPct });
   await expect(page.locator("#app")).toHaveAttribute("data-ambiance", "brouillard 15 % · sons 20 %");
-  await expect.poll(async () => Number(await panel(page).getAttribute("data-distance-m")), { timeout: 20_000 }).toBeGreaterThan(5);
-  await page.evaluate(() => {
-    (window as unknown as E2eWindow).quest.quaternion.set(Math.sin((-45 * Math.PI) / 360), 0, 0, Math.cos((-45 * Math.PI) / 360));
-  });
+  await questPreference(page, 1, { traffic: true });
+  await expect(page.locator("#app")).toHaveAttribute("data-figurants", /^[1-9]\d* véhicules · [1-9]\d* piétons$/);
+  await questPreference(page, 3, { trees: false });
+  await questPreference(page, 7, { panelOpacityPct: 80 });
+  await questPreference(page, 6, { side: "left" });
+  for (const profile of ["qualite", "performance", "equilibre"]) {
+    await questPreference(page, 0, { profile: profile as "qualite" | "performance" | "equilibre" });
+    await expect(page.locator("#app")).toHaveAttribute("data-profile", profile);
+    await expect(page.locator("#app")).toHaveAttribute("data-ambiance", profile === "performance" ? "brouillard éteint · sons 20 %" : "brouillard 15 % · sons 20 %");
+  }
+  await questPreference(page, 4, { fog: false });
+  await expect(page.locator("#app")).toHaveAttribute("data-ambiance", "brouillard éteint · sons 20 %");
+  await toggleQuestPreferences(page, false);
+  expect(Number(await panel(page).getAttribute("data-distance-m"))).toBeGreaterThan(before);
+  await toggleQuestPreferences(page, true);
+  await lookDown(page);
   await expect(panel(page).locator("[data-field='opacity']")).toHaveText("0 %");
+  await expect(page.locator("#app")).toHaveAttribute("data-preferences-visible", "false");
   expect({ errors, foreign }).toEqual({ errors: [], foreign: [] });
-});
-
-test("chemin 25 : sans réglage, la marche se fait sans brouillard ni son, et le brouillard se coupe d'un geste", async ({ page }) => {
-  await page.goto("/");
-  await enter(page);
-  await expect(page.locator("#app")).toHaveAttribute("data-ambiance", "brouillard éteint · sons 0 %");
   await page.reload();
-  await page.getByLabel("Brouillard").check();
-  await page.getByLabel("Brouillard").uncheck();
   await enter(page);
-  await expect(page.locator("#app")).toHaveAttribute("data-ambiance", "brouillard éteint · sons 0 %");
+  await expect(page.locator("#app")).toHaveAttribute("data-panel-side", "left");
+  await expect(page.locator("#app")).toHaveAttribute("data-profile", "equilibre");
+  await expect(page.locator("#app")).toHaveAttribute("data-ambiance", "brouillard éteint · sons 20 %");
 });
 
-test("chemin 25 : le profil le plus léger refuse le brouillard, même coché à l'accueil", async ({ page }) => {
-  await page.goto("/");
-  await page.getByLabel("Performance").check();
-  await page.getByLabel("Brouillard").check();
-  await enter(page);
-  await expect(page.locator("#app")).toHaveAttribute("data-ambiance", "brouillard éteint · sons 0 %");
-});
-
-const CAPTURES = "../dist/e2e-captures";
-
-test("chemin 25 : la nuit au souk, les lanternes s'allument, se photographient, et s'effacent avec la ville tête baissée", async ({ page }) => {
-  const errors: string[] = [];
-  page.on("pageerror", (e) => {
-    errors.push(e.message);
-  });
+test("QUA-020 APP-011: nuit et jour, lanternes coupées à chaud avec les mâts", async ({ page }) => {
   await page.clock.setFixedTime(new Date(2026, 10, 5, 22, 30));
   await page.goto("/");
-  await expect(page.getByLabel("Lampadaires allumés la nuit")).toBeChecked();
   await enter(page);
   await expect(page.locator("#app")).toHaveAttribute("data-lanternes", "allumées");
-  await expect.poll(async () => Number(await panel(page).getAttribute("data-distance-m")), { timeout: 20_000 }).toBeGreaterThan(5);
-  await page.screenshot({ path: `${CAPTURES}/souk-nuit.png` });
-  await page.evaluate(() => {
-    (window as unknown as E2eWindow).quest.quaternion.set(Math.sin((-45 * Math.PI) / 360), 0, 0, Math.cos((-45 * Math.PI) / 360));
-  });
-  await expect(panel(page).locator("[data-field='opacity']")).toHaveText("0 %");
-  expect(errors).toEqual([]);
-});
-
-test("chemin 25 : de jour les lanternes sont éteintes, et la case décochée les retire la nuit", async ({ page }) => {
+  await page.screenshot({ path: "../dist/e2e-captures/souk-nuit.png" });
+  await toggleQuestPreferences(page, true);
+  await questPreference(page, 2, { lamps: false });
+  await expect(page.locator("#app")).toHaveAttribute("data-lanternes", "absentes");
+  await questPreference(page, 2, { lamps: true });
+  await expect(page.locator("#app")).toHaveAttribute("data-lanternes", "allumées");
   await page.clock.setFixedTime(new Date(2026, 10, 5, 12, 0));
-  await page.goto("/");
+  await page.reload();
   await enter(page);
   await expect(page.locator("#app")).toHaveAttribute("data-lanternes", "éteintes");
-  await page.clock.setFixedTime(new Date(2026, 10, 5, 22, 30));
-  await page.reload();
-  await page.getByLabel("Lampadaires allumés la nuit").uncheck();
-  await enter(page);
-  await expect(page.locator("#app")).toHaveAttribute("data-lanternes", "absentes");
 });
 
-test("chemin 25 : la case « Circulation et piétons », décochée par défaut, pose véhicules et piétons au souk, effacés tête baissée", async ({ page }) => {
-  const errors: string[] = [];
-  page.on("pageerror", (e) => {
-    errors.push(e.message);
-  });
-  await page.clock.setFixedTime(new Date(2026, 10, 5, 16, 0));
-  await page.goto("/");
-  await expect(page.getByLabel("Circulation et piétons")).not.toBeChecked();
-  await page.getByLabel("Circulation et piétons").check();
-  await enter(page);
-  await expect(page.locator("#app")).toHaveAttribute("data-figurants", /^[1-9]\d* véhicules · [1-9]\d* piétons$/, { timeout: 20_000 });
-  await expect.poll(async () => Number(await panel(page).getAttribute("data-distance-m")), { timeout: 20_000 }).toBeGreaterThan(5);
-  await page.screenshot({ path: `${CAPTURES}/souk-circulation.png` });
-  await page.evaluate(() => {
-    (window as unknown as E2eWindow).quest.quaternion.set(Math.sin((-45 * Math.PI) / 360), 0, 0, Math.cos((-45 * Math.PI) / 360));
-  });
-  await expect(panel(page).locator("[data-field='opacity']")).toHaveText("0 %");
-  expect(errors).toEqual([]);
-});
-
-test("chemin 25 : sans cocher la case, la marche au souk n'a aucun figurant", async ({ page }) => {
+test("QUA-020 APP-006 APP-011: dernier choix brouillard relu, profil performance le refuse", async ({ page }) => {
+  await remembered(page, { profile: "performance", fog: true });
   await page.goto("/");
   await enter(page);
-  await expect.poll(async () => Number(await panel(page).getAttribute("data-distance-m")), { timeout: 20_000 }).toBeGreaterThan(1);
-  await expect(page.locator("#app")).not.toHaveAttribute("data-figurants", /.*/);
+  await expect(page.locator("#app")).toHaveAttribute("data-ambiance", "brouillard éteint · sons 0 %");
 });

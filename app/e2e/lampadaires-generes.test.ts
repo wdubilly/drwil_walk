@@ -1,8 +1,10 @@
 // e2e des lampadaires produits par règle (QUA-020, APP-013, APP-001), dans Chromium avec un Meta Quest 3 émulé (IWER) : la marche
-// de la Vieille ville de Pune pose des lampadaires produits à côté du relevé d'OpenStreetMap, le réglage de l'accueil les éteint,
+// pose des lampadaires produits à côté du relevé d'OpenStreetMap, une préférence en marche les éteint,
 // le profil « performance » les plafonne plus bas, et tête baissée ils s'effacent avec la ville.
 import { createRequire } from "node:module";
 import { expect, test, type Page } from "@playwright/test";
+import { remembered } from "./preferences-helper.ts";
+import { questPreference, toggleQuestPreferences } from "./quest-preferences-helper.ts";
 
 const iwerBuild = createRequire(import.meta.url).resolve("iwer/build/iwer.min.js");
 
@@ -56,7 +58,7 @@ const produced = async (page: Page): Promise<number> => {
 test("chemin 27 : les lampadaires produits sont posés par défaut, plafonnés, et s'effacent tête baissée", async ({ page }) => {
   const seen = watch(page);
   await page.goto("/");
-  await expect(page.getByLabel("Lampadaires produits par règle")).toBeChecked();
+  await expect(page.getByLabel("Lampadaires produits par règle")).toHaveCount(0);
   await walk(page);
   expect(await produced(page)).toBeGreaterThan(20);
   expect(await produced(page)).toBeLessThanOrEqual(300);
@@ -67,18 +69,21 @@ test("chemin 27 : les lampadaires produits sont posés par défaut, plafonnés, 
   expect(seen).toEqual({ errors: [], foreign: [] });
 });
 
-test("chemin 27 : décocher le réglage de l'accueil ne laisse que le mobilier réel", async ({ page }) => {
+test("chemin 27 : retirer les lampadaires à chaud garde la marche et le mobilier réel", async ({ page }) => {
   const seen = watch(page);
   await page.goto("/");
-  await page.getByLabel("Lampadaires produits par règle").uncheck();
   await walk(page);
+  const before = Number(await panel(page).getAttribute("data-distance-m"));
+  await toggleQuestPreferences(page, true);
+  await questPreference(page, 2, { lamps: false });
   await expect(page.locator("#app")).toHaveAttribute("data-mobilier", /^\d+ d'OpenStreetMap · 0 produits$/);
+  await expect.poll(async () => Number(await panel(page).getAttribute("data-distance-m")), { timeout: 20_000 }).toBeGreaterThan(before);
   expect(seen).toEqual({ errors: [], foreign: [] });
 });
 
 test("chemin 27 : le profil performance plafonne les lampadaires produits à 100", async ({ page }) => {
+  await remembered(page, { profile: "performance" });
   await page.goto("/");
-  await page.getByLabel("Performance").check();
   await walk(page);
   expect(await produced(page)).toBeGreaterThan(0);
   expect(await produced(page)).toBeLessThanOrEqual(100);

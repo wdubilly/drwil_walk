@@ -4,6 +4,7 @@
 // le mobilier s'efface avec la ville. Le profil « performance », qui réduit la densité, se marche aussi.
 import { createRequire } from "node:module";
 import { expect, test, type Page } from "@playwright/test";
+import { remembered } from "./preferences-helper.ts";
 
 const iwerBuild = createRequire(import.meta.url).resolve("iwer/build/iwer.min.js");
 
@@ -73,8 +74,8 @@ for (const { card, route } of ITINERARIES) {
 
 test("chemin 24 : en profil performance, la marche garde le mobilier réduit, sans erreur ni appel réseau", async ({ page }) => {
   const seen = watch(page);
+  await remembered(page, { profile: "performance" });
   await page.goto("/");
-  await page.getByLabel("Performance").check();
   await walk(page, "Doha Souq Waqif", "doha-souq-waqif");
   await expect(page.locator("#app")).toHaveAttribute("data-profile", "performance");
   expect(seen).toEqual({ errors: [], foreign: [] });

@@ -10,11 +10,9 @@ describe("configuration Playwright", () => {
     expect(server?.command).toContain(`--port ${String(E2E_PORT)} --strictPort`);
   });
 
-  it("SEC-007: le serveur des e2e reçoit une clé fictive, jamais une vraie", () => {
+  it("SEC-007: le serveur des e2e n'injecte aucune clé ni fournisseur réseau", () => {
     const server = Array.isArray(config.webServer) ? config.webServer[0] : config.webServer;
-    expect(server?.env?.["VITE_GOOGLE_MAPS_API_KEY"]).toBe("cle-factice-e2e");
-    // Vide : l'itinéraire libre e2e passe par les services ouverts, même si app/.env.local porte une vraie clé Routes.
-    expect(server?.env?.["VITE_GOOGLE_ROUTES_API_KEY"]).toBe("");
+    expect(server?.env).toBeUndefined();
   });
 
   it("refuse un test isolé par .only, qui ferait passer les autres pour verts", () => {

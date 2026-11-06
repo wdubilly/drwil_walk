@@ -30,13 +30,12 @@ describe("arbres du pack dans la marche", () => {
     expect(t.fake.render).toHaveBeenCalledTimes(1);
   });
 
-  it("QUA-002: le refus des tuiles Google s'ajoute au message des arbres au lieu de l'effacer", async () => {
+  it("QUA-002: le changement de profil n'interrompt pas le repli sur les arbres simples", async () => {
     const t = setup({ trees: () => Promise.reject(new Error("texture illisible")) });
-    t.chooseGoogle();
     await t.enter();
-    t.fail("clé refusée");
-    expect(t.notice()).toContain(treeFallbackNotice("texture illisible"));
-    expect(t.notice()).toContain("clé refusée");
+    t.home.preferences.change({ ...t.home.preferences.read(), profile: "qualite" });
+    t.frame(0, poseFrame(0));
+    expect(renderedScene(t).getObjectByName("arbres")).toBeDefined();
   });
 
   it("sans chargeur, la marche garde l'arbre procédural sans rien dire", async () => {

@@ -1,14 +1,11 @@
 import type { Scene } from "three";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { ACTIVE_STATUS, ENDED_STATUS } from "./experience.ts";
 import { poseFrame, setup } from "./experience-double.ts";
 
-/** Coche la case « Brouillard » de l'accueil (APP-011). */
+/** Allume la préférence de brouillard (APP-011). */
 function tickFog(t: ReturnType<typeof setup>): void {
-  const label = [...t.root.querySelectorAll("label")].find((l) => l.textContent.includes("Brouillard"));
-  const box = label?.querySelector("input");
-  if (!box) throw new Error("case « Brouillard » introuvable");
-  box.checked = true;
+  t.home.preferences.change({ ...t.home.preferences.read(), fog: true });
 }
 
 describe("expérience en réalité mixte", () => {
@@ -27,11 +24,11 @@ describe("expérience en réalité mixte", () => {
   it("APP-006: le casque applique l'échelle d'image du profil choisi, détecté d'abord puis manuel", async () => {
     const scale = (t: ReturnType<typeof setup>) => (t.fake.renderer as unknown as { xr: { setFramebufferScaleFactor: { mock: { calls: number[][] } } } }).xr.setFramebufferScaleFactor.mock.calls;
     const detected = setup();
-    await vi.waitFor(() => { expect(detected.root.querySelector<HTMLInputElement>("input[value='equilibre']")?.checked).toBe(true); });
+    expect(detected.home.preferences.read().profile).toBe("equilibre");
     await detected.enter();
     expect(scale(detected)).toEqual([[1]]);
     const chosen = setup();
-    chosen.root.querySelector<HTMLInputElement>("input[value='performance']")?.click();
+    chosen.home.preferences.change({ ...chosen.home.preferences.read(), profile: "performance" });
     await chosen.enter();
     expect(scale(chosen)).toEqual([[0.8]]);
     expect(chosen.root.dataset["profile"]).toBe("performance");
@@ -43,7 +40,7 @@ describe("expérience en réalité mixte", () => {
     await t.enter();
     expect(t.root.dataset["ambiance"]).toBe("brouillard 15 % · sons 0 %");
     const light = setup();
-    light.root.querySelector<HTMLInputElement>("input[value='performance']")?.click();
+    light.home.preferences.change({ ...light.home.preferences.read(), profile: "performance" });
     tickFog(light);
     await light.enter();
     expect(light.root.dataset["ambiance"]).toBe("brouillard éteint · sons 0 %");

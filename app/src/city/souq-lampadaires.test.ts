@@ -3,7 +3,6 @@ import { Group, Mesh } from "three";
 import { describe, expect, it } from "vitest";
 import { createPath } from "../route/path.ts";
 import { DEFAULT_ZONE } from "../safety/zone.ts";
-import { renderLampsChoice } from "../ui/lamps-choice.ts";
 import { withCanvasContext } from "./canvas-double.ts";
 import { MAX_CITY_MESHES, createSouqScene, setCityOpacity } from "./souq.ts";
 import { MAX_FURNITURE, MAX_GENERATED_LAMPS, buildFurniture, countSources } from "./props.ts";
@@ -41,12 +40,10 @@ describe("lampadaires produits dans la scène", () => {
     expect((page.getElementById("app") as HTMLElement).dataset["mobilier"]).toBe("1 d'OpenStreetMap · 4 produits");
   });
 
-  it("APP-013: décocher le réglage de l'accueil éteint les lampadaires produits et ne laisse que le mobilier réel", () => {
+  it("APP-013: le moteur peut préparer une variante sans lampadaires produits, sans changer le relevé", () => {
     const page = doc();
-    page.body.append(renderLampsChoice(page));
     expect(createSouqScene(page, souq).furnitureSources.generated).toBeGreaterThan(0);
-    (page.querySelector("input") as HTMLInputElement).checked = false;
-    expect(createSouqScene(page, souq).furnitureSources).toEqual({ osm: 1, generated: 0 });
+    expect(createSouqScene(page, souq, { generatedLamps: false }).furnitureSources).toEqual({ osm: 1, generated: 0 });
     expect(createSouqScene(doc(), souq, { generatedLamps: false }).furnitureSources.generated).toBe(0);
     expect(createSouqScene(page, souq, { generatedLamps: true }).furnitureSources.generated).toBeGreaterThan(0);
   });

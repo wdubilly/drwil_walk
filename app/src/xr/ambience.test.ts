@@ -62,4 +62,16 @@ describe("ambiance de la scène", () => {
     expect(ambience.summary).toBe("brouillard éteint · sons 20 %");
     expect(() => { ambience.stop(); }).not.toThrow();
   });
+
+  it("APP-001 APP-011: brouillard et volume changent à chaud sans poser de fond au casque", () => {
+    const o = options();
+    const ambience = startAmbience(o);
+    ambience.update(true, 50);
+    expect(ambience.summary).toBe("brouillard 15 % · sons 10 %");
+    expect(o.scene.background).toBeNull();
+    ambience.update(false, 0);
+    expect(o.scene.fog).toBeNull();
+    expect(ambience.summary).toBe("brouillard éteint · sons 0 %");
+    ambience.stop();
+  });
 });

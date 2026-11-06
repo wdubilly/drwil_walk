@@ -10,11 +10,11 @@ de plus de 5 km se charge-t-il (ou retombe-t-il sur le sol seul en le disant) sa
 
 ## Existant
 
-Lu le 2026-11-02 : la vitesse n'a plus de maximum (minimum de 1 km/h, `app/src/route/speed.ts`) et le trajet libre n'a plus de
-limite de longueur (`app/src/route/providers.ts`) ; la requête Overpass d'un long trajet grossit avec le tracé (réduit à un
-nombre de points au plus dans `app/src/city/free-route.ts`). Rien n'a été vu au casque.
+Actualisé le 2026-11-05 : la vitesse n'a plus de maximum (minimum 1 km/h, `app/src/route/speed.ts`).
+Le parcours libre et son chargement distant ont été retirés ; seul l'essai de vitesse sur itinéraire embarqué reste applicable.
+Rien n'a été vu au casque.
 
 ## Questions à trancher
 
 - [decision] À quelle vitesse la lecture de la ville devient-elle inconfortable ? Faut-il un avertissement ou une montée progressive (écarté du chantier, à cadrer à part) ?
-- [decision] Le chargement d'un trajet de plus de 5 km tient-il (Overpass public) ?
+- Le chargement d'un long trajet libre n'est plus dans le produit ; autre cadrage s'il revient.

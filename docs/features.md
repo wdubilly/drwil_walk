@@ -1,256 +1,182 @@
 # Fonctionnalités
 
-Ce que fait drwil_walk, fonctionnalité par fonctionnalité, du point de vue de la personne qui marche sur le tapis.
-Cadré le 2026-10-30. Le détail de la v0.1 est dans `MISSION.md`. Codé au 2026-10-30 : une première tranche (accueil,
-entrée en réalité mixte, marche dans le souk de Doha, joystick de vitesse, fondu tête baissée) ; le
-reste est marqué « à venir ».
+Ce que fait drwil_walk du point de vue de la personne qui marche. Mission initiale : `MISSION.md`.
+Le produit actuel propose quatre itinéraires embarqués, un seul rendu OpenStreetMap, sans compte ni serveur applicatif.
+Les essais sur Quest 3, PC autre que Chromium et vraie tablette restent **humains, non vérifiés**.
 
 ## Écran d'accueil
 
-Ouvert dans le navigateur du Quest 3 : choix de l'itinéraire (Doha Souq Waqif par défaut ; Pune Vieille ville, Pune FC Road et Doha Corniche disponibles ; « Itinéraire libre » : voir la section dédiée), du rendu de la ville (OpenStreetMap par défaut, ou Google 3D photoréaliste avec une clé) et de la vitesse de départ, ville aux voies dessinées sur le sol et aux bâtiments de plusieurs tons, palette propre à chaque itinéraire (à juger au casque), rappel de sécurité (clé de sécurité du tapis attachée, main près
-de la rampe), bouton « Entrer en réalité mixte ». Une seule personne utilise l'application : pas de compte ni de rôle.
+Seuls l'itinéraire et la vitesse sont des choix d'accueil :
 
-Codé : accueil sombre à grandes cibles (48 px au moins, contraste prouvé par QUA-014, contraste du texte et de son
-fond) ; quatre cartes d'itinéraire avec une illustration, Doha Souq Waqif choisi par défaut, choix d'un clic ou à la
-manette ; un itinéraire sans ville dans le dépôt serait marqué « Bientôt » et ne se choisirait pas (plus aucun aujourd'hui) ;
-vitesse de départ (à partir de 1 km/h, sans maximum, défaut 4,0 ; le minimum est écrit sous le champ ; une saisie sous 1 km/h est ramenée à 1 km/h et une saisie illisible à 4,0 km/h, en le disant), opacité de la ville (30 à 100 %), brouillard d'ambiance (décoché) et sons d'ambiance (0 %), rappel de sécurité, mention « © contributeurs OpenStreetMap » (suivie de « Google » quand ce rendu est choisi), bouton d'entrée ; rendu OpenStreetMap par défaut, Google 3D en option : sans clé, ou si les tuiles ne se chargent pas, la marche se fait en OpenStreetMap et la raison s'affiche sur l'accueil ; un
-échec (navigateur sans WebXR, réalité mixte non prise en charge) s'affiche sur la page, pour le bouton du casque seulement : le bouton « Version PC » reste utilisable. Les itinéraires qui démarrent sont le souk
-de Doha, la Vieille ville de Pune, la Corniche de Doha et FC Road à Pune ; le choisi est inscrit sur la page (`data-route`) .
+- Quatre cartes illustrées : Doha Souq Waqif (par défaut), Pune Vieille ville, Pune FC Road et Doha Corniche.
+- Vitesse de départ : 4,0 km/h, minimum 1 km/h, sans maximum, pas de 0,1. Une valeur trop basse est ramenée à 1 ;
+  une valeur illisible à 4,0, avec un message.
+- Rappel de sécurité : clé de sécurité du tapis attachée, main près de la rampe ; attribution OpenStreetMap.
+- « Entrer en réalité mixte » et « Version PC ». L'absence de WebXR ne bloque que le premier bouton.
 
-## Itinéraire libre
-
-Choisir son propre trajet : à l'accueil, la carte « Itinéraire libre » ouvre une carte légère (tuiles OpenStreetMap avec leur mention,
-zoom et déplacement par boutons). Le départ et l'arrivée se posent en touchant la carte ou en cherchant un lieu ou une adresse (Photon,
-OpenStreetMap) ; les deux modes se remplissent mutuellement (géocodage inverse pour une touche, point placé pour une adresse), le premier résultat
-d'une adresse est retenu et affiché. « Calculer le trajet » demande le chemin à pied à Valhalla (profil piéton), puis charge les
-bâtiments OpenStreetMap proches du tracé ; la marche suit ce tracé à la vitesse réglée et **s'arrête à l'arrivée en le disant** (page et casque), sans
-boucle (contrat APP-002). La ville vient du rendu Google 3D si on l'a choisi, ou des bâtiments OpenStreetMap chargés pour le trajet
-(contrat APP-003). Aller simple, de n'importe quelle longueur ; si la ville d'un très long trajet ne se charge pas (Overpass refuse ou ne répond pas), la marche se fait sur le sol seul et la raison s'affiche. Aucune clé : routage et adresses viennent des instances publiques d'OpenStreetMap (réglables pour une instance auto-hébergée, `INSTALL.md`) ; si un service refuse
-ou limite les demandes, la raison est dite et les quatre itinéraires figés restent utilisables. Une clé Google Routes remplace ces deux services (option). Aucun point ni adresse n'est conservé.
-
-Codé et vérifié dans Chromium avec un Quest 3 émulé, services factices (jamais d'appel à un service réel). Limites : jamais essayé avec les instances publiques ni sur un
-vrai Quest 3 (cadence avec des milliers de bâtiments en bande de 150 m, profil piéton et justesse des adresses de Valhalla et de Photon dans les rues de Pune et de Doha) ;
-`docs/intentions/essai-casque-itineraire-libre.md`.
+Thème sombre, cibles de 48 px au moins, contraste du texte et du fond (QUA-014).
+Pas de choix de fournisseur, de carte distante, d'adresse, de poids ni de réglage de rendu à l'accueil.
+Les erreurs de démarrage sont dites sur la page et le bouton redevient utilisable.
 
 ## Marche dans la ville
 
-La ville défile le long de l'itinéraire à la vitesse réglée (défaut 4,0 km/h, à partir de 1 km/h et sans maximum, par pas de 0,1 ; le panneau de la page dit quand la vitesse est au minimum, le message dans le casque lui-même reste à faire : `docs/intentions/hud-casque.md`), avec une
-caméra qui suit le parcours sans rotation brusque (la direction est lissée sur 8 m dans les virages). Manettes : aux carrefours, manette droite pour pointer une rue et prise droite pour la choisir (voir plus bas), gâchette droite pour pause / reprise, joystick droit pour la
-vitesse, bouton A pour recalibrer, bouton B pour le tableau de bord (vitesse, allure, durée, distance, distance restante et progression, calories environ, cap, lieu, heure) et la minicarte du côté opposé (le tracé du parcours, nord en haut, avec un point qui avance ; sans fond de tuiles ni réseau). La ville est faite
-de bâtiments OpenStreetMap extrudés par défaut, ou des tuiles photoréalistes Google 3D au choix de l'accueil (clé requise), avec les mentions « © contributeurs OpenStreetMap » et, en rendu Google, celle de Google et les droits des tuiles. Le fondu tête baissée efface les tuiles Google comme la ville OpenStreetMap. À juger au casque : netteté à hauteur d'yeux, 72 images par seconde, lisibilité des mentions.
+La session Quest est `immersive-ar` (passthrough). La caméra suit le parcours GPS à la vitesse réglée,
+avec une direction lissée sur 8 m dans les virages. Les quatre parcours bouclent (APP-002).
+Les bâtiments viennent des extraits OpenStreetMap figés ; l'attribution ODbL apparaît sur la page et dans la scène
+(APP-003). Aucun service distant n'est appelé pendant la marche.
 
-Codé : session `immersive-ar` (passthrough), le souk de Doha (Souq Waqif : 253 bâtiments OpenStreetMap extrudés, sol)
-qui défile le long d'une boucle d'environ 1,5 km (place Al Koot, ruelle principale, écuries, retour) à la vitesse
-réglée et reprend au départ à la fin de la boucle (contrat APP-002), joystick droit haut / bas pour +0,1 / −0,1 km/h (un cran par poussée),
-panneau sur la page (vitesse, distance, temps, opacité de la ville, mention OpenStreetMap) et panneau de mention dans
-la scène du casque, effacé avec la ville (contrat APP-003). Limites : la ville n'a pas encore été vue sur un vrai Quest 3
-(rendu, 72 images par seconde, lisibilité de la mention) ; environ 20 m de la boucle traversent des passages couverts
-dessinés comme des bâtiments par OpenStreetMap. Dans le casque : à l'approche d'un carrefour (40 m), des flèches à plat signalent les rues possibles (jaune : proposée, blanche : pointée, verte : choisie) et le panneau annonce « Carrefour dans N m » ; la manette droite pointe une rue, la prise droite la choisit (sans choix, la marche suit le tracé d'origine ; un autre choix quitte le tracé en douceur ; vitesse et distance ne changent pas ; rien n'est choisi ville effacée, tête baissée : APP-001, APP-002). La gâchette droite met la marche en pause et la reprend (l'avancée s'arrête, la vitesse réglée est gardée), le bouton A recale le parcours sur l'endroit et la direction où l'on regarde (la distance parcourue ne change pas), le bouton B masque ou réaffiche le tableau de bord de marche, un texte flottant sur un fond légèrement transparent, posé en bas du champ de vision du côté choisi à l'accueil (gauche ou droite, droite par défaut, gardé dans le navigateur : contrats APP-001 et APP-002), hors de la zone tapis, affiché dès le départ, qui disparaît tête baissée avec la ville : cap de la boussole (lu sur la direction du parcours) et heure locale en haut, lieu (le nom de l'itinéraire), vitesse, durée, distance et calories « environ » (formule de marche de l'ACSM : vitesse, durée et poids, 70 kg sans poids saisi) ; le poids est facultatif, saisi une fois à l'accueil, gardé seulement dans le navigateur du casque, effaçable (contrat APP-002) ; un appui ne compte qu'une fois. Sa place (28° sur le côté, 0,31 m sous les yeux) est réglée sur la simulation du champ de vision pour que tout son texte, l'heure comprise, reste dans la vue des deux côtés (APP-005). Limites : jamais essayé sur un vrai Quest 3 (lisibilité du texte sur fond transparent, place du tableau de bord, tapis resté visible) ; le nom de la rue n'est pas affiché, l'extrait OpenStreetMap n'en porte pas (`docs/intentions/noms-de-rues-extrait.md`) ; pas de dénivelé, faute de source d'élévation.
+| Itinéraire | Ville et tracé |
+|---|---|
+| Souq Waqif | 253 bâtiments ; boucle d'environ 1,5 km, Al Koot, ruelle principale, écuries, retour |
+| Pune Vieille ville | 2 079 bâtiments ; boucle d'environ 1,5 km, Shaniwar Wada, Dagdusheth Halwai Ganpati, Bajirao Road |
+| Pune FC Road | 1 427 bâtiments, dont 1 410 sans hauteur (7 m) ; aller-retour d'environ 3,5 km |
+| Doha Corniche | 756 bâtiments, dont 310 sans hauteur (7 m) ; aller-retour d'environ 4 km depuis le musée |
 
-Codé aussi : la Vieille ville de Pune (2 079 bâtiments OpenStreetMap extrudés) qui défile le long d'une boucle d'environ
-1,5 km (Shaniwar Wada, contour nord du fort, ruelles à l'est jusqu'au temple Dagdusheth Halwai Ganpati, retour par l'ouest
-et Bajirao Road) ; la marche lit l'itinéraire choisi à l'accueil. Limites : le tracé est calculé par plus court chemin
-sur les voies OpenStreetMap (hypothèse de cadrage, à relire par le demandeur) ; ni la ville ni la boucle n'ont été vues sur
-un vrai Quest 3 (cadence, lisibilité).
+Les tracés sont calculés sur les voies OpenStreetMap, hypothèse à relire sur place. La Corniche n'atteint pas West Bay,
+dont les tours se voient de loin. Environ 20 m de la boucle du souk traversent des passages couverts dessinés comme bâtiments.
+Cadence, netteté et lisibilité attendent un vrai casque : `docs/intentions/seance-casque-parcours.md`.
 
-Codé aussi : FC Road à Pune (1 427 bâtiments OpenStreetMap extrudés, dont 1 410 sans hauteur, donc à 7 m) le long d'un
-aller-retour d'environ 3,5 km (1,76 km de Ferguson College, au nord, au carrefour de Jangli Maharaj Road, au sud, retour par
-le même chemin) ; la marche lit l'itinéraire choisi à l'accueil. Limite : tracé calculé par plus court chemin sur les voies
-OpenStreetMap, qui préfère les voies principales (hypothèse de cadrage, à relire par le demandeur).
+### Commandes Quest
 
-Codé aussi : la Corniche de Doha (756 bâtiments OpenStreetMap extrudés, dont les tours de West Bay dans l'extrait) le long d'un
-aller-retour d'environ 4 km (2 km sur le front de mer en partant près du Musée d'art islamique, retour par le même chemin) ;
-la marche lit l'itinéraire choisi à l'accueil. Limites : le tracé est calculé par plus court chemin sur les voies
-OpenStreetMap, qui préfère les cheminements piétons (hypothèse de cadrage, à relire par le demandeur) ; il part du point
-relié le plus proche du musée et n'atteint pas West Bay (environ 3,5 km plus loin), dont les tours ne se voient que de loin ;
-310 bâtiments sur 756 sans hauteur OSM (7 m par défaut) ; jamais essayé sur un vrai Quest 3.
+- Joystick droit haut/bas : ±0,1 km/h par poussée. Gâchette droite : pause/reprise (penser à arrêter le tapis).
+- A : recalage sur le regard, sans changer la distance. B : afficher/masquer tableau de bord et minicarte.
+- Aux carrefours (40 m) : viser avec la manette droite puis confirmer avec la prise droite.
+  Flèches jaune (proposée), blanche (pointée), verte (choisie). Sans choix, le tracé initial continue ;
+  une autre rue quitte le tracé en douceur, sans changement de vitesse ni distance et sans retour guidé.
+  Aucun choix n'est lu quand la ville est effacée ou les préférences ouvertes.
+- Gâchette gauche : ouvrir/fermer les préférences ; rayon et prise droite pour changer une ligne.
+- Clic joystick droit : diagnostic de rendu, masqué au départ.
+- X, Y, joystick et prise gauches : zone tapis, décrite plus bas.
 
-Ville riche (chantier rendu-ville-riche) : sur les quatre itinéraires figés (et le trajet libre, dont la requête lit les mêmes balises), les rues
-portent des trottoirs (`sidewalk`) et des passages piétons zébrés, le chemin suivi est jaune bordé de sombre, les parcs, herbes et bois sont des
-surfaces vertes au sol avec leurs haies, les toits à deux pans (300 au plus) et les auvents (80 au plus) s'ajoutent aux bâtiments, et jusqu'à 8 noms
-de rues (les plus proches du parcours, à 60 m au plus) sont écrits à plat sur la chaussée, dans le sens de la marche. Rien de tout cela n'ajoute plus
-de 8 maillages fixes, et tout s'efface avec la ville tête baissée (APP-001). Hors périmètre : ciel, soleil, brume, relief. Non vu au casque :
-voir `docs/intentions/essai-casque-ville-riche.md`.
+Un appui compte une fois même tenu. Les gestes attendent un essai sur vrai Quest.
 
-Rendu enrichi (chantier osm-enrichi) : les bâtiments prennent la couleur, la couleur de toit ou le matériau de leurs balises
-OpenStreetMap, sinon un ton de la palette de l'itinéraire ; les murs s'assombrissent vers le pied (ombrage par sommet) ; les
-arbres, lampadaires et bancs de l'extrait s'affichent (300 arbres et 400 éléments de mobilier au plus, les plus proches du
-parcours ; les arbres sont ceux du pack Quaternius, voir l'ambiance cartoon ci-dessous). Constaté sur les extraits du 2026-10-31 : arbres 155 (souk), 285 (Vieille ville), 513 (Corniche), 105 (FC Road) ;
-bancs 19 (souk) et 8 (Corniche) ; aucun lampadaire ; très peu de bâtiments portent une couleur ou un matériau (7 matériaux
-au total, un seul toit coloré hors bâtiment), donc la plupart gardent le ton de la palette. À juger au casque, cadence
-comprise (lot 5 du chantier, humain) ; le relief du sol n'est pas fait (`docs/intentions/osm-enrichi.md`).
+### Tableau de bord et minicarte
 
-## Mobilier urbain et marquages au sol
+Vitesse, allure (— en pause), durée, distance, distance restante et progression du tour, calories **environ pour 70 kg**,
+cap, lieu (itinéraire), heure locale. Aucune mesure personnelle : le poids est fixe et les anciens poids ne sont pas relus.
+Pas de dénivelé faute de source d'élévation ; noms de rues manquants : `docs/intentions/noms-de-rues-extrait.md`.
 
-Chantier rendu-rues-mobilier (APP-009). Le mobilier courant est produit par code, aux dimensions réelles : lampadaire (mât de
-4,5 m, bras et lanterne au-dessus de la chaussée), banc (assise à 45 cm, dossier à 85 cm, long de 1,8 m), corbeille (90 cm) et
-panneau (2,2 m). Chaque pièce est posée au sol et tournée dans l'axe du parcours le plus proche, jamais de travers. Rien n'est
-inventé : une pièce n'est posée que là où l'extrait porte la balise exacte (`highway=street_lamp`, `amenity=bench`,
-`amenity=waste_basket`, `traffic_sign` ou `highway=stop|give_way`). Les marquages suivent les balises de voie : passages piétons
-en bandes blanches (`footway=crossing`) avec une ligne d'arrêt de chaque côté, trottoirs et leurs bordures (`footway=sidewalk`,
-`sidewalk=both|left|right`) ; une balise absente ne produit rien.
+Le tableau flottant est en bas du champ de vision, du côté choisi, sur un fond transparent réglable.
+Ses quatre coins restent dans la vue simulée (APP-004, APP-005), hors de la zone tapis.
+La minicarte est de l'autre côté, nord en haut, avec le tracé et un point mobile, sans tuiles ni réseau.
+Ils suivent le regard et s'effacent tête baissée ; les préférences prennent leur place sans arrêter la marche.
+Lisibilité réelle : `docs/intentions/essai-casque-tableau-de-bord.md`.
 
-Relevé des quatre extraits figés, réextraits le 2026-11-04 avec les poubelles et les panneaux : bancs 19 (souk) et 8
-(Corniche), aucun ailleurs ; poubelles 14 (Corniche), aucune ailleurs ; **aucun lampadaire** ni **aucun panneau**
-(OpenStreetMap n'en porte aucun dans les quatre emprises, ni `traffic_sign` ni `highway=stop|give_way`). Passages piétons :
-31 (souk), 18 (Vieille ville), 30 (FC Road), 104 (Corniche) ; trottoirs tracés à part : 40 (Vieille ville), 69 (FC Road),
-18 (Corniche), 0 (souk) ; voies portant une balise `sidewalk` : 1 (FC Road), 8 (Corniche).
+## Préférences en marche
 
-Tout le mobilier tient dans un seul maillage plafonné (400 pièces, les plus proches du parcours d'abord) et les marquages se
-fondent dans le maillage des voies : aucun maillage ni matériau en plus, donc tout s'efface avec la ville tête baissée
-(APP-001). Hors périmètre : les lampadaires comme source de lumière (`docs/intentions/rendu-eclairage-ambiance.md`) et les
-éléments remarquables en glTF (`docs/intentions/mobilier-remarquable-gltf.md`). Non jugé au casque :
-`docs/intentions/essai-casque-mobilier-urbain.md`.
+Sur Quest, PC et tablette, chaque changement s'applique **à chaud sans reconstruire la ville ni quitter la marche**.
+Les variantes graphiques sont préparées au départ ; changer un profil ne fabrique pas de géométrie.
+Sur écran, ouvrir « Préférences de marche », puis cliquer/toucher une ligne. Sur Quest, pointer puis confirmer
+avec la prise droite ; chaque appui passe à la valeur suivante.
 
-## Version PC (sans casque)
+| Préférence | Premier départ | Choix |
+|---|---|---|
+| Qualité | Équilibré | Performance, Équilibré, Qualité |
+| Ville vivante (piétons et circulation) | Non | une seule commande pour les deux |
+| Lampadaires | Oui | Oui/Non ; mâts produits et leurs lanternes |
+| Arbres | Oui | Oui/Non |
+| Brouillard | Non | Oui/Non, refusé en Performance |
+| Sons d'ambiance (%) | Coupés | 0, 25, 50, 75, 100 |
+| Côté du panneau | À droite | À gauche/À droite |
+| Opacité du panneau (%) | 70 | 70, 80, 90, 100 |
 
-Le bouton « Version PC » de l'accueil lance la même marche (même ville, même parcours, même vitesse) dans un canvas qui couvre la
-page, sans aucune session WebXR : un navigateur sans WebXR peut donc l'utiliser. Le bouton « Entrer en réalité mixte » reste
-distinct et ouvre toujours une session `immersive-ar`, avec le fondu tête baissée, la zone tapis et la vignette ; la version PC ne les
-applique pas, faute de passthrough ni de tapis (rien n'y remplace APP-001, voir `docs/contracts.md`).
+Choix mémorisés uniquement dans le navigateur (`localStorage`). Les anciens réglages sont ignorés, sauf le profil.
+Une valeur illisible ou un stockage indisponible est dit sur la page ; la séance reste utilisable.
+Matériaux locaux, poids et vignette ne sont pas exposés. L'opacité du panneau ne change pas celle de la ville.
 
-Commandes : Espace (ou P) pause et reprise ; ↑ ou + et ↓ ou − règlent la vitesse de 0,1 km/h par pression (PageHaut et PageBas : 1 km/h), à partir de 1 km/h et sans maximum ;
-R recale le parcours sur le regard sans toucher à la distance ; H masque le tableau (les mentions de données restent) ; D affiche ou masque le diagnostic de rendu ; glisser la souris tourne le regard ;
-Échap quitte. Une pression ne déclenche qu'une action : une touche tenue ne répète pas. Les itinéraires figés bouclent ; le trajet libre s'arrête à l'arrivée et le dit.
+### Profils graphiques (APP-006)
 
-Limites : OpenStreetMap seulement (le rendu Google 3D choisi est dit indisponible), ni minicarte, ni manette de jeu ;
-le tableau de bord est celui de la page ; jamais essayé sur un autre navigateur que Chromium (e2e). Voir `docs/intentions/version-pc-suites.md`.
-
-Façades des bâtiments (chantier rendu-facades-batiments, APP-008) : les bâtiments ne sont plus des blocs nus. Près du parcours (80 m), chacun reçoit des façades dessinées par code, sans texture : corniche, porte du côté de la rue suivie, fenêtres (vitrines pour un commerce), volets et balcons, en nombre réglé par la largeur du mur et par les étages d'OpenStreetMap (repli sur la hauteur, ou sur un type générique, quand ils manquent). Quatre familles (provençale, maison de village, bâtiment ancien, construction récente) sont choisies selon la région : la provençale n'apparaît qu'en Provence, jamais à Pune ni à Doha. L'identifiant OSM sert de graine : la même ville donne toujours les mêmes façades, et deux voisins n'ont jamais la même façade. Le profil graphique règle le détail (« performance » réduit, « équilibré » et « qualité » complet). Comme le reste de la ville, les façades s'effacent tête baissée (APP-001). Une teinte par région (chantier facades-regions, APP-008) : la région se déduit de la position de l'itinéraire (Provence, France du Nord, Italie, Caucase, Inde, Golfe) et choisit les couleurs des détails (liserés, volets, portes, rambardes), les familles restant les mêmes partout ; sans région connue, les teintes d'avant restent. **Changement voulu sur les quatre itinéraires livrés** : Pune prend les teintes de l'Inde (chaux blanche, volets turquoise, safran et vert, portes de teck), Doha celles du Golfe (enduits sable, bois sombre des portes et des volets) ; la forme des façades et le nombre de triangles ne changent pas, et l'e2e joint une capture de chaque ville à son rapport. Limites (teintes) : choisies sans photo de référence, fenêtres de région grossières (`docs/intentions/palettes-regions-references.md`) ; jamais jugées sur un vrai Quest 3 (`docs/intentions/seance-casque-parcours.md`). Limites (façades) : jamais essayé sur un vrai Quest 3 (`docs/intentions/essai-casque-facades-batiments.md`) ; aucune ville de Provence (`docs/intentions/ville-provence.md`) ; ni texture ni monument glTF (`docs/intentions/facades-textures-monuments.md`).
-
-Matériaux locaux du souk (chantier facades-materiaux-souk, APP-012, prototype) : à l'accueil, quand le souk Waqif est choisi, une troisième option de rendu « Matériaux locaux (prototype) » habille les façades détaillées d'enduit, de pierre et de bois texturés (textures CC0 recolorées, embarquées : aucun appel réseau pendant la marche). Sur un autre itinéraire l'option est masquée et le rendu revient à OpenStreetMap, qui reste le rendu par défaut. Le matériau suit la famille de la façade ; sa teinte, son échelle et l'usure plus sombre du pied du mur sont tirées de l'identifiant OSM, et deux voisins n'ont jamais le même matériau dans la même teinte. Le profil « performance » n'en pose aucun. Tête baissée, la ville habillée s'efface comme le reste (APP-001). Limites : couleurs provisoires (palette du souk), faute de photo de rue relevée (`docs/intentions/couleurs-photos-souk.md`) ; textures sans compression GPU (`docs/intentions/textures-compressees-quest.md`) ; jamais jugé sur un vrai Quest 3 (`docs/intentions/essai-casque-materiaux-souk.md`).
-
-Créer un itinéraire (chantier creation-itineraire, APP-003, APP-012) : une seule commande hors casque, `npm run city -- <identifiant> --nom "<nom>" --emprise <sud,ouest,nord,est> --depart <lat,lon> --arrivee <lat,lon>` (étapes `--via`, retour `--retour aller-retour|boucle`, photos fournies `--photos <dossier>`), écrit l'extrait OpenStreetMap de la ville, son tracé de boucle (plus court chemin, chaque point sur une voie de l'extrait) et sa bibliothèque de matériaux, sans code ni script npm propre à la ville ; les quatre itinéraires existants sont décrits dans `app/data/villes.json` et se rejouent par leur identifiant. Les couleurs viennent de photos de rue (Panoramax, puis Mapillary avec `MAPILLARY_TOKEN`, puis photos fournies) ; sans photo à moins de 30 m du tracé, la recherche s'élargit aux quartiers voisins jusqu'à 1 km, puis se replie sur la palette de la région, et le rapport dit pour chaque couleur d'où elle vient (photo, distance, auteur, licence). Limites : la commande n'a été essayée que sur des réponses simulées (jamais contre Overpass, Panoramax ou Mapillary) ; le tracé rejoué des quatre itinéraires est valide mais pas identique aux boucles versionnées, qui n'ont pas été réécrites ; une ville créée n'est pas encore inscrite dans l'application (`docs/intentions/inscrire-une-ville-creee.md`) ; couleurs et matériaux à juger au casque (`docs/intentions/seance-casque-parcours.md`).
-
-Tablette (chantier rendu-tablette-tactile, APP-007) : ouverte sur une tablette, la même version PC se commande au toucher. Des boutons en bas de l'écran
-(« Moins vite », « Pause ou reprise », « Plus vite », « Recaler », « Quitter ») font les mêmes actions que le clavier ; glisser un doigt sur la scène tourne le regard,
-relâcher l'arrête. Le tableau de bord reste du HTML en surimpression, et l'accueil comme le panneau tiennent dans la largeur d'un petit écran. Limites : rejoué en émulation
-tactile de Chromium seulement ; l'essai sur une vraie tablette reste à faire (`docs/intentions/essai-tablette-tactile.md`) ; pas de pincement ni de gyroscope.
-
-## Sécurité : le réel reste visible
-
-La ville s'efface quand on baisse la tête (au-delà d'environ 25°), la zone du tapis définie à la manette reste
-toujours transparente, l'opacité de la ville est réglable (30 à 100 %) et la périphérie peut rester en passthrough.
-Règle protégée par le contrat APP-001.
-
-Codé : le fondu tête baissée (ville pleine jusqu'à 25° sous l'horizontale, effacée à 40°, et effacée aussi si le
-casque perd la pose) et l'opacité globale bornée.
-
-Zone tapis : une boîte (par défaut 1,2 m de large, 2,4 m de profondeur, 1,2 m de haut, autour de la position de départ)
-dans laquelle la ville n'est jamais rendue, quel que soit l'angle de la tête ou l'opacité ; le tapis, la rampe et la console
-restent visibles. Elle se règle à la manette gauche : X la pose sous soi dans le sens du regard, le joystick la déplace
-(vers l'avant en poussant), la prise (grip) tenue + joystick la redimensionne, Y rend la boîte par défaut. Elle est
-enregistrée en fin de geste dans `localStorage` (un volume en mètres, aucune donnée personnelle) et relue au lancement suivant ;
-une zone illisible est remplacée par la boîte par défaut. Vignette réelle : la périphérie du champ de vision reste en
-passthrough (fondu entre 60 % et 125 % du rayon de l'image) ; activée par défaut, case à décocher à l'accueil.
-Non essayé sur un vrai Quest 3 (lot 6 de la fiche).
-
-Ambiance cartoon (lots 2, 3 et 5 de `docs/projects/journal.md`) : le sol, les voies et les bâtiments ont un matériau
-toon à quatre paliers de lumière ; chaque classe de voie a sa couleur, une bordure plus claire et, dès 7 m de large, une ligne
-centrale ; les façades portent un motif de fenêtres dessiné par le shader. Les contours des bâtiments (un trait autour des bâtiments à moins de 120 m du parcours) sont réglés par le profil graphique (ci-dessous), sans case à part. Les arbres sont ceux du pack Quaternius
-« Stylized Nature MegaKit » (version Standard, CC0), embarqués dans `app/assets/` (provenance dans `app/assets/PROVENANCE.md`) : quatre
-variantes d'arbre commun retenues parmi les 15 arbres de l'archive (non les 40 du kit complet), allégées à 413-454 triangles,
-une variante, un cap et une taille par arbre tirés de sa position (donc la même forêt à chaque marche), 300 arbres au plus,
-aucun appel réseau. Si le modèle ne se charge pas, l'écran le dit (« Arbres stylisés indisponibles… ») et la marche continue avec
-l'arbre simple. Non essayé sur un vrai Quest 3 (`docs/intentions/essai-casque-ambiance-cartoon.md`).
-
-## Profils graphiques
-
-Chantier rendu-profils-graphiques (APP-006). À l'accueil, trois profils figés règlent ensemble le rendu, au casque, au PC et à la tablette :
-
-| Profil | Contours | Ville riche (verdure, noms des rues) | Marquages au sol | Brouillard d'ambiance | Arbres / mobilier au plus | Ratio de pixels (PC, tablette) | Échelle d'image (casque) |
+| Profil | Contours | Ville riche | Marquages | Brouillard permis | Arbres/mobilier OSM max. | Pixel ratio écran | Échelle XR initiale |
 |---|---|---|---|---|---|---|---|
-| Performance | non | non | non | non | 100 / 120 | 0,75 | 0,8 |
-| Équilibré | non | oui | oui | oui | 300 / 400 | 1 | 1 |
-| Qualité | oui | oui | oui | oui | 300 / 400 | 2, sans dépasser l'écran | 1,2 |
+| Performance | non | non | non | non | 100/120 | 0,75 | 0,8 |
+| Équilibré | non | oui | oui | oui | 300/400 | 1 | 1 |
+| Qualité | oui | oui | oui | oui | 300/400 | 2, borné par l'écran | 1,2 |
 
-Le profil proposé vient des capacités de l'appareil, pas du seul user-agent : session `immersive-ar` possible (casque : équilibré), pointeur tactile
-principal (tablette : performance), WebGL 2 absent (performance), ni casque ni tactile (PC : qualité) ; une détection impossible donne « équilibré ». Le choix
-manuel l'emporte, est gardé dans le navigateur (`localStorage`, jamais envoyé) et relu à l'accueil suivant ; une valeur gardée inconnue est ignorée et dite à
-l'accueil. Aucun profil ne touche l'opacité, la vignette ni la zone tapis : le réel reste visible (APP-001). Le profil retenu est inscrit sur la page (`data-profile`).
-« Qualité » est proposé partout, sans refus fondé sur des mesures : le risque est assumé. Les images par seconde de chaque profil n'ont jamais été mesurées sur
-un vrai Quest 3 (`docs/intentions/essai-casque-profils-graphiques.md`).
+Équilibré est le premier choix sur toutes les plateformes, sans détection de capacités. À chaud, le casque adapte
+la fovéation (Performance 1, Équilibré 0,5, Qualité 0), sans recréer la session ; l'échelle XR est fixée à l'entrée.
+Aucun profil ne touche la zone tapis, la vignette ni l'opacité de sécurité. Cadences et budgets de mémoire des variantes
+sur un vrai casque : `docs/intentions/essai-casque-profils-graphiques.md`.
 
-## Lampadaires produits par règle
+## Rendu de la ville
 
-Chantier lampadaires-generes (APP-013). Aucun extrait ne porte de lampadaire : la ville en produit le long des rues, sans jamais
-les faire passer pour des relevés. L'intervalle dépend de la classe de voie (voie passante 27,5 m, rue de quartier 37,5 m,
-ruelle 17,5 m ; ni sentier, ni escalier, ni cheminement piéton), varié de ±20 % par une graine tirée de l'identifiant
-OpenStreetMap de la voie : jamais régulier, mais identique à chaque promenade. Le côté de la rue est choisi par tronçon, le
-mât est posé à 0,6 m de la bordure, bras tendu vers la chaussée. Trois refus : dans un bâtiment, sur un trottoir de moins de
-1,2 m, à moins de 2 m d'un autre objet ; les objets du relevé sont posés d'abord et jamais écartés.
+- Bâtiments extrudés, couleurs OSM (`building:colour`, `roof:colour`, `building:material`) ou palette régionale,
+  ombrage vers le pied. Sol et voies en toon à quatre paliers ; voies bordées, ligne centrale dès 7 m.
+- Ville riche : trottoirs et passages piétons, parcours jaune, surfaces vertes et haies, jusqu'à 300 toits à deux pans,
+  80 auvents, 8 noms de rues à moins de 60 m. Au plus 8 maillages fixes supplémentaires.
+- Façades procédurales (APP-008) : identifiant OSM comme graine, quatre familles adaptées à la région,
+  aucun voisin identique, fenêtres, portes, volets, balcons et corniches à moins de 80 m du parcours.
+  Teintes de l'Inde à Pune, sable et bois du Golfe à Doha. Performance réduit le détail.
+- Matériaux locaux (APP-012) : appliqués automatiquement quand une bibliothèque embarquée existe, absents en Performance.
+  Textures CC0 recolorées, teinte/échelle/usure déterministes sans doublon voisin, aucun réseau.
+- Arbres Quaternius CC0 : quatre variantes de 413–454 triangles, cap et taille reproductibles, au plus 300.
+  Échec de chargement signalé, repli sur un arbre simple.
+- Mobilier OSM et marquages (APP-009) : dimensions réelles, axe de rue, bancs, poubelles, panneaux,
+  bordures de trottoir et lignes d'arrêt. Les extraits n'ont ni lampadaire ni poubelle ni panneau ;
+  bancs au souk et à la Corniche.
 
-Chaque objet porte sa provenance (`osm` ou `generated`) et la page dit combien de chaque sorte sont dessinés (`data-mobilier`,
-par exemple « 12 d'OpenStreetMap · 300 produits »). Les lampadaires produits ont leur plafond par profil graphique (100 en
-performance, 300 ailleurs), distinct de celui du mobilier du relevé, et partagent son maillage : aucun appel de rendu en plus
-(environ 21 600 triangles pour 300 mâts, calculé et non mesuré). À l'accueil, la case **Lampadaires produits par règle**
-(cochée) les éteint quand on la décoche ; rien n'en est gardé. Ils s'effacent tête baissée avec la ville (APP-001). Non jugé
-au casque (densité, hauteur, images par seconde) : `docs/intentions/seance-casque-parcours.md`.
+Tout s'efface avec la ville. Limites : couleurs sans références suffisantes et textures non compressées ;
+`docs/intentions/palettes-regions-references.md`, `docs/intentions/textures-compressees-quest.md`,
+`docs/intentions/essai-casque-facades-batiments.md`, `docs/intentions/essai-casque-materiaux-souk.md`,
+`docs/intentions/essai-casque-ville-riche.md`, `docs/intentions/essai-casque-ambiance-cartoon.md`.
 
-## Éclairage et ambiance
+### Lampadaires produits par règle (APP-013)
 
-Chantier rendu-eclairage-ambiance (APP-011). La lumière de la ville suit l'heure réelle de l'appareil : le soleil monte de 6 h à
-18 h, sa couleur passe de l'orange rasant au blanc de midi, le ciel et le brouillard suivent la même courbe ; la nuit, la ville
-reste éclairée doucement (le soleil ne passe jamais sous l'horizon) et une heure illisible retombe sur midi. Rien ne se règle :
-l'heure n'est pas un réglage de l'accueil.
+Inventés, jamais présentés comme relevés : intervalle 27,5 m sur voie passante, 37,5 m en quartier, 17,5 m en ruelle,
+variation ±20 % par graine OSM ; pas de sentier, escalier ni cheminement piéton. Mât à 0,6 m de la bordure,
+bras vers la chaussée. Refus dans un bâtiment, sur trottoir de moins de 1,2 m ou à moins de 2 m d'un objet ;
+les relevés sont prioritaires. Plafond 100 en Performance, 300 ailleurs. Provenance `osm`/`generated`,
+résumé sur la page. Maillage séparé pour permettre leur retrait à chaud.
+Environ 21 600 triangles pour 300 mâts (calcul, pas mesure). Densité et cadence : `docs/intentions/seance-casque-parcours.md`.
 
-Deux réglages facultatifs s'ajoutent à l'accueil, tous deux éteints à chaque ouverture (rien n'est gardé dans le navigateur) :
+### Éclairage et ambiance (APP-011)
 
-- **Brouillard** (décoché) : un voile de profondeur. Au casque, il ne dépasse jamais 15 % d'opacité, même à 1000 m, et rien
-  n'est voilé en deçà de 8 m : la zone tapis, le panneau d'infos, la minicarte et tout obstacle à portée de pas gardent leurs
-  couleurs (APP-001). Sur la version PC, où il n'y a pas de réel à voir, le voile peut aller plus loin (90 %). Le profil
-  « performance » le refuse, même coché.
-- **Sons d'ambiance** (0 %) : une rumeur produite par code (bruit filtré, bouclé). Tant que le volume est à 0, aucun contexte
-  audio n'est ouvert ; au plus fort, le gain reste à 0,2, de quoi entendre le tapis, la pièce et une personne qui parle.
-  Quitter la marche coupe le son.
+Lumière suivant l'heure locale au départ : soleil de 6 h à 18 h, orange rasant puis blanc de midi ;
+nuit doucement éclairée, heure illisible remplacée par midi. Aucun ciel opaque au casque.
+Brouillard : rien sous 8 m, opacité au plus 15 % au casque, jusqu'à 90 % sur écran, coupé en Performance.
+Sons produits par code : aucun contexte audio à volume nul, gain plafonné à 0,2 ; quitter coupe le son.
+De nuit, lanternes et halos chauds au sol : deux maillages instanciés, aucune lumière par mât,
+aucun effet sur l'alpha du passthrough, découpe et fondu de sécurité. La préférence Lampadaires les coupe aussi.
+Non jugé/écouté sur vrai casque : `docs/intentions/seance-casque-parcours.md`.
 
-**Lampadaires allumés la nuit** (chantier ville-vivante-souk, lot 1, APP-011) : quand le soleil est sous l'horizon (avant 6 h,
-après 18 h), les lanternes de tous les lampadaires dessinés, relevés comme produits par règle, brillent et posent un halo chaud
-au sol ; le jour, elles sont éteintes. L'état est lu une fois à l'entrée dans la marche et inscrit sur la page
-(`data-lanternes` : « allumées », « éteintes » ou « absentes »). Aucune source de lumière par mât : deux maillages instanciés
-de plus (lanternes et halos, environ 12 + 20 triangles par mât, calculé et non mesuré). Le halo éclaircit le sol sans jamais
-toucher à l'alpha de l'image : il ne masque rien du passthrough ; lanternes et halos s'effacent tête baissée et sont découpés
-dans la zone tapis (APP-001). La case **Lampadaires allumés la nuit** (cochée, jamais gardée) les retire quand on la décoche.
-Non jugé au casque : `docs/intentions/seance-casque-parcours.md`.
+### Ville vivante (APP-014)
 
-**Circulation et piétons** (chantier ville-vivante-souk, lots 2 et 3, APP-014) : la case **Circulation et piétons**, à l'accueil,
-est décochée par défaut et n'est jamais gardée. Cochée, elle peuple de figurants les itinéraires listés par le catalogue,
-aujourd'hui le seul Souq Waqif. Sur les autres itinéraires, la case est sans effet.
+Activable par une seule préférence, sur les itinéraires du catalogue (Souq Waqif seulement).
+Voitures, taxis, 4x4, utilitaires, deux-roues sur voies carrossables ; piétons sur trottoirs et voies piétonnes.
+`oneway`, `lanes`, côté de conduite et emprises des bâtiments sont respectés. Moteur pur à graine OSM,
+types et tables régionales en données (`app/assets/figurants-catalogue.json`), Golfe réglé, Inde provisoire.
+Vitesses plafonnées à 30 km/h et 6 km/h. Plafonds véhicules/piétons : 8/16, 20/40, 30/60 selon profil.
+Figurants retirés à moins de 10 m avec transition sur 4 m, soumis à la zone tapis et au fondu.
+Un maillage instancié par modèle CC0, 12 au plus ; modèles invalides refusés avec raison.
+Les piétons glissent sans animation. Origines/licences : `app/assets/PROVENANCE.md`.
+Essai réel et animation : `docs/intentions/seance-casque-parcours.md`.
 
-- **Où ils circulent** : les véhicules (berlines, taxis, 4x4, utilitaires, deux-roues) roulent sur les voies carrossables,
-  dans le sens de la voie (`oneway` lu de l'extrait) et du côté de la conduite de la région, sur autant de files que la
-  balise `lanes`. Les piétons marchent sur les trottoirs (`sidewalk`) et les voies piétonnes. Les tronçons qui frôlent un
-  bâtiment sont retirés : aucun figurant n'y entre.
-- **Moteur** : il est pur et reproductible. La graine vient de l'identifiant OSM de la voie. Le moteur ne connaît aucun
-  type en dur. Il lit deux tables dans `app/assets/figurants-catalogue.json` :
-  - le **catalogue des types** : modèles, lieu de circulation, vitesse, gabarit ;
-  - la **table par région** : côté de conduite, densités par lieu, poids des types. `golfe` y est réglé, `inde` a des
-    valeurs provisoires, `ailleurs` sert par défaut.
-- **Vitesses** : plafonnées à 30 km/h pour un véhicule et 6 km/h pour un piéton, quelle que soit la donnée.
-- **Plafonds par profil** (véhicules / piétons) : 8 / 16 en performance, 20 / 40 en équilibré, 30 / 60 en qualité. Les
-  figurants gardés sont les plus proches du parcours.
-- **Sécurité** : un figurant à moins de 10 m de l'utilisateur est retiré de l'image, avec un fondu sur 4 m. Il ne passe
-  donc jamais devant lui et n'entre pas dans la zone tapis. Les figurants s'effacent tête baissée et sont découpés dans la
-  zone tapis comme le reste de la ville (APP-001).
-- **Rendu** : un maillage instancié par modèle, soit 12 modèles au plus. Les piétons glissent, sans marche animée.
-- **Coût mesuré** (scène du souk entière, test `app/src/city/traffic-budget.test.ts`) :
-  - en qualité, de 15 appels et 90 865 triangles à 27 appels et 203 618 triangles ;
-  - en performance, de 8 appels et 45 908 triangles à 18 appels et 75 774 triangles ;
-  - dans les budgets de 150 appels et 500 000 triangles.
-- **Relevé sur la page** (`data-figurants`) : « N véhicules · M piétons », « aucun : itinéraire hors du catalogue », ou
-  « refusés : <raison> » si les modèles ne se chargent pas.
+## Sécurité : le réel reste visible (APP-001)
 
-Les modèles viennent de packs CC0 (Kenney « Car Kit » et « Mini Characters », une moto de Poly Pizza). Leur provenance est
-dans `app/assets/PROVENANCE.md`.
+Ville pleine jusqu'à 25° tête baissée, effacée à 40°, effacée aussi sans pose du casque.
+Zone tapis toujours transparente : boîte 1,2 × 2,4 × 1,2 m au départ. X la pose sous soi ;
+joystick gauche la déplace, prise tenue + joystick la redimensionne, Y rétablit le défaut.
+Enregistrement en fin de geste, erreur dite ; zone illisible remplacée par le défaut.
+Vignette réelle toujours active : périphérie en passthrough, fondu entre 60 % et 125 % du rayon.
+Aucune préférence ni changement de qualité ne réduit ces protections.
 
-Non jugé au casque (densité, vitesses, gabarits et orientation des modèles) : `docs/intentions/seance-casque-parcours.md`.
+## Version PC et tablette
 
-Au casque, aucun ciel ni fond n'est posé : le fond est le passthrough, donc le réel. Sur la version PC, le ciel suit l'heure.
-Ce qui est appliqué est inscrit sur la page (`data-ambiance`, par exemple « brouillard 15 % · sons 20 % »). Limites : jamais
-essayé sur un vrai Quest 3 (`docs/intentions/essai-casque-eclairage-ambiance.md`) ; les sons sont un murmure produit par code,
-pas une ville enregistrée (`docs/intentions/sons-ambiance-ville.md`) ; la courbe du jour ignore la saison et la latitude.
+Canvas de page sans WebXR, même ville, vitesse et calculs. Pas de fondu, de zone tapis ni de vignette sur écran.
+Espace/P pause ; ↑/+ et ↓/− vitesse ±0,1, PageHaut/PageBas ±1 ; R recale ; H masque le tableau ;
+D diagnostic ; glisser regarde ; Échap quitte. Une pression = une action, sans répétition.
+Pas de choix de carrefour ni de minicarte ni de manette de jeu : `docs/intentions/version-pc-suites.md`.
 
-## Vérifié en conditions réelles
+Tablette (APP-007) : boutons tactiles de 48 px, « Moins vite », « Pause ou reprise », « Plus vite », « Recaler », « Quitter » ;
+glisser un doigt regarde, relâcher arrête. Préférences accessibles au toucher ; tableau HTML et accueil petit écran.
+Ni pincement ni gyroscope. Émulation Chromium seulement : `docs/intentions/essai-tablette-tactile.md`.
 
-Rien pour l'instant : aucune fonctionnalité n'a encore été essayée sur le Quest 3 et le tapis. La tranche codée est
-vérifiée dans Chromium avec un Quest 3 émulé (IWER), pas sur un vrai casque.
+Diagnostic : images/s, temps d'image, appels de rendu et triangles, valeur illisible dite indisponible.
+Sur écran, « Enregistrer les mesures » télécharge du JSON, sans envoi.
+
+## Créer un itinéraire
+
+`npm run city -- <identifiant> [options]` prépare extrait, boucle et matériaux **sur le PC de développement uniquement**,
+avec réseau ; rien n'est généré dans le casque. Villes décrites dans `app/data/villes.json`, pas de script par ville.
+Photos Panoramax, Mapillary (jeton dans l'environnement), photos fournies ; recherche jusqu'à 1 km puis palette régionale,
+rapport de provenance. Arguments : `docs/guide-utilisateur.md`. Tests à réponses simulées, pas de services réels validés.
+Inscription à l'accueil encore manuelle : `docs/intentions/inscrire-une-ville-creee.md`.

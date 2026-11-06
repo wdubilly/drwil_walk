@@ -35,7 +35,7 @@ export interface WalkInfo {
   position: Vec2;
   buildingCount: number;
   /** Le rendu affiché : le repli sur OpenStreetMap se lit ici. */
-  rendering: "osm" | "google";
+  rendering: "osm";
   /** Tuiles Google affichées (0 en rendu OpenStreetMap). */
   tileCount: number;
   /** Les mentions de données de ce qui est affiché (APP-003). */
@@ -87,7 +87,7 @@ export function renderWalkPanel(doc: Document, root: HTMLElement, pc = false, di
   const pace = row("pace", "Allure");
   const remaining = row("remaining", "Distance restante");
   const progress = row("progress", "Progression");
-  const kcal = row("kcal", "Calories");
+  const kcal = row("kcal", "Calories estimées (référence 70 kg)");
   const opacity = row("opacity", "Opacité de la ville");
   const credit = doc.createElement("p");
   credit.className = "attribution";

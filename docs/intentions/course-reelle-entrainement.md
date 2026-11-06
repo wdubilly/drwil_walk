@@ -16,10 +16,8 @@ Exemple cité : une course de Vidauban à Sainte-Maxime, dont le parcours évolu
 
 Lu le 2026-11-01 (`docs/features.md`, `app/src/route/`, `docs/intentions/hud-casque.md`) :
 
-- Le trajet libre pose un départ et une arrivée sur la carte, calcule le chemin à pied par Valhalla, puis charge les bâtiments
-  OpenStreetMap proches ; aller simple, arrêt à l'arrivée. Il refuse un chemin de plus de 5 km (tests de
-  `app/src/route/valhalla.test.ts` et `app/src/route/routes-api.test.ts`), alors qu'une course réelle fait souvent plusieurs fois cette
-  distance.
+- Le parcours libre et ses fournisseurs ont été retirés le 2026-11-05 ; seuls les itinéraires embarqués bouclent.
+  Rejouer une course réelle demande un autre cadrage, pas la remise en route d'un service supprimé.
 - Aucun import de fichier de tracé (rien sur GPX dans `app/`) : un parcours réel ne peut pas être fourni tel quel.
 - Aucune source d'élévation : le dénivelé d'une course n'est pas rejoué (`docs/intentions/hud-casque.md`).
 - La progression d'une séance à l'autre n'est pas conservée, hors la distance cumulée prévue par

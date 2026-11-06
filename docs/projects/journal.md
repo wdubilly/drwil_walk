@@ -90,34 +90,42 @@ One entry per closed project, most recent last.
 
 ## 2026-10-31 — Le rendu photoréaliste Google 3D Tiles, en option
 
-- L'accueil propose le rendu « OpenStreetMap » (par défaut, sans réseau) ou « Google 3D » (`app/src/ui/render-choice.ts`). Les tuiles viennent de `3d-tiles-renderer` 0.5.3 (Apache-2.0, aucune vulnérabilité propre ; les 32 avis `npm audit` visent l'outillage de développement, déjà présent), calées sur l'origine de la boucle (`app/src/city/google-tiles.ts`, `app/src/xr/google-mode.ts`).
+- Historique : l'accueil proposait OpenStreetMap ou Google 3D, avec tuiles `3d-tiles-renderer` 0.5.3 calées sur la boucle.
+  Ce mode, ses fichiers, sa dépendance et ses tests ont été retirés par décision du 2026-11-05 ; aucune option actuelle.
 - La clé vient de `VITE_GOOGLE_MAPS_API_KEY` (`.env.local` dans `app/`, jamais commitée ; `.env.example` ne porte qu'une valeur fictive). Sans clé, ou si le jeu de tuiles est refusé, la marche se fait en OpenStreetMap et la raison est dite à l'accueil (alerte à part du statut, clé masquée) : `QUA-002`.
 - Le fondu efface les tuiles comme la ville OpenStreetMap, la scène garde `scene.background` nul (`APP-001`) ; la mention de Google s'ajoute à celle d'OpenStreetMap à l'accueil, dans le panneau et dans le casque (`APP-003`, texte du contrat adapté dans les termes de la fiche : plus de « aucun appel réseau » en rendu Google).
-- Aucun test n'appelle Google : les tests unitaires remplacent `fetch` et injectent la fabrique de tuiles ; l'e2e (chemin 9, `app/e2e/google-3d.test.ts`, `QUA-020`) sert un jeu de tuiles factice par `page.route`, refuse tout autre hôte, et le serveur de test reçoit une clé fictive.
+- Aucun test n'appelait Google : réponses factices ; l'ancien chemin 9 et sa configuration ont été retirés le 2026-11-05
+  et les garanties toujours utiles sont reprises par les e2e des itinéraires embarqués (QUA-020).
 - Critères de la fiche : aucun ajusté. Le chemin 2 de l'e2e compte désormais les radios de l'itinéraire seulement (le choix du rendu en ajoute deux).
 - Limites : jamais essayé avec une vraie clé ni au casque (couverture de Pune et de Doha, netteté, 72 images par seconde, hauteur du sol des tuiles, décodeur Draco chargé depuis le CDN de Google, conformité des mentions sans logo) ; l'e2e émulé ne juge pas l'apparence. Lots 1 et 4 laissés aux humains : intentions retirées le 2026-11-02 (Google 3D abandonné, code resté dormant).
 - Branche `workstream/google-3d-tiles`. Preuve de clôture : docs/preuves/google-3d-tiles.md (écrite par la clôture).
 
 ## 2026-10-31 — Choisir son propre itinéraire (carte ou adresse, chemin à pied calculé)
 
-- L'accueil propose une cinquième carte « Itinéraire libre » : une carte légère à tuiles OpenStreetMap (sans bibliothèque, `app/src/ui/map-picker.ts` : Leaflet lit `window` à l'import, ce qui contredit l'injection testée sous happy-dom ; aucune dépendance ajoutée, `npm audit` et licences inchangés) ou des champs « Départ » et « Arrivée » (recherche d'adresse par l'API Google Geocoding, premier résultat retenu et affiché) posent les deux points, qui se remplissent mutuellement (`app/src/ui/free-trip.ts`). Le chemin à pied vient de l'API Google Routes (mode piéton, 5 km au plus, refus avant l'appel à vol d'oiseau et après sur la distance du chemin), avec **sa propre clé** `VITE_GOOGLE_ROUTES_API_KEY` (`.env.local`, jamais commitée, `.env.example` fictif, masquée dans tout message) sur laquelle Routes et Geocoding doivent être activés (`INSTALL.md`).
-- Le trajet se prépare à l'accueil (`app/src/city/free-route.ts`) : chemin, puis bâtiments et voies OpenStreetMap proches du tracé (bande de 150 m, Overpass) ; la marche, elle, ne fait aucun appel. Si Overpass échoue, la marche reste possible sans bâtiments et le dit. Un tracé non bouclé (`Path.loop`) s'arrête à l'arrivée et le dit sur la page et dans le casque (`APP-002`) ; le rendu Google 3D reste au choix, `scene.background` nul et fondu sur tout (`APP-001`). Aucun point ni adresse n'est conservé.
+- Historique : cinquième carte Itinéraire libre, points par carte ou adresse, trajet piéton Google Routes limité à 5 km,
+  clé distincte masquée. Écran, routage et variables ont été retirés par décision du 2026-11-05 ; installation actuelle sans clé.
+- Le trajet était préparé à l'accueil puis marché sans appel distant, avec bâtiments Overpass ou raison du repli, arrêt à
+  l'arrivée et fondu de sécurité. Cette préparation n'existe plus ; les quatre itinéraires embarqués bouclent (APP-002).
 - Sans clé Routes, ou en cas de refus, d'adresse introuvable, de saisie vide ou de trajet trop long, la raison est dite à l'écran (`QUA-002`) et les quatre itinéraires figés restent utilisables.
-- Contrats : `APP-002` (boucle des quatre itinéraires figés, arrêt à l'arrivée d'un trajet libre) et `APP-003` (ville d'un trajet libre chargée, pas versionnée) adaptés comme déclaré à la fiche ; `QUA-020` reçoit le chemin 10 (`app/e2e/itineraire-libre.test.ts`, services factices servis par `page.route`) et le chemin 2 compte cinq cartes. Critères de la fiche : ajustés à la demande du demandeur (recherche d'adresse, raisons dites reliées à `QUA-002`) ; le périmètre s'étend à la configuration Playwright, `.env.example` et `INSTALL.md`.
+- Contrats historiques APP-002/APP-003 et chemin 10 de QUA-020 : adaptés au retrait du 2026-11-05, quatre cartes seulement.
+  Les erreurs, la marche et la sécurité gardent leurs chemins e2e sur les itinéraires embarqués.
 - Limites (lot 4, humain) : jamais essayé avec une vraie clé, avec de vrais Overpass, Geocoding et Routes, ni sur un vrai Quest 3 (cadence avec des milliers de bâtiments, maniabilité de la carte à la manette, justesse du premier résultat d'une adresse). Intention `docs/intentions/essai-casque-itineraire-libre.md` ; intention `itineraire-libre` couverte, retirée à la clôture.
 - Branche `workstream/itineraire-libre`. Preuve de clôture : docs/preuves/itineraire-libre.md (écrite par la clôture).
 
 ## 2026-10-31 — Des fournisseurs ouverts à la place de Google pour l'itinéraire libre
 
-- Le trajet libre passe par deux interfaces, `Router` et `Geocoder` (`app/src/route/providers.ts`). Par défaut, sans clé : Valhalla (`app/src/route/valhalla.ts`, profil piéton, une requête GET, tracé décodé de la polyligne à 6 décimales) et Photon (`app/src/route/photon.ts`, une requête par validation d'adresse, aucune autocomplétion, géocodage inverse avec repli sur les coordonnées arrondies), instances publiques d'OpenStreetMap. Leurs adresses se règlent par `VITE_ROUTING_URL` et `VITE_GEOCODING_URL` (non secrètes, `.env.example`, `INSTALL.md`) pour viser une instance auto-hébergée. Google Routes et Geocoding (`app/src/route/routes-api.ts`, `app/src/route/geocoding.ts`) passent derrière les mêmes interfaces et remplacent les deux si `VITE_GOOGLE_ROUTES_API_KEY` est fournie (`app/src/route/create-providers.ts`).
-- Un refus ou une limite d'un service public (429, autre code, panne) est dit à l'écran avec sa raison (`QUA-002`), les quatre itinéraires figés restent utilisables. Le rendu Google 3D reste au choix ; un refus 403 des tuiles évoque la restriction de l'EEA (`app/src/city/google-tiles.ts`, `INSTALL.md`). Le cas « trajet libre indisponible sans clé » disparaît : il n'y a plus de cas sans clé.
+- Historique : interfaces de routage/adresses, Valhalla et Photon publics sans clé, Google en option, variables
+  d'instances réglables. Interfaces, fournisseurs et variables retirés le 2026-11-05 ; aucun service de trajet actuel.
+- Les refus étaient dits avec leur raison (QUA-002), itinéraires figés préservés. Le retrait ne change pas les erreurs
+  de démarrage désormais testées sans fournisseur.
 - Contrats : `APP-002` (le chemin du trajet libre vient du routage choisi, Valhalla par défaut) et `APP-003` (adresses de Photon, ville d'OpenStreetMap par défaut) adaptés comme déclaré à la fiche ; `QUA-020` : l'e2e du chemin 10 tourne sans aucune clé (clé Routes vidée dans `app/playwright.config.ts`, tout appel à Google fait échouer le test), avec un cas de service public qui limite les demandes. Couverture 100 %, aucun fichier au-delà de 200 lignes.
 - Limites (lot 4, humain) : aucun appel réel à Valhalla ni à Photon n'a eu lieu ; leurs adresses publiques, leur accès inter-origines, le profil piéton à Pune et à Doha, la justesse du premier résultat et l'usage raisonnable sont des hypothèses de l'agent, non vérifiées ; les conditions d'usage de Nominatim, de Photon et de Valhalla n'ont pas été relues (le navigateur ne laisse pas fixer l'identification, l'instance voit l'origine de la page). Le fondu de sécurité sur un trajet libre reste à juger au casque (`APP-001`). Intentions nées de la clôture : `docs/intentions/essai-fournisseurs-ouverts.md`, `docs/intentions/auto-heberger-valhalla-photon.md`, `relais-cles-google` (retirée le 2026-11-02, Google 3D abandonné) ; l'intention `fournisseurs-ouverts` est couverte, retirée à la clôture.
 - Branche `workstream/fournisseurs-ouverts`. Preuve de clôture : docs/preuves/fournisseurs-ouverts.md (écrite par la clôture).
 
 ## 2026-10-31 — Un rendu OpenStreetMap plus riche (teintes, ombrage, arbres, mobilier)
 
-- L'extraction conserve `building:colour`, `roof:colour`, `building:material` et les nœuds `natural=tree`, `highway=street_lamp`, `amenity=bench` (`app/scripts/osm-tags.ts`) ; les quatre extraits sont ré-extraits (Overpass, plusieurs essais pour Pune et la Corniche) et le trajet libre lit les mêmes balises (`app/src/city/free-route.ts`).
+- L'extraction conserve `building:colour`, `roof:colour`, `building:material` et les nœuds `natural=tree`, `highway=street_lamp`, `amenity=bench` (`app/scripts/osm-tags.ts`) ; les quatre extraits sont ré-extraits (Overpass, plusieurs essais pour Pune et la Corniche).
+  L'ancienne lecture de ces balises pour le trajet libre a été retirée le 2026-11-05.
 - Rendu : un bâtiment prend sa couleur, sinon la teinte de son matériau (`app/src/city/tint.ts`), sinon un ton de la palette ; le toit a sa couleur propre ; les murs s'assombrissent vers le pied (ombrage par sommet, `app/src/city/buildings.ts`). Arbres instanciés (300 au plus) et mobilier fusionné (400 au plus), les plus proches du parcours d'abord (`app/src/city/props.ts`) ; tout est dans le groupe OpenStreetMap, donc effacé par le fondu (`APP-001`).
 - Constaté : arbres 155 / 285 / 513 / 105 (souk, Vieille ville, Corniche, FC Road), bancs 19 et 8, aucun lampadaire ; presque aucune couleur ni matériau (7 matériaux au total) : la plupart des bâtiments gardent leur ton de palette.
 - Contrats : `APP-003` complété (règle, source, preuve, tests), `QUA-020` (parcours 5 à 8 et 10 rejoués avec le rendu enrichi). Choix de l'agent : balises exactes du mobilier, formes simples, plafonds, teintes des matériaux et des arbres, ombrage à 55 % au pied.
@@ -239,7 +247,8 @@ One entry per closed project, most recent last.
 
 ## 2026-11-02 — carte-position-casque (lots 1, 2 et 3 ; lot 4 à faire par l'humain)
 
-- Livré : tracé réduit à 120 points au plus (`app/src/route/simplify.ts`), minicarte dans la scène (`app/src/xr/minimap.ts` : tracé nord en haut, point courant, redessin seulement quand le point change de case de 2 px), place du côté opposé au panneau, hors de la zone tapis (`app/src/xr/pose.ts`, `placeBox` partagé avec le panneau), branchement dans `app/src/xr/experience.ts` ; e2e `app/e2e/minicarte.test.ts` (itinéraire figé, sans requête hors de la page) et point qui avance sur le trajet libre (`app/e2e/itineraire-libre.test.ts`).
+- Livré : tracé réduit à 120 points au plus (`app/src/route/simplify.ts`), minicarte dans la scène (`app/src/xr/minimap.ts` : tracé nord en haut, point courant, redessin seulement quand le point change de case de 2 px), place du côté opposé au panneau, hors de la zone tapis (`app/src/xr/pose.ts`, `placeBox` partagé avec le panneau), branchement dans `app/src/xr/experience.ts` ; e2e `app/e2e/minicarte.test.ts` (itinéraire embarqué, sans requête distante).
+  L'ancienne variante trajet libre a été retirée le 2026-11-05.
 - Contrats : `APP-001` point 5 (minicarte, même fondu, masquage et zone tapis), `APP-002` (tracé et point courant) et `QUA-020` (chemin 18) mis à jour : **à approuver par le demandeur à la validation de la fiche** ; architecture, features, guide, README et `app/AGENTS.md` à jour.
 - Choix techniques de l'agent (pas des décisions de produit) : carré de 0,22 m, côté opposé au panneau, nord en haut (le tracé ne tourne pas avec le recalage), plafond de 120 points, couleurs jaune (tracé) et orange (point), la case du point exposée sur `data-minimap` de `#app` pour l'e2e (la carte est dans la scène, pas dans la page).
 - Limites : lisibilité, place dans le champ de vision et tapis visible jamais jugés sur un vrai Quest 3 (lot 4 humain) ; pas de test de champ de vision (`APP-004`) propre à la minicarte ; 72 images par seconde non mesurées ; nord en haut et non tête en haut, à rouvrir à l'essai.
@@ -271,7 +280,9 @@ One entry per closed project, most recent last.
 
 ## 2026-11-02 — limites-vitesse-distance (lots 1 à 3 ; lot 4 à faire par l'humain)
 
-- Livré : plus de plafond de vitesse (minimum de 1 km/h et pas de 0,1 conservés, `app/src/route/speed.ts`), plus de limite de longueur du trajet libre (`app/src/route/providers.ts`) ; l'accueil dit « À partir de 1 km/h. », plus aucun message de maximum ; e2e `app/e2e/vitesse-limite.test.ts` (50 km/h) et `app/e2e/trajet-long.test.ts` (11 km à 30 km/h, Overpass refusé : marche sur le sol seul, raison dite).
+- Livré : plus de plafond de vitesse (minimum de 1 km/h et pas de 0,1 conservés, `app/src/route/speed.ts`) ;
+  l'accueil dit « À partir de 1 km/h. », aucun message de maximum ; e2e `app/e2e/vitesse-limite.test.ts` (50 km/h).
+  L'ancienne limite de longueur, les routeurs et le scénario de trajet libre long ont été retirés le 2026-11-05.
 - Contrats : `QUA-020` (critère 19 modifié, critère 20 ajouté), changement approuvé le 2026-11-02 dans la fiche ; `APP-002` (plage de la version PC) ; architecture, features, guide utilisateur, README, MISSION à jour. Critère `APP-001` de la fiche marqué [human] (`verify` le rejetait comme « non durable », contrat attesté par un humain).
 - Choix techniques de l'agent (pas des décisions de produit) : repli sur 4,0 km/h d'une saisie illisible, forme des messages, texte « À partir de 1 km/h. ».
 - Limites : `assertCrowFlies` et `assertRouteLength` restent des gardes sans effet, appelées par des routeurs hors périmètre (`docs/intentions/nettoyer-gardes-longueur-routeurs.md`) ; essai au casque à haute vitesse et sur un long trajet non fait (`docs/intentions/essai-casque-vitesse-haute.md`) ; `docs/intentions/limite-vitesse-casque.md` est devenue sans objet (relue, à supprimer au prochain tri, le journal la cite).
@@ -287,7 +298,10 @@ One entry per closed project, most recent last.
 
 ## 2026-11-03 — rendu-profils-graphiques (lots 1 à 4 ; essai au casque à faire par l'humain)
 
-- Livré : trois profils graphiques figés (performance, équilibré, qualité : `app/src/render/profiles.ts`) qui règlent ensemble les contours des bâtiments, la ville riche (verdure, noms des rues), les plafonds d'arbres et de mobilier, le ratio de pixels (PC, tablette) et l'échelle d'image du casque ; détection des capacités (casque `immersive-ar`, pointeur tactile, WebGL 2) sans se fier au user-agent, repli « équilibré » (`app/src/render/capabilities.ts`) ; choix à l'accueil gardé dans le navigateur, qui l'emporte sur la détection, valeur illisible dite (`app/src/ui/profile-choice.ts`) ; les cases « contours » de l'accueil sont retirées ; branchement au casque (`app/src/xr/experience.ts`), au PC (`app/src/pc/enter-pc.ts`) et à la scène (`app/src/city/souq.ts`, `app/src/city/props.ts`) ; e2e `app/e2e/profils-graphiques.test.ts` (chemin 22).
+- Livré : trois profils figés (`app/src/render/profiles.ts`), contours, ville riche, plafonds, ratio écran et échelle XR ;
+  branchement `app/src/xr/experience.ts`, `app/src/pc/enter-pc.ts`, `app/src/city/souq.ts` ;
+  e2e `app/e2e/profils-graphiques.test.ts`. Depuis le 2026-11-05, détection et choix d'accueil retirés :
+  Équilibré au premier départ, préférences en marche et mémoire validée (`app/src/ui/preferences.ts`).
 - Contrats : `APP-006` créé (contrôle `app-006`) ; `QUA-020` modifié (chemin 14 réglé par le profil, approuvé le 2026-11-03 dans la fiche) et complété (chemin 22) ; architecture, features, guide utilisateur et `app/AGENTS.md` à jour.
 - Défaut trouvé par l'e2e et corrigé : `buildStreetLabels` appelait `group.add()` sans argument sur un réseau sans rue, ce que three.js signale par une erreur (`app/src/city/street-names.ts`, test `APP-006` vu échouer avant la correction).
 - Choix techniques de l'agent (pas des décisions de produit) : défaut casque « équilibré » (le rendu d'avant), tablette « performance », PC « qualité » ; valeurs des profils (100/120 et 300/400 arbres et mobilier, ratio de pixels 0,75/1/2, échelle d'image 0,8/1/1,2) ; « ville riche » = verdure et noms des rues ; les plafonds de « qualité » sont ceux des données, donc égaux à « équilibré » ; le profil retenu est inscrit sur la page (`data-profile`).
@@ -459,3 +473,22 @@ One entry per closed project, most recent last.
 - Périmètre de la fiche de référence `docs/projects/socle-app.md` élargi aux quatre fichiers de données des figurants (`app/assets/`), comme à la clôture d'arbres-pack-quaternius.
 - Branche `workstream/ville-vivante-souk`, PR #83. Preuve de clôture : `docs/preuves/ville-vivante-souk.md` (écrite par la
   clôture).
+
+## 2026-11-06 — recentrage-generateur : accueil réduit et préférences en marche
+
+- Livré sur la branche `chantier/recentrage-generateur` : retrait de Google 3D, des fournisseurs de trajet libre et de
+  leurs dépendances ; les quatre itinéraires OpenStreetMap embarqués restent les seuls parcours.
+- L'accueil garde l'itinéraire et la vitesse. Quest, PC et tablette proposent huit préférences en marche, appliquées
+  à chaud sans reconstruire la ville et mémorisées ; ville vivante réunit circulation et piétons, Équilibré par défaut.
+  Les anciens réglages sont ignorés sauf le profil ; poids de référence approximatif, matériaux et vignette fixes.
+- Documentation, contrats et chemins e2e adaptés au produit réduit ; intentions de recentrage réalisées.
+  Le catalogue et la génération de nouvelles villes restent dans `docs/intentions/generateur-ville-complet.md`.
+- Preuves avant clôture : `VITEST_MAX_WORKERS=1 node .githooks/run-checks.mjs`, sortie 0, 747 tests dans 121 fichiers,
+  couverture 100 % ; 17 contrôles repris et 9 rejoués. `git diff --check`, sortie 0.
+  `VITEST_MAX_WORKERS=1 npx drwil verify --agent`, sortie 0 : 27 PASS, 7 ATTESTED, aucun FAIL, ERROR ou MANUAL,
+  `GOVERNANCE: PASS`. La preuve de clôture sur le commit est produite séparément par `npx drwil verify --evidence`.
+- Sécurité-visibilité : essai Quest et attestation réalisés par l'humain le 2026-11-06 ; aucune attestation agent.
+- Limites conservées : cadence, mémoire et appréciation des profils dans `docs/intentions/essai-casque-profils-graphiques.md`,
+  ergonomie dans `docs/intentions/essai-casque-commandes-panneau.md`, réglage du tapis dans
+  `docs/intentions/essai-casque-zone-tapis.md`. L'attestation de sécurité ne vaut pas mesure de performance.
+- Preuve de clôture : docs/preuves/recentrage-generateur.md (écrite par la clôture).

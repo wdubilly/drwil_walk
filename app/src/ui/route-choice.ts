@@ -8,8 +8,6 @@ export interface RouteChoice {
   element: HTMLElement;
   /** L'itinéraire choisi ; jamais un itinéraire « bientôt ». */
   readId(): string;
-  /** Appelé quand l'itinéraire choisi change (l'accueil montre alors la carte de l'itinéraire libre, ou la cache). */
-  onChange(handler: () => void): void;
 }
 
 function text(doc: Document, className: string, content: string): HTMLSpanElement {
@@ -48,8 +46,5 @@ export function renderRouteChoice(doc: Document, itineraries: readonly Itinerary
   return {
     element,
     readId: () => element.querySelector<HTMLInputElement>("input:checked")?.value ?? DEFAULT_ITINERARY_ID,
-    onChange: (handler) => {
-      element.addEventListener("change", handler);
-    },
   };
 }

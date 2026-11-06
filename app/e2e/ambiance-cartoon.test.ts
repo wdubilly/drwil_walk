@@ -4,6 +4,7 @@
 // l'écran sans arrêter la marche (QUA-002).
 import { createRequire } from "node:module";
 import { expect, test, type Page } from "@playwright/test";
+import { remembered } from "./preferences-helper.ts";
 
 const iwerBuild = createRequire(import.meta.url).resolve("iwer/build/iwer.min.js");
 
@@ -37,9 +38,8 @@ async function walkWith(page: Page, outlines: boolean): Promise<Walk> {
   page.on("pageerror", (e) => {
     errors.push(e.message);
   });
+  await remembered(page, { profile: outlines ? "qualite" : "equilibre" });
   await page.goto("/");
-  await expect(page.getByLabel("Équilibré")).toBeChecked();
-  if (outlines) await page.getByLabel("Qualité").check();
   await page.getByRole("button", { name: "Entrer en réalité mixte" }).click();
   await expect(page.getByRole("status")).toHaveText("Réalité mixte active (immersive-ar)");
   await page.waitForTimeout(500);

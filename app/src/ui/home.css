@@ -13,6 +13,7 @@
   --sur-bouton-inactif: #e6eaf2;
   --focus: #7cc4ff;
   --bordure: #56627a;
+  --panneau-rgb: 16 20 28;
   color-scheme: dark;
 }
 
@@ -48,58 +49,6 @@ h1 {
   padding: 0;
   font-size: 1.5rem;
   font-weight: 600;
-}
-
-.rendering,
-.panel-side,
-.profile {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin: 0 0 1.5rem;
-  padding: 0;
-  border: 0;
-}
-
-.rendering legend,
-.panel-side legend,
-.profile legend {
-  margin-bottom: 0.5rem;
-  padding: 0;
-  font-size: 1.5rem;
-  font-weight: 600;
-}
-
-.rendering label,
-.panel-side label,
-.profile label {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  min-height: 3rem;
-  padding: 0 1rem;
-  background: var(--surface);
-  border: 3px solid var(--bordure);
-  border-radius: 1rem;
-  cursor: pointer;
-}
-
-.rendering label:has(input:checked),
-.panel-side label:has(input:checked),
-.profile label:has(input:checked) {
-  border-color: var(--accent);
-}
-
-.rendering input,
-.panel-side input,
-.profile input {
-  width: 1.5rem;
-  height: 1.5rem;
-}
-
-.profile-hint {
-  flex-basis: 100%;
-  margin: 0;
 }
 
 .notice {
@@ -226,76 +175,6 @@ input:focus-visible {
   outline-offset: 2px;
 }
 
-/* Itinéraire libre : carte, champs d'adresse et boutons, aux mêmes grandes cibles que le reste de l'accueil. */
-.free-trip {
-  margin: 0 0 1.5rem;
-  padding: 1rem;
-  background: var(--surface);
-  border: 3px solid var(--bordure);
-  border-radius: 1rem;
-}
-
-.free-trip input[type="text"] {
-  flex: 1;
-  min-height: 3rem;
-  padding: 0 0.75rem;
-  background: var(--fond);
-  color: var(--texte);
-  border: 2px solid var(--bordure);
-  border-radius: 0.5rem;
-  font-size: 1.25rem;
-}
-
-.free-trip button {
-  min-height: 3rem;
-  min-width: 3rem;
-  margin: 0 0.5rem 0.5rem 0;
-  padding: 0 1rem;
-  background: var(--fond);
-  color: var(--texte);
-  border: 2px solid var(--bordure);
-  border-radius: 0.5rem;
-  font-size: 1.25rem;
-  cursor: pointer;
-}
-
-.map-view {
-  position: relative;
-  width: 640px;
-  height: 400px;
-  overflow: hidden;
-  background: var(--fond);
-  cursor: crosshair;
-}
-
-.map-view img {
-  user-select: none;
-  -webkit-user-drag: none;
-}
-
-.marker {
-  position: absolute;
-  display: grid;
-  place-items: center;
-  width: 2rem;
-  height: 2rem;
-  margin: -1rem 0 0 -1rem;
-  background: var(--accent);
-  color: var(--sur-accent);
-  border-radius: 50%;
-  font-weight: 700;
-  pointer-events: none;
-}
-
-.map-controls {
-  margin: 0.5rem 0;
-}
-
-.free-message {
-  color: var(--texte);
-  font-weight: 600;
-}
-
 .speed-hint,
 .speed-limit {
   margin: 0.25rem 0;
@@ -412,6 +291,42 @@ input:focus-visible {
     bottom: 12rem;
   }
 }
+
+  .walk-preferences {
+    position: fixed;
+    right: 0.75rem;
+    bottom: 9rem;
+    z-index: 4;
+    width: min(24rem, calc(100vw - 1.5rem));
+    max-height: 45vh;
+    overflow-y: auto;
+    padding: 0.75rem;
+    background: var(--surface);
+    color: var(--texte);
+    border: 2px solid var(--bordure);
+    border-radius: 0.75rem;
+  }
+
+  .walk-preferences button {
+    display: block;
+    width: 100%;
+    min-height: 3rem;
+    margin-top: 0.5rem;
+  }
+
+  .pc-panel {
+    background: rgb(var(--panneau-rgb) / var(--walk-panel-alpha, 0.7));
+  }
+
+  #app[data-panel-side="right"] .pc-panel {
+    left: auto;
+    right: 0.75rem;
+  }
+
+  #app[data-panel-side="left"] .pc-panel {
+    left: 0.75rem;
+    right: auto;
+  }
 
 /* Petit écran : l'accueil et le panneau de marche tiennent dans la largeur, rien n'est coupé. */
 @media (max-width: 40rem) {

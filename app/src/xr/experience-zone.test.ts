@@ -86,7 +86,7 @@ describe("zone tapis et vignette réelle dans le casque", () => {
     expect(t.notice()).toContain("n'a pas pu être enregistrée");
   });
 
-  it("APP-001: la vignette réelle est activée par défaut et se désactive à l'accueil", async () => {
+  it("APP-001: la vignette réelle reste activée, sans commande d'accueil ni préférence", async () => {
     const t = await started();
     t.frame(0, poseFrame(0));
     const vignette = scene(t).getObjectByName("vignette");
@@ -96,7 +96,7 @@ describe("zone tapis et vignette réelle dans le casque", () => {
     off.root.querySelector<HTMLInputElement>("input[type='checkbox']")?.click();
     await off.enter();
     off.frame(0, poseFrame(0));
-    expect((off.fake.render.mock.calls[0]?.[0] as Scene).getObjectByName("vignette")?.visible).toBe(false);
-    expect(off.panel()?.getAttribute("data-vignette")).toBe("false");
+    expect((off.fake.render.mock.calls[0]?.[0] as Scene).getObjectByName("vignette")?.visible).toBe(true);
+    expect(off.panel()?.getAttribute("data-vignette")).toBe("true");
   });
 });

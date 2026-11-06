@@ -10,11 +10,9 @@ depuis le navigateur du Quest 3 et d'un ordinateur (accès inter-origines, déla
 
 ## Existant
 
-Lu le 2026-10-31 : routage (`app/src/route/valhalla.ts`, `https://valhalla1.openstreetmap.de`) et adresses (`app/src/route/photon.ts`,
-`https://photon.komoot.io`) sont codés derrière les interfaces `Router` et `Geocoder` et prouvés par tests et par l'e2e avec des
-services factices ; aucun appel réel n'a eu lieu. Les adresses de ces deux instances et leur accès inter-origines (requête GET simple
-pour le routage, sans en-tête personnalisé) sont des hypothèses de l'agent, non vérifiées. Le navigateur ne laisse pas fixer l'en-tête
-d'identification : l'instance voit l'origine de la page. Les conditions d'usage de Nominatim, de Photon et de Valhalla sont à relire.
+Le 2026-10-31, les fournisseurs étaient testés avec des réponses factices, sans essai réel.
+Depuis le recentrage du 2026-11-05, parcours libre, fournisseurs et leurs variables sont retirés.
+Cette intention n'autorise plus d'essai réseau ; elle ne s'applique que si un futur cadrage réintroduit ce besoin.
 
 ## Questions à trancher
 

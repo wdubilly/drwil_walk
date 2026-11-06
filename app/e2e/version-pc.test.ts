@@ -1,11 +1,6 @@
 // e2e de la version PC (QUA-020, APP-002), dans Chromium SANS émulation WebXR : l'accueil, le bouton « Version PC », la marche dans
-// un canvas de la page, pilotée au clavier et à la souris, sur un itinéraire figé puis sur un trajet libre servi par des services factices.
-import { expect, test, type Page, type Route } from "@playwright/test";
-
-const PNG = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==", "base64");
-const cors = { "access-control-allow-origin": "*" };
-/** Tracé de Valhalla entre (18.5204 ; 73.8567) et (18.5209 ; 73.8567), encodé en polyligne à 6 décimales. */
-const SHAPE = "_tkib@wjzzkCg^?";
+// un canvas de la page, pilotée au clavier et à la souris, sur les itinéraires embarqués sans réseau externe.
+import { expect, test, type Page } from "@playwright/test";
 
 test.beforeEach(async ({ page }) => {
   // Aucune session WebXR ne doit jamais être demandée : le compte des demandes reste à zéro.
@@ -114,52 +109,55 @@ test("chemin 13 : sans WebXR, le bouton du casque dit son échec et la version P
   await expect.poll(() => read(page, "data-distance-m"), { timeout: 20_000 }).toBeGreaterThan(0);
 });
 
-test("chemin 13 : un trajet libre se marche en version PC et s'arrête à l'arrivée en le disant", async ({ page }) => {
-  test.setTimeout(120_000);
+test("chemin 19 : un autre itinéraire se marche en version PC, sans réseau externe ni arrêt de la boucle", async ({ page }) => {
   const leaks: string[] = [];
-  const way = (id: number, tags: Record<string, string>, lat: number) => ({
-    type: "way", id, tags,
-    geometry: [{ lat, lon: 73.8568 }, { lat: lat + 0.0001, lon: 73.8568 }, { lat: lat + 0.0001, lon: 73.857 }, { lat, lon: 73.8568 }],
-  });
-  await page.route(/^https?:\/\/(?!localhost)/, async (route: Route) => {
-    const url = new URL(route.request().url());
-    if (route.request().method() === "OPTIONS") return route.fulfill({ status: 204, headers: cors });
-    if (url.host === "tile.openstreetmap.org") return route.fulfill({ body: PNG, contentType: "image/png" });
-    if (url.host === "valhalla1.openstreetmap.de") {
-      return route.fulfill({ headers: cors, json: { trip: { summary: { length: 0.06 }, legs: [{ shape: SHAPE }] } } });
-    }
-    if (url.host === "photon.komoot.io") {
-      const arrival = (url.searchParams.get("q") ?? "").startsWith("Arrivée");
-      const coordinates = [73.8567, arrival ? 18.5209 : 18.5204];
-      return route.fulfill({ headers: cors, json: { features: [{ geometry: { coordinates }, properties: { name: arrival ? "Arrivée factice" : "Départ factice", city: "Pune" } }] } });
-    }
-    if (url.host === "overpass-api.de") {
-      return route.fulfill({ headers: cors, json: { elements: [way(1, { building: "yes", height: "15" }, 18.5206), way(2, { highway: "residential" }, 18.5204)] } });
-    }
-    leaks.push(url.host);
+  await page.route(/^https?:\/\/(?!localhost)/, async (route) => {
+    leaks.push(route.request().url());
     return route.abort();
   });
   await page.goto("/");
-  await page.locator("label.card", { hasText: "Itinéraire libre" }).click();
-  await page.getByRole("textbox", { name: "Départ" }).fill("Départ factice");
-  await page.getByRole("button", { name: "Chercher départ" }).click();
-  await expect(page.getByRole("textbox", { name: "Départ" })).toHaveValue("Départ factice, Pune");
-  await page.getByRole("textbox", { name: "Arrivée" }).fill("Arrivée factice");
-  await page.getByRole("button", { name: "Chercher arrivée" }).click();
-  await expect(page.getByRole("textbox", { name: "Arrivée" })).toHaveValue("Arrivée factice, Pune");
-  await page.getByRole("button", { name: "Calculer le trajet" }).click();
-  await expect(page.locator(".free-message")).toContainText("Trajet prêt");
+  await page.locator("label.card", { hasText: "Pune FC Road" }).click();
   await page.getByLabel("Vitesse de départ (km/h)").fill("8");
   await page.getByRole("button", { name: "Version PC" }).click();
   await expect(page.getByRole("status")).toHaveText("Version PC active : marche dans la page, sans casque.");
-  await expect(panel(page)).toHaveAttribute("data-building-count", "1");
-  await expect(panel(page).locator(".arrival")).toBeHidden();
-  await expect(panel(page)).toHaveAttribute("data-arrived", "true", { timeout: 90_000 });
-  await expect(panel(page).locator(".arrival")).toContainText("Arrivée");
-  const end = await panel(page).getAttribute("data-distance-m");
-  expect(Number(end)).toBeGreaterThan(40);
-  await page.waitForTimeout(300);
-  await expect(panel(page)).toHaveAttribute("data-distance-m", end ?? "");
+  await expect(page.locator("#app")).toHaveAttribute("data-route", "pune-fc-road");
+  await expect.poll(() => read(page, "data-distance-m"), { timeout: 20_000 }).toBeGreaterThan(2);
+  await expect(panel(page)).toHaveAttribute("data-arrived", "false");
   expect(leaks).toEqual([]);
   await noXrSession(page);
+});
+
+test("APP-006 : toutes les préférences PC changent en marche et reviennent au départ suivant", async ({ page }) => {
+  test.setTimeout(45_000);
+  const leaks: string[] = [];
+  await page.route(/^https?:\/\/(?!localhost)/, async (route) => { leaks.push(route.request().url()); await route.abort(); });
+  await startPc(page);
+  const canvas = await page.locator(".pc-canvas").elementHandle();
+  const before = await read(page, "data-distance-m");
+  await page.getByText("Préférences de marche", { exact: true }).click();
+  const prefs = page.locator(".walk-preferences");
+  for (const name of [/^Ville vivante/, /^Lampadaires/, /^Arbres/, /^Brouillard/, /^Sons d'ambiance/, /^Côté du panneau/, /^Opacité du panneau/]) {
+    await prefs.getByRole("button", { name }).click();
+  }
+  await prefs.getByRole("button", { name: "Qualité : Équilibré", exact: true }).click();
+  await expect(prefs.getByRole("button", { name: "Qualité : Qualité", exact: true })).toBeVisible();
+  await prefs.getByRole("button", { name: "Qualité : Qualité", exact: true }).click();
+  await expect(page.locator("#app")).toHaveAttribute("data-profile", "performance");
+  await expect(page.locator("#app")).toHaveAttribute("data-ambiance", "brouillard éteint · sons 5 %");
+  await expect(page.locator("#app")).toHaveAttribute("data-panel-side", "left");
+  expect(await canvas.evaluate((el) => el === document.querySelector(".pc-canvas"))).toBe(true);
+  await expect.poll(() => read(page, "data-distance-m"), { timeout: 20_000 }).toBeGreaterThan(before + 1);
+  await page.keyboard.press("ArrowUp");
+  await expect(panel(page)).toHaveAttribute("data-speed-kmh", "4.1");
+  await page.keyboard.press("Escape");
+  await expect(prefs).toHaveCount(0);
+  await page.reload();
+  await page.getByRole("button", { name: "Version PC" }).click();
+  await page.getByText("Préférences de marche", { exact: true }).click();
+  for (const name of ["Qualité : Performance", "Ville vivante (piétons et circulation) : Oui", "Lampadaires : Non", "Arbres : Non",
+    "Brouillard : Oui", "Sons d'ambiance (%) : 25", "Côté du panneau : À gauche", "Opacité du panneau (%) : 80"]) {
+    await expect(prefs.getByRole("button", { name, exact: true })).toBeVisible();
+  }
+  await noXrSession(page);
+  expect(leaks).toEqual([]);
 });

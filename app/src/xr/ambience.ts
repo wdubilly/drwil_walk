@@ -9,7 +9,7 @@ import { soundGain, startAmbienceSound, type SoundWindow } from "./ambience-soun
 export interface AmbienceOptions {
   scene: Scene;
   target: FogTarget;
-  /** Le brouillard : éteint par défaut, allumé à l'accueil et permis par le profil graphique (APP-006). */
+  /** Brouillard activable en marche, permis par le profil (APP-006). */
   fog: boolean;
   /** Le volume des sons d'ambiance, en pour cent : 0 (coupé) tant que l'utilisateur n'a rien réglé. */
   soundPct: number;
@@ -22,11 +22,12 @@ export interface AmbienceOptions {
 export interface Ambience {
   daylight: Daylight;
   fog: FogSettings | null;
-  /** Les lanternes des lampadaires : allumées la nuit, éteintes le jour, absentes si la case de l'accueil est décochée (APP-011). */
+  /** Lanternes : nuit/jour ; la préférence Lampadaires peut les masquer (APP-011). */
   lanterns: "allumées" | "éteintes" | "absentes";
   /** Ce qui est appliqué, lisible sur la page par l'e2e. */
   summary: string;
   stop(): void;
+  update(fog: boolean, soundPct: number): void;
 }
 
 /** Règle les lumières déjà posées dans la scène sur la lumière du moment, et allume les lanternes la nuit. */
@@ -54,11 +55,24 @@ function applyLights(scene: Scene, daylight: Daylight): Ambience["lanterns"] {
 export function startAmbience(options: AmbienceOptions): Ambience {
   const daylight = daylightNow(options.now);
   const lanterns = applyLights(options.scene, daylight);
-  const fog = options.fog ? fogFor(options.target, daylight.fogColor) : null;
-  options.scene.fog = fog ? new Fog(fog.color, fog.near, fog.far) : null;
   // Au casque, aucun ciel n'est posé : le fond est le passthrough, donc le réel (APP-001).
   options.scene.background = options.target === "ecran" ? new Color(daylight.skyColor) : null;
-  const sound = startAmbienceSound(options.window, options.soundPct);
-  const gainPct = Math.round(soundGain(options.soundPct) * 100);
-  return { daylight, fog, lanterns, summary: `${fogSummary(fog)} · sons ${String(gainPct)} %`, stop: () => { sound.stop(); } };
+  let sound = startAmbienceSound(options.window, options.soundPct);
+  let volume = options.soundPct;
+  const ambience: Ambience = {
+    daylight, fog: null, lanterns, summary: "",
+    stop: () => { sound.stop(); },
+    update: (enabled, soundPct) => {
+      ambience.fog = enabled ? fogFor(options.target, daylight.fogColor) : null;
+      options.scene.fog = ambience.fog ? new Fog(ambience.fog.color, ambience.fog.near, ambience.fog.far) : null;
+      if (volume !== soundPct) {
+        sound.stop();
+        sound = startAmbienceSound(options.window, soundPct);
+        volume = soundPct;
+      }
+      ambience.summary = `${fogSummary(ambience.fog)} · sons ${String(Math.round(soundGain(soundPct) * 100))} %`;
+    },
+  };
+  ambience.update(options.fog, options.soundPct);
+  return ambience;
 }

@@ -2,6 +2,7 @@
 // le masque de champ de vision de la cible (app/src/xr/fov.ts), et le rendu masqué est capturé pour être publié par la CI.
 import { createRequire } from "node:module";
 import { expect, test } from "@playwright/test";
+import { remembered } from "./preferences-helper.ts";
 import { QUEST3_FOV, visibilityMask } from "../src/xr/fov.ts";
 
 const iwerBuild = createRequire(import.meta.url).resolve("iwer/build/iwer.min.js");
@@ -49,9 +50,7 @@ for (const side of ["left", "right"] as const) {
     page.on("pageerror", (e) => {
       errors.push(e.message);
     });
-    await page.addInitScript((value) => {
-      localStorage.setItem("drwil_walk.cote-panneau", value);
-    }, side);
+    await remembered(page, { side });
     await page.goto("/");
     await page.getByRole("button", { name: "Entrer en réalité mixte" }).click();
     await expect(page.getByRole("status")).toHaveText("Réalité mixte active (immersive-ar)");

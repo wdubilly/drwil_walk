@@ -66,6 +66,7 @@ export function buildTraffic(doc: Document, souq: Souq, options: TrafficOptions)
   group.name = "figurants";
   const page = doc.getElementById("app");
   const write = (text: string): void => {
+    group.userData["summary"] = text;
     if (page) page.dataset["figurants"] = text;
   };
   const start = performance.now() / 1000;

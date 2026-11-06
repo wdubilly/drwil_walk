@@ -1,14 +1,14 @@
-// Doublures des tests de l'expérience : un renderer, une session et des tuiles Google factices (jamais d'appel à Google).
+// Doublures de la marche, sans WebGL ni réseau.
 import { Window } from "happy-dom";
-import { Group, Mesh, MeshBasicMaterial, PlaneGeometry } from "three";
 import { expect, vi } from "vitest";
 import { withCanvasContext } from "../city/canvas-double.ts";
-import { createProviders } from "../route/create-providers.ts";
 import { startExperience, type RendererClass } from "./experience.ts";
-import type { GoogleTiles, GoogleTilesOptions } from "../city/google-tiles.ts";
 import type { TreePack } from "../city/tree-pack.ts";
 import type { WeightStorage } from "../route/stats.ts";
 import type { XrSystemLike } from "./session.ts";
+
+// Trois variantes par départ : l'instrumentation c8 et le poste partagé dépassent parfois 5 s.
+vi.setConfig({ testTimeout: 20_000 });
 
 type Loop = ((timeMs: number, frame?: XRFrame) => void) | null;
 
@@ -29,14 +29,14 @@ const DRAWING_CONTEXT = Object.fromEntries(
   ["fillRect", "fillText", "beginPath", "moveTo", "lineTo", "stroke", "arc", "fill"].map((name) => [name, () => undefined]),
 );
 
-export const KEY = "cle-fictive-pour-les-tests";
 
 export function setup(
-  options: { supported?: boolean; space?: boolean; xr?: boolean; sessionFails?: boolean; rendererThrows?: unknown; apiKey?: string | undefined; fetch?: typeof fetch; storage?: WeightStorage; now?: () => Date; trees?: () => Promise<TreePack> } = {},
+  options: { supported?: boolean; space?: boolean; xr?: boolean; sessionFails?: boolean; rendererThrows?: unknown; storage?: WeightStorage; now?: () => Date; trees?: () => Promise<TreePack> } = {},
 ) {
   const win = new Window();
   const doc = withCanvasContext(win.document as unknown as Document, DRAWING_CONTEXT);
   const root = doc.createElement("main");
+  root.id = "app";
   doc.body.append(root);
   const listeners: Record<string, () => void> = {};
   const released = () => Array.from({ length: 6 }, () => ({ pressed: false, value: 0 }));
@@ -65,7 +65,7 @@ export function setup(
   class FakeRenderer {
     domElement = fake.canvas;
     localClippingEnabled = false;
-    xr = { enabled: false, getCamera: () => ({ cameras: [] }), setReferenceSpaceType: vi.fn(), setFramebufferScaleFactor: vi.fn(), setSession: vi.fn(() =>
+    xr = { enabled: false, setFoveation: vi.fn(), setReferenceSpaceType: vi.fn(), setFramebufferScaleFactor: vi.fn(), setSession: vi.fn(() =>
         options.sessionFails ? Promise.reject(new Error("contexte WebGL refusé")) : Promise.resolve(),
       ), getReferenceSpace: () => space };
     setAnimationLoop = (cb: Loop) => (fake.loop = cb);
@@ -79,26 +79,14 @@ export function setup(
     dispose = fake.dispose;
   }
   const Renderer = FakeRenderer as unknown as RendererClass;
-  // Aucune tuile réelle : un maillage factice tient lieu de jeu de tuiles Google.
-  const tileMesh = new Mesh(new PlaneGeometry(1, 1), new MeshBasicMaterial());
-  const tiles = { root: new Group(), update: vi.fn(), copyright: () => "Landsat", visibleTileCount: () => 3, dispose: vi.fn() };
-  tiles.root.add(tileMesh);
-  const failures: GoogleTilesOptions["onFailure"][] = [];
-  const create = vi.fn((o: GoogleTilesOptions): GoogleTiles => {
-    failures.push(o.onFailure);
-    return tiles;
-  });
-  const apiKey = "apiKey" in options ? options.apiKey : KEY;
   const home = startExperience({
     document: doc,
     root,
     xr: options.xr === false ? undefined : xr,
     Renderer,
-    google: { apiKey, create },
     storage: options.storage,
     now: options.now,
     trees: options.trees,
-    routes: createProviders({}, options.fetch ?? (() => Promise.reject(new Error("réseau interdit aux tests")))),
   });
   const status = () => root.querySelector("[role='status']")?.textContent;
   const panel = () => root.querySelector("[aria-label='Marche']");
@@ -128,10 +116,5 @@ export function setup(
     fake.loop(timeMs, f);
   };
   const notice = () => root.querySelector("[role='alert']")?.textContent;
-  const chooseGoogle = () => root.querySelector<HTMLInputElement>("input[value='google']")?.click();
-  const fail = (reason: string) => {
-    for (const failure of failures) failure(reason);
-  };
-  return { root, win, home, xr, enterPc, press, mouse, fake, inputSources, hold, listeners, status, panel, enter, frame, notice, chooseGoogle, create, tiles, tileMesh, fail };
+  return { root, win, home, xr, enterPc, press, mouse, fake, inputSources, hold, listeners, status, panel, enter, frame, notice };
 }
-
