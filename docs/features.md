@@ -173,6 +173,12 @@ Ni pincement ni gyroscope. Émulation Chromium seulement : `docs/intentions/essa
 Diagnostic : images/s, temps d'image, appels de rendu et triangles, valeur illisible dite indisponible.
 Sur écran, « Enregistrer les mesures » télécharge du JSON, sans envoi.
 
+### Parité des plateformes (APP-015)
+
+Casque, PC et tablette montrent la même ville avec les mêmes options (matériaux, lampadaires, ville vivante, arbres, profil).
+Propre à chaque plateforme : commandes (carrefours et minicarte au casque seulement), passthrough et protections au casque,
+ciel et brouillard, profils par défaut ; rendu Google 3D indisponible sur PC et tablette (repli annoncé).
+
 ## Créer un itinéraire
 
 `npm run city -- <identifiant> [options]` prépare extrait, boucle et matériaux **sur le PC de développement uniquement**,

@@ -524,3 +524,20 @@ One entry per closed project, most recent last.
 - Preuve finale : `VITEST_MAX_WORKERS=1 npx drwil verify --evidence`, sortie 0, 34 contrats : 27 PASS, 7 ATTESTED, 0 FAIL,
   0 MANUAL, 0 ERROR, `GOVERNANCE: PASS` (un premier verdict FAIL venait du critère sans contrat lié, corrigé ci-dessus).
 - Preuve de clôture : docs/preuves/inscrire-ville-creee.md (écrite par la clôture).
+
+## 2026-11-06 — parite-plateformes : la même ville sur Quest, PC et tablette, garantie par un contrat
+
+- Livré sur la branche `chantier/parite-plateformes` : contrat `APP-015` (les trois plateformes montrent la même ville) avec la
+  liste fermée de ce qui peut différer (commandes, passthrough, ciel, profils par défaut) et l'exception du rendu Google 3D.
+- Test unique `app/src/xr/parity.test.ts`, paramétré sur casque, PC et tablette, deux villes (Pune Vieille ville, Souq Waqif) et
+  cinq jeux d'options : mêmes groupes et maillages visibles, mêmes matériaux, mêmes relevés de page ; chaque option (arbres,
+  lampadaires, ville vivante) agit sur la scène de chaque mode. Sensibilité éprouvée à la main : retirer les matériaux de
+  l'accueil, ou la liaison des préférences à chaud, dans `app/src/pc/enter-pc.ts` fait échouer 10 puis 22 cas.
+- Résultat du lot 2 : le test ne révèle **aucun écart** de scène, les trois modes passant par `createLiveCity` et
+  `bindLivePreferences` ; aucune correction de code d'application n'était nécessaire. Seule différence mesurée : les repères de
+  carrefour du casque, qui sont des commandes (admis).
+- Docs : `app/AGENTS.md`, recette `docs/recipes/add-a-frontend-screen.md`, `docs/features.md`, `docs/architecture.md`.
+- Limites : la tablette suit le chemin du PC (`enterPc`), le toucher reste couvert par l'e2e existant ; les figurants ne se
+  chargent pas dans la doublure (relevé de page comparé seulement) ; aucun essai sur Quest réel.
+- Preuves avant clôture : `tsc --noEmit` et `eslint` sans erreur ; `vitest run` 123 fichiers, 789 tests passés (avec le nouveau).
+- Preuve de clôture : docs/preuves/parite-plateformes.md (écrite par la clôture).

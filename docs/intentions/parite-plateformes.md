@@ -1,6 +1,6 @@
 # Intention : la même ville et les mêmes options sur Quest, PC et tablette, par construction
 
-**Statut** : proposée le 2026-11-05 (demande du demandeur).
+**Statut** : réalisée le 2026-11-06 par le contrat APP-015 (`app/src/xr/parity.test.ts`) ; le test ne révèle aucun écart de scène.
 
 ## Besoin
 
