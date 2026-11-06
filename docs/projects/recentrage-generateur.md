@@ -69,9 +69,15 @@ préférences (qualité, ville vivante…) se règlent **pendant la marche** et 
 
 ## Contrats modifiés
 
-- `APP-002` (plus de trajet libre), `APP-003` (plus d'OpenStreetMap chargé pour un trajet, plus de mention Google), `APP-006`
-  (profil réglé en marche et mémorisé), `APP-011`, `APP-012`, `APP-013`, `APP-014` (options sans case d'accueil).
-- Les contrats de couverture e2e qui citent Google et le parcours libre sont réécrits.
+- `APP-001` : sécurité-visibilité inchangée, nouveau panneau de préférences inclus dans les preuves et l'essai humain.
+- `APP-002` : retrait du trajet libre, boucles embarquées conservées.
+- `APP-003` : retrait des bâtiments chargés pour un trajet et des mentions Google.
+- `APP-006` : profil réglé en marche et mémorisé, Équilibré par défaut.
+- `APP-011` : ambiance réglable en marche, sans case d'accueil.
+- `APP-012` : matériaux locaux fixes, sans case d'accueil.
+- `APP-013` : lampadaires réglables en marche, sans case d'accueil.
+- `APP-014` : ville vivante réglable en marche par un seul interrupteur.
+- `QUA-020` : chemins e2e Google et parcours libre remplacés par les itinéraires embarqués et préférences à chaud.
 
 ## 2. Hors périmètre
 
@@ -130,15 +136,20 @@ préférences (qualité, ville vivante…) se règlent **pendant la marche** et 
 
 ### Livraison du 2026-11-06
 
-- **État relu** : BUILD, branche `chantier/recentrage-generateur`, implémentation conservée sans réécriture.
+- **État relu** : BUILD après VERIFY, branche `chantier/recentrage-generateur`, implémentation conservée sans réécriture.
+  Cadrage commité dans `e7166b5`, produit et attestation dans `1c1b4ce`.
 - **Geste humain reçu** : essai Quest et attestation de sécurité-visibilité effectués par l'humain.
   `VITEST_MAX_WORKERS=1 npx drwil verify --agent` relancé : sortie **0**,
   **27 PASS, 7 ATTESTED, 0 FAIL, 0 ERROR, 0 MANUAL**, `GOVERNANCE: PASS`.
   Les attestations ne sont pas présentées comme des preuves automatiques.
-- **Preuves** : 9 contrôles rejoués, 24 repris sur leurs fichiers inchangés ; cette reprise par contrôle
-  ne constitue pas encore la preuve de clôture sur l'arbre entier.
-- **Travail non commité** : implémentation, docs, attestation humaine et cette préparation de livraison.
-- **Prochaine étape** : commit, transitions EVIDENCE puis VERIFY, `npx drwil verify --evidence`
+- **Preuves sur commit** : `VITEST_MAX_WORKERS=1 npx drwil verify --evidence`, sortie **0**,
+  `GOVERNANCE: PASS`, tous les contrôles contractuels rejoués sur l'arbre entier.
+  Les hooks ont également rejoué **747 tests / 121 fichiers**, couverture **100 %**, **64 e2e passés (10.3m)**.
+- **Cause de refus de clôture corrigée** : le parseur exige un contrat en tête de chaque puce de « Contrats modifiés » ;
+  les déclarations groupées ne suffisaient pas. Les changements déjà cadrés sont maintenant déclarés séparément,
+  sans modifier une règle ni le produit.
+- **Travail non commité** : uniquement cette précision de fiche et le journal de livraison.
+- **Prochaine étape** : commit documentaire, transitions EVIDENCE puis VERIFY, `npx drwil verify --evidence`
   sur le commit livré, journal et clôture ; push/PR, fusion automatique autorisée et suivi jusqu'à fusion.
   Rester en CLOSING avant fusion ; aucun `next`, aucun nouveau chantier.
 

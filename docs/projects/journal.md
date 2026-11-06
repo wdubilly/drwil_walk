@@ -487,6 +487,10 @@ One entry per closed project, most recent last.
   couverture 100 % ; 17 contrôles repris et 9 rejoués. `git diff --check`, sortie 0.
   `VITEST_MAX_WORKERS=1 npx drwil verify --agent`, sortie 0 : 27 PASS, 7 ATTESTED, aucun FAIL, ERROR ou MANUAL,
   `GOVERNANCE: PASS`. La preuve de clôture sur le commit est produite séparément par `npx drwil verify --evidence`.
+- Rejeu complet sur le commit `1c1b4ce` : `VITEST_MAX_WORKERS=1 npx drwil verify --evidence`, sortie 0,
+  `GOVERNANCE: PASS`. Hooks : 747 tests / 121 fichiers, couverture 100 %, 64 e2e passés (10.3m).
+  Déclarations de contrats séparées en une puce par contrat pour que le cadrage déjà approuvé soit reconnu à la clôture.
+  Dix-huit avertissements de résidus dans les dossiers temporaires des contrôles restent visibles, sans contrôle échoué.
 - Sécurité-visibilité : essai Quest et attestation réalisés par l'humain le 2026-11-06 ; aucune attestation agent.
 - Limites conservées : cadence, mémoire et appréciation des profils dans `docs/intentions/essai-casque-profils-graphiques.md`,
   ergonomie dans `docs/intentions/essai-casque-commandes-panneau.md`, réglage du tapis dans
