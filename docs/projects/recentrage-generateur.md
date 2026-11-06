@@ -1,12 +1,13 @@
 # Chantier : recentrer le produit sur le générateur d'itinéraire (accueil réduit, sans Google ni parcours libre)
 
-**Statut** : cadré le 2026-11-05.
+**Statut** : en cours le 2026-11-05.
 **Risque** : HIGH
 **Maturité** : prêt
 **Intention** : `docs/intentions/recentrer-generateur-itineraire.md`, `docs/intentions/generateur-ville-complet.md`
 
 <!-- scope
 files:
+  - .env.example
   - app/src/city/*
   - app/src/city/*.test.ts
   - app/src/route/*
@@ -26,8 +27,10 @@ files:
   - app/package.json
   - app/package-lock.json
   - app/playwright.config.ts
+  - app/playwright.config.test.ts
   - app/AGENTS.md
   - README.md
+  - INSTALL.md
   - docs/contracts.md
   - docs/architecture.md
   - docs/features.md
@@ -44,11 +47,10 @@ préférences (qualité, ville vivante…) se règlent **pendant la marche** et 
 
 ## Critères d'acceptation
 
-- **Google 3D supprimé** : plus de code (`app/src/city/google-tiles.ts`, `app/src/xr/google-mode.ts`, choix de rendu de
-  l'accueil, mention et crédit Google), plus de test ni de contrat qui le cite ; le rendu OpenStreetMap est le seul — `APP-003`
-- **Parcours libre supprimé** : plus de recherche d'adresse ni de trajet libre (`app/src/ui/free-trip.ts`,
-  `app/src/city/free-route.ts`, `app/src/route/geocoding.ts`, `app/src/route/routes-api.ts`, fournisseurs de trajets, e2e
-  `itineraire-libre`), plus de clé ni de réseau à la marche ; la marche reste une boucle d'itinéraire — `APP-002`
+- **Google 3D supprimé** : plus de fabrique de tuiles, mode Google, choix de rendu de l'accueil, mention ni crédit Google,
+  plus de test ni de contrat qui le cite ; le rendu OpenStreetMap est le seul — `APP-003`
+- **Parcours libre supprimé** : plus de recherche d'adresse, écran/préparation ni fournisseur de trajet libre,
+  plus d'e2e spécifique, de clé ni de réseau à la marche ; la marche reste une boucle d'itinéraire — `APP-002`
 - **Accueil réduit** : seuls l'itinéraire et la vitesse sont visibles ; poids, matériaux, lampadaires, ville vivante, arbres,
   brouillard, sons, côté et opacité du panneau, vignette n'y sont plus ; les préférences réglables en marche reprennent
   le dernier choix, sinon leur valeur initiale (qualité Équilibré). Les anciens réglages sont ignorés sauf le profil déjà
@@ -59,7 +61,7 @@ préférences (qualité, ville vivante…) se règlent **pendant la marche** et 
   dernier choix, repris au départ de la marche suivante ; la première marche part des valeurs par défaut (qualité
   Équilibré) ; chaque changement s'applique à chaud, sans reconstruire la ville — `APP-006`, `APP-011`, `APP-013`, `APP-014`
 - La **sécurité-visibilité ne bouge pas** : aucun niveau ni retrait d'option n'affecte le passthrough, et le changement de
-  qualité en marche ne cache jamais le réel — `APP-001`
+  qualité en marche ne cache jamais le réel [human] — `APP-001`
 - Les e2e des chemins critiques sont **réécrits** pour le parcours réduit (sans Google ni parcours libre), pas supprimés — `QUA-011`
 - Docs à jour : `README.md`, `app/AGENTS.md`, `docs/architecture.md`, `docs/features.md`, `docs/guide-utilisateur.md` ;
   `docs/contracts.md` : `APP-002` et `APP-003` perdent le trajet libre et Google, les contrats d'options de l'accueil sont relus
@@ -86,6 +88,13 @@ préférences (qualité, ville vivante…) se règlent **pendant la marche** et 
 - Tout chantier touchant `app/` est HIGH ; `APP-001` reste testé.
 
 ## 4. Décisions
+
+- 2026-11-05 : le demandeur autorise `.env.example` pour retirer les variables Google et des services de parcours libre.
+
+- 2026-11-05 : le demandeur autorise `INSTALL.md` pour retirer les instructions Google et parcours libre devenues obsolètes.
+
+- 2026-11-05 : le demandeur autorise aussi `app/playwright.config.test.ts`, test directement lié à la configuration
+  Playwright et aux variables Google retirées.
 
 - 2026-11-05 : le demandeur autorise l'ajout au périmètre de `app/package-lock.json`, `app/playwright.config.ts` et
   `app/src/main.test.ts`, nécessaires au retrait complet des dépendances, de la configuration e2e et des branchements.
@@ -117,19 +126,115 @@ préférences (qualité, ville vivante…) se règlent **pendant la marche** et 
   verts.
 - **Lot 5 — docs** [AI] : `README.md`, `app/AGENTS.md`, architecture, fonctions, guide, contrats. Sortie : CI verte.
 
-## 7. Reprise
+## 7. Reprise / Hand-off
 
-- **Dernier état** (2026-11-05, Hand-off) : BUILD lu sur disque ; branche `chantier/recentrage-generateur` créée dans
-  le dossier du projet, sans worktree. Aucun code modifié. Skills écran et refactor chargés ; contrats et intentions lus.
-- **Preuve initiale** : `cd app && npm test -- src/ui/home.test.ts src/xr/experience.test.ts src/xr/experience-controls.test.ts src/xr/experience-pc.test.ts` :
-  `Test Files 4 passed (4)`, `Tests 65 passed (65)`.
-- **Blocage de périmètre** : le retrait complet demandé nécessite `app/package-lock.json` (dépendance
-  `3d-tiles-renderer`), `app/playwright.config.ts` (configuration et mentions Google/parcours libre), et potentiellement
-  `app/src/main.test.ts` (signature du point d'entrée). Ces trois fichiers ne sont pas couverts par le scope actuel ;
-  le contrôle du périmètre compare chaque commit à la fiche dans son parent. Aucun élargissement ni contournement
-  effectué ; aucun détour lancé, puisque le demandeur interdit de lancer un autre chantier.
-- **Travail non commité** : cette fiche uniquement (formulation des choix repris et présent Hand-off).
-- **Prochaine étape** : décision humaine, conservée par la session principale, sur l'ajout des fichiers directement
-  couplés au scope, dans un commit de cadrage distinct avant implémentation. Les décisions produit sont déjà prises ;
-  aucun nouveau point produit à trancher. Reprendre ensuite le lot 1 et les contrôles, sans `next`.
-- **Non vérifié** : contrôles complets, couverture, build, typecheck, e2e, `verify`, clôture, push et fusion. Aucune PR créée.
+### Livraison du 2026-11-06
+
+- **État relu** : BUILD, branche `chantier/recentrage-generateur`, implémentation conservée sans réécriture.
+- **Geste humain reçu** : essai Quest et attestation de sécurité-visibilité effectués par l'humain.
+  `VITEST_MAX_WORKERS=1 npx drwil verify --agent` relancé : sortie **0**,
+  **27 PASS, 7 ATTESTED, 0 FAIL, 0 ERROR, 0 MANUAL**, `GOVERNANCE: PASS`.
+  Les attestations ne sont pas présentées comme des preuves automatiques.
+- **Preuves** : 9 contrôles rejoués, 24 repris sur leurs fichiers inchangés ; cette reprise par contrôle
+  ne constitue pas encore la preuve de clôture sur l'arbre entier.
+- **Travail non commité** : implémentation, docs, attestation humaine et cette préparation de livraison.
+- **Prochaine étape** : commit, transitions EVIDENCE puis VERIFY, `npx drwil verify --evidence`
+  sur le commit livré, journal et clôture ; push/PR, fusion automatique autorisée et suivi jusqu'à fusion.
+  Rester en CLOSING avant fusion ; aucun `next`, aucun nouveau chantier.
+
+### Reprise du 2026-11-06, 07:44
+
+- **État relu** : BUILD, branche `chantier/recentrage-generateur`, commit `b3da9ab`. Tout le travail sauvegardé
+  reste non commité ; aucune réinitialisation, attestation, clôture, création de PR, poussée ou fusion effectuée.
+- **Preuves actualisées** : `VITEST_MAX_WORKERS=1 node .githooks/run-checks.mjs` : sortie **0**,
+  **747 tests / 121 fichiers passés**, couverture **100 %** des quatre mesures ; **9 contrôles rejoués,
+  17 repris** car leurs fichiers sont inchangés. Les e2e ne sont donc pas annoncés comme rejoués ce matin.
+  Un avertissement demeure : c8 laisse un élément dans son dossier temporaire.
+  `git diff --check` : sortie **0**.
+- **Verdict actuel** : `VITEST_MAX_WORKERS=1 npx drwil verify --agent` : sortie **1**,
+  `GOVERNANCE: MANUAL REVIEW REQUIRED`. Seul critère non prouvé signalé : sécurité-visibilité,
+  **APP-001 — Sécurité-visibilité : le réel reste visible**, avec attestation humaine requise.
+  Aucun `GOVERNANCE: PASS` obtenu.
+- **Arrêt sur besoin humain réel** : essayer sur un vrai Quest 3 la visibilité du tapis et les protections du
+  nouveau panneau lors des changements de préférences, puis faire attester humainement APP-001.
+  Les intentions d'essai citées ci-dessous portent déjà cette limite ; aucun nouveau chantier ouvert.
+- **Après ce geste seulement** : reprendre les contrôles et obtenir `GOVERNANCE: PASS`, puis journal, clôture,
+  commits et push/PR avec fusion automatique et suivi selon l'autorisation conservée. Ne pas passer en SCOPING
+  avant la fusion ; ne pas lancer de chantier suivant.
+
+- **État actuel (2026-11-05)** : BUILD, branche `chantier/recentrage-generateur`, même dossier partagé,
+  travail antérieur préservé et toujours non commité ; aucun nouveau commit/push/PR, `b3da9ab` conservé.
+  Aucun vrai fichier de secrets lu. `.env.example`, `INSTALL.md` et les ajouts autorisés sont intégrés.
+- **Produit réalisé** : Google et parcours libre retirés du code, dépendances, tests et docs ; accueil itinéraire/vitesse.
+  Huit préférences à chaud et mémoire sur Quest, PC et tablette, même ville et même marche.
+  Nouvelles unités : `app/src/city/live-city.ts`, `app/src/ui/preferences.ts`,
+  `app/src/ui/walk-preferences.ts`, `app/src/xr/live-preferences.ts`, `app/src/xr/preference-panel.ts`, leurs tests
+  et les helpers e2e. Poids fixe 70 kg affiché comme référence approximative ; anciens réglages ignorés sauf profil.
+- **Causes traitées sans contournement** : branches de rayon/placement, canvas indisponible, ressources multiples,
+  chargement après arrêt et mémoire couverts ; code orphelin retiré. Test brouillard PC à chaud, sans deuxième ville.
+  Budget commun des assemblages 20 s après dépassements sous c8. Scénarios Quest et calories à deux entrées :
+  budget global 30 s épuisé, budgets locaux 60 s, assertions conservées ; stockage du poids ancien écrit une seule fois
+  afin que les rechargements ne masquent pas un effacement.
+- **Validation complète constatée** : `VITEST_MAX_WORKERS=1 node .githooks/run-checks.mjs` :
+  **747 tests, 121 fichiers passés**, couverture **100 % lignes/instructions/branches/fonctions** ;
+  couverture différentielle **145 lignes, 0 manquante, 100 %** ; **64 e2e passés (12.9m)** ;
+  typage, lint et licences passés. Sortie **1** : seuls cinq liens contrat/test sans ID dans le nom échouaient
+  (QUA-029). Corrigés depuis : `node .githooks/check-contract-tests.mjs` :
+  **154 liens, 0 problème** ; tests concernés : `cd app && npm test -- src/ui/preferences.test.ts
+  src/ui/walk-preferences.test.ts src/ui/home.test.ts --maxWorkers 1` : **3 fichiers, 10 tests passés**, sortie 0.
+- **Autres résultats** : `cd app && npm run e2e -- tableau-de-bord.test.ts` : **2 passed (40.3s)** ;
+  `cd app && npm run build` : sortie **0**, **121 modules**, avertissement Vite de paquet supérieur à 500 kB conservé.
+  `git diff --check` : sortie **0** ; `node .githooks/check-docs.mjs` : **191 fichiers, 0 erreur** ;
+  `node .githooks/check-file-size.mjs app 200 ts,tsx,js,jsx,mjs,cjs` : sortie **0**.
+- **Blocage humain réel établi** : le contrôle `app-001` est `ok`, mais le contrat APP-001 est **MANUAL** :
+  ancienne attestation invalide car sa règle a changé (nouveau panneau et réglages en marche).
+  Le marqueur `[human]` du critère reflète son champ Manuel ; la règle et les tests ne sont pas affaiblis.
+  L'essai au vrai Quest 3 puis son attestation restent humains ; limites consignées dans
+  `docs/intentions/essai-casque-commandes-panneau.md`, `docs/intentions/essai-casque-zone-tapis.md` et
+  `docs/intentions/essai-casque-profils-graphiques.md` (cadence, mémoire et préparation des trois variantes).
+- **Prochaine étape** : verdict final des contrôles après correction des liens, puis arrêt sur le geste humain.
+  Après essai/attestation humaine seulement : obtenir `GOVERNANCE: PASS`, commit français avec trailer,
+  preuves sur HEAD, journal, clôture, push/PR et fusion automatique selon l'autorisation conservée.
+  Aucun PASS, clôture, attestation, PR/fusion ni `next` annoncé ou effectué.
+
+### Historique de la reprise précédente (22:27)
+
+- **Dernier état** (2026-11-05, 22:27, Hand-off) : BUILD, branche `chantier/recentrage-generateur`, même dossier,
+  sans worktree. Commit de cadrage conservé `b3da9ab`, aucun nouveau commit ni push. Les quatre fichiers additionnels
+  autorisés figurent dans le scope et les décisions ; aucune réautorisation de ces fichiers n'est nécessaire.
+- **Travail conservé et complété, non commité** : injection des images des matériaux par le document fourni
+  (cause `document is not defined` corrigée sans désactiver les matériaux), test de configuration Playwright sans
+  clés, quatre cartes, palette CSS centralisée, styles des préférences disponibles aussi sur PC, correction du lint.
+  Les variantes préparées donnent désormais le relevé du profil actif, et les figurants signalent leur état après
+  chargement. Les e2e Google et parcours libre ont été retirés ; leurs chemins encore utiles sont remplacés par
+  les itinéraires embarqués et les préférences à chaud. Nouveaux helpers e2e pour les derniers choix et pour pointer
+  réellement les commandes Quest (gâchette gauche puis rayon et prise droite).
+- **Preuves de cette reprise** :
+  - `cd app && npm test` : `Test Files 10 failed | 108 passed (118)`, `Tests 27 failed | 714 passed (741)` :
+    trois attentes d'accueil corrigées ensuite, le reste était des délais sur la machine chargée.
+  - `cd app && npm test -- --maxWorkers 1` : `Test Files 1 failed | 117 passed (118)`,
+    `Tests 2 failed | 739 passed (741)` ; les deux échecs étaient des délais de 5 s, sortie dans
+    `dist/recentrage-tests.log`. Une seule commande lourde à la fois.
+  - `cd app && npm test -- src/xr/experience.test.ts --maxWorkers 1` : `Test Files 1 passed (1)`,
+    `Tests 19 passed (19)` (rejeu des deux délais précédents compris).
+  - `cd app && npm test -- src/xr/experience-preferences.test.ts --maxWorkers 1` :
+    `Test Files 1 passed (1)`, `Tests 2 passed (2)`.
+  - `cd app && npm run typecheck` : sortie 0 ; `cd app && npm run lint` : sortie 0 ;
+    `cd app && npm run build` : sortie 0, 121 modules transformés, avertissement Vite de taille de paquet
+    (non masqué). Ces commandes précèdent les toutes dernières adaptations e2e/diagnostics.
+  - `cd app && npm run e2e -- eclairage-ambiance.test.ts profils-graphiques.test.ts panneau-discret.test.ts` :
+    `1 failed`, `9 passed (1.8m)`, détails `dist/recentrage-e2e.log`. Toutes les interactions à chaud du scénario
+    Quest ont fonctionné (brouillard, sons, ville vivante, arbres, opacité, côté, trois profils, fondu) ;
+    le scénario dépasse ensuite ses 30 s à la réentrée après rechargement. Découper le scénario ou lui donner
+    un budget correspondant à ses nombreux gestes, sans retirer d'assertion.
+- **Nouveau besoin humain de périmètre, vérifié** : `INSTALL.md` (lignes 25–42) documente encore l'activation de
+  Google 3D, les clés, Valhalla/Photon et le trajet libre. Ce document suivi est absent du scope. Le retrait complet
+  demandé et la cohérence documentaire exigent sa mise à jour ; il n'a pas été modifié. Arrêt conformément à
+  l'instruction « autre besoin humain arrêter avec rapport ». Ce n'est pas une réautorisation des quatre ajouts.
+- **Prochaine étape** : autoriser `INSTALL.md`, enregistrer ce cadrage par l'outil documenté si un rafraîchissement
+  du scope est nécessaire (jamais écrire l'état à la main), puis poursuivre les e2e restants :
+  lampadaires, tableau de bord (poids désormais fixe), tactile ; terminer docs/contrats et les preuves de budgets
+  des variantes. Ajouter les tests unitaires des rayons/préférences Quest et atteindre la couverture 100 %.
+- **Non vérifié** : suite complète verte, couverture, e2e complets, contrôles finaux et `verify`, journal, clôture,
+  PR, push et fusion. Aucun `GOVERNANCE: PASS` obtenu ; pas de clôture ni d'auto-fusion ni de `next`.
+  L'essai au vrai Quest demeure humain.
