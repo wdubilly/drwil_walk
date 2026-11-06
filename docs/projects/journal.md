@@ -491,6 +491,10 @@ One entry per closed project, most recent last.
   `GOVERNANCE: PASS`. Hooks : 747 tests / 121 fichiers, couverture 100 %, 64 e2e passés (10.3m).
   Déclarations de contrats séparées en une puce par contrat pour que le cadrage déjà approuvé soit reconnu à la clôture.
   Dix-huit avertissements de résidus dans les dossiers temporaires des contrôles restent visibles, sans contrôle échoué.
+- Preuve finale sur `4568fcc` : `VITEST_MAX_WORKERS=1 npx drwil verify --evidence`, sortie 0,
+  **GOVERNANCE: PASS** : 27 PASS, 7 ATTESTED, aucun FAIL, MANUAL ou ERROR ; e2e rejoués avec succès.
+  Les scénarios PC/tablette ont été séparés sans augmenter les délais ni retirer les gestes ou assertions.
+  Le rejeu ciblé des neuf tests passe ; le timeout de Pune passe ensuite seul, puis dans la preuve complète.
 - Sécurité-visibilité : essai Quest et attestation réalisés par l'humain le 2026-11-06 ; aucune attestation agent.
 - Limites conservées : cadence, mémoire et appréciation des profils dans `docs/intentions/essai-casque-profils-graphiques.md`,
   ergonomie dans `docs/intentions/essai-casque-commandes-panneau.md`, réglage du tapis dans
