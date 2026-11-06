@@ -31,7 +31,7 @@ async function startPc(page: Page, speed = "4.0") {
   await expect(page.getByRole("status")).toHaveText("Version PC active : marche dans la page, sans casque.");
 }
 
-test("chemin 13 : la version PC marche dans un canvas de la page, sans session WebXR, au clavier et à la souris", async ({ page }) => {
+test("QUA-020 chemin 13 : la version PC marche sans session WebXR, vitesse et pause au clavier", async ({ page }) => {
   await startPc(page, "7.2");
   const canvas = page.locator("canvas.pc-canvas");
   await expect(canvas).toBeVisible();
@@ -71,7 +71,16 @@ test("chemin 13 : la version PC marche dans un canvas de la page, sans session W
   await page.keyboard.press("Space");
   await expect(panel(page)).toHaveAttribute("data-paused", "false");
   await expect.poll(() => read(page, "data-distance-m"), { timeout: 20_000 }).toBeGreaterThan(frozen + 1);
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("status")).toHaveText("Version PC arrêtée : vous pouvez y revenir.");
+  await expect(canvas).toHaveCount(0);
+  await noXrSession(page);
+});
 
+test("QUA-020 chemin 13 : la souris tourne le regard, le clavier recale, masque le tableau et quitte", async ({ page }) => {
+  await startPc(page, "7.2");
+  const canvas = page.locator("canvas.pc-canvas");
+  await expect(canvas).toBeVisible();
   // Souris : glisser tourne le regard, R recale le parcours sur ce regard sans toucher à la distance.
   await page.keyboard.press("r");
   await expect.poll(() => read(page, "data-calibration-yaw")).toBe(0);
@@ -127,7 +136,23 @@ test("chemin 19 : un autre itinéraire se marche en version PC, sans réseau ext
   await noXrSession(page);
 });
 
-test("APP-006 : toutes les préférences PC changent en marche et reviennent au départ suivant", async ({ page }) => {
+const preferenceCases = [
+  {
+    name: "qualité et ville", buttons: [/^Ville vivante/, /^Lampadaires/, /^Arbres/], changeQuality: true,
+    profile: "performance", ambiance: "brouillard éteint · sons 0 %", side: "right",
+    choices: ["Qualité : Performance", "Ville vivante (piétons et circulation) : Oui", "Lampadaires : Non", "Arbres : Non",
+      "Brouillard : Non", "Sons d'ambiance (%) : Coupés", "Côté du panneau : À droite", "Opacité du panneau (%) : 70"],
+  },
+  {
+    name: "ambiance et panneau", buttons: [/^Brouillard/, /^Sons d'ambiance/, /^Côté du panneau/, /^Opacité du panneau/], changeQuality: false,
+    profile: "equilibre", ambiance: "brouillard 90 % · sons 5 %", side: "left",
+    choices: ["Qualité : Équilibré", "Ville vivante (piétons et circulation) : Non", "Lampadaires : Oui", "Arbres : Oui",
+      "Brouillard : Oui", "Sons d'ambiance (%) : 25", "Côté du panneau : À gauche", "Opacité du panneau (%) : 80"],
+  },
+];
+
+for (const prefsCase of preferenceCases) {
+test(`APP-006 : les préférences PC changent en marche et reviennent au départ suivant — ${prefsCase.name}`, async ({ page }) => {
   test.setTimeout(45_000);
   const leaks: string[] = [];
   await page.route(/^https?:\/\/(?!localhost)/, async (route) => { leaks.push(route.request().url()); await route.abort(); });
@@ -136,15 +161,17 @@ test("APP-006 : toutes les préférences PC changent en marche et reviennent au 
   const before = await read(page, "data-distance-m");
   await page.getByText("Préférences de marche", { exact: true }).click();
   const prefs = page.locator(".walk-preferences");
-  for (const name of [/^Ville vivante/, /^Lampadaires/, /^Arbres/, /^Brouillard/, /^Sons d'ambiance/, /^Côté du panneau/, /^Opacité du panneau/]) {
+  for (const name of prefsCase.buttons) {
     await prefs.getByRole("button", { name }).click();
   }
-  await prefs.getByRole("button", { name: "Qualité : Équilibré", exact: true }).click();
-  await expect(prefs.getByRole("button", { name: "Qualité : Qualité", exact: true })).toBeVisible();
-  await prefs.getByRole("button", { name: "Qualité : Qualité", exact: true }).click();
-  await expect(page.locator("#app")).toHaveAttribute("data-profile", "performance");
-  await expect(page.locator("#app")).toHaveAttribute("data-ambiance", "brouillard éteint · sons 5 %");
-  await expect(page.locator("#app")).toHaveAttribute("data-panel-side", "left");
+  if (prefsCase.changeQuality) {
+    await prefs.getByRole("button", { name: "Qualité : Équilibré", exact: true }).click();
+    await expect(prefs.getByRole("button", { name: "Qualité : Qualité", exact: true })).toBeVisible();
+    await prefs.getByRole("button", { name: "Qualité : Qualité", exact: true }).click();
+  }
+  await expect(page.locator("#app")).toHaveAttribute("data-profile", prefsCase.profile);
+  await expect(page.locator("#app")).toHaveAttribute("data-ambiance", prefsCase.ambiance);
+  await expect(page.locator("#app")).toHaveAttribute("data-panel-side", prefsCase.side);
   expect(await canvas.evaluate((el) => el === document.querySelector(".pc-canvas"))).toBe(true);
   await expect.poll(() => read(page, "data-distance-m"), { timeout: 20_000 }).toBeGreaterThan(before + 1);
   await page.keyboard.press("ArrowUp");
@@ -154,10 +181,10 @@ test("APP-006 : toutes les préférences PC changent en marche et reviennent au 
   await page.reload();
   await page.getByRole("button", { name: "Version PC" }).click();
   await page.getByText("Préférences de marche", { exact: true }).click();
-  for (const name of ["Qualité : Performance", "Ville vivante (piétons et circulation) : Oui", "Lampadaires : Non", "Arbres : Non",
-    "Brouillard : Oui", "Sons d'ambiance (%) : 25", "Côté du panneau : À gauche", "Opacité du panneau (%) : 80"]) {
+  for (const name of prefsCase.choices) {
     await expect(prefs.getByRole("button", { name, exact: true })).toBeVisible();
   }
   await noXrSession(page);
   expect(leaks).toEqual([]);
 });
+}

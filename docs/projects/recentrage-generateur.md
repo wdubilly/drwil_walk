@@ -134,6 +134,65 @@ préférences (qualité, ville vivante…) se règlent **pendant la marche** et 
 
 ## 7. Reprise / Hand-off
 
+### Reprise après le contrôle complet du 2026-11-06
+
+- Le commit des corrections a été refusé par le hook : **65 e2e réussis, 1 échec** (budget global de 45 s épuisé au
+  redémarrage du scénario PC des huit préférences). Aucune preuve complète nouvelle ni clôture.
+- Le scénario PC des préférences est désormais séparé comme celui de la tablette : qualité/ville et ambiance/panneau,
+  avec progression, même canvas, vitesse, sortie, rechargement et mémoire dans chaque parcours ; délais inchangés.
+- Rejeu ciblé sous forte charge : **7 réussis, 2 échecs** ; timeout tablette au rechargement et attente de brouillard
+  incorrecte dans le nouveau cas PC Équilibré. Cette attente est corrigée : le brouillard est actif dans ce profil,
+  contrairement au profil Performance du scénario initial. Types et lint passent.
+- Modifications non commitées dans les deux fichiers e2e et cette fiche. Attendre une charge basse avant le prochain
+  rejeu ; ne pas annoncer la correction validée ni utiliser un ancien PASS pour clore.
+- Rejeu après attente de charge basse : `cd app && npm run e2e -- tablette-tactile.test.ts version-pc.test.ts` :
+  **9 passed (3.8m)**, sortie **0**. Validation ciblée acquise ; commit et preuve complète restent à faire.
+
+### Correction ciblée des deux échecs e2e du 2026-11-06
+
+- **État actuel** : BUILD, retour documenté de VERIFY par `node .githooks/state.mjs move BUILD`.
+  Branche `chantier/recentrage-generateur`, trois fichiers non commités : cette fiche,
+  `app/e2e/tablette-tactile.test.ts` et `app/e2e/version-pc.test.ts`. Aucun code produit ni contrat modifié.
+  Cette reprise remplace les anciennes annonces de livraison ci-dessous : le dernier verdict global reste
+  **GOVERNANCE: FAIL**, **25 PASS, 7 ATTESTED, 2 FAIL**, dans `dist/recentrage-evidence.log`.
+- **Diagnostic borné** : les artefacts historiques donnent uniquement des budgets globaux épuisés :
+  45 s au retour sur « Version PC » après rechargement tactile, 30 s pendant `mouse.move` sur PC.
+  `cd app && npm run e2e -- tablette-tactile.test.ts version-pc.test.ts --trace on` avant correction :
+  sortie **1**, **1 failed, 5 passed (2.6m)** ; les deux scénarios historiques passent, mais le premier
+  parcours tactile dépasse cette fois 30 s au recalage. Les traces montrent des taps réussis prenant
+  **1 à 3,5 s**, et un rechargement de **8 s** : le budget est consommé par l'accumulation des gestes,
+  pas par une assertion fonctionnelle rouge. Une suite tierce du dépôt voisin a été observée sur la
+  machine partagée ; aucun processus tiers arrêté. Pas de reproduction déterministe des deux échecs
+  historiques ni de défaut produit établi.
+- **Confirmation avant correction** :
+  `cd app && npm run e2e -- tablette-tactile.test.ts version-pc.test.ts --grep "préférences tactiles|au clavier et à la souris" --trace on` :
+  sortie **0**, **2 passed (1.3m)**. Logs locaux : `dist/recentrage-two-files-before.log`,
+  `dist/recentrage-two-cases-before.log` ; artefacts historiques préservés dans
+  `dist/recentrage-original-results/`, traces avant changement dans `dist/recentrage-first-repro-results/`
+  et `dist/recentrage-two-cases-before-results/`.
+- **Correction de fiabilité** : le scénario PC est séparé en clavier/vitesse/pause et souris/recalage/tableau/sortie.
+  Les préférences tactiles sont deux parcours indépendants (qualité/ville et ambiance/panneau), chacun
+  conservant les vrais taps, les cibles de 48 px, le même canvas, la progression, la vitesse, la sortie,
+  le rechargement et la relecture des huit préférences (choix changés et choix restés par défaut).
+  Toutes les interactions d'origine restent exécutées ; le parcours PC des huit préférences combinées
+  reste inchangé. Aucun délai ni retry augmenté, aucune assertion retirée ni contrôle désactivé.
+- **Preuves après correction** :
+  - `cd app && npm run e2e -- tablette-tactile.test.ts version-pc.test.ts --trace on` :
+    sortie **0**, **8 passed (2.6m)**, log `dist/recentrage-two-files-after.log`, traces conservées
+    dans `dist/recentrage-two-files-after-results/`.
+  - `cd app && npm run e2e -- tablette-tactile.test.ts version-pc.test.ts` :
+    sortie **0**, **8 passed (1.6m)**, log `dist/recentrage-two-files-final.log`.
+  - `cd app && npm run typecheck` et `cd app && npm run lint` : sorties **0**, aucun avertissement ;
+    log `dist/recentrage-two-files-static.log`.
+  - `git diff --check` : sortie **0** ; `node .githooks/check-docs.mjs` :
+    sortie **0**, **191 fichiers scannés, 0 erreur**.
+- **Limites / suite pour le principal** : seule cette validation ciblée est acquise, pas une validation
+  globale ni une garantie contre toute saturation future de la machine. Aucun `run-checks` complet,
+  `verify`, attestation, journal de clôture, clôture, commit, push ni PR lancé pendant cette reprise.
+  Le geste Quest et l'attestation existants restent humains, sans nouvelle exécution de `attest`.
+  Prochaine étape : relire ce diff puis reprendre les preuves globales dans la session principale ;
+  ne pas clore sur le résultat de `close --check` tant que le verdict global demeure rouge.
+
 ### Livraison du 2026-11-06
 
 - **État relu** : BUILD après VERIFY, branche `chantier/recentrage-generateur`, implémentation conservée sans réécriture.
