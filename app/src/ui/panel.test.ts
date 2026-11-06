@@ -9,7 +9,7 @@ describe("panneau de marche", () => {
     const root = doc.createElement("main");
     const panel = renderWalkPanel(doc, root);
     const info = { speedKmh: 4.1, distanceM: 12.34, timeS: 65, cityOpacity: 0.5, kcal: 12.4, pace: "15:00 min/km", remainingM: 3456, progressPct: 12, weightKg: 72.5, compass: "NE 45°", clock: "09:05", place: "Doha", position: { x: 3, z: -4 }, buildingCount: 253,
-      rendering: "google" as const, tileCount: 7, attribution: "© contributeurs OpenStreetMap · Google", arrived: false,
+      rendering: "osm" as const, tileCount: 0, attribution: "© contributeurs OpenStreetMap", arrived: false,
       paused: false, showPanel: true, calibration: { x: 0, z: 0, yawRad: 0 }, zone: DEFAULT_ZONE, vignette: true };
     panel.update(info);
     panel.update(info);
@@ -32,9 +32,9 @@ describe("panneau de marche", () => {
     expect(section?.getAttribute("data-building-count")).toBe("253");
     expect(section?.getAttribute("data-zone")).toBe("0.000 0.000 0.000 1.200 2.400 1.200");
     expect(section?.getAttribute("data-vignette")).toBe("true");
-    expect(section?.getAttribute("data-rendering")).toBe("google");
-    expect(section?.getAttribute("data-tile-count")).toBe("7");
-    expect(section?.querySelector(".attribution")?.textContent).toBe("© contributeurs OpenStreetMap · Google");
+    expect(section?.getAttribute("data-rendering")).toBe("osm");
+    expect(section?.getAttribute("data-tile-count")).toBe("0");
+    expect(section?.querySelector(".attribution")?.textContent).toBe("© contributeurs OpenStreetMap");
     expect(section?.querySelector<HTMLElement>(".arrival")?.hidden).toBe(true);
     expect(section?.getAttribute("data-arrived")).toBe("false");
     panel.update({ ...info, arrived: true });

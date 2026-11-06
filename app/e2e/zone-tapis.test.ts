@@ -81,13 +81,13 @@ test("chemin 13 : la boîte par défaut protège le tapis, X la pose, le joystic
   expect(errors).toEqual([]);
 });
 
-test("chemin 13 : une zone enregistrée illisible redonne la boîte par défaut, et la vignette se désactive à l'accueil", async ({ page }) => {
+test("chemin 13 : une zone enregistrée illisible redonne la boîte par défaut, la vignette reste toujours active", async ({ page }) => {
   await page.goto("/");
   await page.evaluate(() => { localStorage.setItem("drwil_walk.zone-tapis", '{"x":"?"}'); });
   await page.reload();
-  await page.getByLabel("Vignette réelle").uncheck();
+  await expect(page.getByLabel("Vignette réelle")).toHaveCount(0);
   await page.getByRole("button", { name: "Entrer en réalité mixte" }).click();
   await expect(page.getByRole("status")).toHaveText("Réalité mixte active (immersive-ar)");
   expect(await zone(page)).toEqual([0, 0, 0, 1.2, 2.4, 1.2]);
-  await expect(panel(page)).toHaveAttribute("data-vignette", "false");
+  await expect(panel(page)).toHaveAttribute("data-vignette", "true");
 });

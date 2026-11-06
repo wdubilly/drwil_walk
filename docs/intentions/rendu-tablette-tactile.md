@@ -11,8 +11,8 @@ Pouvoir ouvrir l'application sur une tablette, dans un navigateur : même marche
 ## Existant
 
 Lu le 2026-11-02 : la version PC marche dans un canvas, au clavier et à la souris (`app/src/pc/`), sans tactile ni
-minicarte ; l'accueil n'a aucun traitement propre aux petits écrans (`app/src/ui/home.css`). Le sélecteur de carte du
-trajet libre (`app/src/ui/map-picker.ts`) est déjà tactile. Jamais essayé sur une vraie tablette.
+minicarte ; le tactile a depuis été réalisé (APP-007), puis les préférences en marche ajoutées le 2026-11-05.
+La carte de trajet libre a été retirée. Jamais essayé sur une vraie tablette.
 
 ## Questions à trancher
 

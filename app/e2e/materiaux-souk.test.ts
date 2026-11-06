@@ -33,9 +33,9 @@ function watch(page: Page) {
 }
 
 /** Le nombre de textures en mémoire graphique, lu sur le diagnostic de la version PC une fois la ville dessinée. */
-async function texturesInPc(page: Page, local: boolean): Promise<number> {
+async function texturesInPc(page: Page, souk: boolean): Promise<number> {
   await page.goto("/");
-  if (local) await page.getByLabel(LOCAL).check();
+  if (!souk) await page.locator("label.card", { hasText: "Pune FC Road" }).click();
   await page.getByRole("button", { name: "Version PC" }).click();
   await expect(page.getByRole("status")).toHaveText("Version PC active : marche dans la page, sans casque.");
   await page.keyboard.press("d");
@@ -46,14 +46,14 @@ async function texturesInPc(page: Page, local: boolean): Promise<number> {
   return Number(await textures.textContent());
 }
 
-test("chemin 26 : l'option des matériaux locaux n'existe que pour le souk, OpenStreetMap reste le rendu par défaut", async ({ page }) => {
+test("chemin 26 : matériaux locaux fixes, aucun choix de rendu dans l'accueil réduit", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByLabel("OpenStreetMap")).toBeChecked();
-  await expect(page.getByLabel(LOCAL)).toBeVisible();
+  await expect(page.getByLabel("OpenStreetMap")).toHaveCount(0);
+  await expect(page.getByLabel(LOCAL)).toHaveCount(0);
   await page.locator("label.card", { hasText: "Pune FC Road" }).click();
-  await expect(page.getByLabel(LOCAL)).toBeHidden();
+  await expect(page.getByLabel(LOCAL)).toHaveCount(0);
   await page.locator("label.card", { hasText: "Doha Corniche" }).click();
-  await expect(page.getByLabel(LOCAL)).toBeHidden();
+  await expect(page.getByLabel(LOCAL)).toHaveCount(0);
 });
 
 test("chemin 26 : au souk, les matériaux locaux chargent leurs textures embarquées, sans réseau ni erreur WebGL", async ({ page }) => {
@@ -77,7 +77,6 @@ test("chemin 26 : dans le Quest 3 émulé, la ville habillée des matériaux loc
   });
   const seen = watch(page);
   await page.goto("/");
-  await page.getByLabel(LOCAL).check();
   await page.getByLabel("Vitesse de départ (km/h)").fill("7.2");
   await page.getByRole("button", { name: "Entrer en réalité mixte" }).click();
   await expect(page.getByRole("status")).toHaveText("Réalité mixte active (immersive-ar)");

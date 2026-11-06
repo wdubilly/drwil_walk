@@ -46,7 +46,7 @@ Gardez ce terminal ouvert pendant toute la marche. Pour arrêter : `Ctrl+C` dans
   dont le début ressemble à l'adresse de votre poste sur le réseau du casque, souvent `192.168.…`.
 - L'adresse commence par `https://` (et non `http://`) : le mode réalité mixte du navigateur l'exige.
 
-### Créer un nouvel itinéraire (hors casque, réseau nécessaire)
+### Créer un nouvel itinéraire (PC de développement uniquement, réseau nécessaire)
 
 Une seule commande, depuis `app/`, prépare une ville : l'extrait OpenStreetMap, le tracé de boucle et les matériaux colorés
 d'après des photos de rue.
@@ -73,7 +73,7 @@ npm run city -- rome --nom "Rome, centre" --emprise 41.89,12.47,41.91,12.50 --de
 3. Le navigateur avertit que la connexion n'est pas privée : le certificat est **auto-signé** (créé par le poste, pas
    par une autorité). C'est attendu. Choisissez l'option « Avancé » puis celle qui permet de continuer vers le site.
    N'acceptez ce certificat que pour l'adresse de votre propre poste.
-4. La page d'accueil s'affiche : rappel de sécurité, itinéraire, vitesse de départ, opacité de la ville, bouton
+4. La page d'accueil s'affiche : rappel de sécurité, itinéraire, vitesse de départ, bouton
    « Entrer en réalité mixte ».
 
 Un essai sans casque est possible : ouvrez l'adresse `Local` dans le navigateur du poste. L'accueil s'affiche, mais le
@@ -95,44 +95,61 @@ Le risque principal est une chute. Avant de mettre le casque :
 - **La ville n'est jamais un substitut à la vigilance.** Elle reste une image : arrêtez le tapis avant de retirer le
   casque ou si quelque chose vous gêne, et ne comptez pas sur elle pour voir un obstacle.
 
-L'opacité de la ville se règle à l'accueil (30 à 100 %) : baissez-la si vous voulez voir davantage le réel.
+La visibilité de sécurité et la vignette restent fixes ; aucune préférence ne les désactive.
 
 ## 5. Marcher
 
 1. Sur l'accueil, choisissez l'**itinéraire** en cliquant sur une carte (à la manette, pointez-la). Disponibles :
-   Doha Souq Waqif (par défaut), Pune Vieille ville, Pune FC Road, Doha Corniche, et **Itinéraire libre** (voir ci-dessous).
-   Choisissez aussi le **rendu de la ville** : « OpenStreetMap » (par défaut, sans réseau) ou « Google 3D »
-   (photoréaliste, demande une clé Google dans `.env.local` (dans `app/`), voir `INSTALL.md`). Sans clé, ou si les tuiles ne se
-   chargent pas, la marche se fait en OpenStreetMap et la raison s'affiche sur l'accueil, sous le bouton.
-   **Itinéraire libre** (sans clé : routage et adresses d'OpenStreetMap, voir `INSTALL.md`) : une carte apparaît.
-   Posez le **départ** puis l'**arrivée** en touchant la carte (boutons « + », « − » et flèches pour zoomer et la déplacer),
-   ou tapez un lieu ou une adresse dans les champs « Départ » et « Arrivée » puis « Chercher » : les deux modes se
-   remplissent mutuellement (l'adresse trouvée s'inscrit dans le champ, et le point se place sur la carte ; si plusieurs
-   lieux correspondent, le premier est retenu et affiché). Un troisième toucher recommence ; « Effacer » vide tout. Appuyez sur
-   « Calculer le trajet » : le chemin à pied et la ville autour sont chargés, et la longueur s'affiche (sans limite de longueur ; si la ville ne
-   se charge pas, la marche se fait sur le sol seul et l'écran le dit). Si un service public refuse ou limite les demandes, la raison s'affiche et les quatre autres itinéraires restent utilisables.
-   Aucun lieu ni adresse n'est enregistré : ils ne partent qu'aux services d'adresses (Photon) et de routage (Valhalla) d'OpenStreetMap.
-2. Réglez la **vitesse de départ** (à partir de 1 km/h, sans maximum, par pas de 0,1) et l'**opacité de la ville**. Le minimum est écrit sous le champ ;
+   Doha Souq Waqif (par défaut), Pune Vieille ville, Pune FC Road et Doha Corniche.
+   Le rendu OpenStreetMap est embarqué : aucune clé ni recherche d'adresse ni connexion à un service distant.
+2. Réglez la **vitesse de départ** (à partir de 1 km/h, sans maximum, par pas de 0,1). Le minimum est écrit sous le champ ;
    une valeur sous 1 km/h est ramenée à 1 km/h et l'écran le dit. Réglez une vitesse que vous maîtrisez, clé de sécurité du tapis attachée.
-   Facultatif : **Brouillard** (décoché) ajoute un voile de profondeur très léger : au casque il ne cache jamais rien
-   à moins de 8 m et ne voile jamais plus de 15 % des couleurs, le tapis, la rampe et le bouton d'arrêt restent aussi
-   visibles qu'avant ; décochez-le à tout moment pour le supprimer entièrement. **Sons d'ambiance** (0 %, coupés)
-   ajoute une rumeur de ville discrète : montez le curseur seulement si vous entendez encore le tapis et la pièce ;
-   les deux réglages reviennent éteints à chaque ouverture de l'accueil. La lumière de la ville, elle, suit l'heure
-   qu'il est chez vous : rien à régler.
-   Facultatif : saisissez votre **poids** (en kg) pour que l'estimation de calories soit plus juste ; sans poids, 70 kg sont utilisés. Il est gardé dans le navigateur du casque seulement (rien n'est envoyé) et repris à la prochaine visite ; « Effacer mon poids » le supprime.
+   Les préférences se règlent une fois la marche démarrée (voir ci-dessous). Le poids n'est pas demandé :
+   les calories « environ » sont une estimation pour 70 kg, jamais une mesure personnelle.
 3. Appuyez sur « Entrer en réalité mixte » et acceptez la demande d'autorisation du navigateur. Si le bouton est
    grisé ou affiche un message, voir la section 6.
 4. La ville défile le long de l'itinéraire à la vitesse réglée. Lancez ou ajustez le tapis à la même vitesse.
 5. Pendant la marche, **joystick droit haut / bas** : +0,1 / −0,1 km/h. Un panneau (vitesse, distance, temps)
-   s'affiche sur la page et dans la scène ; à 1 km/h, il le dit : le joystick ne descend pas plus bas. À la fin d'une boucle, la marche reprend au départ ; sur un itinéraire libre,
-   elle s'arrête à l'arrivée et le dit (page et casque) : arrêtez alors le tapis.
+   s'affiche sur la page et dans la scène ; à 1 km/h, il le dit : le joystick ne descend pas plus bas.
+   À la fin d'une boucle, la marche reprend au départ.
+
+### Préférences pendant la marche (non vérifié sur appareil réel)
+
+**Quest** : la **gâchette gauche** ouvre ou ferme les préférences. Pointez une ligne avec la manette droite puis
+appuyez sur la **prise droite** : chaque appui passe à la valeur suivante. Le tableau de bord laisse sa place au
+panneau de préférences ; baissez la tête et il s'efface, comme la ville. Le réglage de la zone tapis reste disponible.
+
+**PC et tablette** : ouvrez **« Préférences de marche »**, puis cliquez ou touchez un bouton pour passer à la valeur
+suivante. La marche continue, sans reconstruire la ville, et les commandes de vitesse restent disponibles.
+
+| Préférence | Choix |
+|---|---|
+| Qualité | Performance, Équilibré, Qualité ; Équilibré au premier départ |
+| Ville vivante (piétons et circulation) | une seule commande, Non au premier départ ; figurants au Souq Waqif seulement |
+| Lampadaires | Oui au premier départ ; coupe aussi leurs lanternes |
+| Arbres | Oui au premier départ |
+| Brouillard | Non au premier départ ; au casque, aucun voile à moins de 8 m et 15 % au plus ; Performance le refuse |
+| Sons d'ambiance (%) | Coupés, 25, 50, 75, 100 ; gain sonore plafonné à 20 % ; garder le tapis et la pièce audibles |
+| Côté du panneau | À gauche ou À droite ; droite au premier départ |
+| Opacité du panneau (%) | 70, 80, 90, 100 ; ne modifie pas l'opacité de la ville |
+
+Le dernier choix est gardé dans ce navigateur pour la prochaine marche, sans envoi. Les anciens réglages sont ignorés,
+sauf le profil graphique. Un stockage illisible ou indisponible est signalé sur la page ; les changements restent utilisables
+pour la séance. Les matériaux locaux et la vignette restent fixes. La lumière suit l'heure de l'appareil au départ.
 
 **Carrefours** (dans le casque) : à l'approche d'un carrefour, des flèches au sol montrent les rues possibles (jaune), le panneau dit « Carrefour dans N m ». Visez une rue avec la **manette droite** (la flèche devient blanche) puis appuyez sur la **prise** : la flèche devient verte et vous prenez cette rue. Si vous ne choisissez rien, vous suivez le tracé de l'itinéraire. Choisir une autre rue ne change ni la vitesse ni la distance parcourue ; une fois sorti du tracé, il n'y a pas de retour guidé vers lui. La version PC ne propose pas de carrefours.
 
-Autres commandes de la **manette droite** : **gâchette** = pause / reprise (la ville reste affichée, la vitesse réglée est gardée ; pensez à arrêter ou ralentir le tapis) ; **bouton A** = recalibrer (« je suis face au tapis » : le parcours repart d'où vous êtes, dans le sens où vous regardez, sans changer la distance parcourue) ; **bouton B** = afficher / masquer le tableau de bord flottant, affiché dès le départ : boussole et heure en haut, lieu (le nom de l'itinéraire), vitesse et allure en minutes par kilomètre (« — » à l'arrêt ou en pause), durée, distance, distance restante et progression en pourcentage (jusqu'à l'arrivée d'un trajet libre, ou pour le tour en cours d'une boucle) et calories « environ » (une estimation, pas une mesure). Il est posé discrètement en bas de votre champ de vision, sur un fond légèrement transparent, à gauche ou à droite selon le **côté du panneau** choisi à l'accueil (à droite par défaut, choix gardé dans ce navigateur seulement), assez près du centre pour que tout son texte, l'heure comprise, reste dans votre vue sans tourner la tête ; il suit la direction de votre regard, s'écarte de la zone tapis (qu'il ne recouvre jamais) et s'efface avec la ville quand vous baissez la tête. Une **minicarte** est posée de l'autre côté, aussi discrète et avec le même fondu : elle montre le tracé de votre parcours (le nord en haut, sans fond de carte ni connexion) et un point orange qui avance avec votre marche ; elle se masque avec le tableau de bord (bouton B). **Clic du joystick droit** = afficher / masquer le diagnostic de rendu (images par seconde, temps d'image, appels de rendu, triangles ; masqué par défaut, une valeur illisible est dite « indisponible »). Dans la page (version PC ou tablette), son bouton « Enregistrer les mesures » télécharge un fichier JSON à comparer avant et après un changement : rien n'est envoyé. Un appui compte une fois, même si vous gardez le bouton enfoncé. Ces commandes n'ont pas encore été essayées sur un vrai Quest 3.
+Autres commandes de la **manette droite** : **gâchette** = pause / reprise (penser à arrêter ou ralentir le tapis) ;
+**A** = recalibrer le parcours sur votre position et regard, sans changer la distance ; **B** = afficher / masquer le
+tableau de bord et la minicarte. Le tableau montre cap, heure, lieu, vitesse, allure (« — » en pause), durée, distance,
+distance restante et progression du tour. Les calories sont **environ pour 70 kg**, pas une mesure personnelle.
+Il reste en bas du champ de vision, du côté réglé pendant la marche (droite au premier départ), hors de la zone tapis,
+sur un fond transparent ; tête baissée, il s'efface avec la ville. La minicarte, de l'autre côté, montre tracé nord en haut
+et point mobile sans tuiles ni connexion. **Clic joystick droit** = diagnostic de rendu, masqué au départ (images/s,
+temps d'image, appels de rendu, triangles ; valeur illisible dite « indisponible »). Sur écran, « Enregistrer les mesures »
+télécharge un JSON sans envoi. Une pression compte une fois même tenue. Gestes non essayés sur vrai Quest 3.
 
-**Zone tapis** (manette gauche) : une boîte autour du tapis (par défaut 1,2 m sur 2,4 m, 1,2 m de haut, autour de l'endroit où vous démarrez) dans laquelle la ville n'est jamais dessinée : le tapis, la rampe et la console restent visibles. **Bouton X** = poser la boîte sous vous, dans le sens où vous regardez ; **joystick gauche** = la déplacer (en avançant, la boîte avance) ; **prise gauche tenue + joystick** = l'élargir (gauche/droite) ou l'allonger (haut/bas) ; **bouton Y** = revenir à la boîte par défaut. Le réglage est enregistré dans le navigateur quand vous relâchez le joystick, et repris au lancement suivant ; si l'enregistrement échoue, l'écran le dit. Dans la ville, le trou laisse voir le réel : c'est lui qui montre où est la zone. **Vignette réelle** : la périphérie du champ de vision reste en vision réelle (case cochée par défaut à l'accueil, décochez-la pour la désactiver). Ni la zone ni la vignette n'ont encore été essayées sur un vrai Quest 3.
+**Zone tapis** (manette gauche) : une boîte autour du tapis (par défaut 1,2 m sur 2,4 m, 1,2 m de haut, autour de l'endroit où vous démarrez) dans laquelle la ville n'est jamais dessinée : le tapis, la rampe et la console restent visibles. **Bouton X** = poser la boîte sous vous, dans le sens où vous regardez ; **joystick gauche** = la déplacer (en avançant, la boîte avance) ; **prise gauche tenue + joystick** = l'élargir (gauche/droite) ou l'allonger (haut/bas) ; **bouton Y** = revenir à la boîte par défaut. Le réglage est enregistré dans le navigateur quand vous relâchez le joystick, et repris au lancement suivant ; si l'enregistrement échoue, l'écran le dit. Dans la ville, le trou laisse voir le réel : c'est lui qui montre où est la zone. **Vignette réelle** : la périphérie du champ de vision reste toujours en vision réelle, sans préférence pour la désactiver. Ni la zone ni la vignette n'ont encore été essayées sur un vrai Quest 3.
 
 **Ville riche** : les rues ont des trottoirs et des passages piétons, le chemin que vous suivez est jaune, les parcs sont verts, certains toits sont à deux pans et quelques noms de rues sont écrits au sol devant vous. Tout s'efface, comme le reste de la ville, quand vous baissez la tête.
 
@@ -141,12 +158,20 @@ Autres commandes de la **manette droite** : **gâchette** = pause / reprise (la 
 **Mobilier urbain et marquages** : les bancs, lampadaires, poubelles et panneaux de la rue sont dessinés à leur taille réelle et
 posés dans l'axe de la rue, uniquement là où les données OpenStreetMap en signalent ; les passages piétons, les bordures de
 trottoir et les lignes d'arrêt suivent les mêmes données. Les extraits livrés ne contiennent aujourd'hui ni lampadaire, ni
-poubelle, ni panneau : vous ne verrez donc que les bancs du souk de Doha et de la Corniche. Des **lampadaires** sont en revanche produits par règle le long des rues (inventés, pas relevés) : décochez « Lampadaires produits par règle » à l'accueil pour ne garder que le mobilier réel ; le profil Performance en pose moins. La nuit (avant 6 h et après 18 h, à l'heure de votre appareil), les lanternes des lampadaires s'allument et éclairent le sol à leur pied ; décochez « Lampadaires allumés la nuit » à l'accueil pour les éteindre. La lueur ne masque jamais le réel et s'efface tête baissée avec la ville. Au souk de Doha, cochez « Circulation et piétons » à l'accueil pour faire rouler des voitures et des deux-roues et marcher des passants. La case est décochée à chaque visite. Ces figurants restent à distance : ils disparaissent en douceur avant d'arriver à 10 m de vous. Ils ne traversent jamais la zone du tapis et s'effacent tête baissée. Le profil Performance en pose moins. Le profil **Performance** réduit le
+poubelle, ni panneau : vous ne verrez donc que les bancs du souk de Doha et de la Corniche. Des **lampadaires** sont
+produits par règle le long des rues (inventés, pas relevés) ; la préférence Lampadaires les retire à chaud, avec leurs
+lanternes. De nuit au départ (avant 6 h et après 18 h), elles brillent avec un halo au sol, sans masquer le réel.
+Au souk, Ville vivante active ensemble véhicules et passants, désactivés au premier départ. Votre dernier choix est
+repris aux marches suivantes. Les figurants disparaissent en douceur avant d'arriver à 10 m, restent hors du tapis et
+s'effacent tête baissée. Le profil Performance en pose moins. Le profil **Performance** réduit le
 mobilier et retire les marquages. Rien de tout cela ne masque le réel : tête baissée, la ville et son mobilier s'effacent. Non
 vérifié au casque.
 
-**Ambiance cartoon** : la ville est dessinée en aplats à paliers de couleur, les voies ont une bordure plus claire (et une ligne centrale quand elles sont larges) et les façades portent des fenêtres. À l'accueil, le **profil graphique** (Performance, Équilibré ou Qualité) règle le rendu : le profil **Qualité** trace un trait sombre autour des bâtiments proches du parcours ; si l'image devient saccadée, choisissez Équilibré ou Performance (qui retire aussi la verdure au sol et les noms des rues, et réduit arbres et mobilier). Le profil proposé dépend de votre appareil ; votre choix est gardé dans le navigateur. Le réel reste visible quel que soit le profil. Non vérifié au casque. Les arbres sont ceux du pack Quaternius (quatre variantes, tournées et à des tailles différentes), embarqués dans l'application : aucun réseau n'est utilisé pour eux. Si leur chargement échoue, un message l'indique sur la page d'accueil et la marche continue avec des arbres simples. Ce rendu n'a pas encore été jugé sur un vrai Quest 3.
-Les données de la ville sont © contributeurs OpenStreetMap (et © Google en rendu Google 3D).
+**Ambiance cartoon** : aplats à paliers de couleur, voies bordées et façades avec fenêtres. Le profil se règle pendant
+la marche ; Qualité ajoute les contours, Performance retire verdure au sol et noms de rues, réduit arbres et mobilier.
+Équilibré au premier départ, dernier choix mémorisé ensuite. Aucun profil ne retire la sécurité.
+Arbres Quaternius embarqués, quatre variantes reproductibles, sans réseau ; échec signalé avec repli sur arbres simples.
+Ce rendu n'a pas été jugé sur vrai Quest 3. Données : © contributeurs OpenStreetMap.
 
 ### Sans casque : la version PC
 
@@ -167,7 +192,7 @@ tapis en regardant un écran sans la même vigilance (clé de sécurité, main p
 
 **Sur une tablette** : ouvrez l'application dans le navigateur et touchez « Version PC ». Des boutons en bas de l'écran règlent la vitesse (« Moins vite », « Plus vite » : 0,1 km/h par appui), mettent en pause ou reprennent, recalent le parcours sur le regard et quittent ; glissez un doigt sur la scène pour regarder autour, relâchez-le pour arrêter. Le tableau de bord s'affiche par-dessus la scène. Même vigilance qu'au PC : regarder un écran en marchant sur un tapis demande clé de sécurité et main près de la rampe. Jamais essayé sur une vraie tablette (émulation tactile de Chromium seulement).
 
-Le rendu Google 3D n'existe pas en version PC : la marche se fait en OpenStreetMap et l'accueil le dit. Un trajet libre s'arrête à l'arrivée et le dit.
+La marche se fait uniquement sur les itinéraires embarqués et boucle.
 
 ## 6. Ennuis connus et remèdes
 

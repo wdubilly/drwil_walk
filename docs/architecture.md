@@ -1,108 +1,149 @@
 # Architecture — drwil_walk
 
-Au 2026-10-30. Carte du dépôt : ce qui vit où. À tenir à jour dans le même commit que le code qu'elle décrit.
+Carte du dépôt au 2026-11-05. Comportement utilisateur : `docs/features.md`. Mission initiale : `MISSION.md`.
 
-## Ce que fait l'application
+## Stack et couches
 
-Une page WebXR en réalité mixte, ouverte dans le navigateur du Meta Quest 3, sans installation (et une version PC, sans casque : clavier et souris). L'utilisateur marche
-sur un tapis de course classique (non connecté). La ville (Pune ou Doha) défile le long d'un itinéraire prédéfini, à la
-vitesse qu'il règle à la manette pour qu'elle corresponde à celle du tapis. Le monde réel (tapis, rampe, console) reste
-visible grâce au passthrough : la ville s'efface quand il baisse la tête, et la zone du tapis reste transparente.
-Le détail fonctionnel est dans `MISSION.md`.
+Une seule couche, `app/` : TypeScript strict + Vite HTTPS + three.js, WebXR `immersive-ar` sur Quest 3.
+Version écran sans WebXR, clavier/souris ou tactile. Application statique, sans compte, serveur applicatif ni base.
+Un seul rendu : extraits OpenStreetMap embarqués, attribution ODbL ; aucun fournisseur de trajet ni de tuiles distant.
+Génération `npm run city` exclusivement sur PC de développement. Tests Vitest, c8 et Playwright/IWER.
 
-## Stack
+## Entrées et assemblage
 
-Décidée le 2026-10-30 par le demandeur :
+- `app/index.html`, `app/src/main.ts` : montage du DOM, vrai `WebGLRenderer`, WebXR et chargement local des arbres.
+- `app/src/xr/experience.ts` : accueil → session → boucle XR ; renderer, document, horloge et arbres injectés.
+- `app/src/pc/enter-pc.ts` : même ville et marche, canvas de page, sans zone tapis, vignette ni fondu sur écran.
+- `app/src/xr/city-choice.ts`, `app/src/city/cities.ts` : association itinéraire/extrait/palette/boucle.
+- `app/src/city/live-city.ts` : prépare une variante par profil avant la marche, conserve le groupe ville,
+  bascule les groupes visibles sans construire de géométrie à chaud ; libération des géométries et matériaux à la sortie.
+- `app/src/xr/live-preferences.ts` : applique les choix à la ville, à l'ambiance et au renderer ;
+  fovéation XR à chaud, pixel ratio écran à chaud, échelle de framebuffer XR fixée à l'entrée.
 
-- **Langage** : TypeScript strict.
-- **Build et serveur de dev** : Vite, en HTTPS (WebXR l'exige), accessible sur le réseau local pour le Quest 3.
-- **3D et XR** : three.js, session WebXR `immersive-ar` (passthrough du Quest 3).
-- **Ville** : par défaut, bâtiments OpenStreetMap extrudés en three.js, à partir d'un extrait GeoJSON figé dans le dépôt
-  (aucun appel réseau dans le casque), mention « © contributeurs OpenStreetMap » affichée (licence ODbL). En option
-  (décision du demandeur du 2026-10-31, `docs/projects/journal.md`) : les Google Photorealistic 3D Tiles par
-  `3d-tiles-renderer`, avec une clé lue de `.env.local` (dans `app/`) (`VITE_GOOGLE_MAPS_API_KEY`) ; sans clé ou si les tuiles
-  échouent, le rendu OpenStreetMap reste le plan B et la raison est dite à l'écran.
-- **Tests** : Vitest (unitaires, couverture à 100 %), Playwright avec émulation WebXR (IWER) pour l'e2e.
-- **Hébergement** : application 100 % statique, aucun serveur ni base de données.
+## Modules
 
-## Couches
+### `app/src/ui/` — accueil et préférences
 
-- `app/` : l'application entière, paquet npm à part (`app/package.json`). Contexte de la couche : `app/AGENTS.md`.
-  - `app/index.html` : la page servie ; elle charge le point d'entrée `app/src/main.ts`.
-  - `app/src/` : le code, un dossier par module, chaque fichier de logique avec son test `*.test.ts` à côté.
-    Découpage prévu : xr (session et contrôles), city (bâtiments OSM extrudés), route (itinéraires et déplacement),
-    safety (visibilité du réel), ui (accueil et panneau d'infos).
-  - `app/src/main.ts` : point d'entrée ; il monte l'accueil et branche le renderer three.js (`WebGLRenderer`).
-  - `app/src/route/` : la vitesse de marche (`app/src/route/speed.ts` : minimum 1 km/h sans maximum, pas de 0,1, conversion en m/s) et le
-    déplacement (`app/src/route/walk.ts` : distance à la vitesse réglée, affichage distance et temps ; `app/src/route/stats.ts` : calories estimées, poids gardé en `localStorage`, cap de la boussole, heure locale, allure, distance restante et progression), le parcours GPS
-    (`app/src/route/geo.ts` : GPS vers mètres locaux ; `app/src/route/path.ts` : position et direction à une distance,
-    boucle qui reprend au départ, contrat APP-002 ; `app/src/route/network.ts` : réseau de voies de l'extrait, rues à un carrefour et marche sur le réseau, pour le choix de la rue) et les quatre itinéraires de l'accueil
-    (`app/src/route/itineraries.ts` : données, dont l'indicateur « disponible »).
-  - Itinéraire libre (chantier itineraire-libre) : `app/src/route/providers.ts` (interfaces `Router` et `Geocoder`, aucune limite de longueur), `app/src/route/valhalla.ts` (chemin à pied, profil piéton) et `app/src/route/photon.ts` (recherche d'adresse et géocodage inverse), par défaut et sans clé,
-    `app/src/route/create-providers.ts` (choix des services, adresses `VITE_ROUTING_URL` et `VITE_GEOCODING_URL`), `app/src/route/routes-api.ts` et `app/src/route/geocoding.ts` (option Google Routes et Geocoding, clé `VITE_GOOGLE_ROUTES_API_KEY`), `app/src/route/reject-double.ts` (doublure de test),
-    `app/src/city/free-route.ts` (bâtiments OpenStreetMap proches du tracé demandés à Overpass, préparation du trajet, contrats APP-002 et APP-003),
-    `app/src/ui/free-trip.ts` (départ et arrivée : carte et adresses qui se remplissent mutuellement), `app/src/ui/map-picker.ts` et `app/src/ui/map-math.ts`
-    (carte légère à tuiles OpenStreetMap, sans bibliothèque), illustration `app/src/ui/libre.svg` ; un tracé non bouclé (`Path.loop` faux) s'arrête à l'arrivée (`app/src/xr/frame.ts`).
-  - `app/src/safety/` : la sécurité-visibilité (`app/src/safety/visibility.ts`, contrat APP-001) : inclinaison de la tête lue dans la
-    pose WebXR, fondu de la ville au-delà de 25°, opacité globale bornée 30 à 100 %. Zone tapis (`app/src/safety/zone.ts` : boîte par défaut, validation, enregistrement `localStorage`, six plans ; `app/src/safety/zone-edit.ts` : réglage à la manette gauche en logique pure) et vignette réelle (`app/src/xr/vignette.ts`).
-  - Champ de vision du casque (`app/src/xr/fov.ts`, contrat APP-004) : logique pure qui juge qu'un point ou un rectangle de la scène reste dans la vue d'une tête, pour la cible Quest 3 (110° × 96°, marge 80 % des demi-angles : hypothèse de cadrage annoncée par Meta, source à relire, voir le fichier) ; l'e2e en tire le masque donné à IWER (`app/e2e/champ-de-vision.test.ts`). Le panneau d'infos y est jugé (contrat APP-005) : sa place (`app/src/xr/pose.ts`, 28° sur le côté, 0,31 m sous les yeux) est réglée pour que ses quatre coins restent dans la vue.
-  - `app/src/pc/` : la version PC (contrat APP-002), sans session WebXR : `app/src/pc/enter-pc.ts` assemble accueil → canvas de la page → boucle de rendu
-    avec la scène, la marche (`app/src/xr/frame.ts`), le tableau de bord (`app/src/xr/dashboard.ts`) et le choix de ville (`app/src/xr/city-choice.ts`) du casque ;
-    `app/src/pc/keys.ts` (touches, une pression = une action), `app/src/pc/look.ts` (regard à la souris, borné) et `app/src/pc/input.ts` (commandes accumulées entre deux images) ; la tablette (APP-007) : `app/src/pc/touch.ts` (suivi du doigt, pur) et `app/src/pc/touch-controls.ts` (boutons à l'écran, mêmes actions que les touches), affichés sur un pointeur tactile par `app/src/ui/home.css`, qui adapte aussi l'accueil et le panneau aux petits écrans ; `app/src/pc/pc-button.ts` est le bouton « Version PC » de l'accueil.
-    Aucun fondu, aucune zone tapis ni vignette : sans passthrough ni tapis, rien à protéger (APP-001 ne concerne que le casque).
-  - `app/src/xr/` : l'ambiance de la scène (`app/src/xr/ambience.ts` : lumières réglées sur l'heure, brouillard posé ou non, ciel jamais posé au casque ; `app/src/xr/ambience-sound.ts` : les sons facultatifs, coupés par défaut et plafonnés, contrat APP-011), la session `immersive-ar` (`app/src/xr/session.ts`), le joystick droit (`app/src/xr/joystick.ts`, un cran de 0,1 km/h
-    par poussée), l'image de marche en logique pure (`app/src/xr/frame.ts`) et l'assemblage accueil → session → boucle de rendu
-    (`app/src/xr/experience.ts`, renderer injecté pour être testé avec une doublure). La gâchette (pause), A (recalage), B (panneau) et le clic du joystick droit (diagnostic de rendu) sont lus par `app/src/xr/buttons.ts` (un appui = une action), le diagnostic de rendu (fenêtre glissante, lecture de `renderer.info`, bloc de la page, fichier JSON) par `app/src/xr/diagnostics.ts` et `app/src/xr/diagnostics-report.ts`, la pause par `app/src/xr/frame.ts`, le choix de la rue aux carrefours (APP-002) par `app/src/xr/junctions.ts` (le guide `app/src/xr/guide.ts` suit le tracé d'origine ou le réseau, le rayon et la prise droite sont lus par `app/src/xr/choice-ray.ts`, les flèches posées dans la ville par `app/src/xr/choice-markers.ts`, donc effacées et découpées comme elle, APP-001), le recalage (origine et cap du parcours, posés sur le groupe `world`) par `app/src/xr/pose.ts`, et la minicarte du casque (`app/src/xr/minimap.ts` : tracé réduit par `app/src/route/simplify.ts`, point courant, place du côté opposé au panneau dans `app/src/xr/pose.ts`, mêmes règles APP-001), et le tableau de bord du casque (cap, heure, lieu, vitesse, durée, distance, calories « environ »), un texte flottant dessiné une fois par valeur changée, soumis au fondu de la ville, sur un fond légèrement transparent, par `app/src/xr/hud-panel.ts` ; sa place (en bas du champ de vision, du côté choisi, à l'horizontale, écartée de la zone tapis qu'il ne recouvre jamais) est calculée en logique pure par `app/src/xr/pose.ts`, le côté se choisit à l'accueil et se garde en `localStorage` (`app/src/ui/panel-side.ts`) ; le poids facultatif se saisit aussi à l'accueil, `app/src/ui/home.ts`. La zone tapis est réglée par la manette gauche (`app/src/xr/left-controller.ts` : joystick, prise, X, Y ; `app/src/xr/zone-control.ts` : chargement, réglage, enregistrement en fin de geste) et rendue par six plans de coupe `clipIntersection` partagés par les matériaux de la ville (`app/src/city/zone-clip.ts`, appliqués par `app/src/city/souq.ts` ; les mentions en sont exemptées), sans rendu supplémentaire ; la vignette est un quadrilatère plein écran à fondu multiplicatif dessiné en dernier (`app/src/xr/vignette.ts`).
-  - `app/src/city/` : les villes des itinéraires, le souk de Doha, la Vieille ville de Pune, la Corniche de Doha et FC Road (chantiers doha-souq-waqif, pune-vieille-ville, doha-corniche et pune-fc-road, `docs/projects/journal.md`) : lecture de l'extrait
-    (`app/src/city/souq-data.ts`), choix de la ville et de la boucle par identifiant d'itinéraire (`app/src/city/cities.ts`, lu par `app/src/xr/experience.ts`), bâtiments extrudés et fusionnés en un maillage à couleurs par sommet, un ton de la palette par bâtiment, ou la teinte de ses balises `building:colour`, `roof:colour`, `building:material` (`app/src/city/tint.ts`), avec un ombrage par sommet vers le pied (`app/src/city/buildings.ts`), arbres et mobilier urbain plafonnés (`app/src/city/props.ts`, modèles du mobilier produits par code et tournés dans l'axe de la rue `app/src/city/furniture.ts`, contrat APP-009), lanternes allumées la nuit et halos au sol en deux maillages instanciés, sans source de lumière, allumés par l'ambiance d'après `Daylight.night` (`app/src/city/street-lights.ts`, case de l'accueil `app/src/ui/lamps-choice.ts`, contrat APP-011), ville vivante en option (contrat APP-014) : catalogue des types et table par région en données (`app/assets/figurants-catalogue.json`, lu et validé par `app/src/city/traffic-catalog.ts`), voies de circulation tirées des balises `oneway`, `lanes`, `sidewalk` et dégagées des bâtiments (`app/src/city/traffic-lanes.ts`), moteur pur à graine OSM et plafonds par profil (`app/src/city/traffic-rule.ts`), mouvement et retrait près de l'utilisateur (`app/src/city/traffic-motion.ts`), modèles CC0 embarqués et validés (`app/assets/figurants.json` préparé par `app/scripts/prepare-traffic-pack.ts`, lu par `app/src/city/traffic-pack.ts`, chargé à la demande par `app/src/city/traffic-assets.ts`), un maillage instancié par modèle ajouté à la ville (`app/src/city/traffic.ts`, case de l'accueil `app/src/ui/traffic-choice.ts`) : mobilier fusionné en un maillage ; arbres du pack Quaternius (chargement et validation `app/src/city/tree-pack.ts`, modèle embarqué `app/src/city/tree-assets.ts`, instances par variante avec variante, cap et taille tirés de la position `app/src/city/tree-instances.ts`), chargés dès l'accueil par `app/src/xr/trees-load.ts` et, si le modèle ne se charge pas, remplacés par l'arbre procédural avec la raison dite à l'écran, voies posées à plat sur le sol et fusionnées en un maillage, largeur et couleur selon leur classe, bordure plus claire et ligne centrale des voies larges (`app/src/city/roads.ts`), trottoirs, passages piétons et chemin suivi jaune posés sur les voies (`app/src/city/walkways.ts`), bordures de trottoir et lignes d'arrêt lues des balises de voie (`app/src/city/markings.ts`), surfaces vertes et haies (`app/src/city/vegetation.ts`), toits à deux pans et auvents ajoutés au maillage des bâtiments (`app/src/city/roofs.ts`), matériaux locaux en option (chantier facades-materiaux-souk, contrat APP-012) : bibliothèque par quartier, textures CC0 recolorées embarquées en `data:` et budget de mémoire (`app/src/city/material-library.ts`, données `app/assets/materials/`), choix déterministe du matériau, de sa teinte, de son échelle et de son usure selon la famille de façade et sans doublon entre voisins (`app/src/city/material-variation.ts`), placage texturé un peu devant les murs des bâtiments détaillés, un maillage par matériau, absent en profil « performance » (`app/src/city/material-mesh.ts`), ajouté à la ville par `createSouqScene` donc effacé avec elle tête baissée ; façades procédurales sans texture (chantier rendu-facades-batiments, contrat APP-008) : graine tirée de l'identifiant OSM (`app/src/city/facade-seed.ts`), quatre familles, région de l'itinéraire par fenêtres de coordonnées et voisinage (`app/src/city/facade-family.ts`), palettes de détails par région avec repli sur le jeu de base (`app/src/city/facade-palettes.ts`, chantier facades-regions), plan d'une façade selon étages et largeur (`app/src/city/facade-plan.ts`), pièces géométriques (corniche, porte, fenêtres, volets, balcons) à plafond de triangles (`app/src/city/facade-parts.ts`) et assemblage par budget de détail réglé par le profil, unicité entre voisins (`app/src/city/facades.ts`), ajoutées au maillage des bâtiments sans motif de fenêtres du shader (`noWindows`), plaques des noms de rues à plat (`app/src/city/street-names.ts`), triangles orientés et proximité du parcours partagés (`app/src/city/soup.ts`, `app/src/city/near-route.ts`), matériau toon à quatre paliers sur le sol, les voies et les bâtiments, avec un motif de fenêtres dessiné par le shader sur les façades, sans texture ni maillage en plus (`app/src/city/toon.ts`), contours des bâtiments proches du parcours en option de l'accueil, désactivés par défaut (`app/src/city/outlines.ts`), palette par itinéraire (`app/src/city/cities.ts`), scène,
-    placement de la ville sur le parcours et opacité (`app/src/city/souq.ts` : scène sans fond pour le passthrough),
-    mentions de données dans la scène (`app/src/city/attribution.ts`) et leur texte (`app/src/city/licence.ts`,
-    contrat APP-003), tuiles Google 3D (`app/src/city/google-tiles.ts` : clé, alignement sur l'origine de la boucle,
-    repli, droits des tuiles ; `app/src/xr/google-mode.ts` : rendu choisi, message de repli, mentions affichées). `app/src/city/canvas-double.ts`, `app/src/city/zip-double.ts`, `app/src/city/gltf-double.ts` et `app/src/city/tree-pack-double.ts` sont des doublures de test, importées par les seuls tests.
-  - `app/data/` : l'extrait OpenStreetMap du quartier, bâtiments (avec leurs balises de teinte), voies, arbres, lampadaires, bancs, poubelles et panneaux (`app/data/souq-waqif.json`, `app/data/pune-vieille-ville.json`, `app/data/doha-corniche.json`, `app/data/pune-fc-road.json`, GeoJSON versionnés, ©
-    contributeurs OpenStreetMap, ODbL) et le tracé de chaque boucle (`app/data/souq-waqif-boucle.json`, `app/data/pune-vieille-ville-boucle.json`, `app/data/doha-corniche-boucle.json`, `app/data/pune-fc-road-boucle.json`).
-  - `app/assets/` : les arbres du pack Quaternius « Stylized Nature MegaKit » (Standard, CC0), allégés et embarqués (`app/assets/quaternius-trees.json`, texture des feuilles comprise), la licence de l'archive (`app/assets/quaternius-licence.txt`) et la provenance écrite (`app/assets/PROVENANCE.md`) ; `app/scripts/prepare-nature-pack.ts` les produit depuis l'archive, gardée hors du dépôt (lecture du zip `app/src/city/zip-read.ts`, du glTF `app/src/city/gltf-read.ts`, allègement `app/src/city/mesh-simplify.ts`), jamais exécuté dans le casque.
-  - `app/scripts/extract-souq.ts` : l'extraction Overpass unique (une requête par ville, jamais relancée en boucle) ; `app/data/villes.json` : les villes décrites par des données (nom, emprise, identification Overpass, fichier, départ, étapes, arrivée et retour), seule source ; `app/scripts/cities.ts` : sa lecture typée et `extractCity` ; `app/scripts/osm-tags.ts` (balises retenues : couleurs, matériau, arbres, mobilier urbain, trottoirs et passages).
-  - `app/scripts/create-city.ts` : **la commande unique de création d'un itinéraire** (`npm run city -- <identifiant> [options]`, hors casque, réseau permis ici seulement ; options lues par `app/scripts/city-args.ts`). Avec le seul identifiant d'une ville de `app/data/villes.json`, elle la rejoue ; avec `--nom`, `--emprise`, `--depart` et `--arrivee` (et `--via`, `--retour`), elle écrit l'entrée dans `app/data/villes.json`. Elle écrit ensuite l'extrait OpenStreetMap (`app/data/<ville>.json`, attribution ODbL comprise), le tracé de boucle (`app/data/<ville>-boucle.json`, plus court chemin sur les voies de l'extrait, `app/scripts/route-loop.ts` : chaque point est un sommet d'une voie), l'inventaire des photos (`app/assets/materials/<itinéraire>-photos.json`, liens seulement) et la bibliothèque de matériaux (`app/assets/materials/<itinéraire>.json`). Les photos viennent de Panoramax puis de Mapillary (`MAPILLARY_TOKEN` dans l'environnement, jamais dans le dépôt, SEC-007) et du dossier de photos fournies (`--photos`, lu sur le disque hors dépôt) ; sans photo à moins de 30 m du tracé, la recherche s'élargit (100, 300 puis 1 000 m, `app/scripts/photo-search.ts`), puis se replie sur la palette de la région (APP-008, `app/scripts/city-colours.ts`). Le rapport affiché dit pour chaque couleur d'où elle vient (photo, distance, auteur, licence). Aucun code et aucun script npm par ville ; un seul test paramétré sur `CITIES` (`app/src/city/cities-extract.test.ts`) vérifie l'emprise, l'identification et les repères des villes existantes. Ces scripts ne sont jamais exécutés dans le casque, qui ne fait aucun appel réseau. L'inscription de la ville dans l'application (`app/src/city/cities.ts`, carte d'accueil) reste à faire à la main (`docs/intentions/inscrire-une-ville-creee.md`).
-  - `app/scripts/panoramax.ts`, `app/scripts/materials-*.ts` : la préparation des matériaux locaux d'un quartier, hors casque (chantier facades-materiaux-souk, contrat APP-012) : inventaire des photos de rue à moins de 30 m du tracé (Panoramax, repli Mapillary avec le jeton `MAPILLARY_TOKEN`, jamais dans le dépôt ; `npm run materials:inventory -- <itinéraire>`), couleurs dominantes des photos ou palette de la région, textures ambientCG CC0 réduites, recolorées et embarquées (`npm run materials:library -- <itinéraire>`) ; ces deux gestes sont aussi enchaînés par `npm run city` ; le quartier se déduit de la ville décrite dans `app/data/villes.json` (`app/scripts/materials-areas.ts`). Seuls ces scripts touchent le réseau, jamais le casque.
-  - `app/scripts/overture-coverage.ts` : l'essai de couverture d'Overture Maps (chantier rendu-sources-donnees), un
-    **relevé ponctuel**, lancé à la main, jamais par l'application : il compare les quatre extraits figés aux fichiers
-    publiés d'Overture (Parquet du bucket public, sans compte ni clé), couches `buildings/building` (ODbL) et
-    `addresses/address` (licences ouvertes par pays), et rend le relevé en Markdown. Rien d'Overture n'entre dans
-    `app/data/` : la ville reste celle d'OpenStreetMap (APP-003). L'exécuteur de requêtes (DuckDB, gardé hors du
-    dépôt) et la lecture des extraits lui sont injectés : son test (`app/src/city/overture-coverage.test.ts`)
-    n'ouvre ni réseau ni fichier. Ligne de commande et relevé : `docs/intentions/rendu-sources-donnees.md`.
-  - `app/src/city/lamp-rule.ts` : les lampadaires produits par règle le long des voies (intervalle par classe, graine de l'identifiant de la voie, trois refus, relevé posé d'abord), contrat APP-013 ; leur plafond par profil est `maxGeneratedLamps` (`app/src/render/profiles.ts`), leur case d'accueil `app/src/ui/lamps-choice.ts`, relue par `createSouqScene` dans la page (le réglage ne traverse ni le casque ni le PC).
-  - `app/src/render/` : les profils graphiques (`app/src/render/profiles.ts` : trois réglages figés, repli équilibré, ratio de pixels borné) et la détection des capacités de l'appareil (`app/src/render/capabilities.ts` : casque, tactile, WebGL 2, jamais le user-agent seul), contrat APP-006 ; lus par `app/src/xr/experience.ts` et `app/src/pc/enter-pc.ts`, appliqués par `createSouqScene` (`app/src/city/souq.ts`) ; le choix à l'accueil est `app/src/ui/profile-choice.ts` (gardé dans le navigateur, valeur illisible dite). Aucun réglage de sécurité-visibilité n'y entre (APP-001). La lumière de l'heure réelle et le brouillard y vivent aussi (contrat APP-011) : `app/src/render/daylight.ts` (courbe du jour, repli de midi, couleurs du soleil, du ciel et du brouillard) et `app/src/render/fog.ts` (voile plafonné à 0,15 au casque, rien de voilé sous 8 m), deux modules purs appliqués à la scène par `app/src/xr/ambience.ts`.
-  - `app/src/ui/` : l'écran d'accueil (`app/src/ui/home.ts` : vitesse, opacité, rappel de sécurité, bouton « Entrer en réalité
-    mixte » ; `app/src/ui/route-choice.ts` : cartes d'itinéraire en boutons radio ; `app/src/ui/render-choice.ts` : rendu OpenStreetMap, Google 3D ou « Matériaux locaux (prototype) », cette dernière option proposée seulement pour un itinéraire doté d'une bibliothèque de matériaux (contrat APP-012) ; `app/src/ui/home.css` : thème sombre et
-    couleurs ; `app/src/ui/contrast.ts` : mesure du contraste, contrat QUA-014), les illustrations des cartes
-    (`app/src/ui/*.svg`, une par itinéraire, livrées par Vite avec l'application, sans réseau) et le panneau de marche sur la page (`app/src/ui/panel.ts` : vitesse, distance, temps, opacité de la ville).
-  - `app/e2e/` : l'e2e des chemins critiques (`app/e2e/chemins-critiques.test.ts`, `app/e2e/itineraire-libre.test.ts` pour l'itinéraire libre, servi par des services factices, et `app/e2e/google-3d.test.ts` pour le rendu Google, servi par des tuiles factices sans appel à Google, contrat QUA-020), Playwright sur
-    Chromium avec un Quest 3 émulé par IWER, injecté par le test (jamais livré dans l'application). Il prend aussi les
-    captures de l'accueil et de la marche à Pune, sur la Corniche et sur FC Road dans `dist/e2e-captures/` (ignoré par Git), publiées par la CI sous le nom `captures-accueil`.
-  - Configuration, chacune testée comme le code : `app/playwright.config.ts` (e2e contre Vite sur le port 5174, en
-    HTTPS, résultats hors de la couche), `app/vite.config.ts` (Vite en HTTPS sur le réseau local, build
-    dans le dossier dist/app de la racine, hors de la mesure de couverture, et
-    Vitest), `app/eslint.config.js` (règles des contrats de qualité), `app/tsconfig.json` (TypeScript strict).
-  - Couverture : c8 autour de `npm test` (Vitest), 100 % sans exclusion. Les tests tournent en threads et le code
-    est importé par Node avec retrait natif des types, pour que c8 mesure les vraies lignes des fichiers .ts :
-    d'où l'extension .ts dans les imports relatifs. Les tests du DOM utilisent happy-dom (`new Window()`), sans
-    environnement global. La couverture différentielle (contrôle `coverage-diff-app`, QUA-004) exige en plus
-    100 % des lignes ajoutées ou modifiées par rapport à `origin/master` : c8 écrit un rapport Cobertura dans
-    app/coverage/ (ignoré par Git), lu par diff-cover (outil Python).
+- `app/src/ui/home.ts`, `app/src/ui/route-choice.ts`, `app/src/ui/home.css`, illustrations SVG : quatre cartes, vitesse et démarrages, rappel de sécurité,
+  erreurs et mentions. Pas de préférence graphique à l'accueil.
+- `app/src/ui/preferences.ts` : valeurs initiales (Équilibré partout), validation, mémoire `preferences-v1`,
+  migration du seul ancien profil ; autres anciennes préférences ignorées ; stockage indisponible dit.
+- `app/src/ui/walk-preferences.ts` : lignes et valeurs communes, boutons PC/tablette dans « Préférences de marche ».
+- `app/src/ui/panel-side.ts` : côté par défaut et type ; `app/src/ui/panel.ts` : tableau HTML de marche ;
+  `app/src/ui/contrast.ts` : contraste texte/fond (QUA-014).
+- Matériaux locaux, poids (70 kg) et vignette sont fixes ; opacité du panneau séparée de la sécurité.
+
+### `app/src/route/` — parcours et calculs purs
+
+- `app/src/route/speed.ts`, `app/src/route/walk.ts` : minimum 1 km/h sans maximum, pas de 0,1 et conversion en m/s ; durée/distance.
+- `app/src/route/geo.ts`, `app/src/route/path.ts` : GPS vers mètres, position et direction lissées, boucles (APP-002).
+- `app/src/route/network.ts` : rues des carrefours et marche sur réseau.
+- `app/src/route/itineraries.ts` : quatre cartes d'itinéraire, données et disponibilité.
+- `app/src/route/stats.ts` : estimation calories, cap, heure, allure, restant et progression ; fonctions historiques de stockage
+  du poids conservées mais non branchées dans l'application.
+- `app/src/route/simplify.ts` : réduction du tracé pour la minicarte.
+- `app/src/route/reject-double.ts` : doublure d'erreur de chargement utilisée par les tests des arbres.
+
+### `app/src/safety/` — visibilité du réel (APP-001)
+
+- `app/src/safety/visibility.ts` : fondu tête baissée 25°–40°, pose absente → ville effacée, opacité bornée.
+- `app/src/safety/zone.ts`, `app/src/safety/zone-edit.ts` : boîte par défaut, validation/stockage, plans de coupe et édition pure.
+- La sécurité n'est jamais dans les profils ni les préférences ; la vignette XR reste active.
+
+### `app/src/xr/` — session, image et panneaux
+
+- `app/src/xr/session.ts` : `immersive-ar`, espace de référence et erreurs.
+- `app/src/xr/frame.ts`, `app/src/xr/joystick.ts`, `app/src/xr/buttons.ts` : image de marche pure, vitesse, pause, recalage, tableau, fronts de boutons.
+- `app/src/xr/guide.ts`, `app/src/xr/junctions.ts`, `app/src/xr/choice-ray.ts`, `app/src/xr/choice-markers.ts` : parcours/réseau, pointage et flèches de carrefour.
+- `app/src/xr/pose.ts` : recalage, placement des panneaux hors de la zone tapis ; `app/src/xr/fov.ts` : champ simulé Quest 3
+  (110° × 96°, marge de 80 %), APP-004/APP-005, hypothèse à relire sur vrai appareil.
+- `app/src/xr/dashboard.ts`, `app/src/xr/hud-panel.ts`, `app/src/xr/minimap.ts` : données et canvas des panneaux flottants, même fondu que la ville.
+- `app/src/xr/preference-panel.ts` : canvas des préférences, ouverture gâchette gauche, rayon/prise droite,
+  pas de sélection cachée ; prend la place du tableau sans suspendre la marche.
+- `app/src/xr/left-controller.ts`, `app/src/xr/zone-control.ts` : réglage/stockage de la boîte ; `app/src/xr/vignette.ts` : masque périphérique multiplicatif.
+- `app/src/xr/ambience.ts`, `app/src/xr/ambience-sound.ts` : lumière du départ, brouillard activable à chaud, sons à gain plafonné ;
+  pas de ciel opaque au casque, contexte audio seulement quand nécessaire (APP-011).
+- `app/src/xr/trees-load.ts` : chargement local du pack, repli procédural et notice.
+- `app/src/xr/diagnostics.ts`, `app/src/xr/diagnostics-report.ts` : fenêtre de mesures, rendu de la page, export JSON local.
+- `app/src/xr/experience-double.ts` : doublure de renderer/session pour les tests.
+
+### `app/src/pc/` — commandes écran
+
+- `app/src/pc/pc-button.ts` : démarrage séparé du casque.
+- `app/src/pc/keys.ts`, `app/src/pc/look.ts`, `app/src/pc/input.ts` : clavier sans répétition, regard borné, actions accumulées entre images.
+- `app/src/pc/touch.ts`, `app/src/pc/touch-controls.ts` : suivi du doigt pur et boutons de 48 px (APP-007).
+- Aucun choix de carrefour ni minicarte sur écran ; préférence accessible pendant la marche.
+
+### `app/src/render/` — profils et ambiance purs
+
+- `app/src/render/profiles.ts` : Performance/Équilibré/Qualité, plafonds et pixel ratio, repli Équilibré (APP-006).
+- `app/src/render/daylight.ts` : courbe locale du jour, couleurs et repli midi.
+- `app/src/render/fog.ts` : voile plafonné à 15 % au casque, pas de voile sous 8 m (APP-011).
+
+### `app/src/city/` — OpenStreetMap et génération graphique
+
+- `app/src/city/souq-data.ts`, `app/src/city/souq.ts` : lecture typée de l'extrait, groupes de scène sans fond XR, placement et opacité.
+- `app/src/city/licence.ts`, `app/src/city/attribution.ts` : texte ODbL et mention de scène (APP-003).
+- `app/src/city/buildings.ts`, `app/src/city/tint.ts`, `app/src/city/roofs.ts` : maillages fusionnés, teintes OSM/palette, ombrage et toits.
+- `app/src/city/roads.ts`, `app/src/city/walkways.ts`, `app/src/city/markings.ts`, `app/src/city/street-names.ts` : voies, bordures, parcours, passages piétons,
+  lignes d'arrêt et noms au sol ; `app/src/city/vegetation.ts` : surfaces vertes/haies.
+- `app/src/city/toon.ts`, `app/src/city/outlines.ts` : toon à quatre paliers et contours selon profil.
+- `app/src/city/facade-seed.ts`, `app/src/city/facade-family.ts`, `app/src/city/facade-palettes.ts`, `app/src/city/facade-plan.ts`, `app/src/city/facade-parts.ts`, `app/src/city/facades.ts` :
+  graine OSM, familles et palettes régionales, voisins distincts, détail borné (APP-008).
+- `app/src/city/soup.ts`, `app/src/city/near-route.ts` : géométrie partagée, proximité du parcours.
+- `app/src/city/props.ts`, `app/src/city/furniture.ts` : arbres/mobilier et dimensions réelles, axe de la rue (APP-009).
+- `app/src/city/lamp-rule.ts` : mâts produits par règle, provenance et refus (APP-013).
+  Le groupe `lampadaires` est séparé du mobilier OSM pour pouvoir être retiré à chaud.
+- `app/src/city/street-lights.ts` : lanternes/halos instanciés sans lumière par mât ni effet sur l'alpha (APP-011).
+- `app/src/city/zone-clip.ts` : découpe par six plans partagés (APP-001).
+- `app/src/city/tree-pack.ts`, `app/src/city/tree-assets.ts`, `app/src/city/tree-instances.ts` : validation/chargement du pack CC0, instances reproductibles.
+- `app/src/city/material-library.ts`, `app/src/city/material-variation.ts`, `app/src/city/material-mesh.ts` : bibliothèques CC0 embarquées,
+  mémoire plafonnée, variantes déterministes, placage fusionné (APP-012). Images créées par le document injecté.
+- `app/src/city/traffic-catalog.ts`, `app/src/city/traffic-lanes.ts`, `app/src/city/traffic-rule.ts`, `app/src/city/traffic-motion.ts` :
+  catalogue/types/régions en données, voies sans bâtiments, moteur pur, proximité et mouvement (APP-014).
+- `app/src/city/traffic-pack.ts`, `app/src/city/traffic-assets.ts`, `app/src/city/traffic.ts` : validation/chargement CC0 et instances ;
+  `app/src/city/traffic-budget.test.ts` : budget mesuré sur les modèles embarqués.
+- `app/src/city/zip-read.ts`, `app/src/city/gltf-read.ts`, `app/src/city/mesh-simplify.ts` : lecture/allègement des modèles sans exécution.
+- `app/src/city/canvas-double.ts`, `app/src/city/zip-double.ts`, `app/src/city/gltf-double.ts`, `app/src/city/tree-pack-double.ts` : doublures de test seulement.
+
+## Données, packs et scripts hors casque
+
+- `app/data/` : quatre GeoJSON OSM et quatre boucles GPS ; `app/data/villes.json` décrit les villes.
+- `app/assets/` : arbres Quaternius CC0 et figurants CC0 Kenney/Poly Pizza, textures embarquées,
+  `app/assets/figurants-catalogue.json` et `app/assets/figurants.json`. Origine/licences : `app/assets/PROVENANCE.md`.
+- `app/assets/materials/` : photos (liens uniquement) et bibliothèques CC0 par quartier.
+- `app/scripts/create-city.ts`, `app/scripts/city-args.ts` : commande unique `npm run city -- <identifiant> [options]`
+  sur PC de développement, écrit description, extrait, boucle et matériaux, jamais appelée par l'application.
+- `app/scripts/cities.ts`, `app/scripts/extract-souq.ts`, `app/scripts/osm-tags.ts`, `app/scripts/route-loop.ts` : lecture des villes, requête Overpass unique,
+  balises conservées et boucle sur les voies (chaque point est un sommet de voie).
+- `app/scripts/panoramax.ts`, scripts de matériaux, `app/scripts/photo-search.ts`, `app/scripts/city-colours.ts` : photos Panoramax, repli Mapillary
+  (jeton `MAPILLARY_TOKEN` dans l'environnement), photos fournies hors dépôt ; élargissement 30–1 000 m,
+  puis palette régionale, rapport de provenance. Commandes matériaux enchaînées par `npm run city`.
+- `app/scripts/prepare-nature-pack.ts`, `app/scripts/prepare-traffic-pack.ts`, `app/scripts/glb-scene.ts`, `app/scripts/png-read.ts` : préparation locale
+  des packs par lecture en mémoire, rien d'extrait ni d'exécuté.
+- `app/scripts/overture-coverage.ts` : relevé ponctuel Overture via exécuteur DuckDB injecté, jamais dans l'application ;
+  aucun fichier Overture incorporé, `docs/intentions/rendu-sources-donnees.md`.
+- Inscription d'une ville créée à l'accueil encore manuelle : `docs/intentions/inscrire-une-ville-creee.md`.
+
+## Tests et configuration
+
+- Tests `*.test.ts` à côté du code. Logique pure séparée du rendu. Renderer/document/horloge/chargements injectés.
+- Imports relatifs avec extension .ts, syntaxe effaçable par Node ; happy-dom sans globals, Vitest threads sans module runner Vite.
+- c8 autour de `npm test`, couverture 100 % dans les quatre dimensions sans exclusion (QUA-004).
+  diff-cover exige 100 % des lignes modifiées contre `origin/master`, rapport Cobertura dans `app/coverage/` (si présent).
+- `app/e2e/` : chemins critiques QUA-020 sur Chromium, Quest 3 IWER injecté uniquement dans les tests,
+  contrôleurs réels émulés pour les préférences ; PC sans WebXR, tactile CDP.
+- `app/playwright.config.ts` : Vite HTTPS port 5174, un worker, pas de serveur réutilisé ;
+  résultats `dist/e2e-results/`, captures `dist/e2e-captures/`.
+- `app/vite.config.ts` : HTTPS réseau, build `dist/app/` hors couverture ; `app/eslint.config.js`, `app/tsconfig.json` :
+  lint/TypeScript strict. Toute configuration a son test.
 
 ## Gouvernance IA-first
 
-- Instructions IA : `AGENTS.md`, puis le `AGENTS.md` de la couche touchée.
-- Mission de la v0.1 : `MISSION.md`.
-- Invariants : `docs/contracts.md`.
-- Recettes : `docs/recipes/`.
-- Contrôles : `.githooks/run-checks.mjs`, lancé au commit par `.githooks/pre-commit`. Les contrôles propres à la stack
-  sont déclarés dans `.drwil/ia-first.json` (clé `checks`).
-- Configuration du kit : `.drwil/ia-first.json`.
-- `.github/workflows/` — CI GitHub (`.github/workflows/ia-first.yml`, écrit par `npx drwil init --ci github`) : le job `checks` rejoue
-  `node .githooks/run-checks.mjs` à chaque push et PR, et sur une PR les rejoue avec les hooks de la branche principale ;
-  c'est le contrôle requis par la protection de `master`. Modèle de PR : `.github/pull_request_template.md`.
-  Avant les contrôles, le job installe les dépendances de `app/` (`npm ci`) et le navigateur Chromium de Playwright
-  (`npx playwright install --with-deps chromium`) : les contrôles de la couche, e2e compris, tournent depuis ce dossier.
+`AGENTS.md` puis `app/AGENTS.md` ; contrats dans `docs/contracts.md`, recettes dans `docs/recipes/`,
+attentes dans `docs/projects/pending.md`. `.drwil/ia-first.json` décrit les contrôles ; hooks
+`.githooks/run-checks.mjs` au commit et push. `npx drwil verify --agent` fournit le verdict de gouvernance.
+
+`.github/workflows/ia-first.yml` rejoue les contrôles au push/PR, avec les hooks principaux sur PR ;
+job `checks` requis pour `master`, installe dépendances et Chromium. Captures publiées en artefact `captures-accueil`.
+Modèle de PR : `.github/pull_request_template.md`. Aucun verdict humain exécuté par l'agent.

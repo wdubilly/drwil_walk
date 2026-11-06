@@ -1,7 +1,7 @@
 // Les bibliothèques de matériaux locaux (prototype : le souk seul) : préparées hors casque (`app/scripts/materials-run.ts`),
 // embarquées dans le dépôt comme du JSON (donc dans le paquet de la page : aucun appel réseau dans le casque), textures en base64
 // décodées par three.js. Un quartier sans bibliothèque n'a pas l'option à l'accueil.
-import { RepeatWrapping, SRGBColorSpace, TextureLoader, type Texture } from "three";
+import { RepeatWrapping, SRGBColorSpace, TextureLoader, Texture } from "three";
 import souqWaqif from "../../assets/materials/doha-souq-waqif.json" with { type: "json" };
 import type { FamilyId } from "./facade-family.ts";
 
@@ -88,6 +88,15 @@ export const hasLocalMaterials = (itineraryId: string): boolean => Object.hasOwn
 export interface LocalMaterials {
   library: MaterialLibrary;
   texture(url: string, colour: boolean): Texture;
+}
+
+/** Le document injecté possède les images : aucun DOM global n'est requis par la scène. */
+export function documentTexture(doc: Document, url: string): Texture {
+  const image = doc.createElement("img");
+  const texture = new Texture(image);
+  image.addEventListener("load", () => { texture.needsUpdate = true; });
+  image.src = url;
+  return texture;
 }
 
 export function localMaterialsFor(itineraryId: string, load: (url: string) => Texture = (url) => new TextureLoader().load(url)): LocalMaterials | undefined {

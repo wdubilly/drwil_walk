@@ -9,13 +9,13 @@ sur son environnement réel.
 - Une version PC (bouton « Version PC » de l'accueil) : la même marche dans un canvas de la page, sans casque ni WebXR, au clavier et à la souris (Espace, flèches, R, H, Échap), ou au toucher sur une tablette (boutons à l'écran, glisser pour regarder).
 - 4 itinéraires proposés : Pune Vieille ville, Pune FC Road, Doha Corniche (du Musée d'art islamique vers West Bay)
   et Doha Souq Waqif. Le souk de Doha (par défaut), la Vieille ville de Pune, la Corniche de Doha et Pune FC Road se parcourent.
-- Un itinéraire libre (départ et arrivée sur une carte ou par une adresse, chemin à pied calculé par Valhalla et adresses de Photon, sans limite de longueur,
-  arrêt à l'arrivée), sans clé (instances publiques d'OpenStreetMap, `INSTALL.md`) ; si un service refuse, la raison est dite et les quatre itinéraires restent.
-- Deux rendus de la ville, au choix à l'accueil : bâtiments OpenStreetMap (par défaut, sans réseau) ou, avec une clé
-  Google (`INSTALL.md`), les tuiles photoréalistes Google 3D, avec repli sur OpenStreetMap et raison dite à l'écran.
+- Un seul rendu : bâtiments OpenStreetMap embarqués, sans clé ni réseau pendant la marche.
+- Un accueil réduit à l'itinéraire et à la vitesse. Pendant la marche, les préférences s'appliquent à chaud sans reconstruire
+  la ville et sont mémorisées : qualité (Équilibré au premier départ), ville vivante, lampadaires, arbres, brouillard, sons,
+  côté et opacité du panneau. Matériaux locaux et vignette restent fixes ; les calories sont une estimation pour 70 kg.
 - La vitesse se règle à la manette pour correspondre à celle du tapis (pas de Bluetooth dans la v0.1), à partir de 1 km/h, sans maximum : une saisie sous 1 km/h est ramenée à 1 km/h et l'écran le dit.
 - Sécurité : la ville s'efface quand on baisse la tête, la zone du tapis (boîte réglée à la manette gauche) reste toujours transparente, la périphérie du champ de vision reste
-  en passthrough (vignette réelle) et l'opacité de la ville est réglable.
+  en passthrough (vignette réelle) ; la visibilité de sécurité n'est jamais réduite par une préférence.
 - Une ambiance éclairée par l'heure qu'il est chez vous, avec un brouillard facultatif (éteint par défaut, plafonné à
   15 % d'opacité au casque, désactivable d'un clic) et des sons d'ambiance facultatifs (coupés par défaut).
 
@@ -24,7 +24,7 @@ Le détail de la v0.1 est dans `MISSION.md`.
 ## Démarrer
 
 Une première tranche est codée : accueil, entrée en réalité mixte, marche dans le souk de Doha, la Vieille ville de Pune, la Corniche de Doha ou FC Road (bâtiments
-OpenStreetMap extrudés, teintés et dotés de façades procédurales, arbres, mobilier urbain et marquages au sol, boucle d'environ 1,5 km) à la vitesse réglée (joystick droit : ±0,1 km/h ; gâchette : pause ; prise : choisir la rue pointée aux carrefours ; A : recalibrer ; B : tableau de bord discret, en bas à gauche ou à droite au choix de l'accueil (vitesse, allure, durée, distance, distance restante et progression, calories environ, cap, lieu, heure) et minicarte du parcours du côté opposé ; manette gauche : zone tapis), ville qui s'efface
+OpenStreetMap extrudés, teintés et dotés de façades procédurales, arbres, mobilier urbain et marquages au sol) à la vitesse réglée (joystick droit : ±0,1 km/h ; gâchette : pause ; prise : choisir la rue pointée aux carrefours ; A : recalibrer ; B : tableau de bord discret, en bas à gauche ou à droite (vitesse, allure, durée, distance, distance restante et progression, calories environ, cap, lieu, heure) et minicarte du parcours du côté opposé ; gâchette gauche : préférences, puis pointer et confirmer avec la prise droite ; autres commandes gauches : zone tapis), ville qui s'efface
 tête baissée, zone tapis et vignette réelle. Les données de la ville sont ©
 contributeurs OpenStreetMap (licence ODbL) ; les modèles d'arbres sont ceux du pack « Stylized Nature MegaKit » de
 Quaternius (CC0, provenance dans `app/assets/PROVENANCE.md`). Avec Node.js 24 :
@@ -34,10 +34,7 @@ cd app
 npm ci
 npm run dev    # serveur HTTPS sur le réseau local, à ouvrir depuis le navigateur du Quest 3
 npm test       # tests unitaires
-npm run extract # relance l'extraction du souk depuis OpenStreetMap (Overpass) et réécrit app/data/souq-waqif.json
-npm run extract:pune # de même pour la Vieille ville de Pune (app/data/pune-vieille-ville.json)
-npm run extract:corniche # de même pour la Corniche de Doha (app/data/doha-corniche.json)
-npm run extract:fc-road # de même pour FC Road à Pune (app/data/pune-fc-road.json)
+npm run city -- souq # génération sur le PC de développement uniquement, réseau nécessaire ; voir le guide
 npm run e2e    # chemins critiques de bout en bout, Quest 3 émulé (après npx playwright install chromium) ;
                # les captures de l'accueil et de la marche à Pune, sur la Corniche et sur FC Road sont écrites dans dist/e2e-captures/
 ```

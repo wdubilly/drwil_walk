@@ -1,8 +1,10 @@
 // La version PC (APP-002) : la même marche que dans le casque (même ville, même parcours, même vitesse, mêmes calculs),
 // dans un canvas de la page, sans session WebXR. Elle n'applique ni le fondu tête baissée, ni la zone tapis, ni la vignette :
 // sans passthrough ni tapis, il n'y a pas de réel à protéger (APP-001 ne concerne que la réalité mixte).
-import { appliedPixelRatio, sceneOptionsOf, settingsOf } from "../render/profiles.ts";
-import { createSouqScene, placeOnRoute, setCityOpacity } from "../city/souq.ts";
+import { placeOnRoute, setCityOpacity } from "../city/souq.ts";
+import { createLiveCity } from "../city/live-city.ts";
+import { bindLivePreferences } from "../xr/live-preferences.ts";
+import { renderWalkPreferences } from "../ui/walk-preferences.ts";
 import type { Souq } from "../city/souq-data.ts";
 import { pointAt } from "../route/path.ts";
 import { DEFAULT_WEIGHT_KG } from "../route/stats.ts";
@@ -18,14 +20,13 @@ import { startAmbience } from "../xr/ambience.ts";
 import { createDiagnosticsUi } from "../xr/diagnostics-report.ts";
 import { initialWalkState, nextWalkState } from "../xr/frame.ts";
 import { NO_CALIBRATION, calibrationFrom } from "../xr/pose.ts";
-import { type TreeLoad, withTreeNotice } from "../xr/trees-load.ts";
+import type { TreeLoad } from "../xr/trees-load.ts";
 import { createPcInput } from "./input.ts";
 import { renderTouchControls } from "./touch-controls.ts";
 import { EYE_HEIGHT_M, lookOrientation } from "./look.ts";
 
 export const PC_ACTIVE_STATUS = "Version PC active : marche dans la page, sans casque.";
 export const PC_ENDED_STATUS = "Version PC arrêtée : vous pouvez y revenir.";
-export const PC_GOOGLE_NOTICE = "Rendu Google 3D indisponible en version PC. Rendu OpenStreetMap affiché.";
 
 /** Lance la marche dans la page ; l'échec se lit sur l'accueil et les deux boutons redeviennent utilisables (QUA-002). */
 export async function enterPc(deps: ExperienceDeps, home: HomeView, trees: Promise<TreeLoad>): Promise<void> {
@@ -40,18 +41,15 @@ export async function enterPc(deps: ExperienceDeps, home: HomeView, trees: Promi
 }
 
 function walkPc(deps: ExperienceDeps, home: HomeView, souq: Souq, trees: TreeLoad): void {
-  const settings = settingsOf(home.readProfile());
-  const souqScene = createSouqScene(deps.document, souq, { ...sceneOptionsOf(settings), ...(trees.pack && { trees: trees.pack }), materials: home.readMaterials() });
+  const souqScene = createLiveCity(deps.document, souq, { ...(trees.pack && { trees: trees.pack }), materials: home.readMaterials() });
   const { scene, camera, world, city, buildingCount } = souqScene;
   home.showNotice(trees.notice);
-  if (home.readRendering() === "google") withTreeNotice(trees, home.showNotice)(PC_GOOGLE_NOTICE);
   const win = deps.document.defaultView as Window;
-  // Sans passthrough, le ciel et le brouillard sont libres : le profil et l'accueil les règlent (APP-011).
+  // Sans passthrough, le ciel et le brouillard suivent les plafonds d'écran (APP-011).
   const now = deps.now ?? (() => new Date());
-  const ambience = startAmbience({ scene, target: "ecran", fog: settings.fog && home.readFog(), soundPct: home.readSoundPct(), now, window: deps.document.defaultView });
-  deps.root.dataset["ambiance"] = ambience.summary;
+  const ambience = startAmbience({ scene, target: "ecran", fog: false, soundPct: 0, now, window: deps.document.defaultView });
   const renderer = new deps.Renderer({ antialias: true, alpha: false });
-  renderer.setPixelRatio(appliedPixelRatio(settings, win.devicePixelRatio));
+  const unbind = bindLivePreferences(home, souqScene, ambience, renderer, true);
   const resize = (): void => {
     renderer.setSize(win.innerWidth, win.innerHeight);
     camera.aspect = win.innerWidth / win.innerHeight;
@@ -64,9 +62,10 @@ function walkPc(deps: ExperienceDeps, home: HomeView, souq: Souq, trees: TreeLoa
   const place = placeOf(home.readRouteId());
   const diagnostics = createDiagnosticsUi({ doc: deps.document, target: "pc", city: place, now, renderer, scene });
   const panel = renderWalkPanel(deps.document, deps.root, true, diagnostics.element);
+  const preferences = renderWalkPreferences(deps.document, deps.root, home.preferences);
   const input = createPcInput(deps.document, renderer.domElement);
   const touchControls = renderTouchControls(deps.document, deps.root, input.push);
-  const weightKg = home.readWeightKg() ?? DEFAULT_WEIGHT_KG;
+  const weightKg = DEFAULT_WEIGHT_KG;
   let calibration = NO_CALIBRATION;
   // Opacité pleine : aucun fondu à appliquer sans réel à montrer.
   let state = initialWalkState(home.readSpeedKmh(), 100);
@@ -80,6 +79,9 @@ function walkPc(deps: ExperienceDeps, home: HomeView, souq: Souq, trees: TreeLoa
     renderer.dispose();
     panel.remove();
     touchControls.remove();
+    preferences.remove();
+    unbind();
+    souqScene.dispose();
     home.setEntering(false);
     home.showStatus(PC_ENDED_STATUS);
   };
@@ -93,7 +95,7 @@ function walkPc(deps: ExperienceDeps, home: HomeView, souq: Souq, trees: TreeLoa
     // Chaque appui compte : les boutons de l'image précédente sont toujours relâchés.
     state = nextWalkState(
       { ...state, speedKmh: stepSpeedKmh(state.speedKmh, taken.steps), buttons: BUTTONS_RELEASED },
-      { timeMs, axisY: 0, buttons: taken.buttons, pitchDownDeg: 0, globalOpacityPct: 100, weightKg, endM: souq.route.loop ? undefined : souq.route.lengthM },
+      { timeMs, axisY: 0, buttons: taken.buttons, pitchDownDeg: 0, globalOpacityPct: 100, weightKg },
     );
     const orientation = lookOrientation(input.look());
     camera.quaternion.set(orientation.x, orientation.y, orientation.z, orientation.w);

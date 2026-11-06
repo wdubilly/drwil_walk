@@ -9,12 +9,11 @@ l'itinéraire choisi, faute de nom de rue disponible.
 
 ## Existant
 
-Lu le 2026-11-01 : les extraits OpenStreetMap figés (`app/data/*.json`) ne portent pas la balise `name` des voies (propriétés
-`kind` et `highway` seulement) ; `Road` (`app/src/city/souq-data.ts`) n'a pas de nom ; les trajets libres chargent leurs voies par
-Overpass sans nom non plus (`app/src/city/free-route.ts`). Ce chantier ne pouvait modifier ni les scripts d'extraction, ni les
-extraits, ni la couche `app/src/city/` (hors de sa portée).
+Actualisé le 2026-11-05 : `Road` (`app/src/city/souq-data.ts`) porte désormais `name` et l'extraction le conserve.
+Le tableau indique encore l'itinéraire, pas la voie courante. Le parcours libre a été retiré ; ce besoin ne concerne
+plus que les données embarquées.
 
 ## Questions à trancher
 
-- [decision] Ajouter `name` aux extraits (relancer les cinq extractions, réseau) puis lire le nom de la voie la plus proche de la
-  position dans le tableau de bord, « rue sans nom connue » en repli ? Et pour un trajet libre ?
+- [decision] Lire le nom de la voie la plus proche de la position dans le tableau de bord,
+  « rue sans nom connue » en repli, sur les quatre itinéraires embarqués ?

@@ -3,7 +3,6 @@ import { AddEquation, CustomBlending, Group, InstancedMesh, Matrix4, Mesh, OneFa
 import { describe, expect, it } from "vitest";
 import { createPath } from "../route/path.ts";
 import { DEFAULT_ZONE } from "../safety/zone.ts";
-import { renderLampsChoices } from "../ui/lamps-choice.ts";
 import { startAmbience } from "../xr/ambience.ts";
 import { withCanvasContext } from "./canvas-double.ts";
 import { LANTERN_AT_M, furnitureParts } from "./furniture.ts";
@@ -95,12 +94,10 @@ describe("lanternes allumées la nuit", () => {
     expect(ambience(day.scene, 7).lanterns).toBe("éteintes");
   });
 
-  it("APP-011: la case « Lampadaires allumés la nuit », cochée par défaut, retire les lanternes décochée", () => {
+  it("APP-011: le moteur peut préparer une variante sans lanternes, les mâts restent présents", () => {
     const page = doc();
-    page.body.append(...renderLampsChoices(page));
     expect(lightsOf(createSouqScene(page, souq).osm)).toBeDefined();
-    (page.getElementById("lampadaires-allumes") as HTMLInputElement).checked = false;
-    const off = createSouqScene(page, souq);
+    const off = createSouqScene(page, souq, { streetLights: false });
     expect(lightsOf(off.osm)).toBeUndefined();
     expect(ambience(off.scene, 23).lanterns).toBe("absentes");
     expect(lightsOf(createSouqScene(doc(), souq, { streetLights: false }).osm)).toBeUndefined();

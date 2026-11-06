@@ -1,6 +1,7 @@
 # Intention : recentrer le produit sur le générateur d'itinéraire
 
-**Statut** : proposée le 2026-11-05 (demande du demandeur).
+**Statut** : réalisée sur la branche `chantier/recentrage-generateur` le 2026-11-06, livraison en cours.
+La clôture et ses limites sont consignées dans l'entrée `recentrage-generateur` du journal des projets.
 
 ## Besoin
 
@@ -23,12 +24,10 @@ pas opportun ; Google 3D doit disparaître faute de licence.
 - **Ordre** : ce recentrage passe **avant** la parité des plateformes et l'inscription des villes, car il change ce qu'elles
   doivent couvrir.
 
-## Existant (relevé du 2026-11-05)
+## Existant avant chantier (relevé du 2026-11-05)
 
-- Google : 36 fichiers l'évoquent (`app/src/city/google-tiles.ts`, `app/src/xr/google-mode.ts`, `app/src/route/*`,
-  `app/src/ui/render-choice.ts`, `app/e2e/google-3d.test.ts`, docs).
-- Parcours libre : `app/src/ui/free-trip.ts`, `app/src/city/free-route.ts`, `app/src/route/geocoding.ts`,
-  `app/src/route/routes-api.ts`, `app/e2e/itineraire-libre.test.ts`.
+- Google : fabrique de tuiles, mode de marche, choix d'accueil, dépendance et e2e désormais retirés.
+- Parcours libre : carte/adresses, fournisseurs, préparation et e2e désormais retirés.
 - Contrats touchés : `APP-002` (trajet libre), `APP-003` (OpenStreetMap chargé pour un trajet libre, mention Google),
   `APP-011` (ambiance), `APP-012` (option des matériaux locaux), `APP-006` (profil réglé à l'accueil).
 

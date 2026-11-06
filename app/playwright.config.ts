@@ -27,11 +27,6 @@ export default defineConfig({
     url: baseURL,
     ignoreHTTPSErrors: true,
     reuseExistingServer: false,
-    // Une clé FICTIVE : le rendu Google est proposé aux e2e, qui servent eux-mêmes les tuiles (google-3d.test.ts) ; elle prime
-    // sur toute vraie clé de .env.local, qui ne part donc jamais dans un test (SEC-007).
-    // La clé Routes est vidée : l'itinéraire libre prend les services ouverts (Valhalla, Photon), servis par itineraire-libre.test.ts,
-    // sans qu'une vraie clé de .env.local bascule les e2e sur Google ; les adresses des services restent celles par défaut.
-    env: { VITE_GOOGLE_MAPS_API_KEY: "cle-factice-e2e", VITE_GOOGLE_ROUTES_API_KEY: "", VITE_ROUTING_URL: "", VITE_GEOCODING_URL: "" },
     timeout: 60_000,
   },
 });

@@ -69,7 +69,7 @@ export interface Hedge {
 }
 
 export interface Souq {
-  /** Le départ de la boucle : l'origine du repère local, en longitude et latitude (aligne les tuiles Google). */
+  /** Le départ de la boucle : l'origine du repère local, en longitude et latitude. */
   origin: LonLat;
   route: Path;
   buildings: Building[];

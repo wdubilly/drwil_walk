@@ -38,6 +38,6 @@ describe("QUA-014 : contraste du texte et de son fond", () => {
 
   it("QUA-014 : les couleurs de l'accueil sont déclarées une fois, dans les variables de home.css", () => {
     const outsideRoot = css.replace(/:root\s*\{[^}]*\}/, "");
-    expect(outsideRoot).not.toMatch(/#[0-9a-f]{3,8}\b|rgba?\(|hsla?\(/i);
+    expect(outsideRoot).not.toMatch(/#[0-9a-f]{3,8}\b|rgba?\((?!var\()|hsla?\(/i);
   });
 });

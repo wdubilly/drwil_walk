@@ -1,7 +1,7 @@
 import type { Mesh, Scene } from "three";
 import { describe, expect, it } from "vitest";
 import { WEIGHT_STORAGE_KEY, advanceKcal } from "../route/stats.ts";
-import { PANEL_SIDE_STORAGE_KEY } from "../ui/panel-side.ts";
+import { PREFERENCES_KEY, DEFAULT_PREFERENCES } from "../ui/preferences.ts";
 import { ZONE_STORAGE_KEY } from "../safety/zone.ts";
 import { poseFrame, setup } from "./experience-double.ts";
 
@@ -46,22 +46,21 @@ describe("tableau de bord de marche dans le casque", () => {
     expect(t.panel()?.querySelector("[data-field='kcal']")?.textContent).toBe("environ 4 kcal");
   });
 
-  it("SEC-007: estime les calories avec le poids gardé dans le navigateur", async () => {
+  it("SEC-007: ignore l'ancien poids et affiche une estimation au poids de référence", async () => {
     const t = await started({ storage: memory("90") });
     t.frame(0, poseFrame(0));
     t.frame(60_000, poseFrame(0));
-    expect(attr(t, "data-weight-kg")).toBe("90");
-    expect(Number(attr(t, "data-kcal"))).toBeCloseTo(advanceKcal(0, 4, 60, 90), 6);
+    expect(attr(t, "data-weight-kg")).toBe("70");
+    expect(Number(attr(t, "data-kcal"))).toBeCloseTo(advanceKcal(0, 4, 60, 70), 6);
   });
 
-  it("SEC-007: le poids saisi à l'accueil sert à la marche qui démarre", async () => {
+  it("SEC-007: l'accueil ne demande plus le poids", async () => {
     const t = setup({ storage: memory() });
     const weight = [...t.root.querySelectorAll("label")].find((l) => l.textContent.includes("Poids"))?.querySelector("input");
-    if (!weight) throw new Error("champ du poids introuvable");
-    weight.value = "100";
+    expect(weight).toBeUndefined();
     await t.enter();
     t.frame(0, poseFrame(0));
-    expect(attr(t, "data-weight-kg")).toBe("100");
+    expect(attr(t, "data-weight-kg")).toBe("70");
   });
 
   it("APP-001: le tableau de bord disparaît tête baissée, avec la ville", async () => {
@@ -75,7 +74,7 @@ describe("tableau de bord de marche dans le casque", () => {
   it("APP-001: pose le panneau du côté gardé à l'accueil, en bas du champ de vision", async () => {
     for (const [side, sign] of [["left", -1], ["right", 1]] as const) {
       const storage = memory();
-      storage.data.set(PANEL_SIDE_STORAGE_KEY, side);
+      storage.data.set(PREFERENCES_KEY, JSON.stringify({ ...DEFAULT_PREFERENCES, side }));
       const t = await started({ storage });
       t.frame(0, poseFrame(0));
       expect(hud(t).visible).toBe(true);

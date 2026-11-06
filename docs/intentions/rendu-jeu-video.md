@@ -11,7 +11,8 @@ quand elle sera mûre. La priorité est la qualité visible à hauteur d'homme, 
 
 ## Décisions du demandeur (2026-11-02)
 
-- Google Photorealistic 3D Tiles est **abandonné** : les quatre intentions Google sont retirées ; le code livré (`app/src/city/google-tiles.ts`, mode Google de l'accueil, contrats et e2e correspondants) reste dormant, son retrait éventuel étant un chantier à part.
+- Google Photorealistic 3D Tiles est **abandonné** ; le retrait du code dormant, dépendances, choix et e2e a été décidé
+  le 2026-11-05 et réalisé dans le recentrage du générateur.
 - Style visé : « jeu vidéo moderne » (ni cartoon figé, ni photoréalisme photographique) ; à préciser par un essai au casque (`docs/intentions/essai-casque-ambiance-cartoon.md`).
 - La tablette et le tactile sont dans le périmètre dès les premiers lots (`docs/intentions/rendu-tablette-tactile.md`).
 
@@ -46,4 +47,4 @@ niveau ci-dessous est donc distinct pour que l'ordre tienne. À la création d'u
 ## Questions à trancher
 
 - [decision] « Jeu vidéo moderne » : quels jeux ou images servent de référence, pour fixer le niveau de détail visé ?
-- [decision] Retirer ou non le code Google dormant (chantier à part) ?
+- Retrait du code Google dormant : décidé et réalisé le 2026-11-05.

@@ -1,7 +1,7 @@
 import type { Scene } from "three";
 import { describe, expect, it } from "vitest";
 import { testPack } from "../city/tree-pack-double.ts";
-import { PC_ACTIVE_STATUS, PC_ENDED_STATUS, PC_GOOGLE_NOTICE } from "../pc/enter-pc.ts";
+import { PC_ACTIVE_STATUS, PC_ENDED_STATUS } from "../pc/enter-pc.ts";
 import { setup } from "./experience-double.ts";
 
 const read = (t: ReturnType<typeof setup>, name: string) => Number(t.panel()?.getAttribute(name));
@@ -32,25 +32,28 @@ describe("version PC (sans casque)", () => {
 
   it("APP-006: la version PC applique le ratio de pixels du profil choisi, borné par celui de l'écran", async () => {
     const t = setup();
-    t.root.querySelector<HTMLInputElement>("input[value='performance']")?.click();
+    t.home.preferences.change({ ...t.home.preferences.read(), profile: "performance" });
     await t.enterPc();
     expect(t.fake.setPixelRatio).toHaveBeenCalledWith(0.75);
     const quality = setup();
-    quality.root.querySelector<HTMLInputElement>("input[value='qualite']")?.click();
+    quality.home.preferences.change({ ...quality.home.preferences.read(), profile: "qualite" });
     await quality.enterPc();
     expect(quality.fake.setPixelRatio).toHaveBeenCalledWith(Math.min(2, quality.win.devicePixelRatio));
   });
 
   it("APP-011: sur l'écran PC, le ciel suit l'heure et le brouillard choisi va plus loin qu'au casque", async () => {
     const t = setup({ now: () => new Date(2026, 10, 3, 13, 0) });
-    const label = [...t.root.querySelectorAll("label")].find((l) => l.textContent.includes("Brouillard"));
-    const box = label?.querySelector("input");
-    if (!box) throw new Error("case « Brouillard » introuvable");
-    box.checked = true;
+    t.home.preferences.change({ ...t.home.preferences.read(), fog: true });
     await t.enterPc();
     expect(t.root.dataset["ambiance"]).toBe("brouillard 90 % · sons 0 %");
-    const plain = await walking();
-    expect(plain.root.dataset["ambiance"]).toBe("brouillard éteint · sons 0 %");
+    t.frame(0);
+    const scene = t.fake.render.mock.lastCall?.[0] as Scene;
+    expect(scene.background).not.toBeNull();
+    t.home.preferences.change({ ...t.home.preferences.read(), fog: false });
+    t.frame(1000);
+    expect(t.root.dataset["ambiance"]).toBe("brouillard éteint · sons 0 %");
+    expect(t.fake.render.mock.lastCall?.[0]).toBe(scene);
+    expect(scene.fog).toBeNull();
   });
 
   it("APP-002: même ville, même parcours et même vitesse que dans le casque", async () => {
@@ -212,14 +215,11 @@ describe("version PC (sans casque)", () => {
     expect(t.fake.setSize).toHaveBeenLastCalledWith(640, 480);
   });
 
-  it("QUA-002: le rendu Google demandé est dit indisponible en version PC, la marche est en OpenStreetMap", async () => {
+  it("APP-003: la version PC utilise uniquement les données embarquées", async () => {
     const t = setup();
-    t.chooseGoogle();
     await t.enterPc();
-    expect(t.notice()).toBe(PC_GOOGLE_NOTICE);
     t.frame(0);
     expect(t.panel()?.getAttribute("data-rendering")).toBe("osm");
-    expect(t.create).not.toHaveBeenCalled();
   });
 
   it("QUA-002: sans WebXR, la version PC se lance ; le bouton du casque dit l'échec sans bloquer l'application", async () => {
@@ -231,13 +231,12 @@ describe("version PC (sans casque)", () => {
     expect(t.status()).toBe(PC_ACTIVE_STATUS);
   });
 
-  it("QUA-002: un trajet libre non préparé est dit et ne lance rien", async () => {
+  it("QUA-020: aucun départ ou recherche réseau n'est proposé, la ville figée démarre", async () => {
     const t = setup();
-    t.root.querySelector<HTMLInputElement>("input[value='libre']")?.click();
+    expect(t.root.querySelector("input[value='libre']")).toBeNull();
     await t.enterPc();
-    expect(t.status()).toContain("posez un départ et une arrivée");
-    expect(t.root.contains(t.fake.canvas)).toBe(false);
-    expect(t.root.querySelector<HTMLButtonElement>("button.enter-pc")?.disabled).toBe(false);
+    expect(t.status()).toBe(PC_ACTIVE_STATUS);
+    expect(t.root.contains(t.fake.canvas)).toBe(true);
   });
 
   it("QUA-002: un échec au lancement, avec ou sans message d'erreur, est dit et rend les boutons", async () => {

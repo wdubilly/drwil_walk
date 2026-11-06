@@ -23,7 +23,6 @@ import { regionOf } from "./facade-family.ts";
 import type { FacadeDetail } from "./facades.ts";
 import { MAX_LOCAL_MATERIALS, type LocalMaterials } from "./material-library.ts";
 import { buildLocalMaterials } from "./material-mesh.ts";
-import { generatedLampsOn, streetLightsOn } from "../ui/lamps-choice.ts";
 import { generateLamps } from "./lamp-rule.ts";
 import { buildFurniture, buildTrees, type PlacedLamp, type Sources } from "./props.ts";
 import { buildStreetLights } from "./street-lights.ts";
@@ -36,7 +35,6 @@ import { buildWalkways } from "./walkways.ts";
 import type { Souq } from "./souq-data.ts";
 import { buildingMaterial, toonMaterial } from "./toon.ts";
 import type { TreePack } from "./tree-pack.ts";
-import { trafficOn } from "../ui/traffic-choice.ts";
 import { buildTraffic } from "./traffic.ts";
 import { bundledCatalogue, loadBundledModels } from "./traffic-assets.ts";
 import { MAX_TRAFFIC_MODELS } from "./traffic-pack.ts";
@@ -64,21 +62,23 @@ export interface SceneOptions {
   maxFurniture?: number;
   /** Plafond des lampadaires produits par règle, distinct de celui du mobilier du relevé (APP-013, APP-006). */
   maxGeneratedLamps?: number;
-  /** Les lampadaires produits par règle : absent, la case de l'accueil décide, et sans accueil ils sont posés (APP-013). */
+  /** Lampadaires produits par règle, posés par défaut (APP-013). */
   generatedLamps?: boolean;
-  /** Les lanternes allumées la nuit : absent, la case de l'accueil décide, et sans accueil elles sont posées (APP-011). */
+  /** Lanternes préparées par défaut, allumées de nuit (APP-011). */
   streetLights?: boolean;
   /** Les marquages au sol lus des balises de voie (bordures, lignes d'arrêt) : vrais par défaut ; un profil léger les retire (APP-009, APP-006). */
   markings?: boolean;
-  /** Les matériaux locaux du quartier, choisis à l'accueil : posés sur les façades détaillées seulement (prototype du souk). */
+  /** Matériaux locaux embarqués : façades détaillées seulement (prototype du souk). */
   materials?: LocalMaterials | undefined;
-  /** Les figurants de la ville vivante : absent, la case de l'accueil décide, et sans accueil il n'y en a aucun (APP-014). */
+  /** Figurants préparés pour être activés à chaud par la préférence unique (APP-014). */
   traffic?: boolean;
   /** Leurs plafonds, réglés par le profil graphique (APP-006). */
   maxVehicles?: number;
   maxPedestrians?: number;
   /** Les modèles des figurants : ceux du dépôt par défaut, une doublure dans les tests. */
   trafficModels?: () => Promise<unknown>;
+  /** Sépare les mâts du reste du mobilier pour les masquer à chaud. */
+  liveLamps?: boolean;
 }
 
 export interface SouqScene {
@@ -88,7 +88,7 @@ export interface SouqScene {
   world: Group;
   /** La ville, qui bouge le long du parcours. */
   city: Group;
-  /** Le sol, les voies et les bâtiments OpenStreetMap : masqués quand les tuiles Google les remplacent. */
+  /** Le sol, les voies et les bâtiments OpenStreetMap. */
   osm: Group;
   label: AttributionLabel;
   buildingCount: number;
@@ -114,8 +114,8 @@ export function createSouqScene(doc: Document, souq: Souq, options: SceneOptions
   buildings.name = "batiments";
   const greenery = new Mesh(buildVegetation(rich ? souq.areas : [], rich ? souq.hedges : [], souq.route), toonMaterial({ vertexColors: true, side: DoubleSide, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }));
   greenery.name = "verdure";
-  const lamps = (options.generatedLamps ?? generatedLampsOn(doc)) ? generateLamps(souq.roads, souq.buildings, souq.props, souq.route) : [];
-  const furniture = buildFurniture(souq.props, souq.route, options.maxFurniture, lamps, options.maxGeneratedLamps);
+  const lamps = options.generatedLamps !== false ? generateLamps(souq.roads, souq.buildings, souq.props, souq.route) : [];
+  const furniture = buildFurniture(options.liveLamps ? souq.props.filter((p) => p.kind !== "lamp") : souq.props, souq.route, options.maxFurniture, options.liveLamps ? [] : lamps, options.maxGeneratedLamps);
   const sources = furniture.userData["sources"] as Sources;
   // Le relevé est écrit sur la page, comme l'ambiance : on y lit ce qui est réel et ce qui est produit.
   const page = doc.getElementById("app");
@@ -123,7 +123,14 @@ export function createSouqScene(doc: Document, souq: Souq, options: SceneOptions
   const osm = new Group();
   osm.name = "osm";
   osm.add(ground, greenery, roads, buildings, buildStreetLabels(doc, rich ? souq.roads : [], souq.route), buildTrees(souq.props, souq.route, options.trees, options.maxTrees), furniture);
-  if (options.streetLights ?? streetLightsOn(doc)) osm.add(buildStreetLights(furniture.userData["lamps"] as PlacedLamp[]));
+  if (options.liveLamps) {
+    const masts = buildFurniture(souq.props.filter((p) => p.kind === "lamp"), souq.route, options.maxFurniture, lamps, options.maxGeneratedLamps);
+    masts.name = "lampadaires";
+    const mastSources = masts.userData["sources"] as Sources;
+    sources.osm += mastSources.osm;
+    sources.generated += mastSources.generated;
+    osm.add(masts, buildStreetLights(masts.userData["lamps"] as PlacedLamp[]));
+  } else if (options.streetLights !== false) osm.add(buildStreetLights(furniture.userData["lamps"] as PlacedLamp[]));
   if (options.materials) osm.add(buildLocalMaterials(souq.buildings, options.materials, { detail: options.facades ?? "off", region: regionOf(souq.origin), route: souq.route, footLight: FOOT_LIGHT }));
   if (options.outlines === true) {
     const outlines = new LineSegments(buildOutlinesGeometry(souq.buildings, souq.route), new LineBasicMaterial({ color: OUTLINE_COLOR }));
@@ -131,7 +138,7 @@ export function createSouqScene(doc: Document, souq: Souq, options: SceneOptions
     osm.add(outlines);
   }
   const caps = { vehicles: options.maxVehicles ?? DEFAULT_CAPS.vehicles, pedestrians: options.maxPedestrians ?? DEFAULT_CAPS.pedestrians };
-  const traffic = (options.traffic ?? trafficOn(doc)) ? buildTraffic(doc, souq, { caps, catalogue: bundledCatalogue, loadModels: options.trafficModels ?? loadBundledModels }) : undefined;
+  const traffic = options.traffic === true ? buildTraffic(doc, souq, { caps, catalogue: bundledCatalogue, loadModels: options.trafficModels ?? loadBundledModels }) : undefined;
   if (traffic) osm.add(traffic.group);
   city.add(osm);
   const label = createAttributionLabel(doc);

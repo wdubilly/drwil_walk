@@ -4,7 +4,6 @@ import { describe, expect, it } from "vitest";
 import bundledCatalogue from "../../assets/figurants-catalogue.json" with { type: "json" };
 import { createPath } from "../route/path.ts";
 import { DEFAULT_ZONE } from "../safety/zone.ts";
-import { renderTrafficChoice } from "../ui/traffic-choice.ts";
 import { withCanvasContext } from "./canvas-double.ts";
 import { createSouqScene, setCityOpacity } from "./souq.ts";
 import type { Souq } from "./souq-data.ts";
@@ -26,13 +25,10 @@ const souq: Souq = {
   props: [],
   buildings: [],
 };
-const page = (route = "doha-souq-waqif", checked = true): Document => {
+const page = (route = "doha-souq-waqif"): Document => {
   const doc = withCanvasContext(new Window().document as unknown as Document);
   const app = Object.assign(doc.createElement("div"), { id: "app" });
   app.dataset["route"] = route;
-  const choice = renderTrafficChoice(doc);
-  (choice.querySelector("input") as HTMLInputElement).checked = checked;
-  app.append(choice);
   doc.body.append(app);
   return doc;
 };
@@ -42,9 +38,9 @@ const render = (mesh: Mesh, camera = new PerspectiveCamera()): void => {
 };
 
 describe("ville vivante dans la scène", () => {
-  it("APP-014: case cochée sur le souk, véhicules et piétons sont posés, un maillage instancié par modèle, compte écrit sur la page", async () => {
+  it("APP-014: les figurants du souk sont préparés, un maillage instancié par modèle, compte écrit sur la page", async () => {
     const doc = page();
-    const scene = createSouqScene(doc, souq, { maxVehicles: 5, maxPedestrians: 7 });
+    const scene = createSouqScene(doc, souq, { traffic: true, maxVehicles: 5, maxPedestrians: 7 });
     await scene.trafficReady;
     const meshes = meshesOf(scene);
     expect(meshes.length).toBeGreaterThan(1);
@@ -54,13 +50,13 @@ describe("ville vivante dans la scène", () => {
   });
 
   it("APP-014: décochée, hors des itinéraires listés ou sans accueil, la scène n'en contient aucun", async () => {
-    for (const doc of [page("doha-souq-waqif", false), withCanvasContext(new Window().document as unknown as Document)]) {
+    for (const doc of [page(), withCanvasContext(new Window().document as unknown as Document)]) {
       const scene = createSouqScene(doc, souq);
       await scene.trafficReady;
       expect(scene.osm.getObjectByName("figurants")).toBeUndefined();
     }
     const elsewhere = page("pune-vieille-ville");
-    const scene = createSouqScene(elsewhere, souq);
+    const scene = createSouqScene(elsewhere, souq, { traffic: true });
     await scene.trafficReady;
     expect(meshesOf(scene)).toEqual([]);
     expect(elsewhere.getElementById("app")?.dataset["figurants"]).toBe("aucun : itinéraire hors du catalogue");
@@ -68,7 +64,7 @@ describe("ville vivante dans la scène", () => {
 
   it("APP-014: un fichier de modèles illisible est refusé avec sa raison, la ville reste sans figurant", async () => {
     const doc = page();
-    const scene = createSouqScene(doc, souq, { trafficModels: () => Promise.resolve({ models: [] }) });
+    const scene = createSouqScene(doc, souq, { traffic: true, trafficModels: () => Promise.resolve({ models: [] }) });
     await scene.trafficReady;
     expect(meshesOf(scene)).toEqual([]);
     expect(doc.getElementById("app")?.dataset["figurants"]).toBe("refusés : Error: aucun modèle de figurant");
@@ -104,7 +100,7 @@ describe("ville vivante dans la scène", () => {
     render(mesh, camera);
     mesh.getMatrixAt(0, matrix);
     expect(new Vector3().setFromMatrixScale(matrix).length()).toBe(0);
-    const scene = createSouqScene(page(), souq);
+    const scene = createSouqScene(page(), souq, { traffic: true });
     await scene.trafficReady;
     setCityOpacity(scene.world, 0.4, createZoneClip(DEFAULT_ZONE).planes);
     for (const m of meshesOf(scene)) expect(m.material).toMatchObject({ opacity: 0.4, transparent: true });

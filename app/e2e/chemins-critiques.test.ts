@@ -96,10 +96,10 @@ test("chemin 1 : de l'accueil à la réalité mixte, en session immersive-ar", a
 // publiées en pièce jointe par la CI.
 const CAPTURES = "../dist/e2e-captures";
 
-test("chemin 2 : l'accueil propose quatre itinéraires figés et l'itinéraire libre, le choisi est celui qui démarre", async ({ page }) => {
+test("chemin 2 : l'accueil propose seulement quatre itinéraires, le choisi est celui qui démarre", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 1100 });
   await page.goto("/");
-  await expect(page.locator(".routes").getByRole("radio")).toHaveCount(5);
+  await expect(page.locator(".routes").getByRole("radio")).toHaveCount(4);
   await expect(page.getByRole("radio", { name: /Doha Souq Waqif/ })).toBeChecked();
   await page.screenshot({ path: `${CAPTURES}/accueil-defaut.png`, fullPage: true });
 

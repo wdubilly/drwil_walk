@@ -1,109 +1,84 @@
 # app layer context
 
-Read `../AGENTS.md` first: do not repeat what it already says. The detail
-of each contract (rule, proof) is in `docs/contracts.md` (from the root):
-do not copy it here.
+Read `../AGENTS.md` first. Contracts live in `docs/contracts.md` : cite their ID, do not duplicate them.
 
 ## Context
 
-Couche unique : l'application WebXR entière (TypeScript strict, Vite, three.js), cadrée le 2026-10-30.
-Socle posé le 2026-10-30 (configuration, point d'entrée, vitesse), puis une première tranche verticale : accueil,
-session `immersive-ar`, rue simple, marche en ligne droite, joystick, fondu tête baissée (carte :
-`docs/architecture.md`). Souk de Doha (bâtiments OpenStreetMap extrudés, boucle GPS d'environ 1,5 km, mention d'attribution) posé le 2026-10-31. Accueil sombre à cartes d'itinéraire (`app/src/ui/home.css`, `app/src/ui/route-choice.ts`, `app/src/route/itineraries.ts`, illustrations `app/src/ui/<id>.svg`) posé le 2026-10-31. Vieille ville de Pune (même méthode, `app/src/city/cities.ts` associe chaque itinéraire à sa ville ; la marche lit l'itinéraire choisi) posée le 2026-10-31. Corniche de Doha (aller-retour d'environ 4 km, même méthode) posée le 2026-10-31. FC Road à Pune (aller-retour d'environ 3,5 km, même méthode) posée le 2026-10-31. Rendu de la ville (voies sur le sol, bâtiments en plusieurs tons, palette par itinéraire, `app/src/city/roads.ts`) posé le 2026-10-31, à juger au casque. Rendu enrichi (couleurs et matériaux OSM des bâtiments, ombrage par sommet, arbres et mobilier, `app/src/city/tint.ts`, `app/src/city/props.ts`, `app/scripts/osm-tags.ts`) posé le 2026-10-31, à juger au casque. Zone tapis (boîte par défaut, réglée à la manette gauche, enregistrée en `localStorage`, `app/src/safety/zone.ts`) et vignette réelle (`app/src/xr/vignette.ts`) posées le 2026-11-01, à juger au casque. Tableau de bord de marche du casque (calories estimées, poids facultatif gardé en `localStorage`, boussole, lieu, heure, allure, distance restante et progression : `app/src/route/stats.ts`, `app/src/xr/hud-panel.ts`) posé le 2026-11-01, à juger au casque ; rendu discret (fond légèrement transparent, en bas du champ de vision, côté choisi à l'accueil et gardé en `localStorage` : `app/src/ui/panel-side.ts`, place hors de la zone tapis dans `app/src/xr/pose.ts`) posé le 2026-11-01, à juger au casque. Ambiance cartoon (matériau toon, voies bordées, fenêtres, contours en option : `app/src/city/toon.ts`, `app/src/city/roads.ts`, `app/src/city/outlines.ts`) posée le 2026-11-01, à juger au casque ; ses arbres sont ceux du pack Quaternius « Stylized Nature MegaKit » (Standard, CC0), allégés et embarqués dans `app/assets/` (`app/src/city/tree-pack.ts`, `app/src/city/tree-instances.ts`, chargés par `app/src/xr/trees-load.ts`, provenance dans `app/assets/PROVENANCE.md`), posés le 2026-11-01, à juger au casque. Champ de vision du casque simulé (`app/src/xr/fov.ts`, masque d'IWER dans `e2e/champ-de-vision.test.ts`) posé le 2026-11-01 : pour juger sans casque si un objet reste dans la vue ; valeurs de la cible à sourcer. Minicarte du casque (tracé réduit, point courant : `app/src/xr/minimap.ts`, `app/src/route/simplify.ts`, e2e `e2e/minicarte.test.ts`) posée le 2026-11-02, à juger au casque. Mobilier urbain et marquages au sol (lampadaires, bancs, poubelles et panneaux produits par code et tournés dans l'axe de la rue : `app/src/city/furniture.ts` ; bordures de trottoir et lignes d'arrêt lues des balises de voie : `app/src/city/markings.ts` ; relevé des extraits et plafonds dans `docs/features.md`) posés le 2026-11-03, à juger au casque. Profils graphiques (performance, équilibré, qualité : `app/src/render/profiles.ts`, détection des capacités `app/src/render/capabilities.ts`, choix gardé à l'accueil `app/src/ui/profile-choice.ts`, e2e `e2e/profils-graphiques.test.ts`) posés le 2026-11-03, à juger au casque. Éclairage et ambiance (lumière suivant l'heure réelle `app/src/render/daylight.ts`, brouillard plafonné `app/src/render/fog.ts`, application à la scène `app/src/xr/ambience.ts`, sons facultatifs `app/src/xr/ambience-sound.ts`, réglages de l'accueil, e2e `e2e/eclairage-ambiance.test.ts`) posés le 2026-11-03, à juger et à écouter au casque. Lanternes allumées la nuit (`app/src/city/street-lights.ts` : lanternes et halos instanciés, sans lumière par mât, halo sans effet sur l'alpha ; allumées par `app/src/xr/ambience.ts` d'après `Daylight.night` ; case « Lampadaires allumés la nuit » dans `app/src/ui/lamps-choice.ts` ; e2e de nuit `e2e/eclairage-ambiance.test.ts`, horloge figée par `page.clock.setFixedTime`) posées le 2026-11-05, à juger au casque. Ville vivante du souk (véhicules et piétons produits par règle, contrat APP-014 : catalogue des types et table par région en données `app/assets/figurants-catalogue.json`, moteur `app/src/city/traffic-*.ts` sans type en dur, modèles CC0 Kenney et Poly Pizza préparés par `app/scripts/prepare-traffic-pack.ts`, case « Circulation et piétons » décochée par défaut `app/src/ui/traffic-choice.ts`, e2e `e2e/eclairage-ambiance.test.ts`) posée le 2026-11-05, à juger au casque.
+Couche unique TypeScript strict + Vite HTTPS + three.js. WebXR `immersive-ar` sur Quest 3, version écran au clavier,
+à la souris ou au toucher. Carte : `docs/architecture.md`, comportement : `docs/features.md`.
+Tout chantier qui touche cette couche est HIGH (risque physique de chute).
 
-- Code dans src/, un dossier par module : render/ (profils graphiques et détection des capacités, APP-006 ; lumière de l'heure réelle et brouillard, APP-011), xr/ (session `immersive-ar`, manettes, ambiance et sons), city/ (3d-tiles-renderer,
-  repli OSM), route/ (itinéraires, déplacement à vitesse réglée), safety/ (fondu tête baissée, zone tapis,
-  opacité, vignette), ui/ (accueil, panneau d'infos), pc/ (version PC sans casque : clavier, souris, canvas de la page ; réutilise la marche de xr/, n'applique jamais le fondu, la zone ni la vignette).
-- La logique (calculs de vitesse, d'opacité, de zone, de trajectoire) est en **fonctions pures**, séparée du rendu
-  three.js : c'est elle que les tests unitaires couvrent à 100 %.
-- Les itinéraires sont des données (liste de points GPS par itinéraire), pas du code.
-- La vitesse passe par une interface `SpeedSource` (réglage manuel en v0.1, Bluetooth plus tard).
-- Tests unitaires à côté du code (`*.test.ts`), e2e Playwright dans e2e/ avec un casque émulé (IWER).
-- Imports relatifs **avec l'extension .ts** (`import { x } from "./speed.ts"`) : les tests importent le code par
-  Node lui-même (retrait natif des types), sans transformation par Vite, pour que c8 mesure les vraies lignes. Seule
-  la syntaxe effaçable est permise (`erasableSyntaxOnly` : pas d'`enum`, pas de `namespace`).
-- Aucune exclusion de couverture : un fichier de configuration (`vite.config.ts`, `eslint.config.js`) a son test.
-- Le DOM se teste avec happy-dom (`new Window().document`) passé en paramètre, sans environnement global de test.
-- Le rendu three.js est injecté (classe `Renderer` passée à `startExperience`) : les tests passent une doublure,
-  seul `src/main.ts` branche le vrai `WebGLRenderer`.
-- Les fichiers de `data/` sont importés comme JSON (attribut d'import de type JSON) : l'extrait est du GeoJSON dans un fichier d'extension json, que Vite et Node lisent sans configuration.
-- Les scripts d'extraction n'ont pas de point d'entrée à eux (ils ne seraient pas couverts) : `scripts/cities.ts` décrit les villes par des données (emprise, identification Overpass, fichier de sortie) et expose `extractCity`, que les commandes `npm run extract*` appellent en ligne ; la requête et la conversion vivent dans `scripts/extract-souq.ts`. Aucun fichier par ville : un seul test paramétré sur `CITIES` (`src/city/cities-extract.test.ts`, car Vitest ne lit que `src/` et la racine) vérifie l'emprise, l'identification et les repères de chaque ville.
-- Rendu par défaut sans clé ni réseau : la ville vient d'un extrait OpenStreetMap figé dans le dépôt. Rendu Google 3D en
-  option (`docs/projects/journal.md`) : clé `VITE_GOOGLE_MAPS_API_KEY` lue de `.env.local` (dans `app/`) par `src/main.ts` (jamais
-  commitée, SEC-007), tuiles par `3d-tiles-renderer` dans `src/city/google-tiles.ts`, injectées dans `startExperience`
-  (`ExperienceDeps.google`) pour que les tests n'appellent jamais Google ; l'e2e (`e2e/google-3d.test.ts`) sert un jeu de
-  tuiles factice par `page.route`, avec une clé fictive donnée au serveur de test.
-- Itinéraire libre (chantiers itineraire-libre, fournisseurs-ouverts) : routage et adresses derrière les interfaces `Router` et `Geocoder` (`app/src/route/providers.ts`) ; par défaut Valhalla
-  (`app/src/route/valhalla.ts`) et Photon (`app/src/route/photon.ts`), sans clé, aux adresses réglables par `VITE_ROUTING_URL` et `VITE_GEOCODING_URL` (non secrètes, instance auto-hébergée possible) ; Google Routes et Geocoding
-  (`app/src/route/routes-api.ts`, `app/src/route/geocoding.ts`) les remplacent si `VITE_GOOGLE_ROUTES_API_KEY` (distincte de celle des tuiles, lue de `.env.local`) est fournie ; `createProviders` (`app/src/route/create-providers.ts`) choisit,
-  appelé par `src/main.ts`, et les services avec `fetch` sont injectés dans `startExperience` (`ExperienceDeps.routes`) pour que les tests n'appellent jamais un service réel ; le trajet se prépare à l'accueil
-  (`src/ui/free-trip.ts` : carte `src/ui/map-picker.ts` ou adresse, puis `src/city/free-route.ts` : chemin, bâtiments Overpass), la marche ne fait aucun appel. Carte sans
-  bibliothèque (Leaflet exige `window` à l'import et une vraie mise en page, ce que l'injection et les tests happy-dom évitent) ; l'e2e (`e2e/itineraire-libre.test.ts`) sert routage,
-  adresses, Overpass et tuiles par `page.route`, sans aucune clé (la clé Routes du serveur de test est vidée). Aucune adresse ni point conservé.
+- Accueil : quatre itinéraires embarqués et vitesse, démarrages Quest/PC et rappel de sécurité.
+- Un seul rendu OpenStreetMap, aucune clé ni fournisseur de trajet/tuiles. Aucun appel distant pendant la marche.
+- Préférences **en marche** sur Quest, PC et tablette : profil, ville vivante (une seule commande), lampadaires,
+  arbres, brouillard, sons, côté/opacité du panneau. Application à chaud sans reconstruire la ville ;
+  `src/city/live-city.ts` prépare les variantes, `src/xr/live-preferences.ts` les applique.
+- Mémoire validée dans `src/ui/preferences.ts`, premier profil Équilibré partout, seul l'ancien profil est migré.
+- Matériaux locaux, poids 70 kg et vignette fixes ; calories approximatives pour 70 kg, pas une mesure personnelle.
+- Quest : gâchette gauche ouvre les préférences, rayon/prise droite change une ligne (`src/xr/preference-panel.ts`).
+  Les autres commandes gauches gardent la zone tapis. Les préférences s'effacent tête baissée comme la ville.
+- PC/tablette : boutons dans « Préférences de marche » (`src/ui/walk-preferences.ts`), marche continue.
+- Sécurité inchangée : fondu tête baissée, zone tapis transparente, vignette toujours active (APP-001).
+- Les figurants CC0 viennent d'un catalogue en données, actifs au Souq Waqif seulement (APP-014) ;
+  lampadaires produits distingués du mobilier OSM (APP-013), lanternes/halos sans effet sur l'alpha (APP-011).
+- Génération `npm run city` sur **PC de développement uniquement**, jamais dans le casque.
+  Description des villes dans `data/villes.json`, pas de code ni de commande par ville ;
+  `scripts/create-city.ts` écrit extrait, boucle et matériaux. Inscription à l'accueil encore manuelle.
+
+## Conventions techniques
+
+- `src/` : `city/`, `route/`, `render/`, `xr/`, `safety/`, `ui/`, `pc/`. Calculs purs séparés du rendu.
+- Itinéraires GPS en données. Vitesse derrière `SpeedSource`, réglage manuel.
+- Tests `*.test.ts` près du code, e2e dans `e2e/`.
+- Imports relatifs avec extension .ts, syntaxe effaçable Node (`erasableSyntaxOnly`).
+- Tests DOM : happy-dom avec document injecté, sans globals ; vrai renderer branché seulement dans `src/main.ts`.
+- Extraits JSON importés avec attribut de type JSON ; mocks réseau dans les tests de génération.
+- Modèles/texture embarqués, provenance dans `assets/PROVENANCE.md`, secrets jamais dans le dépôt.
+- Aucun fichier exclu de couverture, configurations comprises.
 
 ## Test pitfalls
 
-- 2026-10-30 : c8 lit 0 % si Vitest tourne en forks (le fork est tué par signal, sa couverture V8 n'est jamais
-  écrite) : garder `pool: "threads"` dans `vite.config.ts`.
-- 2026-10-30 : c8 compte des branches sur des commentaires si le code passe par le module runner de Vite (positions
-  décalées) : garder `experimental.viteModuleRunner: false`.
-- 2026-11-02 : l'e2e de la version PC (`e2e/version-pc.test.ts`) tourne SANS IWER : `navigator.xr` n'y est pas émulé, et le test compte les appels à `requestSession` (zéro attendu). Les touches se lisent sur `document` : tester avec `page.keyboard`, la souris par glisser sur le canvas `.pc-canvas`. Le tactile (`e2e/tablette-tactile.test.ts`) : `test.use({ hasTouch: true, isMobile: true, viewport })`, boutons par `.tap()`, glisser par `Input.dispatchTouchEvent` (session CDP) hors du panneau de marche, qui couvre le haut de l'écran.
-- Le point d'entrée s'exécute à l'import : son test fournit un `document` (happy-dom) et un `navigator` de
-  substitution (`vi.stubGlobal`) puis l'importe dynamiquement.
-- 2026-10-30 : les e2e sont nommés `*.test.ts` dans e2e/ : c8 exclut les fichiers de test par défaut (pas les
-  `*.spec.ts`), et Vitest ne lit que src/ et la racine. IWER n'applique un axe de manette qu'à l'image suivante :
-  laisser passer des images entre deux poussées (`letFramesPass`) ; même règle pour un bouton (`updateButtonValue`) : tenir la valeur, observer l'effet, relâcher, laisser passer des images avant l'appui suivant. Les commandes de la manette droite sont lues par `src/xr/buttons.ts` (gâchette 0, A 4, B 5) : un appui est un front montant ; celles de la gauche (prise 1, X 4, Y 5, joystick axes 2 et 3) par `src/xr/left-controller.ts`. Le choix de la rue aux carrefours (APP-002) lit le rayon (`targetRaySpace`) et la prise droite (index 1) dans `src/xr/choice-ray.ts` ; dans IWER, viser = `controllers.right.quaternion`, confirmer = `updateButtonValue("squeeze", 1)` (voir `e2e/carrefours.test.ts`).
-- 2026-10-30 : three.js fait tourner sa boucle de page en plus de celle de la session si `setAnimationLoop` est appelé
-  après `xr.setSession` (images sans `XRFrame`) : poser la boucle avant la session, et ignorer une image sans frame.
-- 2026-10-31 : `GLTFExtensionsPlugin` (3d-tiles-renderer) libère à sa fin un chargeur KTX2 même absent et lève alors une erreur : le
-  construire avec `autoDispose: false` et libérer le chargeur Draco soi-même. Le plugin Google est dans `3d-tiles-renderer/core/plugins`
-  (absent de `three/plugins`). Un test du moteur de tuiles remplace `fetch` (jamais de réseau) et lui envoie ses événements directement.
+- c8 ne reçoit pas la couverture de forks terminés par signal : garder Vitest `pool: "threads"`.
+- Garder `experimental.viteModuleRunner: false` : sinon les positions de branches c8 sont décalées.
+- Le point d'entrée s'exécute à l'import : stubber `document` et `navigator`, importer dynamiquement.
+- Poser `setAnimationLoop` avant `xr.setSession`, ignorer les images XR sans frame :
+  sinon three.js fait tourner aussi sa boucle de page.
+- IWER applique axes/boutons à l'image suivante. Tenir, observer, relâcher et laisser des images entre fronts.
+  Droite : gâchette 0, prise 1, A 4, B 5 ; gauche : gâchette 0, prise 1, X 4, Y 5.
+  Préférences : helper `e2e/quest-preferences-helper.ts`, rayon réellement orienté vers la ligne, pas de proxy DOM.
+- SwiftShader peut produire seulement environ 30 images par 5 s sur une ville dense. Les attentes dépendantes
+  des frames utilisent 20 s ; le scénario Quest de nombreuses préférences et réentrée a un budget global de 60 s
+  (35,7 s observées), sans retirer d'assertion ni ralentir la marche.
+- E2e PC sans IWER, zéro `requestSession` ; clavier sur document, glisser sur `.pc-canvas`.
+  Tablette avec `hasTouch`, `isMobile`, viewport et CDP `Input.dispatchTouchEvent` hors du panneau.
+- Une seule commande lourde à la fois sur poste partagé, ne jamais arrêter un processus tiers.
+- Les tests d'assemblage préparent désormais trois variantes par départ : budget de 20 s posé dans la doublure
+  commune (dépassements de 5 s reproduits sous c8, y compris préférences). Aucun scénario ni assertion retiré ;
+  `VITEST_MAX_WORKERS=1` limite la charge de la validation sur poste partagé.
 
-- 2026-11-01 : les attentes `expect.poll` des e2e dépendent des images de la session (marche en temps réel, axes et boutons pris à l'image suivante), et le rendu logiciel de la CI (SwiftShader) tient environ 30 images par 5 s sur la Vieille ville avec les arbres du pack : elles ont 20 s (`{ timeout: 20_000 }`), non les 5 s par défaut, qui laissaient moins d'une seconde de marge pour 4 s de marche (trois contrôles rouges différents avant ce réglage, aucun en isolé).
+## Recettes et contrats
 
-## Layer contracts
-
-| ID | Subject | Reference file |
-|---|---|---|
-| APP-001 | Sécurité-visibilité : le réel reste visible (tête baissée, zone tapis) | `src/safety/visibility.ts` |
-| APP-002 | La marche suit le parcours GPS de l'itinéraire choisi : en boucle pour les quatre figés, jusqu'à l'arrivée pour un trajet libre ; choix de la rue aux carrefours | `src/route/path.ts`, `src/route/network.ts`, `src/xr/guide.ts` |
-| APP-003 | Bâtiments (extrait OpenStreetMap figé, ou chargés pour un trajet libre) et attribution | `src/city/licence.ts` |
-| APP-004 | Champ de vision du casque simulé : un objet de la scène est-il dans la vue (cible Quest 3, marge) | `src/xr/fov.ts` |
-| APP-005 | Le panneau d'infos du casque reste dans le champ de vision, texte compris | `src/xr/pose.ts` |
-| APP-007 | La tablette se commande au toucher : boutons à l'écran, glisser pour regarder, interface petit écran | `src/pc/touch.ts` |
-| APP-008 | Façades procédurales : graine OSM, quatre familles par région, voisins sans façade identique, plafonds, profil | `src/city/facades.ts` |
-| APP-009 | Mobilier urbain et marquages au sol posés d'après les balises OpenStreetMap, aux dimensions réelles, plafonnés | `src/city/furniture.ts`, `src/city/markings.ts` |
-| APP-011 | Ambiance : lumière de l'heure réelle, brouillard plafonné à 0,15 au casque et désactivable, sons coupés par défaut | `src/render/daylight.ts`, `src/render/fog.ts`, `src/xr/ambience.ts` |
-
-## Style guide and recipes
-
-- `docs/recipes/refactor-without-breaking.md` pour toute restructuration.
-- `docs/recipes/run-locally.md` pour lancer l'application.
+Recettes : `docs/recipes/add-a-frontend-screen.md`, `docs/recipes/refactor-without-breaking.md`,
+`docs/recipes/run-locally.md`. Contrats de la couche : APP-001 à APP-009 (hors APP-010),
+APP-011 à APP-014 et QUA-014 ; titres/détails par `.githooks/glossary.mjs`.
 
 ## Check
 
-Depuis `app/`, après `npm ci` :
+Depuis `app/`, après installation :
 
-- `npm test` : tests Vitest ; la couverture se mesure par
-  `npx c8 --check-coverage --lines 100 --branches 100 --functions 100 --statements 100 --all npm test`.
-  Couverture différentielle (contrôle `coverage-diff-app`, diff-cover installé à part) :
-  `npx c8 --reporter=cobertura --report-dir=coverage npm test && diff-cover coverage/cobertura-coverage.xml --compare-branch=origin/master --fail-under=100`
-  (compare à `origin/master` : la branche principale n'est pas `main`, valeur par défaut de diff-cover).
-- `npm run typecheck` : `tsc --noEmit` en mode strict.
-- `npm run lint` : ESLint, zéro avertissement (`--max-warnings 0`).
-- `npm run licenses` : licences des dépendances, liste autorisée.
-- `npm run build` : typecheck puis build Vite, hors de la couche, dans le dossier dist/app de la racine (ignoré par
-  Git) : sous app/, c8 compterait le bundle généré comme du code non couvert.
+- `npm test` : Vitest.
+- `npx c8 --check-coverage --lines 100 --branches 100 --functions 100 --statements 100 --all npm test` :
+  couverture 100 % sans exclusion.
+- `npx c8 --reporter=cobertura --report-dir=coverage npm test && diff-cover coverage/cobertura-coverage.xml --compare-branch=origin/master --fail-under=100` :
+  couverture différentielle contre la branche principale.
+- `npm run typecheck`, `npm run lint` (zéro avertissement), `npm run licenses`, `npm run build` (sortie `../dist/app/`).
+- `npm test -- -t "APP-001"` : contrat sécurité ; même sélecteur pour les autres IDs de la couche.
+- `npm run e2e` : Playwright/IWER, Vite HTTPS port 5174, un worker ; premier lancement `npx playwright install chromium`.
+  Résultats `../dist/e2e-results/`, captures `../dist/e2e-captures/`, hors couverture.
+- `npm run city -- souq` : régénération hors casque, réseau nécessaire, réécrit les données ;
+  ne pas lancer pour valider les tests. Arguments/source : `docs/guide-utilisateur.md`.
+- Préparation locale des arbres, depuis une archive externe lue en mémoire :
+  `node -e "import('./scripts/prepare-nature-pack.ts').then(m=>m.prepareFiles(process.argv[1],'assets'))" "<archive>.zip"`.
 
-- `npm test -- -t "APP-001"` : les seuls tests du contrat APP-001 (contrôle `app-001`) ; de même `APP-002` (`app-002`), `APP-007` (`app-007`), `APP-008` (`app-008`), `APP-003` (`app-003`), `APP-004` (`app-004`), `APP-005` (`app-005`) `APP-009` (`app-009`) et `APP-011` (`app-011`).
-- `npm run extract` : relance l'extraction Overpass du souk (via `extractCity`, voir `scripts/cities.ts` ; ajouter une ville = une entrée de `CITIES` et sa commande npm) et réécrit `data/souq-waqif.json` (réseau, hors casque) ; le tracé `data/souq-waqif-boucle.json` est versionné à part (voir sa description) et un test vérifie que chacun de ses points est un sommet d'une voie de l'extrait.
-- `npm run extract:fc-road` : de même pour FC Road à Pune (`data/pune-fc-road.json`, tracé `data/pune-fc-road-boucle.json`, aller-retour vérifié par le même test de sommets).
-- `npm run extract:corniche` : de même pour la Corniche de Doha (`data/doha-corniche.json`, tracé `data/doha-corniche-boucle.json`, aller-retour versionné à part et vérifié par le même test de sommets).
-- `npm run extract:pune` : de même pour la Vieille ville de Pune (`data/pune-vieille-ville.json`, tracé `data/pune-vieille-ville-boucle.json`, versionné à part et vérifié par le même test de sommets).
-- Arbres du pack : `node -e "import('./scripts/prepare-nature-pack.ts').then(m=>m.prepareFiles(process.argv[1],'assets'))" "<archive>.zip"` relit l'archive Standard du pack (hors du dépôt, donnée non fiable : lue en mémoire, rien d'extrait ni d'exécuté) et réécrit `assets/quaternius-trees.json` et `assets/quaternius-licence.txt` ; le script n'a pas d'entrée npm (hors périmètre de la fiche) et son test vit dans `src/city/`.
-- `npm run e2e` : Playwright (contrôle `e2e`, QUA-020) ; il lance lui-même Vite sur le port 5174 et injecte le Quest 3
-  émulé (IWER) dans la page ; premier lancement : `npx playwright install chromium`. Résultats d'échec dans le
-  dossier dist/e2e-results de la racine, hors de la couche. `e2e/ambiance-cartoon.test.ts` rejoue la marche avec et sans contours ; `e2e/mobilier-urbain.test.ts` la rejoue sur les quatre itinéraires avec le mobilier et les marquages, et en profil « performance ». `e2e/eclairage-ambiance.test.ts` la rejoue avec le brouillard et les sons allumés à l'accueil (APP-011). Les captures de l'accueil (état par défaut, carte choisie) et de la marche à Pune, sur la Corniche et sur FC Road sont écrites dans
-  dist/e2e-captures de la racine et publiées par la CI (artefact `captures-accueil`).
-
-Depuis la racine, `node .githooks/run-checks.mjs` lance les contrôles déclarés dans `.drwil/ia-first.json`.
+Depuis la racine : `node .githooks/run-checks.mjs`, puis `npx drwil verify --agent`.
+Seul le verdict `GOVERNANCE: PASS` permet de dire « vérifié » ; casque réel et attestations restent humains.

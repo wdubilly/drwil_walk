@@ -11,8 +11,8 @@ le demandeur veut voir son parcours évoluer sur une carte, avec un point qui av
 
 Lu le 2026-11-01 (`docs/features.md`, `app/src/ui/`, `docs/intentions/hud-casque.md`, `docs/projects/hud-defis-progression.md`) :
 
-- La carte légère (tuiles OpenStreetMap) n'existe qu'à l'accueil, pour poser le départ et l'arrivée d'un trajet libre
-  (`app/src/ui/map-picker.ts`) ; aucune position en direct n'y est dessinée.
+- La carte distante d'accueil et le parcours libre ont été retirés le 2026-11-05.
+  La minicarte embarquée du casque (`app/src/xr/minimap.ts`) reste ; aucun fond distant.
 - Le panneau de marche de la page affiche vitesse, distance et temps ; la page n'est pas visible en réalité mixte, donc rien
   de cela n'est vu dans le casque. Le tableau de bord du casque (`app/src/xr/hud-panel.ts`) n'a ni carte ni tracé.
 - Le mini-globe avec tracé de la maquette a été écarté pour les défis (distance seule, `hud-defis-progression`) ; sa place
