@@ -40,13 +40,13 @@ Lu le 2026-11-05.
 - **Fait** :
   - blocs 1 et 2 : la commande (PR #80) ; les façades, lampadaires et la ville vivante se calculent au chargement d'après
     la région ;
+  - bloc 5 : l'inscription à l'accueil (chantier `inscrire-ville-creee`, 2026-11-06) ;
   - ville vivante au Souq Waqif (PR #83) : lanternes allumées la nuit, véhicules et piétons décrits par un catalogue de
     types et une table par région (`golfe` réglé, `inde` provisoire, `ailleurs` par défaut) ; l'extraction commune lit
     `lanes` et `oneway`.
 - **Reste** :
   - juger au casque les matériaux et la ville vivante du souk (`docs/intentions/essai-casque-materiaux-souk.md`,
     `docs/intentions/essai-casque-ville-vivante.md`, séance groupée `docs/intentions/seance-casque-parcours.md`) ;
-  - bloc 5 : une ville créée n'est pas inscrite à l'accueil (`docs/intentions/inscrire-une-ville-creee.md`) ;
   - la commande n'a jamais tourné contre les vrais services (`docs/intentions/essai-commande-creation-reseau.md`) ;
   - bloc 3 : seule la région `golfe` est réglée pour les figurants, les palettes ne s'appuient sur aucune référence
     (`docs/intentions/palettes-regions-references.md`), les modèles propres aux régions manquent (rickshaws,

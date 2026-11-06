@@ -1,7 +1,8 @@
 // La ligne de commande de la création d'une ville : lecture des options et écriture de l'entrée dans `data/villes.json`.
 //   npm run city -- <identifiant>                  rejoue une ville déjà décrite (les quatre itinéraires existants)
 //   npm run city -- <identifiant> --nom "<nom>" --emprise <sud,ouest,nord,est> --depart <lat,lon> --arrivee <lat,lon>
-//                   [--via <lat,lon>]... [--retour aller-retour|boucle] [--photos <dossier>]
+//                   [--via <lat,lon>]... [--retour aller-retour|boucle] [--libelle "<titre de carte>"] [--lieu "<ligne de carte>"]
+//                   [--photos <dossier>]
 import type { CityDescription, Retour } from "./cities.ts";
 
 export interface CityRequest {
@@ -43,10 +44,10 @@ export function parseCityArgs(argv: readonly string[], catalog: Readonly<Record<
   if (key === undefined || !/^[a-z0-9][a-z0-9-]*$/.test(key)) return fail("un identifiant de ville est demandé (minuscules, chiffres et tirets)");
   const flags = flagsOf(rest);
   const one = (name: string): string | undefined => flags.get(name)?.[0];
-  for (const name of flags.keys()) if (!["--nom", "--emprise", "--depart", "--arrivee", "--via", "--retour", "--photos"].includes(name)) fail(`option « ${name} » inconnue`);
+  for (const name of flags.keys()) if (!["--nom", "--emprise", "--depart", "--arrivee", "--via", "--retour", "--libelle", "--lieu", "--photos"].includes(name)) fail(`option « ${name} » inconnue`);
   const photosDir = one("--photos");
   const known = catalog[key];
-  const described = ["--nom", "--emprise", "--depart", "--arrivee", "--via", "--retour"].some((n) => flags.has(n));
+  const described = ["--nom", "--emprise", "--depart", "--arrivee", "--via", "--retour", "--libelle", "--lieu"].some((n) => flags.has(n));
   if (!described) return { key, city: known ?? fail(`« ${key} » n'est pas décrite dans data/villes.json : donner --nom, --emprise, --depart et --arrivee`), photosDir, described };
   const name = one("--nom") ?? known?.name ?? fail("--nom est demandé");
   const box = flags.has("--emprise") ? numbers(one("--emprise") as string, 4, "l'emprise") : undefined;
@@ -61,6 +62,8 @@ export function parseCityArgs(argv: readonly string[], catalog: Readonly<Record<
   if (back !== "aller-retour" && back !== "boucle") fail("--retour vaut « aller-retour » ou « boucle »");
   const city: CityDescription = {
     itinerary: known?.itinerary ?? key,
+    label: one("--libelle") ?? known?.label ?? name,
+    place: one("--lieu") ?? known?.place ?? `Itinéraire à pied : ${name}`,
     name,
     bbox: { south: south as number, west: west as number, north: north as number, east: east as number },
     userAgent: known?.userAgent ?? `drwil_walk/0.1 (extraction OpenStreetMap de ${name})`,

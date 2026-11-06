@@ -15,7 +15,7 @@ Lu le 2026-11-03.
 - Quatre itinéraires livrés : Souq Waqif, Doha Corniche, Pune Vieille ville, Pune FC Road. Chacun tient en **deux fichiers**
   (`app/data/<ville>.json` et `app/data/<ville>-boucle.json`) et **un script d'extraction** dédié
   (`app/scripts/extract-souq.ts` et un script par ville, retirés depuis : voir plus bas), lancé par une commande
-  `npm run extract:*`. Rien n'est partagé entre eux : chaque ville est recopiée à l'identique.
+  `npm run extract:*` (retirés depuis : `npm run city`). Rien n'est partagé entre eux : chaque ville est recopiée à l'identique.
 - Les quatre extraits pèsent **2,9 Mo** au total. Un plafond de poids est vérifié par les tests.
 - Un test de non-régression exige que **chaque point du tracé de boucle soit un sommet d'une voie de l'extrait** : un
   parcours ne s'invente pas, il suit le graphe des rues.

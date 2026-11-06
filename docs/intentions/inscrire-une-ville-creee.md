@@ -1,6 +1,6 @@
 # Intention : inscrire dans l'application une ville créée par la commande, et rattraper les docs hors périmètre
 
-**Statut** : proposée le 2026-11-04 (limite du chantier `creation-itineraire`).
+**Statut** : proposée le 2026-11-04 (limite du chantier `creation-itineraire`) ; réalisée par le chantier `inscrire-ville-creee` (2026-11-06).
 
 ## Besoin
 

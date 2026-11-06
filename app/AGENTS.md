@@ -23,7 +23,7 @@ Tout chantier qui touche cette couche est HIGH (risque physique de chute).
   lampadaires produits distingués du mobilier OSM (APP-013), lanternes/halos sans effet sur l'alpha (APP-011).
 - Génération `npm run city` sur **PC de développement uniquement**, jamais dans le casque.
   Description des villes dans `data/villes.json`, pas de code ni de commande par ville ;
-  `scripts/create-city.ts` écrit extrait, boucle et matériaux. Inscription à l'accueil encore manuelle.
+  `scripts/create-city.ts` écrit extrait, boucle et matériaux. Le catalogue est la source unique : `src/city/cities.ts` et la liste d'accueil le lisent, la palette se déduit de la région (`app/src/city/region-palette.ts`), une ville créée apparaît à l'accueil sans code.
 
 ## Conventions techniques
 

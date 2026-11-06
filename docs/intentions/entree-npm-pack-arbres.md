@@ -5,7 +5,7 @@
 ## Besoin
 
 Relancer la préparation des arbres du pack (`app/scripts/prepare-nature-pack.ts`) par une commande courte, comme les extractions
-d'extraits (`npm run extract`…), au lieu d'une ligne `node -e` à recopier.
+d'extraits (`npm run extract`…, retirés depuis : `npm run city`), au lieu d'une ligne `node -e` à recopier.
 
 ## Existant
 

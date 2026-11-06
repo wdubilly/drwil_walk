@@ -68,4 +68,15 @@ describe("choix de l'itinéraire", () => {
     radio("Doha Souq Waqif").checked = false;
     expect(choice.readId()).toBe(DEFAULT_ITINERARY_ID);
   });
+
+  it("APP-003: une ville créée par la commande, sans illustration, reçoit le visuel commun une seule fois", () => {
+    const created: Itinerary = { id: "ville-creee", name: "Ville créée", place: "Quelque part", available: true };
+    const { cards } = setup([...ITINERARIES, created]);
+    const image = cards[4]?.querySelector("img") as HTMLImageElement;
+    expect(image.getAttribute("src")).toMatch(/ville-creee\.svg$/);
+    image.dispatchEvent(new (image.ownerDocument.defaultView as unknown as { Event: typeof Event }).Event("error"));
+    expect(image.getAttribute("src")).toMatch(/libre\.svg$/);
+    expect(cards[4]?.textContent).toContain("Ville créée");
+    expect(cards[4]?.textContent).toContain("Quelque part");
+  });
 });

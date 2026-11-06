@@ -14,7 +14,8 @@ Génération `npm run city` exclusivement sur PC de développement. Tests Vitest
 - `app/index.html`, `app/src/main.ts` : montage du DOM, vrai `WebGLRenderer`, WebXR et chargement local des arbres.
 - `app/src/xr/experience.ts` : accueil → session → boucle XR ; renderer, document, horloge et arbres injectés.
 - `app/src/pc/enter-pc.ts` : même ville et marche, canvas de page, sans zone tapis, vignette ni fondu sur écran.
-- `app/src/xr/city-choice.ts`, `app/src/city/cities.ts` : association itinéraire/extrait/palette/boucle.
+- `app/src/xr/city-choice.ts`, `app/src/city/cities.ts`, `app/src/city/region-palette.ts` : les villes lues dans le catalogue
+  `app/data/villes.json` (extrait et boucle chargés par `import()` dynamique), palette déduite de la région.
 - `app/src/city/live-city.ts` : prépare une variante par profil avant la marche, conserve le groupe ville,
   bascule les groupes visibles sans construire de géométrie à chaud ; libération des géométries et matériaux à la sortie.
 - `app/src/xr/live-preferences.ts` : applique les choix à la ville, à l'ambiance et au renderer ;
@@ -38,7 +39,7 @@ Génération `npm run city` exclusivement sur PC de développement. Tests Vitest
 - `app/src/route/speed.ts`, `app/src/route/walk.ts` : minimum 1 km/h sans maximum, pas de 0,1 et conversion en m/s ; durée/distance.
 - `app/src/route/geo.ts`, `app/src/route/path.ts` : GPS vers mètres, position et direction lissées, boucles (APP-002).
 - `app/src/route/network.ts` : rues des carrefours et marche sur réseau.
-- `app/src/route/itineraries.ts` : quatre cartes d'itinéraire, données et disponibilité.
+- `app/src/route/itineraries.ts` : cartes d'itinéraire lues dans le catalogue des villes (une ville créée par la commande y figure sans code).
 - `app/src/route/stats.ts` : estimation calories, cap, heure, allure, restant et progression ; fonctions historiques de stockage
   du poids conservées mais non branchées dans l'application.
 - `app/src/route/simplify.ts` : réduction du tracé pour la minicarte.
@@ -108,7 +109,7 @@ Génération `npm run city` exclusivement sur PC de développement. Tests Vitest
 
 ## Données, packs et scripts hors casque
 
-- `app/data/` : quatre GeoJSON OSM et quatre boucles GPS ; `app/data/villes.json` décrit les villes.
+- `app/data/` : un GeoJSON OSM et une boucle GPS par ville ; `app/data/villes.json` décrit les villes (source unique).
 - `app/assets/` : arbres Quaternius CC0 et figurants CC0 Kenney/Poly Pizza, textures embarquées,
   `app/assets/figurants-catalogue.json` et `app/assets/figurants.json`. Origine/licences : `app/assets/PROVENANCE.md`.
 - `app/assets/materials/` : photos (liens uniquement) et bibliothèques CC0 par quartier.
