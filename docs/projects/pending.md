@@ -31,6 +31,20 @@ avant les fiches qui touchent le panneau d'infos, `champ-de-vision-casque` puis 
 (le panneau doit tenir dans la vue avant d'y ajouter du contenu), `tableau-allure-progression` et `hud-defis-progression` avant
 `hud-suivi-comparer-marche-reelle`, les fiches de la ville avant `course-reelle-gpx`. `extraction-generique` puis `facades-regions` avant `villes-itineraires` (décision du 2026-11-03 : une famille de façades par région, et une seule extraction paramétrée, avant d'ajouter Rome, Erevan ou Paris). `creation-itineraire` en tête des P2, puis `lampadaires-generes`, puis `villes-itineraires` (décision du 2026-11-04 : la commande unique existe avant toute nouvelle extraction ; les trois villes sont créées avec elle). `facades-materiaux-souk` avant `facades-regions` (décision du 2026-11-03 : les palettes par région pourront reprendre les couleurs relevées sur les photos). Les fiches hud passent en dernier (décision du 2026-11-03) ; `hud-suivi-comparer-marche-reelle` porte le préfixe hud pour passer après `hud-defis-progression`. `ville-vivante-souk` en tête, en P1 (décision du 2026-11-04 : finir le souk comme ville complète du générateur avant toute autre ville). La Corniche est reportée le 2026-11-01 : à annuler si `course-reelle-gpx` couvre le besoin.
 
+- [ ] [P1] [AI] Alléger la CI sans retirer aucun contrôle (un run par commit, runs périmés annulés, caches) — `docs/projects/ci-allegee.md`
+- [ ] [P1] [AI] Générateur 01 : essai réel de `npm run city` contre les vrais services — `docs/projects/gen-01-essai-commande.md`
+- [ ] [P1] [AI] Générateur 02 : le format de la recette (région + quartier, origine, repli) — `docs/projects/gen-02-format-recette.md`
+- [ ] [P1] [AI] Générateur 03 : sols et rues (pavés, asphalte, bordures) — `docs/projects/gen-03-sols-rues.md`
+- [ ] [P1] [AI] Générateur 04 : rez-de-chaussée (boutiques, vitrines, auvents) — `docs/projects/gen-04-rez-de-chaussee.md`
+- [ ] [P1] [AI] Générateur 05 : matériaux de repli et compression — `docs/projects/gen-05-materiaux-repli.md`
+- [ ] [P1] [AI] Générateur 06 : placement cohérent des arbres, lampadaires et mobilier — `docs/projects/gen-06-placement-coherent.md`
+- [ ] [P1] [AI] Générateur 07 : végétation régionale — `docs/projects/gen-07-vegetation-regionale.md`
+- [ ] [P1] [AI] Générateur 08 : jalon, Pune Vieille ville avec le même moteur — `docs/projects/gen-08-pune-vieille-ville.md`
+- [ ] [P2] [AI] Générateur 09 : repères, monuments et tours — `docs/projects/gen-09-reperes-monuments.md`
+- [ ] [P2] [AI] Générateur 10 : eau et paysage — `docs/projects/gen-10-eau-paysage.md`
+- [ ] [P2] [AI] Générateur 11 : piétons animés, modèles régionaux et sons — `docs/projects/gen-11-vie-pietons-sons.md`
+- [ ] [P2] [AI] Générateur 12 : régénérer les quatre itinéraires et constituer le catalogue — `docs/projects/gen-12-catalogue-regeneration.md`
+- [ ] [P3] [AI] Générateur 13 : météo, reflets et grosses ombres — `docs/projects/gen-13-effets-ambiance.md`
 - [ ] [P2] [AI] Trois itinéraires de plus (Rome, Erevan, Paris) — `docs/projects/villes-itineraires.md`
 - [ ] [P2] [AI] Fusion des bâtiments par cellules (en attente d'une séance au casque : `docs/intentions/seance-casque-parcours.md`) — `docs/projects/rendu-lod-cellules.md`
 - [ ] [P3] [AI] Les défis de distance et l'objectif annuel — `docs/projects/hud-defis-progression.md`

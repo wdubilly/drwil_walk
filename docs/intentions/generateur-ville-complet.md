@@ -51,6 +51,8 @@ Lu le 2026-11-05.
   - bloc 3 : seule la région `golfe` est réglée pour les figurants, les palettes ne s'appuient sur aucune référence
     (`docs/intentions/palettes-regions-references.md`), les modèles propres aux régions manquent (rickshaws,
     `docs/intentions/ville-vivante.md`) ;
+  - blocs 3 et 4 : la recette visuelle (sols, commerces, placement, végétation) est cadrée dans
+    `docs/intentions/recette-visuelle-promenade.md` ;
   - bloc 6 : aucune recette ne prouve qu'une ville nouvelle se crée sans une ligne de code.
 
 ## Ordre proposé

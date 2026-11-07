@@ -51,6 +51,8 @@ removes it when fully covered.
 | `docs/intentions/villes-a-parcourir.md` | D'autres villes à parcourir (Rome, Erevan, Paris…) : poids des extraits et familles de façades à décider ensemble |
 | `docs/intentions/tours-treillis-extrudees.md` | Les tours en treillis (`building=tower`) extrudées en blocs pleins : la tour Eiffel ferait un bloc de 330 m |
 | `docs/intentions/generateur-ville-complet.md` | [P1] Un générateur de ville complet : `npm run city` donne une ville prête, mis au point au Souq Waqif (fiche d'ensemble, ordre) |
+| `docs/intentions/e2e-ci-seulement.md` | L'e2e Playwright en CI seulement, plus sur le poste (trop de ressources) : évolution du kit drwil |
+| `docs/intentions/recette-visuelle-promenade.md` | [P1] La recette visuelle d'une promenade : sols, commerces, placement, végétation et repères décrits en données par région |
 | `docs/intentions/ville-vivante.md` | [P1] Une ville vivante : circulation, piétons et lampadaires allumés, par un moteur générique testé au Souq Waqif |
 | `docs/intentions/essai-casque-ville-vivante.md` | Essayer la ville vivante du souk sur un vrai Quest 3 (densité, vitesses, sens des modèles, images par seconde) |
 | `docs/intentions/pietons-animes.md` | Des piétons à la marche animée, au lieu de glisser, si les budgets la tiennent |
