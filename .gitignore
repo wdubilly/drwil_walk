@@ -40,4 +40,5 @@ htmlcov/
 .drwil/reminder.json
 # Identifiers already recalled to the agent in its session (.claude/hooks/id-glossary.mjs): local.
 .drwil/glossary.json
+.drwil/lot.json
 # <<< drwil

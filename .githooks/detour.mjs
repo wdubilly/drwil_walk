@@ -16,14 +16,14 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { BRIEF_DIRS, config } from "./briefs.mjs";
 import { branchMerged, mainBranch, mergedPullRequests, noGhText } from "./close.mjs";
-import { contractsAddedOnly, isRegistry, RULES, rulesFiles } from "./detour-rules.mjs";
+import { contractsAddedOnly, isHookTest, isRegistry, RULES, rulesFiles, weakenedTests } from "./detour-rules.mjs";
 import { JOURNAL, TEXTS } from "./detour-texts.mjs";
 import { minimumLevel, SENSITIVE_PATHS } from "./risk.mjs";
 import { normalize } from "./scope.mjs";
 import { readState, setDetour, stateRoot, writeState } from "./state.mjs";
 import { fill } from "./state-texts.mjs";
 
-export { contractsAddedOnly, isRegistry, RULES, rulesFiles };
+export { contractsAddedOnly, isHookTest, isRegistry, RULES, rulesFiles, weakenedTests };
 
 const texts = (root) => TEXTS[config(root).lang === "en" ? "en" : "fr"];
 const done = (message) => ({ code: 0, message });
@@ -173,5 +173,8 @@ export async function main(args, root) {
 }
 
 if (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url))) {
-  process.exitCode = await main(process.argv.slice(2), stateRoot());
+  // Never a top-level await: a module loaded on demand that imports this file back would wait forever (QUA-249).
+  main(process.argv.slice(2), stateRoot()).then((code) => {
+    process.exitCode = code;
+  });
 }

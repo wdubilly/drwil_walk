@@ -8,28 +8,29 @@
 // the full report (each check, its output, every warning) goes to a file — an agent reads the outputs
 // again at each request, a passed check's output is only context to pay for.
 // QUA-140: a pass outside any hook leaves each check's verdict (ok / fail) with the fingerprint of the tree, for `drwil verify` to reuse.
-// QUA-141: outside any hook and CI, a check "ok" whose own fingerprint (its declaration and the files of its `paths`) is the one of the
+// QUA-141: outside any hook and CI (in CI, only when a pull request asks for it, QUA-250), a check "ok" whose own fingerprint (its declaration and the files of its `paths`) is the one of the
 // last pass is not replayed (`--tout-rejouer` / `--replay-all` replays everything); its verdict keeps its own fingerprint only.
 // QUA-152: the pre-push does the same, from the verdicts of `run-checks` and its own (a separate file `verify` ignores), only when the
 // working tree is the pushed commit; never in CI.
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { rm } from "node:fs/promises";
 import { intentsLeftBehind, staleIntents } from "./briefs.mjs";
 import { checks, projectRoot, startParallel, treeFingerprint } from "./engine.mjs";
+import { ciTexts, WITH_CI_CHECKS } from "./engine-runat.mjs";
 import { annotate, glossary } from "./glossary.mjs";
 import { loadReuse, saveVerdicts } from "./run-checks-verdicts.mjs";
+import { shardOptions, writeShardVerdicts } from "./run-checks-shards.mjs";
 import { TEXTS } from "./run-checks-texts.mjs";
-
 const root = projectRoot(import.meta.url);
 process.chdir(root);
-
 let cfg = {};
 try {
   cfg = JSON.parse(readFileSync(".drwil/ia-first.json", "utf8"));
 } catch {}
 const lang = cfg.lang === "en" ? "en" : "fr";
 const T = TEXTS[lang];
-
+const shard = shardOptions(process.argv, T, cfg);
 // At pre-commit only (DRWIL_HOOK=pre-commit, set by .githooks/pre-commit), the engine defers
 // a project check outside its `paths`. If git does not answer, everything runs (never deferred by default).
 function stagedFiles() {
@@ -58,17 +59,22 @@ const announce = (name) => report.push(`[ia-first] ${name}…`);
 // "not-applicable" (excluded by design: minimal mode, QUA-017 in CI…) is not shown, as before.
 const staged = stagedFiles();
 // A hook pass judges the index or the pushed reference, not the whole tree `drwil verify` judges: it leaves nothing to reuse.
-const hooked = ["DRWIL_HOOK", "DRWIL_PUSH_REFS", "DRWIL_PUSH_TAGS_ONLY", "DRWIL_PUSH_NO_BRANCH"].some((k) => process.env[k]);
+const hooked =
+  Boolean(shard?.index) || ["DRWIL_HOOK", "DRWIL_PUSH_REFS", "DRWIL_PUSH_TAGS_ONLY", "DRWIL_PUSH_NO_BRANCH"].some((k) => process.env[k]);
 const fingerprint = hooked ? null : treeFingerprint(root);
 const verdicts = {};
 const ranAt = new Date().toISOString();
 // Only `secrets` judges something else here than in `drwil verify` (the index, not the whole history, outside CI): never reusable.
 const reusableByVerify = (id) => id !== "secrets" || Boolean(process.env.CI);
-const list = checks(root, { cfg, staged });
-// QUA-141: the verdicts of the last pass, to keep an "ok" whose check files did not change (never in a hook or in CI, never with the option).
+// QUA-261: the option also plays the checks left to CI (`runAt: ["ci"]`, QUA-208), to reproduce a CI failure locally.
+const withCiChecks = process.argv.includes(WITH_CI_CHECKS);
+const list = checks(root, { cfg, staged, withCiChecks, shard });
+// QUA-141: the verdicts of the last pass, to keep an "ok" whose check files did not change (never in a hook, in CI only when asked, QUA-250,
+// never with the option).
 const replayAll = process.argv.some((a) => a === "--tout-rejouer" || a === "--replay-all");
 const { prePush, controls, reuseActive, keptFrom } = loadReuse(list, { hooked, atCommit, replayAll });
-const reused = new Set(keptFrom.keys());
+// A check left to CI is never reused here: an "ok" left by the option would count it as passed (QUA-013, QUA-208).
+const reused = new Set([...keptFrom.keys()].filter((id) => !list.find((c) => c.id === id)?.ciPending));
 // Checks with a `runAsync` (setting `parallel`) are all started up front; their result is read
 // here in the list order, so the report and the verdict are those of a sequential run.
 const started = startParallel(list.filter((c) => !reused.has(c.id)));
@@ -110,7 +116,10 @@ for (const c of list) {
     outputs.set(failures.at(-1), r.output);
   } else if (r.status === "not-run") unrun(`${c.name} (${r.detail})`, r.configured);
 }
+if (shard?.index) writeShardVerdicts({ root, list, verdicts, shard });
 const end = list.finish();
+// The results shared inside the pass (see DRWIL_PASS_ID in the engine) are of no use after it.
+await rm(".drwil/evidence/passe", { recursive: true, force: true }).catch(Boolean);
 saveVerdicts({ root, list, verdicts, reused, fingerprint, ranAt, hooked, prePush });
 if (!Array.isArray(cfg.checks) || !cfg.checks.length) unrun(`${T.project} (${T.noCheck})`, true);
 
@@ -165,7 +174,11 @@ const slowestSummary = ` — ${T.slowestSummary} ${slowest
   .map((t) => `${t.name} ${t.ms} ms`)
   .join(", ")}`;
 const reuseSummary = reused.size ? ` — ${T.reuseSummary(reused.size, timings.length)}` : "";
-const summary = `[ia-first] ${failures.length ? T.ko(failures.length, warnings.length, DETAIL) : T.ok(warnings.length, DETAIL)}${reuseSummary}${slowestSummary}${end.kept ? ` — ${T.keptTmp(end.kept)}` : ""}`;
+// QUA-208, QUA-261: the summary (the only line a hook shows when all is green) names the checks left to CI, and the option when active.
+const CT = ciTexts(lang);
+const pendingCi = list.filter((c) => c.ciPending).map((c) => c.name);
+const ciSummary = `${pendingCi.length ? ` — ${CT.pending(pendingCi)}` : ""}${withCiChecks ? ` — ${CT.option(list.filter((c) => c.ciPlayed).map((c) => c.name))}` : ""}`;
+const summary = `[ia-first] ${failures.length ? T.ko(failures.length, warnings.length, DETAIL) : T.ok(warnings.length, DETAIL)}${ciSummary}${reuseSummary}${slowestSummary}${end.kept ? ` — ${T.keptTmp(end.kept)}` : ""}`;
 // Never at the cost of the verdict: a report that cannot be written changes nothing to the exit code.
 try {
   mkdirSync(".drwil/evidence", { recursive: true });
@@ -181,5 +194,7 @@ try {
     ].join("\n")}\n`,
   );
 } catch {}
-for (const line of [...shown, summary]) console.log(line);
+// In CI the detail file does not outlive the job: the whole ranking goes to the log, before the summary line.
+const ranking = process.env.CI ? [`[ia-first] ${T.slowest}`, ...slowest.map((t) => `  ${t.ms} ms  ${t.name}`)] : [];
+for (const line of [...shown, ...ranking, summary]) console.log(line);
 if (failures.length) process.exitCode = 1;

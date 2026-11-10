@@ -91,6 +91,32 @@ files:
 
   - .claude/settings.json
   - .github/workflows/ia-first.yml
+  - .githooks/state-lots.mjs
+  - .githooks/state-draft.mjs
+  - .githooks/state-limits.mjs
+  - .githooks/state-merge.mjs
+  - .githooks/state-cli-lots.mjs
+  - .githooks/briefs-lots.mjs
+  - .githooks/pr-watch-main.mjs
+  - .githooks/wait-command.mjs
+  - .githooks/merge-auto.mjs
+  - .githooks/close-mechanics.mjs
+  - .githooks/close-journal.mjs
+  - .githooks/close-limits.mjs
+  - .githooks/state-resume.mjs
+  - .githooks/state-cli-commands.mjs
+  - .githooks/state-acceptance.mjs
+  - .githooks/state-hooks.mjs
+  - .githooks/engine-runat.mjs
+  - .githooks/engine-shards.mjs
+  - .githooks/run-checks-pr.mjs
+  - .githooks/run-checks-shards.mjs
+  - .githooks/briefs-order.mjs
+  - .githooks/scope-gate-kit.mjs
+  - .githooks/check-kit-size.mjs
+  - .githooks/check-diff-coverage.mjs
+  - .githooks/recette-note.mjs
+  - .githooks/recette-note-texts.mjs
 -->
 
 ## 1. Need
