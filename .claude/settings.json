@@ -6,7 +6,17 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PROJECT_DIR}/.githooks/state.mjs\""
+            "command": "command -v node >/dev/null || { echo 'drwil: node not found in the PATH of this assistant. Restart it from a shell where which node answers.' >&2; exit 1; }; node \"${CLAUDE_PROJECT_DIR}/.githooks/state.mjs\""
+          }
+        ]
+      },
+      {
+        "matcher": "startup|resume|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v node >/dev/null || { echo 'drwil: node not found in the PATH of this assistant. Restart it from a shell where which node answers.' >&2; exit 1; }; node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/serve-welcome.mjs\"",
+            "timeout": 15
           }
         ]
       }
@@ -16,7 +26,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PROJECT_DIR}/.githooks/state.mjs\" reminder"
+            "command": "command -v node >/dev/null || { echo 'drwil: node not found in the PATH of this assistant. Restart it from a shell where which node answers.' >&2; exit 1; }; node \"${CLAUDE_PROJECT_DIR}/.githooks/state.mjs\" reminder"
           }
         ]
       }
@@ -27,7 +37,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/prompt-hook.mjs\""
+            "command": "command -v node >/dev/null || { echo 'drwil: node not found in the PATH of this assistant. Restart it from a shell where which node answers.' >&2; exit 2; }; node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/prompt-hook.mjs\""
           }
         ]
       },
@@ -36,7 +46,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/bash-guard.mjs\""
+            "command": "command -v node >/dev/null || { echo 'drwil: node not found in the PATH of this assistant. Restart it from a shell where which node answers.' >&2; exit 2; }; node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/bash-guard.mjs\""
           }
         ]
       },
@@ -45,7 +55,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/scope-reminder.mjs\""
+            "command": "command -v node >/dev/null || { echo 'drwil: node not found in the PATH of this assistant. Restart it from a shell where which node answers.' >&2; exit 2; }; node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/scope-reminder.mjs\""
           }
         ]
       },
@@ -54,7 +64,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/read-guard.mjs\""
+            "command": "command -v node >/dev/null || { echo 'drwil: node not found in the PATH of this assistant. Restart it from a shell where which node answers.' >&2; exit 2; }; node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/read-guard.mjs\""
           }
         ]
       }
@@ -65,7 +75,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/prompt-hook.mjs\""
+            "command": "command -v node >/dev/null || { echo 'drwil: node not found in the PATH of this assistant. Restart it from a shell where which node answers.' >&2; exit 1; }; node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/prompt-hook.mjs\""
           }
         ]
       },
@@ -74,7 +84,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/scope-reminder.mjs\""
+            "command": "command -v node >/dev/null || { echo 'drwil: node not found in the PATH of this assistant. Restart it from a shell where which node answers.' >&2; exit 1; }; node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/scope-reminder.mjs\""
           }
         ]
       },
@@ -83,7 +93,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/id-glossary.mjs\""
+            "command": "command -v node >/dev/null || { echo 'drwil: node not found in the PATH of this assistant. Restart it from a shell where which node answers.' >&2; exit 1; }; node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/id-glossary.mjs\""
           }
         ]
       }
@@ -93,7 +103,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/reply-glossary.mjs\""
+            "command": "command -v node >/dev/null || { echo 'drwil: node not found in the PATH of this assistant. Restart it from a shell where which node answers.' >&2; exit 1; }; node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/reply-glossary.mjs\""
           }
         ]
       }
@@ -134,7 +144,23 @@
       "Bash(git restore:*)",
       "Bash(git stash:*)",
       "Bash(git reset:*)",
-      "Bash(node .githooks/run-checks.mjs)"
+      "Bash(gh pr view:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh pr checks:*)",
+      "Bash(gh pr status:*)",
+      "Bash(gh run list:*)",
+      "Bash(gh run view:*)",
+      "Bash(node .githooks/state.mjs)",
+      "Bash(node .githooks/state.mjs reminder)",
+      "Bash(node .githooks/glossary.mjs:*)",
+      "Bash(node .githooks/pr-watch.mjs:*)",
+      "Bash(node .githooks/note.mjs:*)",
+      "Bash(node .githooks/run-checks.mjs)",
+      "Bash(npm test:*)",
+      "Bash(npm run:*)",
+      "Bash(npx vitest:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx eslint:*)"
     ],
     "ask": [
       "Bash(git merge:*)",

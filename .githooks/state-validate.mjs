@@ -23,10 +23,27 @@ export const NEUTRAL_STATE = Object.freeze({ version: 1, activity: "SCOPING", ac
 
 // auto_merge: absent from the neutral state, set only by a human start (`start`).
 // queue, queue_merge (QUA-037): the briefs a human queued at start, run next without a new gesture.
+// queue_draft (QUA-037): the briefs a human has added so far, one single-choice poll each; SCOPING only, until "finish the queue".
 // parallel (QUA-147): the briefs a human launched at once, each in its own worktree, recorded by the main folder.
 // detour (QUA-050): the workstream set aside while a prior defect is fixed (.githooks/detour.mjs).
 // reopened (QUA-116): the workstream reopened after its closing, `{ pr, human? }`, until back in SCOPING.
-const FIELDS = new Set([...Object.keys(NEUTRAL_STATE), "auto_merge", "queue", "queue_merge", "detour", "reopened", "parallel"]);
+// merge_cancelled: the automatic merge a failed reopening cancelled, `{ pr }`, until a reopening succeeds or back in SCOPING.
+// scoping_merge (QUA-188): the automatic merge of the scoping PR of `{ branch }`, authorised by the human's answer to the
+// end-of-scoping poll; SCOPING only, so never `queue_merge`, which would merge the next workstream of the queue.
+// limits (QUA-253): the human's answers to the limits poll, `[{ intent, choice: "now" | "note" }]`, from BUILD to CLOSING.
+const FIELDS = new Set([
+  ...Object.keys(NEUTRAL_STATE),
+  "auto_merge",
+  "queue",
+  "queue_merge",
+  "queue_draft",
+  "detour",
+  "reopened",
+  "parallel",
+  "merge_cancelled",
+  "scoping_merge",
+  "limits",
+]);
 const ISO_RE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:\d{2})$/;
 export const texts = (root) => STATE_MESSAGES[config(root).lang === "en" ? "en" : "fr"];
 
@@ -57,12 +74,28 @@ export function validateState(state, root) {
   if (r !== undefined && !(r && typeof r === "object" && Number.isInteger(r.pr) && [undefined, true, false].includes(r.human)))
     problems.push(T.reopenedType);
   else if (r !== undefined && !["BUILD", "EVIDENCE", "VERIFY", "CLOSING"].includes(state.activity)) problems.push(T.reopenedActivity);
+  const m = state.merge_cancelled;
+  if (m !== undefined && !(m && typeof m === "object" && Number.isInteger(m.pr))) problems.push(T.mergeCancelledType);
+  else if (m !== undefined && state.activity !== "CLOSING") problems.push(T.mergeCancelledActivity);
+  const s = state.scoping_merge;
+  if (s !== undefined && !(s && typeof s === "object" && typeof s.branch === "string" && s.branch !== ""))
+    problems.push(T.scopingMergeType);
+  else if (s !== undefined && state.activity !== "SCOPING") problems.push(T.scopingMergeActivity);
+  if (state.limits !== undefined && !(validLimits(state.limits) && ["BUILD", "EVIDENCE", "VERIFY", "CLOSING"].includes(state.activity)))
+    problems.push(T.limitsType);
   if (state.active_request !== null && typeof state.active_request !== "string") problems.push(T.request);
   if (state.auto_merge !== undefined && typeof state.auto_merge !== "boolean") problems.push(T.autoMergeType);
   else if (state.auto_merge === true && state.activity === "SCOPING") problems.push(T.autoMergeScoping);
   if (state.queue !== undefined) {
     if (!Array.isArray(state.queue) || state.queue.some((b) => typeof b !== "string")) problems.push(T.queueType);
     else for (const b of state.queue) problems.push(...validateBrief(b, root, false, T));
+  }
+  if (state.queue_draft !== undefined) {
+    if (!Array.isArray(state.queue_draft) || state.queue_draft.some((b) => typeof b !== "string")) problems.push(T.queueDraftType);
+    else {
+      if (state.activity !== "SCOPING") problems.push(T.queueDraftActivity);
+      for (const b of state.queue_draft) problems.push(...validateBrief(b, root, false, T));
+    }
   }
   if (state.parallel !== undefined && (!Array.isArray(state.parallel) || state.parallel.some((b) => typeof b !== "string")))
     problems.push(T.parallelType);
@@ -71,6 +104,19 @@ export function validateState(state, root) {
     problems.push(T.since);
   }
   return problems;
+}
+
+/** The limits answers: each a `.md` intent path, once, and a choice "now" or "note", nothing else. */
+function validLimits(limits) {
+  if (!Array.isArray(limits)) return false;
+  const ok = (l) =>
+    l &&
+    typeof l === "object" &&
+    Object.keys(l).length === 2 &&
+    typeof l.intent === "string" &&
+    l.intent.endsWith(".md") &&
+    ["now", "note"].includes(l.choice);
+  return limits.every(ok) && new Set(limits.map((l) => l.intent)).size === limits.length;
 }
 
 function validateBrief(brief, root, mayBeMissing, T) {

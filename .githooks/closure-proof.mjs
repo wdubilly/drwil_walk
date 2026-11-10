@@ -3,10 +3,11 @@
 // as a versioned document by the closing (close.mjs). A module of its own, so that neither file goes
 // past the cap (QUA-001), and so that a project can read a proof without going through the closing.
 import { createHash } from "node:crypto";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, posix } from "node:path";
 import { acceptanceCriteria, config } from "./briefs.mjs";
 import { latestEvidence } from "./state.mjs";
+import { acceptanceCheck } from "./state-acceptance.mjs";
 
 const TEXTS = {
   fr: {
@@ -16,7 +17,10 @@ const TEXTS = {
     proofOtherCommit: (n) => `l'évidence ${n} ne date pas de HEAD : la renouveler (\`npx drwil verify --evidence\`)`,
     proofNotPass: (s) => `le verdict de la dernière évidence est ${s.toUpperCase()} : rien à prouver tant qu'il n'est pas PASS`,
     proofUnwritable: (f, m) => `${f} : ${m}`,
-    proofNotCited: (j, f) => `${j} : l'entrée de journal du chantier ne cite pas \`${f}\` — la preuve de clôture se cite depuis le journal`,
+    proofChanged: (a, b) =>
+      `les critères de la fiche ne sont plus ceux que l'humain a acceptés au lancement (empreinte ${a}, aujourd'hui ${b}) : il les accepte de nouveau, dans un terminal (\`node .githooks/state.mjs accept\`)`,
+    proofAccepted: (f, d) => `**Critères acceptés** : empreinte \`${f}\`, acceptés par l'humain au lancement le ${d}`,
+    proofNotAccepted: "**Critères acceptés** : aucune acceptation enregistrée au lancement (lancement hors sondage ou terminal)",
     proofHead: "critères de ce chantier, et ce qui les prouve aujourd'hui encore (rejoués par `drwil verify` après la clôture) :",
     proofHeads: ["Critère", "Contrat", "Contrôle", "Empreinte des fichiers couverts"],
     proofTitle: (w) => `# Preuve de clôture — ${w}`,
@@ -33,7 +37,10 @@ const TEXTS = {
     proofOtherCommit: (n) => `evidence ${n} is not from HEAD: renew it (\`npx drwil verify --evidence\`)`,
     proofNotPass: (s) => `the latest evidence's verdict is ${s.toUpperCase()}: nothing to prove until it is PASS`,
     proofUnwritable: (f, m) => `${f}: ${m}`,
-    proofNotCited: (j, f) => `${j}: the workstream's journal entry does not cite \`${f}\` — the closing proof is cited from the journal`,
+    proofChanged: (a, b) =>
+      `the brief's criteria are no longer those the human accepted at the start (fingerprint ${a}, today ${b}): the human accepts them again, in a terminal (\`node .githooks/state.mjs accept\`)`,
+    proofAccepted: (f, d) => `**Criteria accepted**: fingerprint \`${f}\`, accepted by the human at the start on ${d}`,
+    proofNotAccepted: "**Criteria accepted**: no acceptance recorded at the start (start outside the poll or a terminal)",
     proofHead: "criteria of this workstream, and what still proves them today (replayed by `drwil verify` after the closing):",
     proofHeads: ["Criterion", "Contract", "Check", "Fingerprint of the covered files"],
     proofTitle: (w) => `# Closing proof — ${w}`,
@@ -54,8 +61,6 @@ const PROOFS_DIR = "docs/preuves";
 
 const proofsDir = (root) => config(root).dirs?.proofs ?? PROOFS_DIR;
 
-const journalPath = (root) => `${config(root).dirs?.projects ?? "docs/projects"}/journal.md`;
-
 /** Path of the closing proof of `brief`, relative to the root. */
 export const proofPath = (root, brief) => `${proofsDir(root)}/${posix.basename(brief, ".md")}.md`;
 
@@ -74,6 +79,8 @@ export function closureProof(root, brief, text, { head, now = new Date() } = {})
   const ev = last.data;
   if (!head || ev.commit !== head) return { problem: T.proofOtherCommit(last.name) };
   if (ev.status !== "pass" && ev.status !== "attested") return { problem: T.proofNotPass(String(ev.status ?? "?")) };
+  const acceptance = acceptanceCheck(root, brief, text);
+  if (acceptance.kind === "changed") return { problem: T.proofChanged(acceptance.record.fingerprint, acceptance.current ?? "—") };
   const cell = (v) => String(v).replace(/\\/g, "\\\\").replace(/\|/g, "\\|").replace(/\n/g, " ").trim();
   const entries = Array.isArray(ev.evidence) ? ev.evidence : [];
   const row = (c) => {
@@ -97,6 +104,9 @@ export function closureProof(root, brief, text, { head, now = new Date() } = {})
       "",
       T.proofClosed(now.toISOString().slice(0, 10)),
       T.proofCommit(head.slice(0, 10), String(ev.status)),
+      acceptance.kind === "same"
+        ? T.proofAccepted(acceptance.record.fingerprint, String(acceptance.record.acceptedAt).slice(0, 10))
+        : T.proofNotAccepted,
       "",
       T.proofHead,
       "",
@@ -114,12 +124,4 @@ export function writeProof(root, proof) {
   } catch (e) {
     return texts(root).proofUnwritable(proof.file, e.message);
   }
-}
-
-/** The journal entry cites the closing proof, or says it does not (QUA-084): the proof is reachable from the journal. */
-export function proofNotCited(root, brief) {
-  const file = proofPath(root, brief);
-  const journal = journalPath(root);
-  if (!existsSync(join(root, journal))) return [];
-  return readFileSync(join(root, journal), "utf8").includes(file) ? [] : [texts(root).proofNotCited(journal, file)];
 }

@@ -17,6 +17,15 @@ request, instead of direct commits on the main branch.
   on a brand-new repository, nobody needs to create a branch by hand for
   the very first commit. Renaming this branch (or creating another one
   named after the current brief) is up to the project.
+- Updating the kit (`npx drwil init` on an equipped project) commits itself on its own `workstream/kit-update` branch: push it, open a pull request.
+- At `/drwil-start` in "This folder", the branch is created for you: the start
+  creates `workstream/<brief-slug>` from the up-to-date main branch
+  (`origin/<main>` after a `git fetch`, or the local main branch if it holds commits `origin` lacks) and switches to it, then goes to BUILD.
+  Already on that branch, it is kept. The start is refused, nothing changed,
+  and the message says what to do, if the current branch is not merged into the
+  main branch (or its merge cannot be established: `gh` unreachable, detached
+  HEAD), if the working tree has uncommitted changes, or if the branch already
+  exists elsewhere (switch to it, or delete it if stale).
 
 ## During the work
 
@@ -41,6 +50,25 @@ request, instead of direct commits on the main branch.
   and the failures, copied word for word.
 - Before merging: check that the pull/merge request CI status checks
   are green (`gh pr checks <n> --watch` on GitHub).
+
+## Ending a scoping (`/drwil-scope`)
+
+- A scoping (brief, intention) is committed on its own branch and goes through
+  a pull request like the rest: `/drwil-start` offers a brief only once that
+  PR is merged, since it reads the briefs of the main branch.
+- Once the scoping is pushed and its PR open, the `/drwil-scope` skill
+  (skill `scope-a-workstream`) asks the human, in a poll
+  with no default or recommended answer, what to do with the PR:
+  - « Automatic merge »: the hook records the authorisation for the current
+    branch (state `scoping_merge`, SCOPING only); the agent runs
+    `node .githooks/merge-auto.mjs <number>`, which refuses the PR of any
+    other branch, then follows it with `node .githooks/pr-watch.mjs <number>`.
+  - « Manual merge »: nothing is scheduled, the human merges.
+  - « Continue scoping »: nothing is scheduled, the PR stays open and the
+    next scopings are committed on the same branch — one branch, one PR —
+    until the poll is asked again.
+- Without the « Automatic merge » answer, the merge of a scoping PR stays a
+  human gesture; leaving SCOPING drops the authorisation.
 
 ## One workstream per worktree
 
@@ -86,15 +114,21 @@ that folder only):
 - If the whole brief is now finished (not just one increment among several of a
   brief that otherwise stays open): summarize the brief into a short entry
   in `docs/projects/journal.md` (date, title, key decisions, closing
-  commit/PR, and the closing proof of the workstream — the entry cites it),
+  commit/PR; identify the entry by its title, brief slug or branch),
   then run `node .githooks/close.mjs` (in Closing): it writes the closing
-  proof (below), deletes
+  proof (below), adds the proof citation to the matching journal entry, then deletes
   the brief file, removes the matching item from `docs/projects/pending.md`
   (don't check it: the journal becomes the closing source, the index only
   lists remaining work; a past entry is read by itself:
   `node .githooks/glossary.mjs --journal <brief>`, never the whole journal) and records the consumption. It stages, commits,
   pushes and merges nothing. Nothing is lost — the full history stays in
   git (`git log --follow -- docs/projects/<brief>.md`).
+- No manual proof citation is required: the closing adds it idempotently,
+  respecting `dirs.projects` and `dirs.proofs`. If no entry matches, it creates
+  only a minimal entry with the proof link, never business decisions.
+  An ambiguous or unreadable/unwritable journal keeps the brief in place.
+  A citation of the active workstream's future proof does not fail the
+  references check before closing; any other missing proof still fails it.
 - The closing writes the workstream's proof first, a versioned file in
   `docs/preuves/` (`dirs.proofs` setting): every acceptance criterion with
   its contract, that contract's checks, the verified commit and the
@@ -112,6 +146,11 @@ that folder only):
   alone, at any time; leaving Build for Evidence gives it too, while code
   can still change. Code cites the contract it serves, never a workstream
   brief: check-docs refuses such a citation in a changed code file.
+- In BUILD, that report also names references whose correction would be outside
+  the scope block committed in HEAD, with the paths to add. Explain
+  and commit that extension separately before correcting those references;
+  an uncommitted extension does not satisfy the scope gate. Already covered
+  files, declared mirrors and scope-gate exclusions need no extension.
 - Local branches already merged into the main branch are deleted when the
   next workstream starts — never an unmerged branch, the current one or
   the main branch. A branch is merged when git sees it in the main branch
@@ -134,13 +173,13 @@ that folder only):
   `.drwil/usage.jsonl` (if present) (tokens, models, active time, read from Claude
   Code's session logs; never twice for the same workstream). Another AI
   tool: estimate by hand (`docs/recipes/track-consumption-per-increment.md`).
-- Close the intent loop, in the closing commit: each limit left untreated
-  becomes an intent brief (`docs/intentions/`, one per limit, never a
-  workstream brief), listed in `docs/projects/pending.md` as `[decision]`
-  and cited from the journal's « Known limits »; the original intent (the
-  brief's `**Intent**` field) is updated, or summarised in the journal and
-  removed when fully covered. A closing commit that deletes the brief
-  without touching its intent gets a warning.
+- Close the intent loop, in the closing commit: a limit within the scope is
+  handled; one answered « Record as intent » to the `drwil-limite` poll (end of
+  BUILD) becomes an intent brief (`docs/intentions/`, never a workstream brief;
+  `.githooks/close.mjs` refuses one born without that answer), listed in
+  `docs/projects/pending.md` as `[decision]`, cited from the journal's « Known
+  limits »; the original intent (`**Intent**` field) is updated, or summarised
+  and removed when covered (deleted brief, untouched intent: a warning).
 - Defect revealed by the PR after the closing commit, before the merge (red
   CI, forge code analysis): never a workaround nor routine maintenance —
   `node .githooks/state.mjs reopen` (in CLOSING, on the workstream's branch,
@@ -161,20 +200,21 @@ that folder only):
   again if it was authorised. A PR already merged or closed is refused: a
   new workstream, or routine maintenance.
 - Queue (decided at start, several briefs ticked in the `/drwil-start` poll): once the
-  closing commit is pushed and the merge scheduled, go back to Scoping, wait until the PR is
-  merged, update the main branch, then start the next brief yourself:
-  `node .githooks/state.mjs next` (allowed to the agent for the head of the queue only). Stop
-  at the first workstream that gets stuck (human attestation, FAIL not fixed, red CI, decision
-  to make) and say why; `node .githooks/state.mjs queue stop` drops what is left.
-- Active governance: the brief can be deleted during CLOSING (the state
-  tolerates its absence in that activity only), then go back to Scoping
-  (`node .githooks/state.mjs move SCOPING`). The next workstream starts in a
-  new session (Claude Code: `/clear`; another tool: a new conversation): a
-  fresh context does not read the closed workstream again; a queue keeps its
+  closing commit is pushed and the merge scheduled, `node .githooks/pr-watch.mjs <number>`
+  follows the PR until it is merged, then the main branch's CI on the merge commit; green with
+  no « CI broken on the main branch » issue open, it writes the proof that `node .githooks/state.mjs next`
+  (allowed to the agent for the head of the queue only) requires for the tip of the up-to-date main branch
+  (a human start is not blocked; with `origin` on a forge other than GitHub, no proof is possible: `next`
+  is not blocked and says so). Stop at the first workstream that gets stuck (human attestation, FAIL not
+  fixed, red CI, main branch red, decision to make) and say why; `node .githooks/state.mjs queue stop` drops what is left.
+- Active governance: the brief can be deleted during CLOSING (the state tolerates its absence
+  in that activity only), then go back to Scoping (`node .githooks/state.mjs move SCOPING`).
+  The next workstream starts in a new session (Claude Code: `/clear`; another tool: a new
+  conversation): a fresh context does not read the closed workstream again; a queue keeps its
   subagent per workstream.
-- If the brief still has open points elsewhere (multi-increment project), don't
-  condense anything: check the matching box in the index as before, the
-  brief stays active until it's fully finished.
+- If the brief still has open points elsewhere (multi-increment project), don't condense
+  anything: check the matching box in the index as before, the brief stays active until it's
+  fully finished.
 
 ## What the kit checks (QUA-017)
 
@@ -182,15 +222,22 @@ that folder only):
   commit or push directly to the main branch (`master`/`main`), including
   a repository's very first commit: no more bootstrap exception. No
   setting disables this check.
+- One bounded exception, for a new project: the very first push of the main
+  branch to a remote that has no branch at all (an empty GitHub/GitLab
+  repository) is accepted, because no pull/merge request can merge into a
+  branch that does not exist yet. Run `git push -u origin master` (or
+  `main`) once, from the main branch holding your first commit. It holds
+  only once: as soon as the remote has a main branch, every direct push is
+  refused as before. Offline, or if the remote cannot be read, there is no
+  exception. The local commit on the main branch stays refused.
 - This check never runs in CI: it only applies locally, at commit/push
   time, not when CI replays an already-made push (a merge landing on the
   main branch is legitimate).
-- If the main branch CI breaks anyway (merge landed too fast,
-  flakiness...): a dedicated CI job (`alert-if-ci-broken`, GitHub and
-  GitLab) automatically opens an issue linking to the failed run — only
-  on the main branch, only when the checks failed, without creating a
-  duplicate if an equivalent issue is already open. This job alerts, it
-  does not fix: the fix remains a separate workstream (dedicated brief).
+- If the main branch CI breaks anyway (merge landed too fast, flakiness...): a dedicated CI job
+  (`alert-if-ci-broken`, GitHub and GitLab) automatically opens an issue linking to the failed
+  run — only on the main branch, only when the checks failed, without creating a duplicate if an
+  equivalent issue is already open. This job alerts, it does not fix: the fix remains a separate
+  workstream (dedicated brief).
 
 ## What the kit does not do
 

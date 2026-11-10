@@ -31,6 +31,29 @@ without a green light, it stops after the `--dry-run` and gives the human
 the exact command to run. The green light covers one release, never the
 following ones, and never an npm publication (see « Assumed limits »).
 
+## Required OS: green CI before the release
+
+Optional setting, absent by default (an update of the kit never adds
+it): `release.requiredOs` in `.drwil/ia-first.json`, a list of runner
+labels — e.g. `["ubuntu-latest", "windows-latest", "macos-latest"]` — for
+a project whose CI does not test every OS at each pull request. Once set,
+`node .githooks/create-release.mjs` (direct release or
+`--candidate`) and `node .githooks/promote-release.mjs` refuse, without creating any tag or release, as long
+as one of those OS has no successful CI job that really ran its test steps
+on the commit concerned (`HEAD`, or the candidate's commit); a job whose
+test steps were skipped never counts, nor in the acceptance sheet. The
+refusal names the missing OS and the command that runs the workflow by
+hand; `gh` unavailable is a refusal too, never a release guessed green;
+`--dry-run` says it without refusing. The order is then:
+
+1. Run the workflow on the commit to release:
+   `gh workflow run <workflow file> --ref <branch>` (the workflow needs a
+   `workflow_dispatch` trigger that tests every required OS).
+2. Wait for every required OS to be green on that commit
+   (`gh run watch`).
+3. Create the release (method below). A candidate's tag push also runs
+   the CI on its commit: wait for it before the promotion.
+
 ## Method (once the module is activated)
 
 1. Preview without creating anything: `node .githooks/create-release.mjs
@@ -52,7 +75,8 @@ following ones, and never an npm publication (see « Assumed limits »).
 3. Create for real, after the human's agreement or with the green light
    given at launch (see above): `node .githooks/create-release.mjs`
    (annotated tag pushed to `origin`, then `gh release create
-   --generate-notes` if `gh` is available and authenticated).
+   --notes-file <acceptance note>` if `gh` is available and authenticated;
+   the note « without verdict » is the body of the release).
 4. If the repo contains one or more publishable npm packages (a
    `package.json`, if present, tracked by Git, with a `name`, without
    `"private": true`), a tarball (`npm pack`) is built for each and
@@ -105,9 +129,10 @@ before the final release.
    says so with the catch-up command (`node .githooks/recette-note.mjs
    vX.Y.Z <note file>`, or `gh pr create` when only the PR failed) and the
    note is kept in a file. A version released directly, without a
-   candidate, gets the same note marked « without verdict » (with a « to
-   complete » block for the human); `--dry-run` shows the note without
-   creating any branch or PR.
+   candidate (mode `solo`), gets the same note marked « without verdict »
+   (with a « to complete » block for the human) as the **body of its
+   GitHub release** (`gh release create --notes-file`): no branch, no PR.
+   `--dry-run` shows the note and where it goes, without creating anything.
 
 ## Assumed limits
 

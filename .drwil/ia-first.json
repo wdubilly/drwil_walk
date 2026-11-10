@@ -20,7 +20,14 @@
     "contracts": "docs/contracts.md",
     "index": "docs/projects/pending.md"
   },
-  "stack": [],
+  "stack": [
+    {
+      "path": "app",
+      "technos": [
+        "Node.js (Vite, TypeScript)"
+      ]
+    }
+  ],
   "checks": [
     {
       "id": "file-size",
@@ -207,6 +214,11 @@
         "app/**"
       ],
       "degradable": false
+    },
+    {
+      "id": "taille-kit",
+      "name": "taille des fichiers du kit : un dépassement avertit, il ne bloque pas",
+      "run": "node .githooks/check-kit-size.mjs"
     }
   ],
   "scopeReminder": "blocking",
@@ -251,5 +263,8 @@
       "branch": "master",
       "verifiedAt": "2026-10-30"
     }
+  },
+  "release": {
+    "mode": "solo"
   }
 }
