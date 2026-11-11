@@ -101,6 +101,6 @@ préparé, hors dépôt : `docs/contracts.md` ne se commite qu'en BUILD) et y ra
 
 ## 7. Reprise
 
-- **Dernier état** (2026-11-11) : lot 1 fait et commité (`push` limité à `master`, `concurrency` annulant les runs périmés hors `master`) ; `run-checks` vert.
+- **Dernier état** (2026-11-11) : lots 1 et 2 faits et commités (lot 2 : cache npm par `setup-node` sur les deux `package-lock.json`, cache `~/.cache/ms-playwright` clé `app/package-lock.json`, installations conservées) ; `run-checks` vert. La durée avant/après est à relever sur la CI (journal, [human]).
 - **Travail non commité** : aucun (hors cette section).
-- **Prochaine étape** : lot 2 — caches (npm via `setup-node`, navigateurs Playwright), clés dérivées des verrous. Relever la durée du run de référence dans le journal.
+- **Prochaine étape** : lot 3 — `"runAt": ["ci"]` sur le contrôle `e2e` de `.drwil/ia-first.json` (incrément 2 bis).
