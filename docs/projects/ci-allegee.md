@@ -64,10 +64,14 @@ préparé, hors dépôt : `docs/contracts.md` ne se commite qu'en BUILD) et y ra
   `DRWIL_SHARD_TOTAL`) et ne rejoue plus sur une PR un contrôle lent dont les fichiers sont inchangés (verdict repris, vérifié
   par empreinte). Le contrôle e2e actuel est `npm run e2e` (`playwright test`, `workers: 1`, une vingtaine de fichiers dans
   `app/e2e/`, environ 415 s) : Playwright sait se limiter à une tranche par `--shard=i/N`.
+- 2026-11-11 : N = 2 tranches pour l'e2e (décidé par le demandeur). Mesure sur un run de référence de `master` : job `checks`
+  16 min 45 s, `.githooks/run-checks.mjs` 909 s dont l'e2e environ 400 s, installation par job environ 90 s (dépendances de `app/` 45 s,
+  Chromium 31 s). Le reste des contrôles (environ 500 s) ne se découpe pas : avec N = 2 une tranche fait environ 200 s plus
+  l'installation, ce qui sort l'e2e du chemin critique ; N = 4 ne réduirait pas le temps total et coûterait plus de minutes.
+  Gain estimé : environ 5 minutes sur `run-checks` (à relever dans le journal du chantier).
 
 ## 5. Points à décider
 
-- [decision] Nombre de tranches N pour l'e2e (2 à 16) : à choisir au vu de la durée de référence et du coût des minutes de CI.
 - [decision] Le workflow `.github/workflows/ia-first.yml` n'a pas de zone du projet (marqueurs `drwil-project-begin/end`) : les
   étapes ajoutées à la main (diff-cover, dépendances de `app/`, Chromium, captures) seraient supprimées par une montée du kit.
   Les ajouter dans une zone du projet avant les shards ? (à vérifier : `npx drwil doctor`, point « Traces d'une montée »)
@@ -78,13 +82,13 @@ préparé, hors dépôt : `docs/contracts.md` ne se commite qu'en BUILD) et y ra
   référence. Critère de sortie : une PR de test ne déclenche qu'un run complet par commit, et la CI est verte.
 - **Incrément 2 — caches** [AI] : cache npm (`setup-node`) et cache des navigateurs Playwright. Critère de sortie : durée du run
   de référence relevée avant et après, CI verte, aucun contrôle « non exécuté ».
-- **Incrément 3 — shards de l'e2e** [AI] : déclarer `shards: N` sur le contrôle `e2e` de `.drwil/ia-first.json`, et lui faire lire
-  `DRWIL_SHARD_INDEX` / `DRWIL_SHARD_TOTAL` (`--shard=i/N`). Critère de sortie : sur une PR de test, N jobs jouent chacun leur
-  tranche, `checks` agrège N verdicts, une tranche retirée à la main fait échouer l'agrégation, et `drwil verify` joue toujours
+- **Incrément 3 — shards de l'e2e** [AI] : déclarer `shards: 2` sur le contrôle `e2e` de `.drwil/ia-first.json`, et lui faire lire
+  `DRWIL_SHARD_INDEX` / `DRWIL_SHARD_TOTAL` (`--shard=i/N`). Critère de sortie : sur une PR de test, 2 jobs jouent chacun leur
+  tranche, `checks` agrège 2 verdicts, une tranche retirée à la main fait échouer l'agrégation, et `drwil verify` joue toujours
   l'e2e en un seul passage.
 
 ## 7. Reprise
 
-- **Dernier état** (2026-11-11) : brief révisé pour le kit 0.11.1 (shards, rejeu évité), rien d'implémenté ; deux points à décider.
+- **Dernier état** (2026-11-11) : brief révisé pour le kit 0.11.1 (shards, rejeu évité), rien d'implémenté ; un point à décider.
 - **Travail non commité** : la révision de ce brief, sur la branche `fiche/ci-allegee-shards`.
-- **Prochaine étape** : [decision] le demandeur tranche N et la zone du projet du workflow, puis lance le chantier (`/drwil-start`).
+- **Prochaine étape** : [decision] le demandeur tranche la zone du projet du workflow, puis lance le chantier (`/drwil-start`).
