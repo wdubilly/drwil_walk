@@ -31,6 +31,7 @@ jobs:
           echo "5bc41815076e6ed6ef8fbecc9d9b75bcae31f39029ceb55da08086315316e3ba  gitleaks.tar.gz" | sha256sum -c -
           mkdir -p ~/.local/bin && tar -xzf gitleaks.tar.gz -C ~/.local/bin gitleaks && rm gitleaks.tar.gz
           ~/.local/bin/gitleaks version
+      # drwil-project-begin steps
       # Le contrôle coverage-diff-app (QUA-004) lit le rapport de c8 avec diff-cover, outil Python : sans lui,
       # le contrôle serait « non exécuté » (QUA-013). Version épinglée ; pipx est fourni par ubuntu-latest.
       # Il compare à origin/master : l'historique complet vient de fetch-depth: 0 ci-dessus.
@@ -56,6 +57,7 @@ jobs:
       - name: Install the e2e browser (Playwright Chromium)
         run: npx playwright install --with-deps chromium
         working-directory: app
+      # drwil-project-end steps
       - run: node .githooks/run-checks.mjs
       # Les captures de l'accueil prises par l'e2e (QUA-020), à télécharger : le demandeur n'a pas de casque
       # et juge le rendu dessus. Publiées même si un contrôle échoue, pour voir ce qui a été rendu.
@@ -82,6 +84,8 @@ jobs:
           else
             node .githooks/base-checks.mjs --base "$base"
           fi
+  # drwil-project-begin jobs
+  # drwil-project-end jobs
   # No branch protection is possible on a private repository on the free plan
   # (GitHub.com's "Merge" button stays unconditional): only an after-the-fact
   # alert is possible. Triggers only on a push to the main branch (not on

@@ -94,13 +94,13 @@ préparé, hors dépôt : `docs/contracts.md` ne se commite qu'en BUILD) et y ra
   protection de `master` inchangée — `QUA-013`, `QUA-020`.
 - **Incrément 3 — zone du projet du workflow** [AI] : placer les étapes ajoutées à la main dans une zone du projet de
   `.github/workflows/ia-first.yml`. Critère de sortie : `npx drwil doctor` ne signale plus de trace de montée sur ce fichier, et la CI est verte.
-- **Incrément 4 — shards de l'e2e** [AI] : déclarer `shards: 2` sur le contrôle `e2e` de `.drwil/ia-first.json`, et lui faire lire
+- **Incrément 4 — shards de l'e2e** [AI] : réserver le contrôle `e2e` à la CI (`"runAt": ["ci"]`, incrément 2 bis, rattaché à ce lot car il porte sur la même déclaration), déclarer `shards: 2` sur ce contrôle de `.drwil/ia-first.json`, et lui faire lire
   `DRWIL_SHARD_INDEX` / `DRWIL_SHARD_TOTAL` (`--shard=i/N`). Critère de sortie : sur une PR de test, 2 jobs jouent chacun leur
   tranche, `checks` agrège 2 verdicts, une tranche retirée à la main fait échouer l'agrégation, et `drwil verify` joue toujours
   l'e2e en un seul passage.
 
 ## 7. Reprise
 
-- **Dernier état** (2026-11-11) : lots 1 et 2 faits et commités (lot 2 : cache npm par `setup-node` sur les deux `package-lock.json`, cache `~/.cache/ms-playwright` clé `app/package-lock.json`, installations conservées) ; `run-checks` vert. La durée avant/après est à relever sur la CI (journal, [human]).
+- **Dernier état** (2026-11-11) : lots 1 à 3 faits (lot 3 : marqueurs `drwil-project-begin/end` `steps` autour de diff-cover, dépendances de `app/` et Chromium, et `jobs` vide avant `alert-if-ci-broken` ; `npx drwil doctor` ne signale plus de trace de montée). La durée avant/après est à relever sur la CI (journal, [human]).
 - **Travail non commité** : aucun (hors cette section).
-- **Prochaine étape** : lot 3 — zone du projet du workflow (marqueurs `drwil-project-begin/end`, doc 0.11.1), puis lot 4 — shards de l'e2e ; le `runAt: ["ci"]` (incrément 2 bis) est à vérifier dans ce plan de lots.
+- **Prochaine étape** : lot 4 — `runAt: ["ci"]` (incrément 2 bis, rattaché ici) puis `shards: 2` sur le contrôle `e2e`, `--shard` lu depuis `DRWIL_SHARD_INDEX`/`DRWIL_SHARD_TOTAL`. Attention : le modèle 0.11.1 de `.github/workflows/ia-first.yml` (jobs `plan`, `shards`, `checks`) place la zone `steps` en fin du job `checks` ; les installations (dépendances de `app/`, Chromium) devront aussi tourner dans le job des tranches, donc y être placées (zone `jobs` ou modèle) ; le step « captures » (hors zone aujourd'hui) est à y rattacher.
