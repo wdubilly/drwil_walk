@@ -16,6 +16,15 @@ files:
   - app/src/city/city-args.test.ts
   - app/src/city/city-photos.test.ts
   - app/data/villes.json
+  - app/data/rome.json
+  - app/data/rome-boucle.json
+  - app/assets/materials/rome.json
+  - app/assets/materials/rome-photos.json
+  - app/src/city/cities-extract.test.ts
+  - app/src/city/route-loop.test.ts
+  - app/src/route/itineraries.test.ts
+  - app/src/ui/home.test.ts
+  - app/src/ui/route-choice.test.ts
   - docs/architecture.md
   - docs/features.md
 -->
@@ -104,6 +113,5 @@ relevé réel (durée, poids écrit, échecs, limite de 1 000 résultats Panoram
 
 ## 8. Reprise
 
-- **Dernier état** (2026-11-11) : lot 3 fait (code, tests, docs). L'entrée Rome n'est pas commitée dans `app/data/villes.json`.
-- **Bloquant** : `app/src/city/cities-extract.test.ts` et `app/src/city/route-loop.test.ts` (hors bloc scope) énumèrent `CITIES` ; il faut les ajouter au périmètre pour y inscrire Rome (repères et bornes de longueur), puis relancer la commande.
-- **Prochaine étape** : décision humaine sur l'élargissement du périmètre, puis lots [humain] 1 et 2 à juger, incrément 4.
+- **Dernier état** (2026-11-11) : lots 3 faits ; périmètre élargi sur décision humaine (« Traiter maintenant ») aux tests qui énumèrent le catalogue (city, route, ui) et aux données de Rome ; Rome commitée (données de l'essai 2), tests adaptés (repères, borne de longueur 2 500–3 800 m, boucle mesurée à 3 113 m).
+- **Prochaine étape** : verify, puis clôture ; lots [humain] 1 et 2 et rendu au casque restent à juger par l'humain.
