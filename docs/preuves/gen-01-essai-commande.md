@@ -1,7 +1,7 @@
 # Preuve de clôture — gen-01-essai-commande
 
 **Clos le** : 2026-11-11
-**Commit vérifié** : `a66ce7cffd` — verdict `drwil verify` : PASS
+**Commit vérifié** : `301e88a937` — verdict `drwil verify` : PASS
 **Critères acceptés** : empreinte `sha256:29a1b41a066b4cf5`, acceptés par l'humain au lancement le 2026-11-11
 
 critères de ce chantier, et ce qui les prouve aujourd'hui encore (rejoués par `drwil verify` après la clôture) :
