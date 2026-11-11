@@ -553,3 +553,5 @@ One entry per closed project, most recent last.
 - Limites : la zone `steps` du kit ne couvre ni les installations avant `run-checks` ni le job des tranches : une montée du kit
   les réécrirait (installations de `app/` et de Chromium, diff-cover). À vérifier après chaque montée du kit (`npx drwil doctor`,
   `git diff` du workflow) ; le correctif est une PR dans le kit drwil (zone avant les contrôles et dans le job des tranches) ; le test `e2e/eclairage-ambiance` est proche de son plafond de 20 s (instable).
+
+- **Preuve de clôture** : `docs/preuves/ci-allegee.md`.
