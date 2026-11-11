@@ -17,10 +17,10 @@ function setup(itineraries?: readonly Itinerary[]) {
 }
 
 describe("choix de l'itinéraire", () => {
-  it("montre quatre cartes avec une image, Doha Souq Waqif choisi par défaut", () => {
+  it("montre une carte par itinéraire avec une image, Doha Souq Waqif choisi par défaut", () => {
     const { choice, cards, radio } = setup();
     expect(choice.element.querySelector("legend")?.textContent).toBe("Itinéraire");
-    expect(cards).toHaveLength(4);
+    expect(cards).toHaveLength(ITINERARIES.length);
     for (const card of cards) expect(card.querySelector("img")?.getAttribute("src")).toMatch(/\.svg$/);
     expect(radio("Doha Souq Waqif").checked).toBe(true);
     expect(choice.readId()).toBe(DEFAULT_ITINERARY_ID);
@@ -37,7 +37,7 @@ describe("choix de l'itinéraire", () => {
     expect(choice.readId()).toBe(DEFAULT_ITINERARY_ID);
   });
 
-  it("aucun itinéraire livré n'est « Bientôt » : les quatre cartes se choisissent", () => {
+  it("aucun itinéraire livré n'est « Bientôt » : toutes les cartes se choisissent", () => {
     const { cards, radio } = setup();
     expect(cards.filter((c) => c.textContent.includes(SOON_LABEL))).toEqual([]);
     expect(radio("Pune FC Road").disabled).toBe(false);
@@ -72,11 +72,11 @@ describe("choix de l'itinéraire", () => {
   it("APP-003: une ville créée par la commande, sans illustration, reçoit le visuel commun une seule fois", () => {
     const created: Itinerary = { id: "ville-creee", name: "Ville créée", place: "Quelque part", available: true };
     const { cards } = setup([...ITINERARIES, created]);
-    const image = cards[4]?.querySelector("img") as HTMLImageElement;
+    const image = cards[ITINERARIES.length]?.querySelector("img") as HTMLImageElement;
     expect(image.getAttribute("src")).toMatch(/ville-creee\.svg$/);
     image.dispatchEvent(new (image.ownerDocument.defaultView as unknown as { Event: typeof Event }).Event("error"));
     expect(image.getAttribute("src")).toMatch(/libre\.svg$/);
-    expect(cards[4]?.textContent).toContain("Ville créée");
-    expect(cards[4]?.textContent).toContain("Quelque part");
+    expect(cards[ITINERARIES.length]?.textContent).toContain("Ville créée");
+    expect(cards[ITINERARIES.length]?.textContent).toContain("Quelque part");
   });
 });
