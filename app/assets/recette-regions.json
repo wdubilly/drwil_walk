@@ -16,7 +16,18 @@
     "caucase": {"facadeSet":{"value":"caucase","origin":"regle"}},
     "france-nord": {"facadeSet":{"value":"france-nord","origin":"regle"}}
   },
-  "districts": {},
+  "districts": {
+    "souq-waqif": {
+      "region": "golfe",
+      "bounds": {"south":25.284,"west":51.529,"north":25.29,"east":51.538},
+      "palette": {"value":{"ground":11047275,"road":6181958,"buildings":[14929829,13808780,13212267,15720640]},"origin":"regle"}
+    },
+    "pune-vieille-ville": {
+      "region": "inde",
+      "bounds": {"south":18.5125,"west":73.852,"north":18.5215,"east":73.8615},
+      "facadeSet": {"value":"inde","origin":"regle"}
+    }
+  },
   "jeuxFacades": {
     "base": {
       "provencale": [

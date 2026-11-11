@@ -93,6 +93,10 @@ Génération `npm run city` exclusivement sur PC de développement. Tests Vitest
 - `app/src/city/toon.ts`, `app/src/city/outlines.ts` : toon à quatre paliers et contours selon profil.
 - `app/src/city/facade-seed.ts`, `app/src/city/facade-family.ts`, `app/src/city/facade-palettes.ts`, `app/src/city/facade-plan.ts`, `app/src/city/facade-parts.ts`, `app/src/city/facades.ts` :
   graine OSM, familles et palettes régionales, voisins distincts, détail borné (APP-008).
+- `app/src/city/region-palette.ts`, `app/src/city/recipe-data.ts`, `app/assets/recette-regions.json` : la recette en données
+  (APP-008) : une entrée par région, une surcharge par quartier trouvée par son emprise (`districtAt`), repli champ par champ
+  quartier → région → « ailleurs », origine de chaque élément (`releve` exige une `source`, sinon refus ; APP-013). Seule la
+  palette de sol, de voies et de bâtiments lit déjà le quartier ; les façades lisent encore la région seule.
 - `app/src/city/soup.ts`, `app/src/city/near-route.ts` : géométrie partagée, proximité du parcours.
 - `app/src/city/props.ts`, `app/src/city/furniture.ts` : arbres/mobilier et dimensions réelles, axe de la rue (APP-009).
 - `app/src/city/lamp-rule.ts` : mâts produits par règle, provenance et refus (APP-013).

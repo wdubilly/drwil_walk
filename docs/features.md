@@ -106,6 +106,8 @@ sur un vrai casque : `docs/intentions/essai-casque-profils-graphiques.md`.
 - Façades procédurales (APP-008) : identifiant OSM comme graine, quatre familles adaptées à la région,
   aucun voisin identique, fenêtres, portes, volets, balcons et corniches à moins de 80 m du parcours.
   Teintes de l'Inde à Pune, sable et bois du Golfe à Doha. Performance réduit le détail.
+  Les teintes d'un quartier (souk Waqif, Vieille ville de Pune) se surchargent dans `app/assets/recette-regions.json`, avec
+  l'origine de chaque élément ; teintes inchangées, pas encore jugées au casque.
 - Matériaux locaux (APP-012) : appliqués automatiquement quand une bibliothèque embarquée existe, absents en Performance.
   Textures CC0 recolorées, teinte/échelle/usure déterministes sans doublon voisin, aucun réseau.
 - Arbres Quaternius CC0 : quatre variantes de 413–454 triangles, cap et taille reproductibles, au plus 300.

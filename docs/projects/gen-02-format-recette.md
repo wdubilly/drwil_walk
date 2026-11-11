@@ -98,12 +98,16 @@ commun, la surcharge par quartier, l'origine des éléments, et des teintes appu
 
 ## 7. Reprise
 
-- **Dernier état** (2026-11-11) : lot 2 fait. Les régions existantes sont lues de `app/assets/recette-regions.json` : palettes de sol,
-  de voies et de bâtiments (`paletteOf`, `RECIPE` dans `app/src/city/region-palette.ts`) et jeux de palettes de façade
-  (`jeuxFacades`, chargés et validés par `app/src/city/recipe-data.ts` ; `palettesOf` passe par `recipeFor`). Mêmes teintes
-  qu'avant (extraites du code), toutes d'origine `regle`. `PALETTES_PER_FAMILY` est défini dans `app/src/city/facade-family.ts` (évite un
-  cycle d'import), ré-exporté par `app/src/city/facade-palettes.ts`. Les figurants lisent déjà leur table de région en données
-  (`app/assets/figurants-catalogue.json`, mêmes noms de région) : non fusionnée dans le fichier de recette.
-- **Travail non commité** : aucun après le commit du lot 2.
-- **Prochaine étape** : lot 3 (surcharge de quartier et preuve de l'origine) ; lot 4 [human] jugement des teintes. Les trois
+- **Dernier état** (2026-11-11) : lot 3 fait. Une surcharge de quartier se trouve par l'emprise (`bounds`) de ses données
+  (`districtAt`, `app/src/city/region-palette.ts`) ; `paletteOf` la lit. Deux quartiers livrés dans
+  `app/assets/recette-regions.json` : `souq-waqif` (palette du Golfe) et `pune-vieille-ville` (jeu de façade `inde`), mêmes teintes
+  qu'avant, origine `regle` : aucune teinte inventée sans référence. Preuve d'origine : `readRecipe` refuse un élément `releve`
+  sans `source` (APP-013) ; test sur le fichier livré. Lots 1 et 2 : schéma, régions migrées (`app/src/city/recipe-data.ts`).
+- **Limites hors cadre (non soumises, sans fiche créée)** : (1) intention « figurants-format-recette » (à venir, déjà identifiée,
+  sans réponse de l'humain) ; (2) les façades et les matériaux lisent encore la région seule : `app/src/city/souq.ts` et `app/src/city/cities.ts` appellent
+  `regionOf` / `palettesOf(region)` sans quartier, donc la surcharge de quartier ne joue que sur la palette de sol, de voies et de
+  bâtiments (fichiers hors bloc scope : `app/src/city/souq.ts`, `app/src/city/cities.ts`, `app/src/city/facades.ts`,
+  `app/src/city/facade-plan.ts`, `app/src/city/buildings.ts`) ; intention prévue « facades-quartier-recette ».
+- **Travail non commité** : aucun après le commit du lot 3.
+- **Prochaine étape** : lot 4 [human] jugement des teintes (souk et Pune, captures ou casque). Les trois
   points [decision] de la section 5 restent à trancher par l'humain.

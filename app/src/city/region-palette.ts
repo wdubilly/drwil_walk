@@ -11,7 +11,11 @@ import type { Palette } from "./souq-data.ts";
 /** Relevé (OSM, photo) ou ajouté par règle : une preuve refuse un élément ajouté présenté comme relevé (APP-013). */
 export type Origin = "releve" | "regle";
 
-export interface RecipeElement<T> { value: T; origin: Origin }
+/** `source` dit d'où vient un élément relevé (photo, identifiant OSM) : sans elle, un élément ne peut pas se dire relevé. */
+export interface RecipeElement<T> { value: T; origin: Origin; source?: string }
+
+/** L'emprise d'un quartier, en degrés : un lieu qui y tombe prend la surcharge du quartier. */
+export interface Bounds { south: number; west: number; north: number; east: number }
 
 /** Les champs d'une entrée ; tous facultatifs sauf dans « ailleurs », qui les porte tous. */
 export interface RecipeEntry {
@@ -21,7 +25,7 @@ export interface RecipeEntry {
 
 export interface RecipeFile {
   regions: Record<string, RecipeEntry> & { ailleurs: Required<RecipeEntry> };
-  districts: Record<string, RecipeEntry & { region?: string }>;
+  districts: Record<string, RecipeEntry & { region?: string; bounds?: Bounds }>;
 }
 
 export interface Recipe { palette: RecipeElement<Palette>; facadeSet: RecipeElement<string> }
@@ -34,7 +38,9 @@ function readElement<T>(raw: unknown, where: string, readValue: (v: unknown) => 
   if (raw.origin !== "releve" && raw.origin !== "regle") throw new Error(`${where} : origine absente ou inconnue`);
   const value = readValue(raw.value);
   if (value === undefined) throw new Error(`${where} : valeur invalide`);
-  return { value, origin: raw.origin };
+  const source = typeof raw.source === "string" && raw.source !== "" ? raw.source : undefined;
+  if (raw.origin === "releve" && source === undefined) throw new Error(`${where} : un élément relevé nomme sa source`);
+  return source === undefined ? { value, origin: raw.origin } : { value, origin: raw.origin, source };
 }
 
 const readPalette = (v: unknown): Palette | undefined =>
@@ -42,6 +48,13 @@ const readPalette = (v: unknown): Palette | undefined =>
     ? { ground: v.ground, road: v.road, buildings: v.buildings }
     : undefined;
 const readName = (v: unknown): string | undefined => (typeof v === "string" && v !== "" ? v : undefined);
+
+function readBounds(raw: unknown, where: string): Bounds {
+  if (!isObject(raw) || ![raw.south, raw.west, raw.north, raw.east].every((n) => typeof n === "number" && Number.isFinite(n))) throw new Error(`${where} : emprise invalide`);
+  const b = raw as unknown as Bounds;
+  if (b.south > b.north || b.west > b.east) throw new Error(`${where} : emprise invalide`);
+  return { south: b.south, west: b.west, north: b.north, east: b.east };
+}
 
 function readEntry(raw: unknown, where: string): RecipeEntry {
   if (!isObject(raw)) throw new Error(`${where} : entrée attendue`);
@@ -62,7 +75,8 @@ export function readRecipe(raw: unknown): RecipeFile {
   for (const [name, entry] of Object.entries(isObject(raw.districts) ? raw.districts : {})) {
     const region = isObject(entry) ? entry.region : undefined;
     if (region !== undefined && typeof region !== "string") throw new Error(`districts.${name} : région invalide`);
-    districts[name] = { ...readEntry(entry, `districts.${name}`), ...(region === undefined ? {} : { region }) };
+    const bounds = isObject(entry) && entry.bounds !== undefined ? readBounds(entry.bounds, `districts.${name}.bounds`) : undefined;
+    districts[name] = { ...readEntry(entry, `districts.${name}`), ...(region === undefined ? {} : { region }), ...(bounds === undefined ? {} : { bounds }) };
   }
   return { regions: regions as RecipeFile["regions"], districts };
 }
@@ -75,8 +89,14 @@ export function recipeFor(file: RecipeFile, region: string, district?: string): 
   return { palette: pick("palette"), facadeSet: pick("facadeSet") };
 }
 
+/** Le quartier dont l'emprise contient l'origine (le premier du fichier), s'il y en a un : aucun nom de quartier n'est dans le code. */
+export function districtAt(file: RecipeFile, origin: LonLat): string | undefined {
+  const [lon, lat] = origin;
+  return Object.entries(file.districts).find(([, d]) => d.bounds && lat >= d.bounds.south && lat <= d.bounds.north && lon >= d.bounds.west && lon <= d.bounds.east)?.[0];
+}
+
 /** La recette des régions, lue une fois de `app/assets/recette-regions.json` : un fichier mal formé fait échouer le chargement. */
 export const RECIPE: RecipeFile = readRecipe(data);
 
-/** La palette du sol, des voies et des bâtiments de la région de l'origine, lue de la recette ; « ailleurs » en repli. */
-export const paletteOf = (origin: LonLat): Palette => recipeFor(RECIPE, regionOf(origin)).palette.value;
+/** La palette du sol, des voies et des bâtiments du quartier de l'origine, sinon de sa région, lue de la recette ; « ailleurs » en repli. */
+export const paletteOf = (origin: LonLat): Palette => recipeFor(RECIPE, regionOf(origin), districtAt(RECIPE, origin)).palette.value;

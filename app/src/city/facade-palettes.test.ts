@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { RECIPE, paletteOf, readRecipe, recipeFor } from "./region-palette.ts";
+import { RECIPE, districtAt, paletteOf, readRecipe, recipeFor } from "./region-palette.ts";
 import { readFacadeSets, usedSetsOf } from "./recipe-data.ts";
 import type { FamilyId, Region } from "./facade-family.ts";
 import { PALETTES, PALETTES_PER_FAMILY, palettesOf, type DetailPalette } from "./facade-palettes.ts";
@@ -42,9 +42,9 @@ const palette = (ground: number) => ({ value: { ground, road: 2, buildings: [3, 
 const raw = () => ({
   regions: {
     ailleurs: { palette: palette(1), facadeSet: { value: "base", origin: "regle" } },
-    golfe: { palette: { ...palette(10), origin: "releve" } },
+    golfe: { palette: { ...palette(10), origin: "releve", source: "photo Panoramax n°1" } },
   },
-  districts: { souq: { facadeSet: { value: "souq", origin: "releve" } }, ancien: { region: "golfe", facadeSet: { value: "x", origin: "regle" } } },
+  districts: { souq: { facadeSet: { value: "souq", origin: "releve", source: "osm:way/1" }, bounds: { south: 0, west: 0, north: 1, east: 1 } }, ancien: { region: "golfe", facadeSet: { value: "x", origin: "regle" } } },
 });
 
 describe("recette en données", () => {
@@ -56,13 +56,13 @@ describe("recette en données", () => {
 
   it("APP-008: un champ absent d'une région vient d'« ailleurs », un champ présent la distingue", () => {
     const recipe = recipeFor(readRecipe(raw()), "golfe");
-    expect(recipe.palette).toEqual({ value: { ground: 10, road: 2, buildings: [3, 4] }, origin: "releve" });
+    expect(recipe.palette).toEqual({ value: { ground: 10, road: 2, buildings: [3, 4] }, origin: "releve", source: "photo Panoramax n°1" });
     expect(recipe.facadeSet.value).toBe("base");
   });
 
   it("APP-008: la surcharge d'un quartier l'emporte sur la région, champ par champ, sans code propre au quartier", () => {
     const file = readRecipe(raw());
-    expect(recipeFor(file, "golfe", "souq").facadeSet).toEqual({ value: "souq", origin: "releve" });
+    expect(recipeFor(file, "golfe", "souq").facadeSet).toEqual({ value: "souq", origin: "releve", source: "osm:way/1" });
     expect(recipeFor(file, "golfe", "souq").palette.value.ground).toBe(10);
     expect(recipeFor(file, "inde", "inconnu").palette.value.ground).toBe(1);
     expect(recipeFor(file, "inde", "ancien").palette.value.ground).toBe(10);
@@ -75,6 +75,27 @@ describe("recette en données", () => {
     const wrong = raw();
     (wrong.districts.souq.facadeSet as { origin: string }).origin = "photo";
     expect(() => readRecipe(wrong)).toThrow("origine");
+  });
+
+  it("APP-013: un élément présenté comme relevé sans source est refusé, un élément de règle n'en a pas besoin", () => {
+    const unsourced = raw();
+    delete (unsourced.districts.souq.facadeSet as { source?: string }).source;
+    expect(() => readRecipe(unsourced)).toThrow("source");
+    const rule = raw();
+    (rule.districts.souq.facadeSet as { origin: string }).origin = "regle";
+    expect(readRecipe(rule).districts["souq"]?.facadeSet?.origin).toBe("regle");
+  });
+
+  it("APP-008: le quartier se trouve par l'emprise de ses données, une emprise renversée est refusée", () => {
+    const file = readRecipe(raw());
+    expect(districtAt(file, [0.5, 0.5])).toBe("souq");
+    expect(districtAt(file, [2, 2])).toBeUndefined();
+    expect(districtAt(file, [0.5, -1])).toBeUndefined();
+    const bad = raw();
+    (bad.districts.souq as { bounds: unknown }).bounds = { south: 1, west: 0, north: 0, east: 1 };
+    expect(() => readRecipe(bad)).toThrow("emprise");
+    (bad.districts.souq as { bounds: unknown }).bounds = 3;
+    expect(() => readRecipe(bad)).toThrow("emprise");
   });
 
   it("APP-008: une recette mal formée est refusée avec sa raison", () => {
@@ -106,6 +127,15 @@ describe("recette des régions existantes migrée", () => {
     expect(paletteOf([5.4, 43.5])).toEqual(paletteOf([-70, -33]));
     const all = [...Object.values(RECIPE.regions), ...Object.values(RECIPE.districts)].flatMap((e) => [e.palette, e.facadeSet]);
     expect(all.filter((e) => e !== undefined).every((e) => e.origin === "regle")).toBe(true);
+  });
+
+  it("APP-008/APP-013: le souk Waqif et la Vieille ville de Pune ont leur quartier en données, même moteur, mêmes teintes qu'avant", () => {
+    expect(districtAt(RECIPE, [51.533, 25.287])).toBe("souq-waqif");
+    expect(districtAt(RECIPE, [73.855, 18.519])).toBe("pune-vieille-ville");
+    expect(districtAt(RECIPE, [51.53, 25.31])).toBeUndefined();
+    expect(recipeFor(RECIPE, "golfe", "souq-waqif").palette).toBe(RECIPE.districts["souq-waqif"]?.palette);
+    expect(paletteOf([51.533, 25.287])).toEqual(RECIPE.regions["golfe"]?.palette?.value);
+    expect(recipeFor(RECIPE, "inde", "pune-vieille-ville").facadeSet.value).toBe("inde");
   });
 
   it("APP-008: une région sans jeu propre garde le jeu de base, les cinq autres le leur", () => {
