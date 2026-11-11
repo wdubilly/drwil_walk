@@ -77,7 +77,8 @@ jobs:
     needs: plan
     if: needs.plan.outputs.skip != 'true' && needs.plan.outputs.count != '0'
     name: shard ${{ matrix.index }}/${{ matrix.total }}
-    runs-on: ubuntu-latest
+    # Image épinglée : sur ubuntu-26.04 (ubuntu-latest), apt ne résout plus ses dépôts et `playwright install --with-deps` échoue.
+    runs-on: ubuntu-24.04
     permissions: { contents: read }
     strategy: { fail-fast: false, matrix: "${{ fromJSON(needs.plan.outputs.matrix) }}" }
     steps:
