@@ -46,7 +46,7 @@ relevé réel (durée, poids écrit, échecs, limite de 1 000 résultats Panoram
 - La ville créée porte l'attribution OpenStreetMap et sa région est déduite sans code propre à la ville — `APP-003`
 - Les photos et couleurs locales produites restent bornées et embarquées — `APP-012`
 - La ville créée se parcourt sur la boucle produite — `APP-002`
-- La ville créée s'efface tête baissée comme les autres — `APP-001`
+- La ville créée s'efface tête baissée comme les autres [human] — `APP-001`
 - Le rapport d'essai relève la durée, le poids écrit et les échecs ; une donnée manquante ou un service en échec laisse la
   commande dans un état net (message clair, rien d'à moitié écrit) — `APP-012`
 - Le rendu de la ville créée vu au casque, sans jugement de beauté [human] — `APP-001`
