@@ -116,4 +116,5 @@ relevé réel (durée, poids écrit, échecs, limite de 1 000 résultats Panoram
 ## 8. Reprise
 
 - **Dernier état** (2026-11-11) : lots 3 faits ; périmètre élargi sur décision humaine (« Traiter maintenant ») aux tests qui énumèrent le catalogue (city, route, ui) et aux données de Rome ; Rome commitée (données de l'essai 2), tests adaptés (repères, borne de longueur 2 500–3 800 m, boucle mesurée à 3 113 m).
+- **Mise à jour** (2026-11-11) : les e2e `profils-graphiques` et `chemins-critiques` comptent désormais les itinéraires dans `app/data/villes.json` (67 e2e verts en local).
 - **Prochaine étape** : verify, puis clôture ; lots [humain] 1 et 2 et rendu au casque restent à juger par l'humain.
