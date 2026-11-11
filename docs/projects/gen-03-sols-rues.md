@@ -14,6 +14,7 @@ files:
   - app/src/city/markings.test.ts
   - app/src/city/walkways.test.ts
   - app/scripts/osm-tags.ts
+  - app/assets/recette-regions.json
   - app/e2e/mobilier-urbain.test.ts
   - docs/architecture.md
   - docs/features.md

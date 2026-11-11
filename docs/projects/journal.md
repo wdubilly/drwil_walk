@@ -579,3 +579,7 @@ One entry per closed project, most recent last.
 ## gen-01-essai-commande
 
 - **Preuve de clôture** : `docs/preuves/gen-01-essai-commande.md`.
+
+## gen-02-format-recette
+
+- **Preuve de clôture** : `docs/preuves/gen-02-format-recette.md`.
