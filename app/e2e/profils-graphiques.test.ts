@@ -1,7 +1,9 @@
+import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { expect, test } from "@playwright/test";
 import { remembered } from "./preferences-helper.ts";
 
+const CITY_COUNT = Object.keys(JSON.parse(readFileSync(new URL("../data/villes.json", import.meta.url), "utf8")) as object).length;
 const iwerBuild = createRequire(import.meta.url).resolve("iwer/build/iwer.min.js");
 interface QuestWindow {
   quest: { quaternion: { set(x: number, y: number, z: number, w: number): void } };
@@ -26,7 +28,7 @@ for (const profile of ["performance", "equilibre", "qualite"] as const) {
     page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
     page.on("request", (r) => { if (!/^(https:\/\/localhost:|data:|blob:)/.test(r.url())) foreign.push(r.url()); });
     await page.goto("/");
-    await expect(page.locator("input")).toHaveCount(5);
+    await expect(page.locator("input")).toHaveCount(CITY_COUNT + 1);
     await page.getByRole("button", { name: "Entrer en réalité mixte" }).click();
     await expect(page.getByRole("status")).toHaveText("Réalité mixte active (immersive-ar)");
     await expect(page.locator("#app")).toHaveAttribute("data-profile", profile);
