@@ -54,6 +54,7 @@ const hasVolume = (building: Building): boolean => building.footprint.length >= 
 export interface FacadeOptions {
   detail: FacadeDetail;
   region: Region;
+  district?: string;
 }
 
 /**

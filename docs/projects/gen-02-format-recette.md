@@ -115,11 +115,11 @@ commun, la surcharge par quartier, l'origine des éléments, et des teintes appu
   `app/assets/recette-regions.json` : `souq-waqif` (palette du Golfe) et `pune-vieille-ville` (jeu de façade `inde`), mêmes teintes
   qu'avant, origine `regle` : aucune teinte inventée sans référence. Preuve d'origine : `readRecipe` refuse un élément `releve`
   sans `source` (APP-013) ; test sur le fichier livré. Lots 1 et 2 : schéma, régions migrées (`app/src/city/recipe-data.ts`).
-- **Limites hors cadre (non soumises, sans fiche créée)** : (1) intention « figurants-format-recette » (à venir, déjà identifiée,
-  sans réponse de l'humain) ; (2) les façades et les matériaux lisent encore la région seule : `app/src/city/souq.ts` et `app/src/city/cities.ts` appellent
-  `regionOf` / `palettesOf(region)` sans quartier, donc la surcharge de quartier ne joue que sur la palette de sol, de voies et de
-  bâtiments (fichiers hors bloc scope : `app/src/city/souq.ts`, `app/src/city/cities.ts`, `app/src/city/facades.ts`,
-  `app/src/city/facade-plan.ts`, `app/src/city/buildings.ts`) ; intention prévue « facades-quartier-recette ».
-- **Travail non commité** : aucun après le commit du lot 3.
+- **Limites hors cadre** : traitées le 2026-11-11 sur réponse « Traiter maintenant » de l'humain (sondage `drwil-limite`) :
+  (1) les figurants lisent leur table de région (champ `figurants` de chaque entrée, avec origine) dans
+  `app/assets/recette-regions.json` ; `app/assets/figurants-catalogue.json` ne garde que types et lieux ; `figurantsTable` fusionne régions
+  et quartiers, `figurantsKeyOf` choisit la clé ; (2) façades et matériaux locaux lisent le quartier (`placeOf`, `district`
+  passé à `planFacade`/`planAll`), mêmes teintes et même rendu qu'avant. Aucune fiche d'intention créée.
+- **Travail non commité** : voir le dernier commit (figurants et façades par quartier) ; rien après.
 - **Prochaine étape** : lot 4 [human] jugement des teintes (souk et Pune, captures ou casque). Les trois
   points [decision] de la section 5 restent à trancher par l'humain.

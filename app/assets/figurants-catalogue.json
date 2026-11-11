@@ -22,22 +22,5 @@
       "vitesseKmh": 3.5,
       "gabarit": { "longueurM": 0.5, "largeurM": 0.55, "hauteurM": 1.7 }
     }
-  },
-  "regions": {
-    "golfe": {
-      "conduite": "droite",
-      "densites": { "chaussee": 1.2, "trottoir": 1.5, "voie-pietonne": 2.5 },
-      "poids": { "berline": 4, "4x4": 4, "taxi": 2, "utilitaire": 1, "deux-roues": 1, "pieton": 1, "flaneur": 1 }
-    },
-    "inde": {
-      "conduite": "gauche",
-      "densites": { "chaussee": 2, "trottoir": 2, "voie-pietonne": 3 },
-      "poids": { "berline": 2, "taxi": 1, "utilitaire": 1, "deux-roues": 6, "pieton": 1, "flaneur": 1 }
-    },
-    "ailleurs": {
-      "conduite": "droite",
-      "densites": { "chaussee": 1, "trottoir": 1, "voie-pietonne": 2 },
-      "poids": { "berline": 4, "4x4": 1, "taxi": 1, "utilitaire": 1, "deux-roues": 1, "pieton": 1, "flaneur": 1 }
-    }
   }
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { RECIPE, districtAt, paletteOf, readRecipe, recipeFor } from "./region-palette.ts";
+import { RECIPE, districtAt, figurantsKeyOf, figurantsTable, paletteOf, placeOf, readRecipe, recipeFor } from "./region-palette.ts";
 import { readFacadeSets, usedSetsOf } from "./recipe-data.ts";
 import type { FamilyId, Region } from "./facade-family.ts";
 import { PALETTES, PALETTES_PER_FAMILY, palettesOf, type DetailPalette } from "./facade-palettes.ts";
@@ -25,7 +25,7 @@ describe("palettes de façades par région", () => {
   });
 
   it("APP-008: deux régions différentes ne partagent aucune palette de maison, d'ancien ou de récent", () => {
-    const sets = [PALETTES, ...OWN.map(palettesOf)];
+    const sets = [PALETTES, ...OWN.map((r) => palettesOf(r))];
     for (const family of COMMON) {
       const all = sets.flatMap((s) => s[family].map(key));
       expect(new Set(all).size).toBe(all.length);
@@ -39,9 +39,10 @@ describe("palettes de façades par région", () => {
 });
 
 const palette = (ground: number) => ({ value: { ground, road: 2, buildings: [3, 4] }, origin: "regle" });
+const setting = (conduite: string) => ({ value: { conduite, densites: {}, poids: {} }, origin: "regle" });
 const raw = () => ({
   regions: {
-    ailleurs: { palette: palette(1), facadeSet: { value: "base", origin: "regle" } },
+    ailleurs: { palette: palette(1), facadeSet: { value: "base", origin: "regle" }, figurants: setting("droite") },
     golfe: { palette: { ...palette(10), origin: "releve", source: "photo Panoramax n°1" } },
   },
   districts: { souq: { facadeSet: { value: "souq", origin: "releve", source: "osm:way/1" }, bounds: { south: 0, west: 0, north: 1, east: 1 } }, ancien: { region: "golfe", facadeSet: { value: "x", origin: "regle" } } },
@@ -101,6 +102,9 @@ describe("recette en données", () => {
   it("APP-008: une recette mal formée est refusée avec sa raison", () => {
     expect(() => readRecipe(null)).toThrow("regions");
     expect(() => readRecipe({ regions: { ailleurs: {} } })).toThrow("ailleurs");
+    const badSide = raw();
+    (badSide.regions.ailleurs.figurants as { value: unknown }).value = { conduite: "milieu" };
+    expect(() => readRecipe(badSide)).toThrow("valeur invalide");
     expect(() => readRecipe({ regions: { ailleurs: 3 } })).toThrow("entrée");
     const bad = raw();
     (bad.regions.golfe.palette as { value: unknown }).value = { ground: -1, road: 2, buildings: [] };
@@ -157,5 +161,37 @@ describe("recette des régions existantes migrée", () => {
     expect(() => readFacadeSets({ base: { ...set, recent: [detail, detail, { ...detail, trim: -1 }] } }, [])).toThrow("illisible");
     expect(() => readFacadeSets({ base: { ...set, recent: [detail, detail, { ...detail, doors: [] }] } }, [])).toThrow("illisible");
     expect(() => readFacadeSets({ base: set, golfe: 3 }, [])).toThrow("golfe.provencale");
+  });
+});
+
+describe("recette : figurants, façades et matériaux par quartier", () => {
+  it("APP-014: la table des figurants porte régions et quartiers, le quartier sans réglage prend celui de sa région", () => {
+    const table = figurantsTable(readRecipe({ ...raw(), regions: { ...raw().regions, golfe: { figurants: setting("gauche") } } }));
+    expect(table).toMatchObject({ ailleurs: { conduite: "droite" }, golfe: { conduite: "gauche" }, ancien: { conduite: "gauche" }, souq: { conduite: "droite" } });
+  });
+
+  it("APP-014: le fichier livré règle golfe à droite et inde à gauche, Souq Waqif et Pune comme leur région, sans changer les réglages d'avant", () => {
+    const table = figurantsTable(RECIPE) as Record<string, { conduite: string; densites: Record<string, number> }>;
+    expect(table["golfe"]?.densites).toEqual({ chaussee: 1.2, trottoir: 1.5, "voie-pietonne": 2.5 });
+    expect(table["inde"]?.conduite).toBe("gauche");
+    expect(table["souq-waqif"]).toBe(table["golfe"]);
+    expect(table["pune-vieille-ville"]).toBe(table["inde"]);
+    expect(figurantsKeyOf([51.533, 25.287])).toBe("souq-waqif");
+    expect(figurantsKeyOf([73.855, 18.519])).toBe("pune-vieille-ville");
+    expect(figurantsKeyOf([51.53, 25.31])).toBe("golfe");
+  });
+
+  it("APP-008: façades et matériaux lisent le quartier du lieu (même jeu qu'avant), puis la région hors quartier", () => {
+    expect(placeOf([73.855, 18.519])).toEqual({ region: "inde", district: "pune-vieille-ville" });
+    expect(placeOf([51.533, 25.287])).toEqual({ region: "golfe", district: "souq-waqif" });
+    expect(placeOf([5.4, 43.5])).toEqual({ region: "provence" });
+    expect(palettesOf("inde", "pune-vieille-ville")).toBe(palettesOf("inde"));
+    expect(palettesOf("golfe", "souq-waqif")).toBe(palettesOf("golfe"));
+  });
+
+  it("APP-008: une surcharge de quartier change le jeu de façade sans code propre au quartier", () => {
+    const file = readRecipe({ ...raw(), districts: { ancien: { region: "golfe", facadeSet: { value: "golfe", origin: "regle" } } } });
+    expect(recipeFor(file, "inde", "ancien").facadeSet.value).toBe("golfe");
+    expect(recipeFor(file, "inde").facadeSet.value).toBe("base");
   });
 });

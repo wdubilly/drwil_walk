@@ -21,5 +21,5 @@ export { PALETTES_PER_FAMILY };
 /** Le jeu de base : celui de la Provence et le repli d'une région inconnue (les teintes d'avant les régions). */
 export const PALETTES: PaletteSet = FACADE_SETS["base"] as PaletteSet;
 
-/** Le jeu de palettes d'une région ; repli sur le jeu de base quand la recette ne la décrit pas. */
-export const palettesOf = (region: Region): PaletteSet => FACADE_SETS[recipeFor(RECIPE, region).facadeSet.value] as PaletteSet;
+/** Le jeu de palettes d'un lieu : celui de son quartier s'il en porte un, sinon de sa région ; repli sur le jeu de base. */
+export const palettesOf = (region: Region, district?: string): PaletteSet => FACADE_SETS[recipeFor(RECIPE, region, district).facadeSet.value] as PaletteSet;

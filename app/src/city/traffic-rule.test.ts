@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import bundled from "../../assets/figurants-catalogue.json" with { type: "json" };
+import { bundledData as bundled } from "./traffic-assets.ts";
 import { createPath, pointAt } from "../route/path.ts";
 import type { Road } from "./souq-data.ts";
 import { readCatalogue, type Catalogue } from "./traffic-catalog.ts";
@@ -50,7 +50,7 @@ describe("moteur de la ville vivante", () => {
     expect(plan([street("primary", 5)], readCatalogue(empty))).toEqual([]);
     expect(planTraffic([street("primary", 5)], [], route, catalogue, "golfe", new Set(["character-male-a"]), lots)).toEqual([]);
     const lone = structuredClone<typeof bundled>(bundled);
-    lone.regions.golfe.densites = { chaussee: 1 } as typeof lone.regions.golfe.densites;
+    lone.regions.golfe.densites = { chaussee: 1 };
     expect(plan([street("pedestrian", 5)], readCatalogue(lone))).toEqual([]);
     // Un type dont un seul modèle est chargé n'utilise que celui-là.
     const vans = planTraffic([street("primary", 5)], [], route, catalogue, "golfe", new Set(["van"]), lots);
@@ -72,7 +72,7 @@ describe("moteur de la ville vivante", () => {
     expect(strip(plan([street("primary", 8)], catalogue, "provence"))).toEqual(strip(plan([street("primary", 8)], catalogue, "ailleurs")));
     const lane = { lieu: "chaussee" as const, points: [{ x: 0, z: 0 }, { x: 400, z: 0 }], seed: 1, bothWays: false, factor: 1 };
     const one = structuredClone<typeof bundled>(bundled);
-    one.regions.golfe.poids = { "deux-roues": 1 } as typeof one.regions.golfe.poids;
+    one.regions.golfe.poids = { "deux-roues": 1 };
     expect(new Set(laneAgents(lane, readCatalogue(one), "golfe", models).map((a) => a.type))).toEqual(new Set(["deux-roues"]));
   });
 });

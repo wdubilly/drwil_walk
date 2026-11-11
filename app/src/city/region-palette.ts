@@ -1,7 +1,7 @@
 // La palette du sol, des voies et des bâtiments d'une ville, déduite de sa région (APP-008) : aucune n'est écrite par ville,
 // une ville créée par la commande en reçoit une sans code. Une région sans jeu propre prend celui d'« ailleurs ».
 import type { LonLat } from "../route/geo.ts";
-import { regionOf } from "./facade-family.ts";
+import { regionOf, type Region } from "./facade-family.ts";
 import data from "../../assets/recette-regions.json" with { type: "json" };
 import type { Palette } from "./souq-data.ts";
 
@@ -21,6 +21,8 @@ export interface Bounds { south: number; west: number; north: number; east: numb
 export interface RecipeEntry {
   palette?: RecipeElement<Palette>;
   facadeSet?: RecipeElement<string>;
+  /** Le réglage des figurants (APP-014) : le moteur du catalogue (`traffic-catalog.ts`) en valide le détail. */
+  figurants?: RecipeElement<Record<string, unknown>>;
 }
 
 export interface RecipeFile {
@@ -28,7 +30,7 @@ export interface RecipeFile {
   districts: Record<string, RecipeEntry & { region?: string; bounds?: Bounds }>;
 }
 
-export interface Recipe { palette: RecipeElement<Palette>; facadeSet: RecipeElement<string> }
+export interface Recipe { palette: RecipeElement<Palette>; facadeSet: RecipeElement<string>; figurants: RecipeElement<Record<string, unknown>> }
 
 const isObject = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
 const isColour = (v: unknown): v is number => Number.isInteger(v) && (v as number) >= 0 && (v as number) <= 0xffffff;
@@ -47,6 +49,7 @@ const readPalette = (v: unknown): Palette | undefined =>
   isObject(v) && isColour(v.ground) && isColour(v.road) && Array.isArray(v.buildings) && v.buildings.length > 0 && v.buildings.every(isColour)
     ? { ground: v.ground, road: v.road, buildings: v.buildings }
     : undefined;
+const readSetting = (v: unknown): Record<string, unknown> | undefined => (isObject(v) && (v.conduite === "droite" || v.conduite === "gauche") ? v : undefined);
 const readName = (v: unknown): string | undefined => (typeof v === "string" && v !== "" ? v : undefined);
 
 function readBounds(raw: unknown, where: string): Bounds {
@@ -61,6 +64,7 @@ function readEntry(raw: unknown, where: string): RecipeEntry {
   const entry: RecipeEntry = {};
   if (raw.palette !== undefined) entry.palette = readElement(raw.palette, `${where}.palette`, readPalette);
   if (raw.facadeSet !== undefined) entry.facadeSet = readElement(raw.facadeSet, `${where}.facadeSet`, readName);
+  if (raw.figurants !== undefined) entry.figurants = readElement(raw.figurants, `${where}.figurants`, readSetting);
   return entry;
 }
 
@@ -70,7 +74,7 @@ export function readRecipe(raw: unknown): RecipeFile {
   const regions: Record<string, RecipeEntry> = {};
   for (const [name, entry] of Object.entries(raw.regions)) regions[name] = readEntry(entry, `regions.${name}`);
   const fallback = regions.ailleurs;
-  if (!fallback?.palette || !fallback.facadeSet) throw new Error("recette : « ailleurs » doit porter tous les champs");
+  if (!fallback?.palette || !fallback.facadeSet || !fallback.figurants) throw new Error("recette : « ailleurs » doit porter tous les champs");
   const districts: RecipeFile["districts"] = {};
   for (const [name, entry] of Object.entries(isObject(raw.districts) ? raw.districts : {})) {
     const region = isObject(entry) ? entry.region : undefined;
@@ -86,7 +90,7 @@ export function recipeFor(file: RecipeFile, region: string, district?: string): 
   const hood = district === undefined ? undefined : file.districts[district];
   const own = file.regions[hood?.region ?? region];
   const pick = <K extends keyof Recipe>(key: K): Recipe[K] => (hood?.[key] ?? own?.[key] ?? file.regions.ailleurs[key]) as Recipe[K];
-  return { palette: pick("palette"), facadeSet: pick("facadeSet") };
+  return { palette: pick("palette"), facadeSet: pick("facadeSet"), figurants: pick("figurants") };
 }
 
 /** Le quartier dont l'emprise contient l'origine (le premier du fichier), s'il y en a un : aucun nom de quartier n'est dans le code. */
@@ -100,3 +104,20 @@ export const RECIPE: RecipeFile = readRecipe(data);
 
 /** La palette du sol, des voies et des bâtiments du quartier de l'origine, sinon de sa région, lue de la recette ; « ailleurs » en repli. */
 export const paletteOf = (origin: LonLat): Palette => recipeFor(RECIPE, regionOf(origin), districtAt(RECIPE, origin)).palette.value;
+
+/** La région d'un lieu et, s'il tombe dans l'emprise d'un quartier de la recette, ce quartier : façades et matériaux en lisent la surcharge. */
+export function placeOf(origin: LonLat): { region: Region; district?: string } {
+  const district = districtAt(RECIPE, origin);
+  return district === undefined ? { region: regionOf(origin) } : { region: regionOf(origin), district };
+}
+
+/** La clé du réglage des figurants d'un lieu : son quartier s'il en a un, sinon sa région (la table ci-dessous porte les deux). */
+export const figurantsKeyOf = (origin: LonLat): string => districtAt(RECIPE, origin) ?? regionOf(origin);
+
+/** La table des figurants lue de la recette, une entrée par région et par quartier, repli de champ comme pour les palettes. */
+export function figurantsTable(file: RecipeFile): Record<string, unknown> {
+  const table: Record<string, unknown> = {};
+  for (const name of Object.keys(file.regions)) table[name] = recipeFor(file, name).figurants.value;
+  for (const [name, d] of Object.entries(file.districts)) table[name] = recipeFor(file, d.region ?? "ailleurs", name).figurants.value;
+  return table;
+}
