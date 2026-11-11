@@ -27,6 +27,7 @@ files:
   - app/src/ui/route-choice.test.ts
   - app/e2e/profils-graphiques.test.ts
   - app/e2e/chemins-critiques.test.ts
+  - .github/workflows/ia-first.yml
   - docs/architecture.md
   - docs/features.md
 -->
