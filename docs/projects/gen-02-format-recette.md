@@ -19,6 +19,14 @@ files:
   - app/assets/recette-regions.json
   - app/src/city/recipe-data.ts
   - app/e2e/facades-batiments.test.ts
+  - app/src/city/souq.ts
+  - app/src/city/facades.ts
+  - app/src/city/facade-plan.ts
+  - app/src/city/buildings.ts
+  - app/src/city/material-mesh.ts
+  - app/src/city/traffic.ts
+  - app/src/city/traffic-assets.ts
+  - app/src/city/traffic-assets.test.ts
   - docs/architecture.md
   - docs/features.md
 -->
