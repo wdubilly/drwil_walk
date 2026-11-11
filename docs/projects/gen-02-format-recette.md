@@ -57,8 +57,8 @@ commun, la surcharge par quartier, l'origine des éléments, et des teintes appu
   élément ajouté présenté comme relevé — `APP-013`
 - Les figurants lisent leur table de région dans le même format — `APP-014`
 - Quest, PC et tablette montrent la même recette — `APP-015`
-- La ville reste effacée tête baissée avec la recette appliquée — `APP-001`
-- Les teintes de chaque région sont jugées au casque ou sur captures [human] — `APP-008`
+- La ville reste effacée tête baissée avec la recette appliquée [human] — `APP-001`
+- Les teintes de chaque région sont jugées au casque ou sur captures — `APP-008`
 
 ## Contrats modifiés
 

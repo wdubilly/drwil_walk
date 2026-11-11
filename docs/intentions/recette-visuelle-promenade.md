@@ -92,7 +92,7 @@ promenade complète. Toute modification de `app/` est HIGH (`APP-001`).
 | Rang | Composant | Chantier envisagé | Intentions reliées |
 |---|---|---|---|
 | 1 | Socle | Essai réel de `npm run city` | `essai-commande-creation-reseau.md` |
-| 1 | Format de la recette | Données région + surcharge quartier, champ d'origine, repli | `palettes-regions-references.md` (absorbée) |
+| 1 | Format de la recette | Données région + surcharge quartier, champ d'origine, repli (fait le 2026-11-11 : `gen-02-format-recette`, `app/assets/recette-regions.json`) | `palettes-regions-references.md` (absorbée) |
 | 2 | Sols et rues | Pavés, asphalte, bordures cohérentes | `rendu-rues-mobilier.md` |
 | 2 | Rez-de-chaussée | Boutiques, vitrines, portes, auvents | `rendu-facades-batiments.md` |
 | 2 | Matériaux | Repli sans photos, compression Quest | `textures-compressees-quest.md`, `essai-casque-materiaux-souk.md` |
