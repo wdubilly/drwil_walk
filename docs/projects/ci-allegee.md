@@ -101,6 +101,6 @@ préparé, hors dépôt : `docs/contracts.md` ne se commite qu'en BUILD) et y ra
 
 ## 7. Reprise
 
-- **Dernier état** (2026-11-11) : brief révisé pour le kit 0.11.1 (shards, rejeu évité), rien d'implémenté ; N = 2 et la zone du projet décidés.
-- **Travail non commité** : la révision de ce brief, sur la branche `fiche/ci-allegee-shards`.
-- **Prochaine étape** : [decision] le demandeur lance le chantier (`/drwil-start`).
+- **Dernier état** (2026-11-11) : lot 1 fait et commité (`push` limité à `master`, `concurrency` annulant les runs périmés hors `master`) ; `run-checks` vert.
+- **Travail non commité** : aucun (hors cette section).
+- **Prochaine étape** : lot 2 — caches (npm via `setup-node`, navigateurs Playwright), clés dérivées des verrous. Relever la durée du run de référence dans le journal.
