@@ -38,5 +38,15 @@
     "userAgent": "drwil_walk/0.1 (extraction OpenStreetMap du quartier de Souq Waqif)",
     "file": "data/souq-waqif.json",
     "route": {"points":[[25.2869,51.5312],[25.2878,51.5336],[25.28949,51.53397],[25.28953,51.53062]],"return":"boucle"}
+  },
+  "rome": {
+    "itinerary": "rome",
+    "label": "Rome centro storico",
+    "place": "Campo de' Fiori, place Navona, Panthéon, fontaine de Trevi",
+    "name": "Rome centro storico",
+    "bbox": {"south":41.893,"west":12.468,"north":41.904,"east":12.487},
+    "userAgent": "drwil_walk/0.1 (extraction OpenStreetMap de Rome centro storico)",
+    "file": "data/rome.json",
+    "route": {"points":[[41.8956,12.4722],[41.8992,12.4731],[41.8986,12.4769],[41.9009,12.4833]],"return":"boucle"}
   }
 }

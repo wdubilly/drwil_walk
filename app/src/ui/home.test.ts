@@ -1,6 +1,7 @@
 import { Event as DomEvent, Window } from "happy-dom";
 import { describe, expect, it, vi } from "vitest";
 import { ENTER_LABEL, renderHome } from "./home.ts";
+import { ITINERARIES } from "../route/itineraries.ts";
 import { DEFAULT_PREFERENCES } from "./preferences.ts";
 
 function setup() {
@@ -13,10 +14,10 @@ function setup() {
 }
 
 describe("accueil réduit", () => {
-  it("QUA-020 APP-003 APP-011: quatre itinéraires, vitesse, rappels et démarrages seulement ; attribution locale", () => {
+  it("QUA-020 APP-003 APP-011: un choix par itinéraire du catalogue, vitesse, rappels et démarrages seulement ; attribution locale", () => {
     const { root, view, button } = setup();
-    expect(root.querySelectorAll("input[name='itineraire']")).toHaveLength(4);
-    expect(root.querySelectorAll("input")).toHaveLength(5);
+    expect(root.querySelectorAll("input[name='itineraire']")).toHaveLength(ITINERARIES.length);
+    expect(root.querySelectorAll("input")).toHaveLength(ITINERARIES.length + 1);
     expect(root.querySelector("[aria-label='Rappel de sécurité']")?.textContent).toContain("Clé de sécurité");
     expect(button.textContent).toBe(ENTER_LABEL);
     expect(root.querySelector(".attribution")?.textContent).toBe("© contributeurs OpenStreetMap");

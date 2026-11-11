@@ -77,10 +77,10 @@ describe("tracé de boucle d'une ville (hors casque)", () => {
     expect(file.geometry.coordinates).toEqual(loop);
   });
 
-  describe("les quatre itinéraires existants, rejoués depuis leurs entrées de data/villes.json", () => {
+  describe("les itinéraires du catalogue, rejoués depuis leurs entrées de data/villes.json", () => {
     const read = (path: string): { features: Extract["features"]; geometry: { coordinates: number[][] } } => JSON.parse(readFileSync(new URL(`../../${path}`, import.meta.url), "utf8")) as never;
     // Les bornes de longueur sont celles des tests de chaque boucle versionnée (cities.test.ts).
-    const bounds: Record<string, [number, number]> = { souq: [1200, 1800], pune: [1200, 1800], corniche: [3500, 4500], "fc-road": [3000, 4000] };
+    const bounds: Record<string, [number, number]> = { souq: [1200, 1800], pune: [1200, 1800], corniche: [3500, 4500], "fc-road": [3000, 4000], rome: [2500, 3800] };
     it.each(Object.entries(CITIES))("APP-002: %s — une boucle qui part et revient au départ, sur des sommets de voies de l'extrait", (key, city) => {
       const file = read(city.file);
       const loop = loopOf(file, city.route.points, city.route.return);

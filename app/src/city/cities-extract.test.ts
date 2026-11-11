@@ -10,6 +10,8 @@ const LANDMARKS: Record<Exclude<CityId, "souq">, { name: string; points: (readon
   corniche: { name: "Corniche de Doha", points: [[25.2955, 51.5393], [25.3237, 51.5265]] },
   // Le carrefour sud de FC Road (18,5150 ; 73,8422) et son extrémité nord (18,5297 ; 73,8437).
   "fc-road": { name: "FC Road à Pune", points: [[18.515, 73.8422], [18.5297, 73.8437]] },
+  // Campo de' Fiori (41,8956 ; 12,4722) et la fontaine de Trevi (41,9009 ; 12,4833).
+  rome: { name: "Rome centro storico", points: [[41.8956, 12.4722], [41.9009, 12.4833]] },
 };
 
 describe("extraction de chaque ville depuis OpenStreetMap (CITIES)", () => {

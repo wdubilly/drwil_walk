@@ -54,8 +54,8 @@ Lu le 2026-11-07, d'après le dépôt (master à `98cfb44`).
 
 Gain visuel décroissant, une promenade complète comme preuve à chaque étape.
 
-1. **Finir le socle** : inscription automatique (faite), puis essai réel de `npm run city`
-   (`docs/intentions/essai-commande-creation-reseau.md`).
+1. **Finir le socle** : inscription automatique (faite), essai réel de `npm run city` (fait le 2026-11-11 sur Rome centro storico,
+   journal `docs/projects/journal.md`) ; reste à juger au casque le rendu de la ville créée (lot [humain]).
 2. **La recette elle-même** : inventaire des briques, paramètres régionaux avec repli, règles de placement, gestion des
    données manquantes. C'est le cadrage à finir en premier.
 3. **Compléter le souk de référence** : sols (pavés, asphalte, bordures cohérentes), rez-de-chaussée (boutiques,

@@ -184,5 +184,6 @@ ciel et brouillard, profils par défaut ; rendu Google 3D indisponible sur PC et
 `npm run city -- <identifiant> [options]` prépare extrait, boucle et matériaux **sur le PC de développement uniquement**,
 avec réseau ; rien n'est généré dans le casque. Villes décrites dans `app/data/villes.json` (source unique, lue par l'application : la ville créée apparaît à l'accueil sans code), pas de script par ville.
 Photos Panoramax, Mapillary (jeton dans l'environnement), photos fournies ; recherche jusqu'à 1 km puis palette régionale,
-rapport de provenance. Arguments : `docs/guide-utilisateur.md`. Tests à réponses simulées, pas de services réels validés.
+rapport de provenance, poids écrits, durée et vignettes écartées. Rien n'est écrit (catalogue compris) tant que toutes les étapes n'ont pas réussi ;
+un échec rend un message avec la cause réseau. Arguments : `docs/guide-utilisateur.md`. Essai réel sur Rome centro storico le 2026-11-11 : `docs/projects/journal.md`.
 Inscription à l'accueil encore manuelle : `docs/intentions/inscrire-une-ville-creee.md`.

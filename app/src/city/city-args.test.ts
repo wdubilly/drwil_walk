@@ -13,21 +13,21 @@ describe("lecture des options de la commande de création de ville", () => {
   });
 
   it("APP-003: décrit une nouvelle ville par un nom, une emprise et un départ/arrivée, sans code propre à la ville", () => {
-    const request = parseCityArgs(["rome", ...NEW, "--via", "50.001,10.001", "--retour", "boucle"], CITIES);
+    const request = parseCityArgs(["oslo", ...NEW, "--via", "50.001,10.001", "--retour", "boucle"], CITIES);
     expect(request.described).toBe(true);
     expect(request.city).toEqual({
-      itinerary: "rome",
+      itinerary: "oslo",
       label: "Essai",
       place: "Itinéraire à pied : Essai",
       name: "Essai",
       bbox: { south: 49.99, west: 9.99, north: 50.01, east: 10.01 },
       userAgent: "drwil_walk/0.1 (extraction OpenStreetMap de Essai)",
-      file: "data/rome.json",
+      file: "data/oslo.json",
       route: { points: [[50, 10], [50.001, 10.001], [50, 10.002]], return: "boucle" },
     });
-    const titled = parseCityArgs(["rome", ...NEW, "--libelle", "Rome antique", "--lieu", "Le Forum"], CITIES).city;
+    const titled = parseCityArgs(["oslo", ...NEW, "--libelle", "Rome antique", "--lieu", "Le Forum"], CITIES).city;
     expect(titled).toMatchObject({ label: "Rome antique", place: "Le Forum", name: "Essai" });
-    expect(parseCityArgs(["rome", ...NEW], CITIES).city.route).toEqual({ points: [[50, 10], [50, 10.002]], return: "aller-retour" });
+    expect(parseCityArgs(["oslo", ...NEW], CITIES).city.route).toEqual({ points: [[50, 10], [50, 10.002]], return: "aller-retour" });
   });
 
   it("change une option d'une ville décrite et garde le reste (fichier, identification, étapes)", () => {
@@ -42,19 +42,19 @@ describe("lecture des options de la commande de création de ville", () => {
     expect(refused()).toThrow("un identifiant de ville est demandé");
     expect(refused("../x")).toThrow("un identifiant de ville est demandé");
     expect(refused("inconnue")).toThrow("« inconnue » n'est pas décrite dans data/villes.json");
-    expect(refused("rome", "nom")).toThrow("option « nom » inconnue ou sans valeur");
-    expect(refused("rome", "--nom")).toThrow("option « --nom » inconnue ou sans valeur");
-    expect(refused("rome", "--ville", "x")).toThrow("option « --ville » inconnue");
-    expect(refused("rome", ...NEW.slice(2))).toThrow("--nom est demandé");
-    expect(refused("rome", "--nom", "E", "--depart", "50,10", "--arrivee", "50,10.1")).toThrow("--emprise est demandée");
-    expect(refused("rome", "--nom", "E", "--emprise", "50,10,49,11", "--depart", "50,10", "--arrivee", "50,10.1")).toThrow("du sud vers le nord");
-    expect(refused("rome", "--nom", "E", "--emprise", "49,11,50,10", "--depart", "50,10", "--arrivee", "50,10.1")).toThrow("de l'ouest vers l'est");
-    expect(refused("rome", "--nom", "E", "--emprise", "1,2,3", "--depart", "50,10", "--arrivee", "50,10.1")).toThrow("l'emprise attendu en 4 nombres");
-    expect(refused("rome", "--nom", "E", "--emprise", "1,2,3,4", "--arrivee", "50,10.1")).toThrow("--depart est demandé");
-    expect(refused("rome", "--nom", "E", "--emprise", "1,2,3,4", "--depart", "50,10")).toThrow("--arrivee est demandée");
-    expect(refused("rome", "--nom", "E", "--emprise", "1,2,3,4", "--depart", "50,x", "--arrivee", "1,1")).toThrow("le départ attendu en 2 nombres");
-    expect(refused("rome", "--nom", "E", "--emprise", "1,2,3,4", "--depart", "95,10", "--arrivee", "1,1")).toThrow("le départ hors du globe");
-    expect(refused("rome", ...NEW, "--retour", "circuit")).toThrow("--retour vaut « aller-retour » ou « boucle »");
+    expect(refused("oslo", "nom")).toThrow("option « nom » inconnue ou sans valeur");
+    expect(refused("oslo", "--nom")).toThrow("option « --nom » inconnue ou sans valeur");
+    expect(refused("oslo", "--ville", "x")).toThrow("option « --ville » inconnue");
+    expect(refused("oslo", ...NEW.slice(2))).toThrow("--nom est demandé");
+    expect(refused("oslo", "--nom", "E", "--depart", "50,10", "--arrivee", "50,10.1")).toThrow("--emprise est demandée");
+    expect(refused("oslo", "--nom", "E", "--emprise", "50,10,49,11", "--depart", "50,10", "--arrivee", "50,10.1")).toThrow("du sud vers le nord");
+    expect(refused("oslo", "--nom", "E", "--emprise", "49,11,50,10", "--depart", "50,10", "--arrivee", "50,10.1")).toThrow("de l'ouest vers l'est");
+    expect(refused("oslo", "--nom", "E", "--emprise", "1,2,3", "--depart", "50,10", "--arrivee", "50,10.1")).toThrow("l'emprise attendu en 4 nombres");
+    expect(refused("oslo", "--nom", "E", "--emprise", "1,2,3,4", "--arrivee", "50,10.1")).toThrow("--depart est demandé");
+    expect(refused("oslo", "--nom", "E", "--emprise", "1,2,3,4", "--depart", "50,10")).toThrow("--arrivee est demandée");
+    expect(refused("oslo", "--nom", "E", "--emprise", "1,2,3,4", "--depart", "50,x", "--arrivee", "1,1")).toThrow("le départ attendu en 2 nombres");
+    expect(refused("oslo", "--nom", "E", "--emprise", "1,2,3,4", "--depart", "95,10", "--arrivee", "1,1")).toThrow("le départ hors du globe");
+    expect(refused("oslo", ...NEW, "--retour", "circuit")).toThrow("--retour vaut « aller-retour » ou « boucle »");
   });
 
   it("écrit le catalogue lisiblement : une ville par bloc, l'emprise et le tracé sur une ligne, relu à l'identique", () => {

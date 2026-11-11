@@ -555,3 +555,18 @@ One entry per closed project, most recent last.
   `git diff` du workflow) ; le correctif est une PR dans le kit drwil (zone avant les contrôles et dans le job des tranches) ; le test `e2e/eclairage-ambiance` est proche de son plafond de 20 s (instable).
 
 - **Preuve de clôture** : `docs/preuves/ci-allegee.md`.
+
+## 2026-11-11 — gen-01-essai-commande : essai réel de `npm run city` (Rome centro storico)
+
+- Essai réel lancé par l'agent (réseau autorisé : Overpass, Panoramax, Mapillary, ambientCG ; jeton dans `.env`, jamais écrit). Ville : Rome centro storico, créée avec les seules options de la commande ; le catalogue et les données sont les seuls fichiers de données ajoutés.
+- Essai 1 : échec à 43 s sur le délai de connexion d'une vignette Panoramax (`images.panoramax.basi.re`, 10 s) ; extrait, boucle et photos déjà écrits (état à moitié écrit, message sans cause). Essai 2 (code corrigé) : succès en 43 s ; écrits : catalogue 2 Ko, extrait 1 635 Ko, boucle 6 Ko, photos 31 Ko, bibliothèque 92 Ko ; 85 photos Panoramax à moins de 30 m (60 lues, 0 perdue), Mapillary non nécessaire, 5 couleurs de provenance photo ; limite de 1 000 résultats non atteinte ; Overpass sans refus (délai propre non mesuré).
+- Corrigé : écriture groupée après réussite de toutes les étapes (catalogue compris), message d'échec avec la cause réseau, vignette illisible écartée et comptée (palette de la région si toutes échouent), troncature à 1 000 dite, poids et durée au rapport.
+- Décisions : pas de bibliothèques pour les trois autres quartiers ; périmètre élargi (« Traiter maintenant ») aux données de Rome et aux tests qui énumèrent le catalogue (`cities-extract`, `route-loop`, `itineraries`, `home`, `route-choice`), désormais pilotés par le catalogue ou par une borne de longueur de Rome (boucle mesurée à 3 113 m).
+- Constat : ajouter une ville a exigé de retoucher ces tests (APP-003 « sans retouche de code » tenu pour le code de production, pas pour les tests) ; les tests UI/route suivent maintenant le nombre d'itinéraires, mais `cities-extract` et `route-loop` demandent encore des repères et bornes par ville.
+- CI de la PR : les e2e comptaient les itinéraires en dur (`profils-graphiques`, `chemins-critiques`), désormais pilotés par le catalogue ; puis 6 échecs identiques des shards à l'étape `playwright install --with-deps` : le DNS apt du runner `ubuntu-latest` (ubuntu-26.04) ne résout plus ses dépôts (relances sans changement incluses). Décision humaine : image épinglée à `ubuntu-24.04` sur le seul job `shards` de `.github/workflows/ia-first.yml`, aucun contrôle retiré (QUA-041).
+- Suite : l'épinglage `ubuntu-24.04` n'a rien changé (apt ne résout pas non plus `azure.archive.ubuntu.com` sur noble : panne DNS du runner, quelle que soit l'image). Décision humaine : retour à `ubuntu-latest`, Chromium installé par `playwright install chromium` puis `install-deps chromium` non bloquant (avertissement) ; une bibliothèque manquante ferait échouer « Play the slice » bruyamment, aucun contrôle affaibli (QUA-041).
+- Reste à l'humain : lots 1 et 2 (marqués [humain], l'essai ayant été lancé par l'agent sur décision) et le rendu de la ville créée au casque, APP-001 attesté par l'humain.
+
+## gen-01-essai-commande
+
+- **Preuve de clôture** : `docs/preuves/gen-01-essai-commande.md`.

@@ -40,7 +40,8 @@ export async function searchPhotos(
   const notes: string[] = [];
   for (const radiusM of WIDENING_M) {
     const bbox = bboxAround(route, radiusM).map((v) => v.toFixed(6)).join(",");
-    const panoramax = nearest(parsePanoramax(await getJson(fetchFn, `${PANORAMAX_SEARCH}?bbox=${bbox}&limit=${String(MAX_RESULTS)}`, { headers: { "User-Agent": userAgent } })), route, radiusM);
+    const answer = parsePanoramax(await getJson(fetchFn, `${PANORAMAX_SEARCH}?bbox=${bbox}&limit=${String(MAX_RESULTS)}`, { headers: { "User-Agent": userAgent } }));
+    const panoramax = nearest(answer, route, radiusM);
     let photos = panoramax;
     let mapillary = "non nécessaire";
     if (panoramax.length < MIN_PHOTOS && (token === undefined || token === "")) mapillary = "non interrogé (sans jeton)";
@@ -50,7 +51,7 @@ export async function searchPhotos(
       photos = [...panoramax, ...found].sort((a, b) => a.distanceM - b.distanceM);
       mapillary = `${String(found.length)} photo(s)`;
     }
-    notes.push(`à moins de ${String(radiusM)} m : Panoramax ${String(panoramax.length)} photo(s), Mapillary ${mapillary}`);
+    notes.push(`à moins de ${String(radiusM)} m : Panoramax ${String(panoramax.length)} photo(s)${answer.length >= MAX_RESULTS ? ` (réponse tronquée à ${String(MAX_RESULTS)} : des photos proches ont pu manquer)` : ""}, Mapillary ${mapillary}`);
     if (photos.length > 0) return { photos: photos.slice(0, MAX_USED_PHOTOS), radiusM, notes };
     await pause();
   }
