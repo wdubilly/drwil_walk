@@ -25,6 +25,8 @@ files:
   - app/src/route/itineraries.test.ts
   - app/src/ui/home.test.ts
   - app/src/ui/route-choice.test.ts
+  - app/e2e/profils-graphiques.test.ts
+  - app/e2e/chemins-critiques.test.ts
   - docs/architecture.md
   - docs/features.md
 -->
