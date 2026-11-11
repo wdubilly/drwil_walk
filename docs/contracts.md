@@ -372,6 +372,16 @@ Balises de l'extrait : couleurs murs/toit et matériau, sinon palette ; ombrage 
 **Check** : `coverage-app`
 **Tests** : `app/src/ui/contrast.test.ts`
 
+## QUA-041 — La CI reste complète quand on l'allège
+**Rule** : alléger la CI (un seul run par commit de PR, runs périmés annulés, caches, tranches e2e) ne retire ni n'affaiblit aucun contrôle : l'e2e, la couverture, les secrets et le rejeu des hooks de la branche principale tournent toujours en CI ; `push` ne déclenche le workflow que sur la branche principale, la `concurrency` n'annule jamais un run de la branche principale ; en local, l'e2e est « non exécuté », jamais « passé ».
+**Scope** : `.github/workflows/ia-first.yml`, `.drwil/ia-first.json`
+**Source of truth** : `.github/workflows/ia-first.yml` (déclencheurs, `concurrency`, jobs), `.drwil/ia-first.json` (contrôles, `runAt`, `shards`)
+**Proof** : **machine** : la couverture des contrôles par la CI est rejouée à chaque commit (`ci-coverage`, QUA-013) ; **humain** : les déclencheurs et la `concurrency` du workflow, et la durée d'un run de référence avant et après, sur une PR de test
+**Reason** : un chantier d'allègement peut retirer un contrôle sans que personne le voie ; la CI est la seule à jouer l'e2e (`runAt: ["ci"]`)
+**Origin** : ci-allegee — « Les contrôles qui tournent en CI sont exactement les mêmes qu'avant »
+**Check** : `ci-coverage`
+**Manual** : lire le workflow (`push` limité à la branche principale, `concurrency` sans annulation sur la branche principale) et relever la durée d'un run de référence avant et après dans le journal du chantier.
+
 ## Out of registry (these are not contracts)
 
 | Rule | Nature | Where it lives |

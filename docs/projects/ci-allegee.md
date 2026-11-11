@@ -22,22 +22,22 @@ affaiblir aucun contrôle** : l'e2e Playwright reste lancé en CI, le rejeu avec
 
 ## Critères d'acceptation
 
-- Un commit poussé sur une branche avec PR ne lance qu'un run de contrôles complet, et la branche principale garde le sien
-- Un push qui rend un run en cours périmé l'annule, sans jamais annuler un run de la branche principale
+- Un commit poussé sur une branche avec PR ne lance qu'un run de contrôles complet, et la branche principale garde le sien [human] — `QUA-041`
+- Un push qui rend un run en cours périmé l'annule, sans jamais annuler un run de la branche principale [human] — `QUA-041`
 - L'e2e est réservé à la CI (`runAt`) : joué par la CI de chaque PR, « non exécuté » (jamais « passé ») en local — `QUA-020`
 - Les contrôles qui tournent en CI sont exactement les mêmes qu'avant (e2e, couverture, secrets, rejeu des hooks de la
   branche principale) : le workflow n'en retire aucun — `QUA-013`
 - Le contrôle e2e est découpé en tranches parallèles (`shards`, kit 0.11.1) : la CI joue une tranche par job, le job `checks`
   agrège leurs verdicts, et une tranche manquante, en double ou en échec fait échouer l'agrégation — `QUA-013`
-- En local, `run-checks` et `drwil verify` jouent toujours l'e2e en un seul passage (aucune tranche n'est sautée)
-- La durée d'un run de référence, avant et après, est relevée dans le journal du chantier [human]
+- En local, `run-checks` et `drwil verify` ne jouent plus l'e2e (`runAt: ["ci"]`) : il est « non exécuté », jamais « passé », et aucune tranche n'est jouée à moitié [human] — `QUA-041`
+- La durée d'un run de référence, avant et après, est relevée dans le journal du chantier [human] — `QUA-041`
 
-Le chantier crée le contrat manuel « la CI reste complète quand on l'allège » dans `docs/contracts.md` (le texte est
-préparé, hors dépôt : `docs/contracts.md` ne se commite qu'en BUILD) et y rattache les critères sans identifiant ci-dessus.
+Le chantier crée le contrat `QUA-041` « la CI reste complète quand on l'allège » dans `docs/contracts.md` et y rattache les
+critères qui le citent ci-dessus.
 
 ## Contrats modifiés
 
-*(aucun)*
+- `QUA-041` créé (la CI reste complète quand on l'allège) ; aucun contrat existant modifié.
 
 ## 2. Hors périmètre
 
