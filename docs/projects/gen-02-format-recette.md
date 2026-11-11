@@ -27,6 +27,10 @@ files:
   - app/src/city/traffic.ts
   - app/src/city/traffic-assets.ts
   - app/src/city/traffic-assets.test.ts
+  - app/src/city/traffic-catalog.test.ts
+  - app/src/city/traffic-lanes.test.ts
+  - app/src/city/traffic-rule.test.ts
+  - app/src/city/traffic.test.ts
   - docs/architecture.md
   - docs/features.md
 -->
