@@ -1,5 +1,13 @@
 name: ia-first
-on: [push, pull_request]
+on:
+  # push limité à la branche principale : une branche avec PR n'est jouée que par pull_request (pas de doublon).
+  push:
+    branches: [master]
+  pull_request:
+# Un push qui rend un run périmé l'annule, jamais un run de la branche principale.
+concurrency:
+  group: ia-first-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
 jobs:
   checks:
     runs-on: ubuntu-latest
