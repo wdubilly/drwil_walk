@@ -147,6 +147,9 @@ Génération `npm run city` exclusivement sur PC de développement. Tests Vitest
 attentes dans `docs/projects/pending.md`. `.drwil/ia-first.json` décrit les contrôles ; hooks
 `.githooks/run-checks.mjs` au commit et push. `npx drwil verify --agent` fournit le verdict de gouvernance.
 
-`.github/workflows/ia-first.yml` rejoue les contrôles au push/PR, avec les hooks principaux sur PR ;
-job `checks` requis pour `master`, installe dépendances et Chromium. Captures publiées en artefact `captures-accueil`.
+`.github/workflows/ia-first.yml` rejoue les contrôles sur PR et sur `master` (pas de doublon `push` de branche), avec les hooks
+principaux sur PR ; l'e2e, réservé à la CI (`runAt: ["ci"]`, jamais joué au commit, au push ni par `drwil verify`), est découpé en
+2 tranches (`shards: 2`) jouées chacune par un job `shard i/2` qui installe les dépendances de `app/` et Chromium. Le job `checks`,
+requis pour `master`, agrège leurs verdicts (une tranche manquante, en double ou en échec le fait échouer) et joue les autres
+contrôles, avec diff-cover et les dépendances de `app/`. Captures publiées par tranche, en artefacts `captures-accueil-i-of-2`.
 Modèle de PR : `.github/pull_request_template.md`. Aucun verdict humain exécuté par l'agent.
