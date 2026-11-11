@@ -541,3 +541,17 @@ One entry per closed project, most recent last.
   chargent pas dans la doublure (relevé de page comparé seulement) ; aucun essai sur Quest réel.
 - Preuves avant clôture : `tsc --noEmit` et `eslint` sans erreur ; `vitest run` 123 fichiers, 789 tests passés (avec le nouveau).
 - Preuve de clôture : docs/preuves/parite-plateformes.md (écrite par la clôture).
+
+## 2026-11-11 — ci-allegee : alléger la CI sans retirer aucun contrôle
+
+- Livré sur la branche `workstream/ci-allegee` (PR #96) : `push` limité à `master` (un seul run par commit de PR), runs périmés annulés
+  sauf sur `master`, caches npm et navigateurs Playwright, zone projet du workflow, e2e réservé à la CI (`runAt: ["ci"]`) en 2 tranches
+  parallèles agrégées par le job `checks`. Contrat `QUA-041` créé (la CI reste complète quand on l'allège).
+- Durée d'un run de référence : avant, 8 derniers runs de `master` (push) entre 14,5 et 21,0 minutes (médiane environ 17 minutes),
+  sans compter le run `pull_request` doublon ; après, run de la PR #96 : `plan` 6 s, tranches 5 min 42 et 6 min 57 en parallèle,
+  `checks` (agrégation) 6 min 49, soit environ 7 minutes en tout. CI verte.
+- Limites : la zone `steps` du kit ne couvre ni les installations avant `run-checks` ni le job des tranches : une montée du kit
+  les réécrirait (installations de `app/` et de Chromium, diff-cover). À vérifier après chaque montée du kit (`npx drwil doctor`,
+  `git diff` du workflow) ; le correctif est une PR dans le kit drwil (zone avant les contrôles et dans le job des tranches) ; le test `e2e/eclairage-ambiance` est proche de son plafond de 20 s (instable).
+
+- **Preuve de clôture** : `docs/preuves/ci-allegee.md`.

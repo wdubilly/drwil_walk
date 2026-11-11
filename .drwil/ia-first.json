@@ -208,11 +208,15 @@
     {
       "id": "e2e",
       "name": "e2e des chemins critiques (Playwright, Quest 3 émulé par IWER, QUA-020)",
-      "run": "npm run e2e",
+      "run": "npm run e2e -- --shard=$DRWIL_SHARD_INDEX/$DRWIL_SHARD_TOTAL",
       "cwd": "app",
       "paths": [
         "app/**"
       ],
+      "runAt": [
+        "ci"
+      ],
+      "shards": 2,
       "degradable": false
     },
     {

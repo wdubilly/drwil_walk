@@ -1,0 +1,24 @@
+{
+  "version": 4,
+  "contract": "QUA-041",
+  "status": "ATTESTED",
+  "attestedAt": "2026-11-11T08:54:21.512Z",
+  "actor": {
+    "name": "Copilot",
+    "source": "git config user.name, déclaratif"
+  },
+  "note": null,
+  "fingerprint": "bd893d25afc931f65663083659720ce5372b8659f0086f5bf3cd811f724dded0",
+  "proof": {
+    "ci-coverage": "92824ec5ee3d3dbf756665fc38f5ed40d4b70dad4ac561b296facad1b47889dd"
+  },
+  "covers": null,
+  "coverage": {},
+  "commit": "aac33bf96fef7a89da083a8bbbefdd5d5dbb0e76",
+  "automated": [
+    {
+      "id": "ci-coverage",
+      "status": "ok"
+    }
+  ]
+}
