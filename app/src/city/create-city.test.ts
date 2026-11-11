@@ -101,6 +101,35 @@ describe("commande unique de création d'une ville (hors casque)", () => {
     expect(parseLibrary(JSON.parse(disk.files["assets/materials/essai.json"] as string)).provisional).toBe(true);
   });
 
+  it("APP-012: une vignette en échec est écartée et dite, les autres couleurs restent ; toutes en échec, palette de la région", async () => {
+    const base = network([{ id: "bonne", dLat: 0.0001 }, { id: "lente", dLat: 0.0002 }]);
+    const slow = (url: unknown, init?: RequestInit): Promise<Response> =>
+      String(url).endsWith("lente.jpg") ? Promise.reject(Object.assign(new TypeError("fetch failed"), { cause: { code: "UND_ERR_CONNECT_TIMEOUT" } })) : base(url as string, init);
+    const report = await createCity(deps(memory(), slow), city);
+    expect(report).toContain("1 vignette(s) non lue(s)");
+    expect(report).toContain("vignette panoramax lente écartée : fetch failed (UND_ERR_CONNECT_TIMEOUT)");
+    expect(report).toContain("(photos : 1 photo(s) dont 0 fournie(s) par le demandeur)");
+    const down = (url: unknown, init?: RequestInit): Promise<Response> => (String(url).endsWith(".jpg") && String(url).startsWith("https://x/") ? Promise.reject(new Error("coupé")) : base(url as string, init));
+    expect(await createCity(deps(memory(), down as typeof fetch), city)).toContain("Couleurs (provisoire");
+  });
+
+  it("APP-012: un service en échec laisse le disque intact et le message dit la cause", async () => {
+    const disk = memory({ "data/villes.json": CATALOG });
+    const base = network([{ id: "p", dLat: 0.0001 }]);
+    const noTextures = (url: unknown, init?: RequestInit): Promise<Response> =>
+      String(url).includes("ambientcg") ? Promise.reject(Object.assign(new TypeError("fetch failed"), { cause: { code: "ECONNRESET" } })) : base(url as string, init);
+    const args = ["essai", "--nom", "Essai", "--emprise", "49.99,9.99,50.01,10.01", "--depart", "50,10", "--arrivee", "50,10.002"];
+    await expect(main(args, deps(disk, noTextures as typeof fetch))).rejects.toThrow("rien n'a été écrit : fetch failed (ECONNRESET)");
+    expect(disk.files).toEqual({ "data/villes.json": CATALOG });
+  });
+
+  it("dit le poids écrit de chaque fichier et la durée de la commande", async () => {
+    const disk = memory({ "data/villes.json": CATALOG });
+    const report = await main(["souq"], deps(disk, network()));
+    expect(report).toMatch(/- data\/souq-waqif-boucle\.json \(\d+ Ko\)/);
+    expect(report).toMatch(/Durée : \d+ s$/);
+  });
+
   it("utilise les seules photos fournies quand le réseau n'en rend aucune", async () => {
     const disk = memory({}, { "/p/a.JPEG": jpeg([90, 120, 60], 64) });
     const report = await createCity(deps(disk, network()), city, "/p");

@@ -39,7 +39,7 @@ relevé réel (durée, poids écrit, échecs, limite de 1 000 résultats Panoram
 - La ville créée se parcourt sur la boucle produite — `APP-002`
 - La ville créée s'efface tête baissée comme les autres — `APP-001`
 - Le rapport d'essai relève la durée, le poids écrit et les échecs ; une donnée manquante ou un service en échec laisse la
-  commande dans un état net (message clair, rien d'à moitié écrit)
+  commande dans un état net (message clair, rien d'à moitié écrit) — `APP-012`
 - Le rendu de la ville créée vu au casque, sans jugement de beauté [human] — `APP-001`
 
 ## Contrats modifiés
@@ -71,10 +71,12 @@ relevé réel (durée, poids écrit, échecs, limite de 1 000 résultats Panoram
 
 - 2026-11-07 : la ville d'essai est **Rome centro storico** (ville nouvelle).
 - 2026-11-07 : les boucles rejouées **remplacent** les boucles versionnées (décision du 2026-11-05 confirmée).
+- 2026-11-11 : on ne génère **pas** les bibliothèques de matériaux des trois autres quartiers, seulement Rome centro storico.
+- 2026-11-11 : l'essai réel est lancé par l'agent ; réseau réel autorisé vers Overpass, Panoramax, Mapillary et ambientCG ; le jeton reste dans `.env` (ignoré par git), jamais affiché ni journalisé.
 
 ## 5. Points à décider
 
-- [decision] Génère-t-on les bibliothèques de matériaux des trois autres quartiers pour juger leurs couleurs au casque ?
+*(aucun)*
 
 ## 6. Incréments
 
@@ -87,8 +89,21 @@ relevé réel (durée, poids écrit, échecs, limite de 1 000 résultats Panoram
 - **Incrément 4 — constat et doc** [AI] : `git diff` ne montre que des données ; `docs/architecture.md` et
   `docs/features.md` à jour. Sortie : `node .githooks/check-docs.mjs` sans erreur.
 
-## 7. Reprise
+## 7. Journal
 
-- **Dernier état** (2026-11-07): cadrage seul, aucun code.
-- **Travail non commité** : la fiche.
-- **Prochaine étape** : [decision] trancher les trois points, puis [human] fournir le jeton et lancer l'essai.
+### 2026-11-11 — essai réel, Rome centro storico (`npm run city -- rome …`, options décrivant la ville)
+
+- **Départ** : Campo de' Fiori, étapes place Navona et Panthéon, arrivée fontaine de Trevi, retour en boucle ; emprise 41,893 / 12,468 / 41,904 / 12,487.
+- **Essai 1** (code d'avant correction) : échec après 43 s, `ConnectTimeoutError` sur la vignette d'une photo Panoramax (hôte `images.panoramax.basi.re`, délai de connexion 10 s). Overpass, la boucle et la recherche de photos avaient réussi, mais l'extrait, la boucle et les photos étaient **déjà écrits** : état à moitié écrit, message `fetch failed` sans cause.
+- **Essai 2** (code corrigé) : succès, **43 s** au total, aucun échec. Fichiers écrits : catalogue des villes 2 Ko, extrait rome 1 635 Ko, boucle 6 Ko, photos 31 Ko, bibliothèque de matériaux 92 Ko.
+- **Couverture photo réelle** : 85 photos Panoramax à moins de 30 m du tracé (60 retenues, 60 lues, 0 vignette perdue) ; Mapillary non nécessaire (non interrogé, donc le jeton n'a pas servi) ; 5 couleurs relevées, toutes de provenance photo.
+- **Limite de 1 000 résultats Panoramax** : non atteinte à 30 m sur ce quartier (85 résultats) ; elle est désormais dite dans le rapport quand elle l'est.
+- **Délais Overpass** : la requête unique a abouti sans refus ni nouvelle tentative ; le temps de l'étape n'est pas mesuré à part (43 s pour toute la commande).
+- **Constat** : ajouter la ville dans le catalogue casse `app/src/city/cities-extract.test.ts` et `app/src/city/route-loop.test.ts` (hors périmètre), qui énumèrent `CITIES` avec des repères et bornes par ville : la ville créée n'est donc pas encore « sans retouche de code » pour les tests. Données de l'essai gardées en local dans `.drwil/evidence/rome-run/` (si présent, ignoré par git), non commitées.
+- **Corrigé (lot 3)** : écriture seulement après réussite de toutes les étapes (catalogue compris), message d'échec avec la cause réseau, vignette illisible écartée et comptée (palette de la région si toutes échouent), troncature à 1 000 dite, poids écrits et durée dans le rapport.
+
+## 8. Reprise
+
+- **Dernier état** (2026-11-11) : lot 3 fait (code, tests, docs). L'entrée Rome n'est pas commitée dans `app/data/villes.json`.
+- **Bloquant** : `app/src/city/cities-extract.test.ts` et `app/src/city/route-loop.test.ts` (hors bloc scope) énumèrent `CITIES` ; il faut les ajouter au périmètre pour y inscrire Rome (repères et bornes de longueur), puis relancer la commande.
+- **Prochaine étape** : décision humaine sur l'élargissement du périmètre, puis lots [humain] 1 et 2 à juger, incrément 4.

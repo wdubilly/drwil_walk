@@ -51,6 +51,13 @@ describe("recherche des photos de rue, élargie jusqu'à 1 km (APP-012)", () => 
     expect(none.notes.every((n) => n.endsWith("Mapillary non interrogé (sans jeton)"))).toBe(true);
   });
 
+  it("APP-012: dit quand Panoramax a rendu la limite de 1 000 résultats (des photos proches ont pu manquer)", async () => {
+    const many = Array.from({ length: 1000 }, (_, i) => panoramax(`p${String(i)}`, 0.0001));
+    const found = await searchPhotos(network(many), route, UA, undefined);
+    expect(found.notes[0]).toContain("réponse tronquée à 1000");
+    expect(found.photos).toHaveLength(MAX_USED_PHOTOS);
+  });
+
   it("APP-012, SEC-007: complète par Mapillary avec le jeton de l'environnement, sans jamais le répéter dans le résultat", async () => {
     const fetchFn = network([panoramax("p", 0.0002)], [mapillary("m", 0.0001), mapillary("m-loin", 0.5)]);
     const found = await searchPhotos(fetchFn, route, UA, TOKEN);

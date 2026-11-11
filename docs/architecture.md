@@ -116,7 +116,8 @@ Génération `npm run city` exclusivement sur PC de développement. Tests Vitest
   `app/assets/figurants-catalogue.json` et `app/assets/figurants.json`. Origine/licences : `app/assets/PROVENANCE.md`.
 - `app/assets/materials/` : photos (liens uniquement) et bibliothèques CC0 par quartier.
 - `app/scripts/create-city.ts`, `app/scripts/city-args.ts` : commande unique `npm run city -- <identifiant> [options]`
-  sur PC de développement, écrit description, extrait, boucle et matériaux, jamais appelée par l'application.
+  sur PC de développement, écrit description, extrait, boucle et matériaux, jamais appelée par l'application ;
+  écriture groupée après réussite de toutes les étapes, vignette en échec écartée et dite.
 - `app/scripts/cities.ts`, `app/scripts/extract-souq.ts`, `app/scripts/osm-tags.ts`, `app/scripts/route-loop.ts` : lecture des villes, requête Overpass unique,
   balises conservées et boucle sur les voies (chaque point est un sommet de voie).
 - `app/scripts/panoramax.ts`, scripts de matériaux, `app/scripts/photo-search.ts`, `app/scripts/city-colours.ts` : photos Panoramax, repli Mapillary
