@@ -77,8 +77,7 @@ jobs:
     needs: plan
     if: needs.plan.outputs.skip != 'true' && needs.plan.outputs.count != '0'
     name: shard ${{ matrix.index }}/${{ matrix.total }}
-    # Image épinglée : sur ubuntu-26.04 (ubuntu-latest), apt ne résout plus ses dépôts et `playwright install --with-deps` échoue.
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     permissions: { contents: read }
     strategy: { fail-fast: false, matrix: "${{ fromJSON(needs.plan.outputs.matrix) }}" }
     steps:
@@ -106,7 +105,12 @@ jobs:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ hashFiles('app/package-lock.json') }}
       - name: Install the e2e browser (Playwright Chromium)
-        run: npx playwright install --with-deps chromium
+        # apt du runner est parfois injoignable (DNS) : le navigateur est téléchargé à part et l'installation des
+        # dépendances système n'est plus bloquante. Aucun contrôle n'est affaibli (QUA-041) : si une bibliothèque
+        # manque, l'étape suivante (« Play the slice ») échoue bruyamment.
+        run: |
+          npx playwright install chromium
+          npx playwright install-deps chromium || echo "::warning::install-deps a échoué (apt indisponible) : on tente sans"
         working-directory: app
       - name: Play the slice
         env: { EVENT: "${{ github.event_name }}", BASE_REF: "${{ github.base_ref }}", SLICE: "${{ matrix.index }}/${{ matrix.total }}" }
