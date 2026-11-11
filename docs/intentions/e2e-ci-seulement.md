@@ -59,6 +59,10 @@ Les 8 derniers runs sont verts mais durent 13 à 19 minutes. Pistes, à réalise
 
 Chaque piste se mesure : durée avant et après, sur un run de référence.
 
+Réalisé le 2026-11-11 par le chantier `ci-allegee` (journal `docs/projects/journal.md`, PR #96) : doublons, runs périmés, caches,
+`runAt: ["ci"]` et tranches e2e. Run de référence : environ 17 minutes avant (médiane des 8 derniers runs de `master`), environ
+7 minutes après. Reste ouverte la piste « e2e conditionné à `app/` » (refusée sans accord du demandeur) et `DRWIL_SKIP`.
+
 ## Questions à trancher
 
 *(aucune)* ; à vérifier à la réalisation : que `DRWIL_SKIP` reste impossible à activer en CI, et que l'amendement de
