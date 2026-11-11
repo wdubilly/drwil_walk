@@ -16,6 +16,8 @@ files:
   - app/src/city/souq-data.ts
   - app/assets/figurants-catalogue.json
   - app/data/villes.json
+  - app/assets/recette-regions.json
+  - app/src/city/recipe-data.ts
   - app/e2e/facades-batiments.test.ts
   - docs/architecture.md
   - docs/features.md
@@ -96,10 +98,12 @@ commun, la surcharge par quartier, l'origine des éléments, et des teintes appu
 
 ## 7. Reprise
 
-- **Dernier état** (2026-11-11): lot 1 fait : schéma de la recette dans `app/src/city/region-palette.ts` (`readRecipe` valide,
-  `recipeFor` résout quartier → région → `ailleurs` champ par champ, origine `releve`/`regle` obligatoire) ; tests dans
-  `app/src/city/facade-palettes.test.ts`. `paletteOf` et les palettes de façade sont inchangés (migration au lot 2).
-- **Travail non commité** : aucun.
-- **Prochaine étape** : lot 2, migrer régions existantes (palettes de façade, sol, figurants) vers un fichier de recette lu par
-  `readRecipe`. Le fichier de recette dans `app/assets/` n'est pas dans le bloc scope : à ajouter à la fiche avant le lot 2.
-  Les trois points [decision] de la section 5 restent à trancher par l'humain.
+- **Dernier état** (2026-11-11) : lot 2 fait. Les régions existantes sont lues de `app/assets/recette-regions.json` : palettes de sol,
+  de voies et de bâtiments (`paletteOf`, `RECIPE` dans `app/src/city/region-palette.ts`) et jeux de palettes de façade
+  (`jeuxFacades`, chargés et validés par `app/src/city/recipe-data.ts` ; `palettesOf` passe par `recipeFor`). Mêmes teintes
+  qu'avant (extraites du code), toutes d'origine `regle`. `PALETTES_PER_FAMILY` est défini dans `app/src/city/facade-family.ts` (évite un
+  cycle d'import), ré-exporté par `app/src/city/facade-palettes.ts`. Les figurants lisent déjà leur table de région en données
+  (`app/assets/figurants-catalogue.json`, mêmes noms de région) : non fusionnée dans le fichier de recette.
+- **Travail non commité** : aucun après le commit du lot 2.
+- **Prochaine étape** : lot 3 (surcharge de quartier et preuve de l'origine) ; lot 4 [human] jugement des teintes. Les trois
+  points [decision] de la section 5 restent à trancher par l'humain.
