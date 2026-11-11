@@ -103,4 +103,4 @@ préparé, hors dépôt : `docs/contracts.md` ne se commite qu'en BUILD) et y ra
 
 - **Dernier état** (2026-11-11) : lots 1 et 2 faits et commités (lot 2 : cache npm par `setup-node` sur les deux `package-lock.json`, cache `~/.cache/ms-playwright` clé `app/package-lock.json`, installations conservées) ; `run-checks` vert. La durée avant/après est à relever sur la CI (journal, [human]).
 - **Travail non commité** : aucun (hors cette section).
-- **Prochaine étape** : lot 3 — `"runAt": ["ci"]` sur le contrôle `e2e` de `.drwil/ia-first.json` (incrément 2 bis).
+- **Prochaine étape** : lot 3 — zone du projet du workflow (marqueurs `drwil-project-begin/end`, doc 0.11.1), puis lot 4 — shards de l'e2e ; le `runAt: ["ci"]` (incrément 2 bis) est à vérifier dans ce plan de lots.
