@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { CENTRE_LINE_MIN_WIDTH_M, buildRoadsGeometry, roadColor, widthOf } from "./roads.ts";
+import { surfaceOf } from "../../scripts/osm-tags.ts";
+import { CENTRE_LINE_MIN_WIDTH_M, buildRoadsGeometry, roadColor, surfaceFor, widthOf } from "./roads.ts";
 
 describe("voies dessinées", () => {
   it("APP-003: la largeur suit la classe : les grands axes sont plus larges, les bretelles comme leur voie", () => {
@@ -52,5 +53,33 @@ describe("voies dessinées", () => {
     expect(widthOf("tertiary")).toBe(CENTRE_LINE_MIN_WIDTH_M);
     expect(track("tertiary")).toBe(24);
     expect(track("residential")).toBe(18);
+  });
+});
+
+describe("revêtement des voies", () => {
+  it("APP-009: la balise surface est lue en trois familles ; absente ou inconnue, elle ne donne rien", () => {
+    expect(surfaceOf({ surface: "asphalt" })).toBe("asphalt");
+    expect(surfaceOf({ surface: " Sett " })).toBe("pave");
+    expect(surfaceOf({ surface: "gravel" })).toBe("terre");
+    expect(surfaceOf({ surface: "moquette" })).toBeUndefined();
+    expect(surfaceOf({})).toBeUndefined();
+  });
+
+  it("APP-009: une balise relevée prime, sinon la région fixe la valeur, sinon « ailleurs », jamais présentée comme relevée", () => {
+    expect(surfaceFor("residential", "pave", "golfe")).toEqual({ kind: "pave", origin: "releve" });
+    expect(surfaceFor("residential", undefined, "golfe")).toEqual({ kind: "asphalt", origin: "regle" });
+    expect(surfaceFor("pedestrian", undefined, "inde")).toEqual({ kind: "pave", origin: "regle" });
+    expect(surfaceFor("primary_link", undefined, "region-inconnue")).toEqual({ kind: "asphalt", origin: "regle" });
+  });
+
+  it("APP-009: le quartier surcharge sa région ; une recette sans valeur retombe sur l'asphalte", () => {
+    const file = {
+      regions: { ailleurs: { sols: { value: { chaussee: "asphalt" as const } } }, x: {} },
+      districts: { vieux: { region: "x", sols: { value: { chaussee: "pave" as const } } }, nu: { region: "x" } },
+    };
+    expect(surfaceFor("service", undefined, "x", "vieux", file).kind).toBe("pave");
+    expect(surfaceFor("service", undefined, "x", "nu", file).kind).toBe("asphalt");
+    expect(surfaceFor("footway", undefined, "x", undefined, file).kind).toBe("asphalt");
+    expect(surfaceFor("service", undefined, "x", undefined, { regions: {} }).kind).toBe("asphalt");
   });
 });

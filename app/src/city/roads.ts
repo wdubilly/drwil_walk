@@ -3,6 +3,8 @@
 import { BufferGeometry, Color, Float32BufferAttribute } from "three";
 import type { Vec2 } from "../route/geo.ts";
 import type { Road } from "./souq-data.ts";
+import type { Surface } from "../../scripts/osm-tags.ts";
+import recipe from "../../assets/recette-regions.json" with { type: "json" };
 
 /** Largeur en mètres selon la classe de la voie : les grands axes sont plus larges, les sentiers étroits. */
 const WIDTH_M: Record<string, number> = {
@@ -89,4 +91,21 @@ export function buildRoadsGeometry(roads: readonly Road[], base = 0x808080, mark
     }
   }
   return ribbonsGeometry({ positions: out.positions.concat(marks.positions), colors: out.colors.concat(marks.colors) });
+}
+
+/** Les classes de voie réservées aux piétons : leur revêtement de repli est celui de « pieton », les autres celui de « chaussee ». */
+const PEDESTRIAN = new Set(["pedestrian", "living_street", "footway", "path", "steps", "track"]);
+
+/** Un revêtement et son origine : relevé OSM (`surface`) ou ajouté par la règle de la région (APP-009, APP-013). */
+export interface RoadSurface { kind: Surface; origin: "releve" | "regle" }
+
+type SolsFile = { regions: Record<string, { sols?: { value: Record<string, Surface> } }>; districts?: Record<string, { region?: string; sols?: { value: Record<string, Surface> } }> };
+
+/** Le revêtement d'une voie : la balise relevée si elle existe, sinon la valeur du quartier, de sa région, puis d'« ailleurs ». */
+export function surfaceFor(highway: string, tagged: Surface | undefined, region: string, district?: string, file: SolsFile = recipe as unknown as SolsFile): RoadSurface {
+  if (tagged !== undefined) return { kind: tagged, origin: "releve" };
+  const hood = district === undefined ? undefined : file.districts?.[district];
+  const sols = hood?.sols ?? file.regions[hood?.region ?? region]?.sols ?? file.regions["ailleurs"]?.sols;
+  const key = PEDESTRIAN.has(baseOf(highway)) ? "pieton" : "chaussee";
+  return { kind: (sols?.value[key] ?? "asphalt"), origin: "regle" };
 }

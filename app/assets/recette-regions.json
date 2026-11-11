@@ -3,16 +3,19 @@
     "ailleurs": {
       "palette": {"value":{"ground":9079428,"road":4737096,"buildings":[13617340,12432548,14538440,11116690]},"origin":"regle"},
       "facadeSet": {"value":"base","origin":"regle"},
+      "sols": {"value":{"chaussee":"asphalt","pieton":"pave"},"origin":"regle"},
       "figurants": {"value":{"conduite":"droite","densites":{"chaussee":1,"trottoir":1,"voie-pietonne":2},"poids":{"berline":4,"4x4":1,"taxi":1,"utilitaire":1,"deux-roues":1,"pieton":1,"flaneur":1}},"origin":"regle"}
     },
     "golfe": {
       "palette": {"value":{"ground":11047275,"road":6181958,"buildings":[14929829,13808780,13212267,15720640]},"origin":"regle"},
       "facadeSet": {"value":"golfe","origin":"regle"},
+      "sols": {"value":{"chaussee":"asphalt","pieton":"pave"},"origin":"regle"},
       "figurants": {"value":{"conduite":"droite","densites":{"chaussee":1.2,"trottoir":1.5,"voie-pietonne":2.5},"poids":{"berline":4,"4x4":4,"taxi":2,"utilitaire":1,"deux-roues":1,"pieton":1,"flaneur":1}},"origin":"regle"}
     },
     "inde": {
       "palette": {"value":{"ground":10127992,"road":5196357,"buildings":[11883580,13138010,14262906,10503730]},"origin":"regle"},
       "facadeSet": {"value":"inde","origin":"regle"},
+      "sols": {"value":{"chaussee":"asphalt","pieton":"pave"},"origin":"regle"},
       "figurants": {"value":{"conduite":"gauche","densites":{"chaussee":2,"trottoir":2,"voie-pietonne":3},"poids":{"berline":2,"taxi":1,"utilitaire":1,"deux-roues":6,"pieton":1,"flaneur":1}},"origin":"regle"}
     },
     "italie": {"facadeSet":{"value":"italie","origin":"regle"}},
