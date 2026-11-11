@@ -96,6 +96,10 @@ commun, la surcharge par quartier, l'origine des éléments, et des teintes appu
 
 ## 7. Reprise
 
-- **Dernier état** (2026-11-07): cadrage seul, aucun code.
-- **Travail non commité** : la fiche.
-- **Prochaine étape** : [decision] trancher les trois points, puis démarrer l'incrément 1 sur demande du demandeur.
+- **Dernier état** (2026-11-11): lot 1 fait : schéma de la recette dans `app/src/city/region-palette.ts` (`readRecipe` valide,
+  `recipeFor` résout quartier → région → `ailleurs` champ par champ, origine `releve`/`regle` obligatoire) ; tests dans
+  `app/src/city/facade-palettes.test.ts`. `paletteOf` et les palettes de façade sont inchangés (migration au lot 2).
+- **Travail non commité** : aucun.
+- **Prochaine étape** : lot 2, migrer régions existantes (palettes de façade, sol, figurants) vers un fichier de recette lu par
+  `readRecipe`. Le fichier de recette dans `app/assets/` n'est pas dans le bloc scope : à ajouter à la fiche avant le lot 2.
+  Les trois points [decision] de la section 5 restent à trancher par l'humain.
