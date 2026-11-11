@@ -16,6 +16,8 @@ files:
   - app/data/pune-vieille-ville-boucle.json
   - app/data/souq-waqif.json
   - app/data/souq-waqif-boucle.json
+  - app/assets/materials/rome.json
+  - app/assets/materials/rome-photos.json
   - app/scripts/create-city.ts
   - app/scripts/cities.ts
   - app/src/city/cities.ts
