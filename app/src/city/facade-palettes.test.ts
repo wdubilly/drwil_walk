@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { readRecipe, recipeFor } from "./region-palette.ts";
+import { RECIPE, paletteOf, readRecipe, recipeFor } from "./region-palette.ts";
+import { readFacadeSets, usedSetsOf } from "./recipe-data.ts";
 import type { FamilyId, Region } from "./facade-family.ts";
 import { PALETTES, PALETTES_PER_FAMILY, palettesOf, type DetailPalette } from "./facade-palettes.ts";
 
@@ -94,5 +95,37 @@ describe("recette en données", () => {
     expect(() => readRecipe(noName)).toThrow("valeur invalide");
     expect(() => readRecipe({ regions: raw().regions, districts: { x: 1 } })).toThrow("entrée");
     expect(readRecipe({ regions: raw().regions }).districts).toEqual({});
+  });
+});
+
+describe("recette des régions existantes migrée", () => {
+  it("APP-008/APP-013: le fichier livré décrit golfe et inde, repli « ailleurs », aucun élément présenté comme relevé", () => {
+    expect(paletteOf([51.53, 25.29]).ground).toBe(0xa8916b);
+    expect(paletteOf([73.85, 18.52]).road).toBe(0x4f4a45);
+    expect(paletteOf([-70, -33]).ground).toBe(0x8a8a84);
+    expect(paletteOf([5.4, 43.5])).toEqual(paletteOf([-70, -33]));
+    const all = [...Object.values(RECIPE.regions), ...Object.values(RECIPE.districts)].flatMap((e) => [e.palette, e.facadeSet]);
+    expect(all.filter((e) => e !== undefined).every((e) => e.origin === "regle")).toBe(true);
+  });
+
+  it("APP-008: une région sans jeu propre garde le jeu de base, les cinq autres le leur", () => {
+    expect(palettesOf("provence")).toBe(PALETTES);
+    expect(OWN.every((r) => palettesOf(r) !== PALETTES)).toBe(true);
+  });
+
+  it("APP-008: les jeux utilisés se lisent des régions et des quartiers, une entrée sans jeu n'en nomme aucun", () => {
+    expect(usedSetsOf(readRecipe(raw())).sort()).toEqual(["base", "souq", "x"]);
+  });
+
+  it("APP-008: un jeu de façade mal formé ou nommé sans exister est refusé avec sa raison", () => {
+    const detail = { trim: 1, glass: 2, accent: 3, shutters: [4], doors: [5] };
+    const set = Object.fromEntries(["provencale", "village", "ancien", "recent"].map((f) => [f, [detail, detail, detail]]));
+    expect(Object.keys(readFacadeSets({ base: set }, ["base"]))).toEqual(["base"]);
+    expect(() => readFacadeSets({}, [])).toThrow("base");
+    expect(() => readFacadeSets({ base: set }, ["golfe"])).toThrow("inconnu");
+    expect(() => readFacadeSets({ base: { ...set, recent: [detail] } }, [])).toThrow("3 palettes");
+    expect(() => readFacadeSets({ base: { ...set, recent: [detail, detail, { ...detail, trim: -1 }] } }, [])).toThrow("illisible");
+    expect(() => readFacadeSets({ base: { ...set, recent: [detail, detail, { ...detail, doors: [] }] } }, [])).toThrow("illisible");
+    expect(() => readFacadeSets({ base: set, golfe: 3 }, [])).toThrow("golfe.provencale");
   });
 });

@@ -1,10 +1,12 @@
 // Les quatre familles architecturales des façades (APP-008) et leur choix : selon la région de l'itinéraire, la balise
 // `building`, la hauteur et le quartier (deux bâtiments voisins partagent une famille et une palette). Les palettes de
-// chaque région sont dans `facade-palettes.ts`.
+// chaque région sont dans la recette en données (`facade-palettes.ts`).
 import type { LonLat } from "../route/geo.ts";
-import { PALETTES_PER_FAMILY } from "./facade-palettes.ts";
 import { hash32 } from "./facade-seed.ts";
 import type { Building } from "./souq-data.ts";
+
+/** Trois palettes par famille : le quartier en choisit une, ses voisins la partagent. */
+export const PALETTES_PER_FAMILY = 3;
 
 export type FamilyId = "provencale" | "village" | "ancien" | "recent";
 export type Region = "provence" | "italie" | "caucase" | "france-nord" | "inde" | "golfe" | "ailleurs";
