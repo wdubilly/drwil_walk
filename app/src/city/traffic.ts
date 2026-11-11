@@ -3,7 +3,7 @@
 // baissée, vignette et découpe de la zone tapis s'y appliquent comme au reste (APP-001).
 import { Euler, Group, InstancedMesh, Matrix4, Quaternion, Vector3, type Camera, type Object3D } from "three";
 import type { Souq } from "./souq-data.ts";
-import { regionOf } from "./facade-family.ts";
+import { figurantsKeyOf } from "./region-palette.ts";
 import { toonMaterial } from "./toon.ts";
 import { readCatalogue } from "./traffic-catalog.ts";
 import { poseAt } from "./traffic-motion.ts";
@@ -78,7 +78,7 @@ export function buildTraffic(doc: Document, souq: Souq, options: TrafficOptions)
       return;
     }
     const pack = readTrafficPack(await options.loadModels());
-    const agents = planTraffic(souq.roads, souq.buildings, souq.route, catalogue, regionOf(souq.origin), new Set(pack.keys()), options.caps);
+    const agents = planTraffic(souq.roads, souq.buildings, souq.route, catalogue, figurantsKeyOf(souq.origin), new Set(pack.keys()), options.caps);
     const byModel = new Map<string, Agent[]>();
     for (const agent of agents) byModel.set(agent.model, [...(byModel.get(agent.model) ?? []), agent]);
     const meshes: Object3D[] = [...byModel].map(([name, list]) => instanced(pack.get(name) as PackModel, list, group, now));

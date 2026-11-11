@@ -106,6 +106,8 @@ sur un vrai casque : `docs/intentions/essai-casque-profils-graphiques.md`.
 - Façades procédurales (APP-008) : identifiant OSM comme graine, quatre familles adaptées à la région,
   aucun voisin identique, fenêtres, portes, volets, balcons et corniches à moins de 80 m du parcours.
   Teintes de l'Inde à Pune, sable et bois du Golfe à Doha. Performance réduit le détail.
+  Les teintes d'un quartier (souk Waqif, Vieille ville de Pune) se surchargent dans `app/assets/recette-regions.json`, avec
+  l'origine de chaque élément ; elles jouent aussi sur les façades, les matériaux et les figurants ; teintes inchangées, pas encore jugées au casque.
 - Matériaux locaux (APP-012) : appliqués automatiquement quand une bibliothèque embarquée existe, absents en Performance.
   Textures CC0 recolorées, teinte/échelle/usure déterministes sans doublon voisin, aucun réseau.
 - Arbres Quaternius CC0 : quatre variantes de 413–454 triangles, cap et taille reproductibles, au plus 300.
@@ -143,7 +145,7 @@ Non jugé/écouté sur vrai casque : `docs/intentions/seance-casque-parcours.md`
 Activable par une seule préférence, sur les itinéraires du catalogue (Souq Waqif seulement).
 Voitures, taxis, 4x4, utilitaires, deux-roues sur voies carrossables ; piétons sur trottoirs et voies piétonnes.
 `oneway`, `lanes`, côté de conduite et emprises des bâtiments sont respectés. Moteur pur à graine OSM,
-types et tables régionales en données (`app/assets/figurants-catalogue.json`), Golfe réglé, Inde provisoire.
+types en données (`app/assets/figurants-catalogue.json`), tables régionales dans la recette (`app/assets/recette-regions.json`), Golfe réglé, Inde provisoire.
 Vitesses plafonnées à 30 km/h et 6 km/h. Plafonds véhicules/piétons : 8/16, 20/40, 30/60 selon profil.
 Figurants retirés à moins de 10 m avec transition sur 4 m, soumis à la zone tapis et au fondu.
 Un maillage instancié par modèle CC0, 12 au plus ; modèles invalides refusés avec raison.

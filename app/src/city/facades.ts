@@ -27,6 +27,8 @@ const CHIMNEY_INSET_M = 1.2;
 export interface FacadeContext {
   detail: FacadeDetail;
   region: Region;
+  /** Le quartier de la recette (APP-008), s'il en a un : sa surcharge l'emporte sur la région. */
+  district?: string;
   route: Path;
   /** Part de lumière au pied d'un mur : les détails suivent l'ombrage des murs. */
   footLight: number;
@@ -51,7 +53,7 @@ export function wallsOf(footprint: readonly Vec2[], route: Path): Wall[] {
 }
 
 /** Le plan de chaque bâtiment détaillé : la variante tirée de l'identifiant, décalée tant qu'un voisin porte déjà la même façade. */
-export function planAll(chosen: readonly Building[], region: Region): Map<Building, FacadePlan> {
+export function planAll(chosen: readonly Building[], region: Region, district?: string): Map<Building, FacadePlan> {
   const seen = new Map<string, Set<string>>();
   const plans = new Map<Building, FacadePlan>();
   for (const b of chosen) {
@@ -60,8 +62,8 @@ export function planAll(chosen: readonly Building[], region: Region): Map<Buildi
     const near = new Set<string>();
     for (const dx of [-1, 0, 1]) for (const dz of [-1, 0, 1]) for (const s of seen.get(`${String(cx + dx)},${String(cz + dz)}`) ?? []) near.add(s);
     const start = startVariant(b);
-    let plan = planFacade(b, region, start);
-    for (let k = 1; near.has(signatureOf(plan)) && k < VARIANT_COUNT; k++) plan = planFacade(b, region, (start + k) % VARIANT_COUNT);
+    let plan = planFacade(b, region, start, district);
+    for (let k = 1; near.has(signatureOf(plan)) && k < VARIANT_COUNT; k++) plan = planFacade(b, region, (start + k) % VARIANT_COUNT, district);
     plans.set(b, plan);
     seen.set(cellKey(p), (seen.get(cellKey(p)) ?? new Set()).add(signatureOf(plan)));
   }
@@ -73,7 +75,7 @@ const anchor = (b: Building): Vec2 => b.footprint[0] as Vec2;
 /** Les bâtiments détaillés (les plus proches du parcours, dans le plafond du profil) et leur plan : les matériaux locaux s'y posent aussi. */
 export function detailedPlans(solid: readonly Building[], ctx: Omit<FacadeContext, "footLight">): Map<Building, FacadePlan> {
   const candidates = solid.filter((b) => b.heightM >= MIN_DETAIL_HEIGHT_M && distanceToRoute(anchor(b), ctx.route) <= FACADE_MAX_DISTANCE_M);
-  return planAll(closest(candidates, ctx.route, FACADE_BUDGETS[ctx.detail].maxBuildings, anchor), ctx.region);
+  return planAll(closest(candidates, ctx.route, FACADE_BUDGETS[ctx.detail].maxBuildings, anchor), ctx.region, ctx.district);
 }
 
 /** Ajoute les façades des bâtiments les plus proches du parcours et rend ceux qui en ont reçu (leurs murs n'ont plus besoin du motif de repli). */

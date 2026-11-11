@@ -19,7 +19,7 @@ import {
 import { headingAt, pointAt, type Path } from "../route/path.ts";
 import { createAttributionLabel, type AttributionLabel } from "./attribution.ts";
 import { FOOT_LIGHT, buildBuildingsGeometry } from "./buildings.ts";
-import { regionOf } from "./facade-family.ts";
+import { placeOf } from "./region-palette.ts";
 import type { FacadeDetail } from "./facades.ts";
 import { MAX_LOCAL_MATERIALS, type LocalMaterials } from "./material-library.ts";
 import { buildLocalMaterials } from "./material-mesh.ts";
@@ -110,7 +110,7 @@ export function createSouqScene(doc: Document, souq: Souq, options: SceneOptions
   const roads = new Mesh(buildRoadsGeometry(souq.roads, souq.palette.road, marks), toonMaterial({ vertexColors: true, side: DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }));
   roads.name = "voies";
   // Couleurs par sommet : la teinte de chaque bâtiment vient de la géométrie, le matériau reste blanc.
-  const buildings = new Mesh(buildBuildingsGeometry(souq.buildings, souq.palette.buildings, souq.route, { detail: options.facades ?? "off", region: regionOf(souq.origin) }), buildingMaterial());
+  const buildings = new Mesh(buildBuildingsGeometry(souq.buildings, souq.palette.buildings, souq.route, { detail: options.facades ?? "off", ...placeOf(souq.origin) }), buildingMaterial());
   buildings.name = "batiments";
   const greenery = new Mesh(buildVegetation(rich ? souq.areas : [], rich ? souq.hedges : [], souq.route), toonMaterial({ vertexColors: true, side: DoubleSide, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }));
   greenery.name = "verdure";
@@ -131,7 +131,7 @@ export function createSouqScene(doc: Document, souq: Souq, options: SceneOptions
     sources.generated += mastSources.generated;
     osm.add(masts, buildStreetLights(masts.userData["lamps"] as PlacedLamp[]));
   } else if (options.streetLights !== false) osm.add(buildStreetLights(furniture.userData["lamps"] as PlacedLamp[]));
-  if (options.materials) osm.add(buildLocalMaterials(souq.buildings, options.materials, { detail: options.facades ?? "off", region: regionOf(souq.origin), route: souq.route, footLight: FOOT_LIGHT }));
+  if (options.materials) osm.add(buildLocalMaterials(souq.buildings, options.materials, { detail: options.facades ?? "off", ...placeOf(souq.origin), route: souq.route, footLight: FOOT_LIGHT }));
   if (options.outlines === true) {
     const outlines = new LineSegments(buildOutlinesGeometry(souq.buildings, souq.route), new LineBasicMaterial({ color: OUTLINE_COLOR }));
     outlines.name = "contours";

@@ -46,13 +46,13 @@ export const startVariant = (building: Building): number => Math.floor(seededRan
 
 const BAY_M: Record<FamilyId, number> = { provencale: 3, village: 2.8, ancien: 3.4, recent: 3.2 };
 
-export function planFacade(building: Building, region: Region, variant: number): FacadePlan {
+export function planFacade(building: Building, region: Region, variant: number, district?: string): FacadePlan {
   const { floors, floorM } = resolveFloors(building.heightM, building.levels);
   const family = familyFor(building, floors, region);
   const digit = (i: number): number => Math.floor(variant / 3 ** i) % 3;
   const [windowStyle, shutterDigit, doorDigit, balconyDigit, corniceDigit] = [0, 1, 2, 3, 4].map(digit) as [number, number, number, number, number];
   const paletteIndex = paletteIndexOf(building);
-  const palette = palettesOf(region)[family][paletteIndex] as DetailPalette;
+  const palette = palettesOf(region, district)[family][paletteIndex] as DetailPalette;
   const hasShutters = family === "provencale" || family === "village" || (family === "ancien" && shutterDigit !== 2);
   const cornice = family === "provencale" ? Math.max(corniceDigit, 1) : family === "recent" ? (corniceDigit === 2 ? 1 : 0) : corniceDigit;
   return {

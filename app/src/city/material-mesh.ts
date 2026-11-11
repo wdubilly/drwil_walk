@@ -20,6 +20,7 @@ export const LOCAL_MATERIALS_NAME = "materiaux-locaux";
 export interface MaterialContext {
   detail: FacadeDetail;
   region: Region;
+  district?: string;
   route: Path;
   /** Part de lumière au pied d'un mur : le placage suit l'ombrage des murs. */
   footLight: number;

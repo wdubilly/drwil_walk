@@ -567,6 +567,19 @@ One entry per closed project, most recent last.
 - Suite : l'épinglage `ubuntu-24.04` n'a rien changé (apt ne résout pas non plus `azure.archive.ubuntu.com` sur noble : panne DNS du runner, quelle que soit l'image). Décision humaine : retour à `ubuntu-latest`, Chromium installé par `playwright install chromium` puis `install-deps chromium` non bloquant (avertissement) ; une bibliothèque manquante ferait échouer « Play the slice » bruyamment, aucun contrôle affaibli (QUA-041).
 - Reste à l'humain : lots 1 et 2 (marqués [humain], l'essai ayant été lancé par l'agent sur décision) et le rendu de la ville créée au casque, APP-001 attesté par l'humain.
 
+## 2026-11-11 — gen-02-format-recette : le format de la recette en données
+
+- Le schéma de la recette (`readRecipe`, `recipeFor`, `app/src/city/region-palette.ts`) valide chaque champ, exige une origine (`releve` avec `source`, ou `regle`, APP-013) et résout champ par champ quartier, région, puis `ailleurs`, sans erreur pour une région inconnue.
+- Les régions existantes sont migrées dans `app/assets/recette-regions.json` (palettes de sol, de voies et de bâtiments, jeux de façade, tables de figurants), chargées par `app/src/city/recipe-data.ts` ; `app/src/city/facade-palettes.ts` passe de 146 à 25 lignes. Teintes et rendu identiques (tests d'identité, e2e `facades-batiments` 8/8, `eclairage-ambiance` 3/3).
+- Surcharge de quartier par emprise (`districtAt`) : `souq-waqif` et `pune-vieille-ville` livrés, mêmes teintes que leur région, origine `regle`, aucune teinte inventée.
+- Décisions (« Traiter maintenant », sondage `drwil-limite`) : périmètre élargi au fichier de recette et à son chargeur, puis aux figurants (`app/src/city/traffic-catalog.ts` et sa lecture) et aux façades et matériaux par quartier (`placeOf`, `district` passé à `planFacade`).
+- Critères : APP-001 (déjà attesté le 2026-11-06) étiqueté [human] ; APP-008 retiré de [human], `verify` le prouvant automatiquement.
+- Reste à l'humain : lot 4, le jugement des teintes du souk et de Pune au casque ou sur captures ; les fenêtres de latitude/longitude ou régions plus fines (Lyon, trou entre Provence et France du Nord) restent à trancher.
+
 ## gen-01-essai-commande
 
 - **Preuve de clôture** : `docs/preuves/gen-01-essai-commande.md`.
+
+## gen-02-format-recette
+
+- **Preuve de clôture** : `docs/preuves/gen-02-format-recette.md`.

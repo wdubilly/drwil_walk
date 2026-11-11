@@ -1,7 +1,7 @@
 import { Window } from "happy-dom";
 import { InstancedMesh, Matrix4, PerspectiveCamera, Vector3, type Mesh, type Scene, type WebGLRenderer } from "three";
 import { describe, expect, it } from "vitest";
-import bundledCatalogue from "../../assets/figurants-catalogue.json" with { type: "json" };
+import { bundledCatalogue } from "./traffic-assets.ts";
 import { createPath } from "../route/path.ts";
 import { DEFAULT_ZONE } from "../safety/zone.ts";
 import { withCanvasContext } from "./canvas-double.ts";

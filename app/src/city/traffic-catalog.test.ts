@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import bundled from "../../assets/figurants-catalogue.json" with { type: "json" };
+import { bundledData as bundled } from "./traffic-assets.ts";
 import { DEFAULT_REGION, readCatalogue, regionSetting } from "./traffic-catalog.ts";
 
 type Data = Record<string, unknown>;
