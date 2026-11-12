@@ -2,7 +2,7 @@
 
 **Statut** : cadré le 2026-11-07.
 **Risque** : HIGH
-**Maturité** : à préciser
+**Maturité** : prêt
 **Intention** : `docs/intentions/recette-visuelle-promenade.md` (ensemble : `docs/intentions/generateur-ville-complet.md`)
 
 <!-- scope
@@ -83,10 +83,11 @@ paramètres `inde` en données, et la preuve d'absence de code propre à une vil
 - 2026-11-07 : une retouche de code **généralisante** est acceptée pendant le jalon ; une exception propre à Pune est un
   échec.
 
+- 2026-11-12 : valeurs `inde` : **valeurs par défaut posées pendant le chantier** (conduite à gauche, façades, sols, essences, mobilier, figurants), jugées ensuite au casque par le demandeur ; Panoramax reste la première source.
+
 ## 5. Points à décider
 
-- [decision] Quelles valeurs `inde` : palette de façades, sols, essences, mobilier, côté de conduite (gauche), densités de
-  figurants ? À valider sur des références visuelles apportées par le demandeur.
+Aucun : tranchés le 2026-11-12 (voir « Décisions »).
 
 ## 6. Incréments
 
