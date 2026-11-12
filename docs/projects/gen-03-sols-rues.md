@@ -51,7 +51,7 @@ ne sont pas traités (`docs/intentions/rendu-rues-mobilier.md`). Manque aussi : 
 - Les bordures restent cohérentes avec les trottoirs et passages, sans raccord flottant ni géométrie invalide — `APP-009`
 - Une balise absente donne la valeur de repli de la région, jamais un élément inventé présenté comme relevé — `APP-009`
 - Le rendu est reproductible : mêmes données, mêmes sols — `APP-013`
-- Les sols s'effacent avec la ville tête baissée — `APP-001`
+- Les sols s'effacent avec la ville tête baissée [human] — `APP-001`
 - Quest, PC et tablette montrent les mêmes sols — `APP-015`
 - Le profil « performance » règle la densité des détails sans toucher à la sécurité — `APP-006`
 - Les sols du souk et de Pune Vieille ville se reconnaissent d'emblée au casque [human] — `APP-001`
