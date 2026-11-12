@@ -14,6 +14,13 @@ files:
   - app/src/city/markings.test.ts
   - app/src/city/walkways.test.ts
   - app/scripts/osm-tags.ts
+  - app/scripts/extract-souq.ts
+  - app/src/city/souq-data.ts
+  - app/src/city/souq-data.test.ts
+  - app/src/city/souq.ts
+  - app/src/city/region-palette.ts
+  - app/src/city/region-palette.test.ts
+  - app/src/city/extract-souq.test.ts
   - app/assets/recette-regions.json
   - app/e2e/mobilier-urbain.test.ts
   - docs/architecture.md
