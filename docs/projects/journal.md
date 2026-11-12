@@ -619,3 +619,7 @@ One entry per closed project, most recent last.
 ## gen-04-rez-de-chaussee
 
 - **Preuve de clôture** : `docs/preuves/gen-04-rez-de-chaussee.md`.
+
+## gen-05-materiaux-repli
+
+- **Preuve de clôture** : `docs/preuves/gen-05-materiaux-repli.md`.
