@@ -18,6 +18,9 @@ files:
   - app/src/city/souq-data.ts
   - app/src/city/souq-data.test.ts
   - app/src/city/souq.ts
+  - app/src/city/road-surface.ts
+  - app/src/city/road-surface.test.ts
+  - app/data
   - app/src/city/region-palette.ts
   - app/src/city/region-palette.test.ts
   - app/src/city/extract-souq.test.ts
@@ -79,6 +82,7 @@ ne sont pas traités (`docs/intentions/rendu-rues-mobilier.md`). Manque aussi : 
   s'effacent comme la ville (`APP-001`, bornes de `APP-012` à relire).
 - 2026-11-07 : **une seule réextraction OSM** pour tous les nouveaux champs (`surface`, `shop`/`amenity`, `highway=stop`,
   eau), faite par un des chantiers `gen-03`, `gen-04`, `gen-06`, `gen-10`, le premier lancé.
+- 2026-11-11 : « textures » réalisées en **motifs de shader** (joints de pavés, grain), sans image : poids nul, même rendu sur les trois plateformes ; une photo de revêtement reste possible plus tard.
 - 2026-11-11 : états retenus d'abord : usé (plus foncé) et poussiéreux (plus clair), une variation de clarté déterministe par voie ; « mouillé » reste à décider (il suppose la météo, `gen-13`).
 
 ## 5. Points à décider
@@ -95,8 +99,7 @@ ne sont pas traités (`docs/intentions/rendu-rues-mobilier.md`). Manque aussi : 
 
 ## 7. Reprise
 
-- **Dernier état** (2026-11-11) : lots 1 à 3 faits (lecture de `surface`, repli `sols` de la recette, teinte par revêtement, usure déterministe).
-  Les extraits figés n'ont pas encore la balise `surface` : l'extraction la porte, mais la réextraction OSM (réseau) n'est pas faite, donc
-  le repli régional s'applique partout aujourd'hui.
+- **Dernier état** (2026-11-11) : lots 1 à 3 faits, plus la réextraction OSM des cinq extraits (champ `surface` présent, rendu par revêtement
+  avec grain de shader). Reste le lot 4 [human] : jugement au casque.
 - **Travail non commité** : aucun après le commit du lot 3.
-- **Prochaine étape** : réextraction OSM des quatre itinéraires (une seule pour `gen-03`, `gen-04`, `gen-06`, `gen-10`) ; lot 4 [human] : jugement au casque.
+- **Prochaine étape** : lot 4 [human] : jugement au casque (souk, Pune Vieille ville). Les autres chantiers `gen-04`, `gen-06`, `gen-10` n'ont plus à réextraire : seule la requête Overpass change s'ils ajoutent des balises.
