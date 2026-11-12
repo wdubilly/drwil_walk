@@ -27,6 +27,12 @@ describe("arbres et mobilier urbain", () => {
     expect(buildTrees([], route).count).toBe(0);
   });
 
+  it("APP-009: les arbres du relevé passent avant ceux d'alignement, qui complètent jusqu'au plafond", () => {
+    const aligned = Array.from({ length: 10 }, (_, i): Prop => ({ kind: "tree", source: "generated", at: { x: i + 100, z: 0 } }));
+    const trees = buildTrees([at("tree", 1), at("tree", 2)], route, undefined, 5, aligned);
+    expect(trees.count).toBe(5);
+  });
+
   it("APP-006: un plafond de profil réduit arbres et mobilier, sans dépasser celui des données", () => {
     const many = Array.from({ length: 20 }, (_, i) => at("tree", i + 1));
     expect(buildTrees(many, route, undefined, 5).count).toBe(5);

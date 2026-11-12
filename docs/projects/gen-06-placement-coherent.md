@@ -104,8 +104,9 @@ Aucun : tranchés le 2026-11-12 (voir « Décisions »).
 
 ## 7. Reprise
 
-- **Dernier état (2026-11-12)**: lot 2 fait. `app/src/city/lamp-rule.ts` refuse un mât à moins d'une demi-chaussée d'une autre voie
-  (`onOtherRoad`) et pose un mât par carrefour (sommet partagé par deux voies, `junctionCandidates`) ; tests dans `app/src/city/lamp-rule.test.ts`.
+- **Dernier état (2026-11-12)**: lots 2 et 3 faits. Lot 3 : `alignedTrees` (`app/src/city/tree-instances.ts`) produit les arbres d'alignement
+  (graine de la voie, refus sur autre chaussée, passage piéton, mur/entrée, parcours, objet du relevé ; plafond `MAX_ALIGNED_TREES`) ;
+  `buildTrees` (`app/src/city/props.ts`) accepte ces arbres en dernier paramètre `aligned`, après ceux du relevé. Tests dans `app/src/city/tree-instances.test.ts` et `app/src/city/props.test.ts`.
 - **Travail non commité** : aucun une fois le lot commité.
-- **Prochaine étape** : lot 3 (alignement des arbres, `app/src/city/tree-instances.ts`). Limite : le refus d'accès aux entrées et passages piétons
-  pour les arbres reste à traiter avec le lot 3.
+- **Prochaine étape** : lot 4 (requête d'extraction). Limite hors cadre : `app/src/city/souq.ts` n'est pas dans le bloc scope, donc `alignedTrees`
+  n'est pas encore appelé au chargement (passer son résultat à `buildTrees`) ; les entrées de bâtiment n'existent pas dans les données, le mur sert de repli.

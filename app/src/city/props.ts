@@ -48,8 +48,9 @@ export const nearest = (props: readonly Prop[], route: Path, max: number): Prop[
  * Les arbres, dans le plafond MAX_TREES : ceux du pack Quaternius s'il est chargé (instances par variante), sinon l'arbre
  * procédural, un seul maillage instancié.
  */
-export function buildTrees(props: readonly Prop[], route: Path, pack?: TreePack, max = MAX_TREES): InstancedMesh | Group {
-  const trees = nearest(props.filter((p) => p.kind === "tree"), route, Math.min(max, MAX_TREES));
+export function buildTrees(props: readonly Prop[], route: Path, pack?: TreePack, max = MAX_TREES, aligned: readonly Prop[] = []): InstancedMesh | Group {
+  const real = nearest(props.filter((p) => p.kind === "tree"), route, Math.min(max, MAX_TREES));
+  const trees = [...real, ...nearest(aligned, route, Math.min(max, MAX_TREES) - real.length)];
   if (pack) return buildPackTrees(trees, pack);
   const mesh = new InstancedMesh(treeModel(), new MeshLambertMaterial({ vertexColors: true }), trees.length);
   for (const [i, tree] of trees.entries()) mesh.setMatrixAt(i, new Matrix4().makeTranslation(tree.at.x, 0, tree.at.z));

@@ -126,6 +126,13 @@ Tout s'efface avec la ville. Limites : couleurs sans références suffisantes et
 `docs/intentions/essai-casque-facades-batiments.md`, `docs/intentions/essai-casque-materiaux-souk.md`,
 `docs/intentions/essai-casque-ville-riche.md`, `docs/intentions/essai-casque-ambiance-cartoon.md`.
 
+### Arbres d'alignement (APP-009)
+
+Le moteur sait produire des arbres le long des voies carrossables (`alignedTrees`) : un côté par tronçon, espacement varié et
+reproductible tiré de l'identifiant de la voie, jamais sur une chaussée, un passage piéton, contre un mur, sur le parcours ou
+près d'un objet du relevé ; sans voie, aucun arbre inventé. Ils sont marqués « generated » ; le branchement au chargement de la ville
+n'est pas encore fait.
+
 ### Lampadaires produits par règle (APP-013)
 
 Inventés, jamais présentés comme relevés : intervalle 27,5 m sur voie passante, 37,5 m en quartier, 17,5 m en ruelle,
