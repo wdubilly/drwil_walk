@@ -54,9 +54,9 @@ mémoire graphique, aucun chargeur KTX2) et un **jugement au casque** avant de g
   provenance) et sans appel réseau pendant la marche — `APP-012`
 - Les matériaux de repli diffèrent entre bâtiments voisins et sont déterministes (identifiant OSM) — `APP-012`
 - Le profil « performance » retire tout placage, le profil de rendu règle le reste — `APP-012`
-- Tête baissée, les matériaux (repli compris) s'effacent avec la ville — `APP-001`
+- Tête baissée, les matériaux (repli compris) s'effacent avec la ville [human] — `APP-001`
 - Les trois plateformes montrent les mêmes matériaux — `APP-015`
-- Le souk et un quartier au repli sont reconnaissables au casque, images par seconde relevées [human] — `APP-012`
+- Le souk et un quartier au repli sont reconnaissables au casque, images par seconde relevées [human] — `APP-001`
 
 ## Contrats modifiés
 
