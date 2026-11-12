@@ -23,6 +23,14 @@ files:
   - app/e2e/materiaux-souk.test.ts
   - docs/architecture.md
   - docs/features.md
+  - docs/contracts.md
+  - app/package.json
+  - app/package-lock.json
+  - app/src/city/material-ktx2.ts
+  - app/src/city/material-ktx2.test.ts
+  - app/src/ui/home.ts
+  - app/src/ui/home.test.ts
+  - app/vite.config.ts
 -->
 
 ## 1. Besoin
@@ -52,7 +60,7 @@ mémoire graphique, aucun chargeur KTX2) et un **jugement au casque** avant de g
 
 ## Contrats modifiés
 
-*(aucun)*
+- `APP-012` règle (3) : les textures peuvent être des KTX2 embarqués en `data:` en plus des JPEG (décision du demandeur, 2026-11-12, sondage des limites).
 
 ## 2. Hors périmètre
 
@@ -79,7 +87,8 @@ mémoire graphique, aucun chargeur KTX2) et un **jugement au casque** avant de g
 - 2026-11-12 : repli = **palette de couleurs de `app/src/city/region-palette.ts` seule** (pas de bibliothèque JSON par région ; le souk garde ses photos).
 - 2026-11-12 : **transcodeur KTX2 (WebAssembly servi avec la page) intégré dans ce chantier** ; sa taille et sa maintenance sont à consigner dans le journal.
 - 2026-11-12 : texture à hauteur d'homme : **512 px**.
-- 2026-11-12 : bornes d'`APP-012` (3 matériaux, 4 Mo) **conservées** : aucun contrat modifié.
+- 2026-11-12 : bornes d'`APP-012` (3 matériaux, 4 Mo) **conservées**.
+- 2026-11-12 (sondage des limites du lot 3) : le demandeur fait traiter dans ce chantier l'encodeur KTX2 (dépendance `app/package.json`), la règle (3) d'`APP-012` (KTX2 en `data:` accepté) et le câblage du chargeur (`app/src/ui/home.ts`) ; le bloc scope est élargi en conséquence.
 
 ## 5. Points à décider
 
