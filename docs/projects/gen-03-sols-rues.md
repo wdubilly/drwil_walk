@@ -20,7 +20,11 @@ files:
   - app/src/city/souq.ts
   - app/src/city/road-surface.ts
   - app/src/city/road-surface.test.ts
-  - app/data
+  - app/data/doha-corniche.json
+  - app/data/pune-fc-road.json
+  - app/data/pune-vieille-ville.json
+  - app/data/rome.json
+  - app/data/souq-waqif.json
   - app/src/city/region-palette.ts
   - app/src/city/region-palette.test.ts
   - app/src/city/extract-souq.test.ts
