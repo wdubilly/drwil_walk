@@ -10,7 +10,7 @@ import {
   toGeoJsonText,
   type OverpassResponse,
 } from "../../scripts/extract-souq.ts";
-import { areaKind, buildingKind, buildingLevels, footwayKind, lanesOf, onewayOf, roofShape, sidewalkSides } from "../../scripts/osm-tags.ts";
+import { areaKind, buildingKind, buildingLevels, footwayKind, lanesOf, onewayOf, roofShape, sidewalkSides, usageOf } from "../../scripts/osm-tags.ts";
 
 const ring = [
   { lat: 25.287, lon: 51.5331234567 },
@@ -142,6 +142,15 @@ describe("APP-008: balises des façades", () => {
     expect(buildingLevels({ "building:levels": "2.6" })).toBe(3);
     expect(["0", "61", "haut", ""].map((v) => buildingLevels({ "building:levels": v }))).toEqual([undefined, undefined, undefined, undefined]);
     expect(buildingLevels({})).toBeUndefined();
+  });
+
+  it("APP-008: l'usage commercial vient de shop et amenity, et reste dans l'extrait", () => {
+    expect(usageOf({ shop: "bakery" })).toBe("shop");
+    expect(usageOf({ shop: "no", amenity: "cafe" })).toBe("food");
+    expect(usageOf({ amenity: "Restaurant" })).toBe("food");
+    expect([{}, { shop: "" }, { amenity: "school" }].map(usageOf)).toEqual([undefined, undefined, undefined]);
+    const { features } = JSON.parse(toGeoJsonText({ elements: [{ type: "way", id: 41, tags: { building: "yes", shop: "kiosk" }, geometry: ring }] })) as { features: { properties: { usage?: string } }[] };
+    expect(features[0]?.properties.usage).toBe("shop");
   });
 
   it("APP-008: une balise building vide ne laisse aucune valeur dans l'extrait", () => {

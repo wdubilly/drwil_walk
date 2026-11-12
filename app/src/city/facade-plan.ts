@@ -1,8 +1,9 @@
 // Le plan d'une façade (APP-008) : tout ce qui la distingue d'une autre, tiré d'une graine et des balises du bâtiment, avec des
 // valeurs de repli cohérentes quand OpenStreetMap ne dit ni les étages, ni le type, ni la hauteur.
-import { SHOP_KINDS, familyFor, paletteIndexOf, type FamilyId, type Region } from "./facade-family.ts";
+import { familyFor, paletteIndexOf, type FamilyId, type Region } from "./facade-family.ts";
 import { palettesOf, type DetailPalette } from "./facade-palettes.ts";
 import { buildingSeed, seededRandom } from "./facade-seed.ts";
+import { shopOf, type Awning, type ShopOrigin } from "./shop-rules.ts";
 import type { Building } from "./souq-data.ts";
 
 /** Cinq choix à trois valeurs (fenêtres, volets, porte, balcons, corniche) : 243 façades différentes dans une famille. */
@@ -29,6 +30,11 @@ export interface FacadePlan {
   balcony: number;
   cornice: number;
   shop: boolean;
+  /** D'où vient la boutique : relevée dans OpenStreetMap ou ajoutée par la règle de la région (APP-013). */
+  shopOrigin: ShopOrigin | undefined;
+  awning: Awning;
+  /** Largeur de l'entrée d'une boutique, selon la région. */
+  entryM: number;
   chimney: boolean;
   /** Où tombe la porte sur le mur, de 0 à 1 : l'emplacement change d'un bâtiment à l'autre. */
   doorSlot: number;
@@ -53,6 +59,7 @@ export function planFacade(building: Building, region: Region, variant: number, 
   const [windowStyle, shutterDigit, doorDigit, balconyDigit, corniceDigit] = [0, 1, 2, 3, 4].map(digit) as [number, number, number, number, number];
   const paletteIndex = paletteIndexOf(building);
   const palette = palettesOf(region, district)[family][paletteIndex] as DetailPalette;
+  const shop = shopOf(building, region, floors);
   const hasShutters = family === "provencale" || family === "village" || (family === "ancien" && shutterDigit !== 2);
   const cornice = family === "provencale" ? Math.max(corniceDigit, 1) : family === "recent" ? (corniceDigit === 2 ? 1 : 0) : corniceDigit;
   return {
@@ -68,7 +75,10 @@ export function planFacade(building: Building, region: Region, variant: number, 
     door: palette.doors[doorDigit] as number,
     balcony: family === "village" ? 0 : balconyDigit,
     cornice,
-    shop: SHOP_KINDS.has(building.kind ?? "") || (family === "recent" && doorDigit === 2),
+    shop: shop.shop,
+    shopOrigin: shop.origin,
+    awning: shop.awning,
+    entryM: shop.entryM,
     chimney: variant % 2 === 0,
     doorSlot: seededRandom(buildingSeed(building) ^ 0x51ed)(),
   };
@@ -76,4 +86,4 @@ export function planFacade(building: Building, region: Region, variant: number, 
 
 /** Ce qui se voit d'une façade : deux voisines ne portent jamais la même signature (les choix sans effet dans la famille n'y comptent pas). */
 export const signatureOf = (plan: FacadePlan): string =>
-  [plan.family, plan.paletteIndex, plan.windowStyle, plan.shutters ?? "-", plan.door, plan.balcony, plan.cornice, plan.shop, plan.chimney].join(":");
+  [plan.family, plan.paletteIndex, plan.windowStyle, plan.shutters ?? "-", plan.door, plan.balcony, plan.cornice, plan.shop, plan.awning, plan.chimney].join(":");

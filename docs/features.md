@@ -106,6 +106,9 @@ sur un vrai casque : `docs/intentions/essai-casque-profils-graphiques.md`.
 - Façades procédurales (APP-008) : identifiant OSM comme graine, quatre familles adaptées à la région,
   aucun voisin identique, fenêtres, portes, volets, balcons et corniches à moins de 80 m du parcours.
   Teintes de l'Inde à Pune, sable et bois du Golfe à Doha. Performance réduit le détail.
+  Rez-de-chaussée commerçant : vitrine, porte et auvent (plat, store rayé ou arcade) selon la région ; un commerce relevé
+  dans OpenStreetMap (`shop`, `amenity`) en a toujours un, et une part des bâtiments sans usage connu en reçoit un par règle.
+  Formes simples, pas encore jugées au casque.
   Les teintes d'un quartier (souk Waqif, Vieille ville de Pune) se surchargent dans `app/assets/recette-regions.json`, avec
   l'origine de chaque élément ; elles jouent aussi sur les façades, les matériaux et les figurants ; teintes inchangées, pas encore jugées au casque.
 - Matériaux locaux (APP-012) : appliqués automatiquement quand une bibliothèque embarquée existe, absents en Performance.

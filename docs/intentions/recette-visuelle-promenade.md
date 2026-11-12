@@ -60,7 +60,7 @@ Gain visuel décroissant, une promenade complète comme preuve à chaque étape.
    données manquantes. C'est le cadrage à finir en premier.
 3. **Compléter le souk de référence** : sols (pavés, asphalte, bordures cohérentes ; faits le 2026-11-11 par `gen-03`, jugement au casque
    à faire), rez-de-chaussée (boutiques,
-   vitrines, portes, auvents), placement cohérent des arbres, lampadaires et objets (alignements, espacements, accès
+   vitrines, portes, auvents ; faits le 2026-11-12 par `gen-04`, jugement au casque à faire), placement cohérent des arbres, lampadaires et objets (alignements, espacements, accès
    dégagés), végétation adaptée.
 4. **Prouver la généralisation sur Pune** : un quartier visuellement différent, même moteur, paramètres régionaux
    complétés plutôt que des exceptions codées.

@@ -3,7 +3,7 @@
 import { toLocalMetres, type LonLat, type Vec2 } from "../route/geo.ts";
 import { materialTone, parseHex } from "./tint.ts";
 import { createPath, type Path } from "../route/path.ts";
-import type { Surface } from "../../scripts/osm-tags.ts";
+import type { Surface, Usage } from "../../scripts/osm-tags.ts";
 
 export interface Building {
   /** Identifiant OpenStreetMap : la graine déterministe des façades (APP-008) ; absent des anciennes données. */
@@ -12,6 +12,8 @@ export interface Building {
   kind?: string;
   /** Nombre d'étages (`building:levels`) ; absent : déduit de la hauteur. */
   levels?: number;
+  /** Usage commercial relevé (`shop`, `amenity`) ; absent : inconnu, la règle de la région décide (APP-008). */
+  usage?: Usage;
   /** Contour fermé, en mètres locaux. */
   footprint: Vec2[];
   heightM: number;
@@ -91,6 +93,7 @@ interface FeatureFile {
       heightM?: number;
       building?: string;
       levels?: number;
+      usage?: Usage;
       highway?: string;
       colour?: string;
       roofColour?: string;
@@ -130,6 +133,7 @@ export function loadSouq(extract: FeatureFile, loop: LoopFile, palette: Palette)
       ...(f.id === undefined ? {} : { id: f.id }),
       ...(f.properties.building ? { kind: f.properties.building } : {}),
       ...(f.properties.levels ? { levels: f.properties.levels } : {}),
+      ...(f.properties.usage ? { usage: f.properties.usage } : {}),
       footprint: ((f.geometry.coordinates as number[][][])[0] as number[][]).map(local),
       heightM: f.properties.heightM as number,
       ...tints(f.properties),

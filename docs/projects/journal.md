@@ -585,6 +585,16 @@ One entry per closed project, most recent last.
 - Limites : e2e `mobilier-urbain` confié à la CI, non rejoué ici ; les extraits réextraits datent d'aujourd'hui (OSM a pu bouger).
 - Reste à l'humain : lot 4, le jugement des sols du souk et de Pune au casque, dont l'effacement avec la ville tête baissée (APP-001).
 
+## 2026-11-12 — gen-04-rez-de-chaussee : rez-de-chaussée commerçant par règle
+
+- L'usage commercial est gardé par l'extraction (`usageOf`, `app/scripts/osm-tags.ts` : `shop` → boutique, `amenity` restaurant ou café → `food`) et lu par `app/src/city/souq-data.ts` (`Building.usage`) ; les cinq extraits sont réextraits (usage présent sur 1 à 24 bâtiments par extrait : peu de relevés, surtout à Pune).
+- Une boutique (`shopOf`, `app/src/city/shop-rules.ts`) est « relevée » si l'usage ou `building=retail/commercial` la dit, sinon ajoutée par la règle de la région (part de 15 à 50 % des bâtiments sans usage et de balise `yes`, `apartments` ou absente, jamais plus de 5 étages) : origine `releve` ou `regle` portée par le plan (`shopOrigin`, APP-013) et relue par un test sur les quatre itinéraires.
+- Vitrine, porte (largeur d'entrée par région) et auvent (`app/src/city/shop-awning.ts` : plat, store rayé, arcade) par règle de région, payés sur le plafond de triangles du bâtiment ; l'auvent entre dans la signature, donc deux voisins ne sont jamais identiques (APP-008).
+- Mesure (120 bâtiments les plus proches, profil complet) : souk Waqif 45 boutiques (10 relevées ; 14 plats, 31 arcades), Pune Vieille ville 59 (3 relevées ; 23 plats, 36 stores), Doha Corniche 30 (5), FC Road 60 (8), Rome 25 (3) ; plafond de 500 triangles par bâtiment respecté sur les 300 premiers de chaque itinéraire ; aucun appel de rendu ajouté (même maillage de façades).
+- Décisions (sondage, demandeur) : usages `shop`, `amenity` et `building=retail/commercial` ; boutique par règle quand l'usage est inconnu en zone dense, marquée « règle » ; pas de captures de référence disponibles, formes simples par région. Périmètre élargi à l'extraction, à `app/src/city/souq-data.ts` et aux cinq extraits.
+- Limites : e2e `facades-batiments` confié à la CI, non rejoué ici ; extraits réextraits aujourd'hui (OSM a pu bouger).
+- Reste à l'humain : lot 4, le jugement des rues commerçantes du souk et de Pune Vieille ville au casque, dont l'effacement avec la ville tête baissée (APP-001).
+
 ## gen-01-essai-commande
 
 - **Preuve de clôture** : `docs/preuves/gen-01-essai-commande.md`.
@@ -596,3 +606,7 @@ One entry per closed project, most recent last.
 ## gen-03-sols-rues
 
 - **Preuve de clôture** : `docs/preuves/gen-03-sols-rues.md`.
+
+## gen-04-rez-de-chaussee
+
+- **Preuve de clôture** : `docs/preuves/gen-04-rez-de-chaussee.md`.
