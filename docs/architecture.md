@@ -115,7 +115,7 @@ Génération `npm run city` exclusivement sur PC de développement. Tests Vitest
   Le groupe `lampadaires` est séparé du mobilier OSM pour pouvoir être retiré à chaud.
 - `app/src/city/street-lights.ts` : lanternes/halos instanciés sans lumière par mât ni effet sur l'alpha (APP-011).
 - `app/src/city/zone-clip.ts` : découpe par six plans partagés (APP-001).
-- `app/src/city/tree-pack.ts`, `app/src/city/tree-assets.ts`, `app/src/city/tree-instances.ts` : validation/chargement du pack CC0, instances reproductibles ; `alignedTrees` (`app/src/city/tree-instances.ts`) produit par règle des arbres d'alignement le long des voies (espacement tiré de la graine de la voie, marqués « generated », refusés sur chaussée, passage piéton, mur, parcours ou objet du relevé), que `buildTrees` ajoute après ceux du relevé.
+- `app/src/city/tree-pack.ts`, `app/src/city/tree-assets.ts`, `app/src/city/tree-instances.ts` : validation/chargement du pack CC0, instances reproductibles ; `alignedTrees` (`app/src/city/tree-instances.ts`) produit par règle des arbres d'alignement le long des voies (espacement tiré de la graine de la voie, marqués « generated », refusés sur chaussée, passage piéton, mur, parcours ou objet du relevé), que `createSouqScene` (`app/src/city/souq.ts`) passe à `buildTrees`, qui les ajoute après ceux du relevé.
 - `app/src/city/material-library.ts`, `app/src/city/material-variation.ts`, `app/src/city/material-mesh.ts` : bibliothèques CC0 embarquées,
   mémoire plafonnée, variantes déterministes, placage fusionné (APP-012). Images créées par le document injecté.
   `app/src/city/material-ktx2.ts` : textures KTX2 (Basis) transcodées au chargement par le transcodeur WebAssembly de three.js, servi

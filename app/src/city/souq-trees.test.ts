@@ -48,4 +48,11 @@ describe("ville avec les arbres du pack", () => {
     setCityOpacity(world, 0, planes);
     expect(world.visible).toBe(false);
   });
+
+  it("APP-009: sans arbre au relevé, les arbres d'alignement le long des voies sont plantés", () => {
+    const doc = withCanvasContext(new Window().document as unknown as Document);
+    const bare: Souq = { ...souq, props: [], roads: [{ highway: "tertiary", id: 3, points: [{ x: 0, z: 0 }, { x: 0, z: -200 }] }] };
+    const { osm } = createSouqScene(doc, bare);
+    expect((osm.getObjectByName("arbres") as InstancedMesh).count).toBeGreaterThan(5);
+  });
 });

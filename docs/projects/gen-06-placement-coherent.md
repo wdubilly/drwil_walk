@@ -108,7 +108,7 @@ Aucun : tranchés le 2026-11-12 (voir « Décisions »).
 ## 7. Reprise
 
 - **Dernier état (2026-11-12)**: lots 2, 3 et 4 faits. Lot 4 : `PROP_NODES` (`app/scripts/extract-souq.ts`) demande aussi `highway=stop` et
-  `highway=give_way`, que `propKind` lisait déjà ; test dans `app/src/city/extract-souq.test.ts`. Aucune réextraction lancée (réseau, demandée par l'humain seulement).
-- **Travail non commité** : aucun une fois le lot commité.
-- **Prochaine étape** : vérifier et clore (lots [humain] 1 et 5 à rappeler). Limite hors cadre : `app/src/city/souq.ts` n'est pas dans le bloc scope, donc `alignedTrees`
-  n'est pas encore appelé au chargement (passer son résultat à `buildTrees`) ; les entrées de bâtiment n'existent pas dans les données, le mur sert de repli.
+  `highway=give_way`. Limite hors cadre traitée sur décision de l'humain : `createSouqScene` (`app/src/city/souq.ts`) passe `alignedTrees(...)` en dernier
+  paramètre `aligned` de `buildTrees` (non filtré par `richCity`) ; test dans `app/src/city/souq-trees.test.ts`, `app/src/city/souq.test.ts` ajusté (arbres du relevé + alignement). Aucune réextraction lancée.
+- **Travail non commité** : aucun une fois le branchement commité.
+- **Prochaine étape** : vérifier et clore (lots [humain] 1 « trancher et mesurer » et 5 « promenade au casque » à rappeler). Les entrées de bâtiment n'existent pas dans les données, le mur sert de repli.

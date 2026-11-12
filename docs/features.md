@@ -130,8 +130,8 @@ Tout s'efface avec la ville. Limites : couleurs sans références suffisantes et
 
 Le moteur sait produire des arbres le long des voies carrossables (`alignedTrees`) : un côté par tronçon, espacement varié et
 reproductible tiré de l'identifiant de la voie, jamais sur une chaussée, un passage piéton, contre un mur, sur le parcours ou
-près d'un objet du relevé ; sans voie, aucun arbre inventé. Ils sont marqués « generated » ; le branchement au chargement de la ville
-n'est pas encore fait.
+près d'un objet du relevé ; sans voie, aucun arbre inventé. Ils sont marqués « generated » ; `createSouqScene` les passe à `buildTrees`, qui les
+plante après ceux du relevé, dans le même plafond.
 
 ### Lampadaires produits par règle (APP-013)
 

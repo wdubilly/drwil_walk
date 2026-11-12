@@ -107,7 +107,7 @@ describe("scène du souk", () => {
   it("APP-003: les arbres sont un maillage instancié, le mobilier un maillage fusionné, dans le groupe OpenStreetMap", () => {
     const { osm } = setup();
     const trees = osm.getObjectByName("arbres") as InstancedMesh;
-    expect(trees.count).toBe(1);
+    expect(trees.count).toBeGreaterThan(1); // l'arbre du relevé et ceux d'alignement
     expect((osm.getObjectByName("mobilier") as Mesh).geometry.getAttribute("position").count).toBeGreaterThan(0);
   });
 
