@@ -4,6 +4,8 @@ import { MAX_LOCAL_MATERIALS, MAX_TEXTURE_BYTES, hasLocalMaterials, localMateria
 import { ITINERARIES } from "../route/itineraries.ts";
 import { materialEntry as entry, rawLibrary as raw } from "./material-double.ts";
 import { Window } from "happy-dom";
+import recipeData from "../../assets/recette-regions.json" with { type: "json" };
+import { RECIPE, loadRecipe, paletteOf, recipeFor } from "./region-palette.ts";
 import { documentTexture } from "./material-library.ts";
 
 describe("bibliothèque de matériaux locaux", () => {
@@ -61,5 +63,54 @@ describe("bibliothèque de matériaux locaux", () => {
     expect(normal?.colorSpace).not.toBe("srgb");
     expect([albedo?.wrapS, albedo?.wrapT, normal?.wrapS, normal?.wrapT]).toEqual([RepeatWrapping, RepeatWrapping, RepeatWrapping, RepeatWrapping]);
     load.mockRestore();
+  });
+});
+
+type Raw = { regions: Record<string, Record<string, unknown>>; districts: Record<string, Record<string, unknown>> };
+const at = (group: Record<string, Record<string, unknown>>, name: string): Record<string, unknown> => group[name] ?? {};
+const copy = (): Raw => JSON.parse(JSON.stringify(recipeData)) as Raw;
+
+describe("repli des matériaux par région, en données", () => {
+  it("APP-012: un quartier sans bibliothèque reçoit la palette de sa région, une région sans jeu propre celle d'« ailleurs »", () => {
+    expect(hasLocalMaterials("pune-vieille-ville")).toBe(false);
+    expect(recipeFor(RECIPE, "inde", "pune-vieille-ville").palette.value).toEqual(RECIPE.regions["inde"]?.palette?.value);
+    expect(paletteOf([73.857, 18.517])).toEqual(RECIPE.regions["inde"]?.palette?.value);
+    expect(paletteOf([2.35, 48.85])).toEqual(RECIPE.regions["ailleurs"].palette.value);
+    expect(paletteOf([-70, -33])).toEqual(RECIPE.regions["ailleurs"].palette.value);
+  });
+
+  it("APP-012: chaque palette de repli dit son origine et reste des teintes valides, sans texture ni réseau", () => {
+    for (const entry of [...Object.values(RECIPE.regions), ...Object.values(RECIPE.districts)]) {
+      if (!entry.palette) continue;
+      expect(["releve", "regle"]).toContain(entry.palette.origin);
+      expect(entry.palette.value.buildings.length).toBeGreaterThan(1);
+      expect(JSON.stringify(entry.palette)).not.toMatch(/data:|https?:/);
+    }
+  });
+
+  it("APP-012: une donnée de repli illisible est écartée sans casser la ville, la région ou « ailleurs » prend le relais", () => {
+    const raw = copy();
+    at(raw.regions, "golfe")["palette"] = { value: { ground: -1 }, origin: "regle" };
+    at(raw.regions, "inde")["figurants"] = 7;
+    at(raw.districts, "souq-waqif")["bounds"] = { south: 9, north: 1 };
+    at(raw.districts, "pune-vieille-ville")["region"] = 4;
+    raw.districts["casse"] = 3 as unknown as Record<string, unknown>;
+    raw.regions["casse"] = "x" as unknown as Record<string, unknown>;
+    const file = loadRecipe(raw);
+    expect(recipeFor(file, "golfe").palette.value).toEqual(RECIPE.regions["ailleurs"].palette.value);
+    expect(recipeFor(file, "inde").figurants.value).toEqual(RECIPE.regions["ailleurs"].figurants.value);
+    expect(file.districts["souq-waqif"]?.bounds).toBeUndefined();
+    expect(file.districts["casse"]).toBeUndefined();
+    expect(recipeFor(file, "inde").palette.value).toEqual(RECIPE.regions["inde"]?.palette?.value);
+  });
+
+  it("APP-012: sans « ailleurs » lisible, rien ne se charge en silence", () => {
+    const raw = copy();
+    delete at(raw.regions, "ailleurs")["palette"];
+    expect(() => loadRecipe(raw)).toThrow("ailleurs");
+    expect(() => loadRecipe(null)).toThrow("regions");
+    const noDistricts = copy() as Partial<Raw>;
+    delete noDistricts.districts;
+    expect(loadRecipe(noDistricts).districts).toEqual({});
   });
 });

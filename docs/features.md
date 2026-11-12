@@ -113,6 +113,7 @@ sur un vrai casque : `docs/intentions/essai-casque-profils-graphiques.md`.
   l'origine de chaque élément ; elles jouent aussi sur les façades, les matériaux et les figurants ; teintes inchangées, pas encore jugées au casque.
 - Matériaux locaux (APP-012) : appliqués automatiquement quand une bibliothèque embarquée existe, absents en Performance.
   Textures CC0 recolorées, teinte/échelle/usure déterministes sans doublon voisin, aucun réseau.
+  Sans bibliothèque (tout quartier hors souk), le repli est la palette de la région, puis d'« ailleurs » ; une donnée de recette illisible est écartée sans casser la ville.
 - Arbres Quaternius CC0 : quatre variantes de 413–454 triangles, cap et taille reproductibles, au plus 300.
   Échec de chargement signalé, repli sur un arbre simple.
 - Mobilier OSM et marquages (APP-009) : dimensions réelles, axe de rue, bancs, poubelles, panneaux,

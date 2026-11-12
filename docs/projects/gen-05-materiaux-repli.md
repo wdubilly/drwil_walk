@@ -96,6 +96,8 @@ Aucun : tranchés le 2026-11-12 (voir « Décisions »).
 
 ## 7. Reprise
 
-- **Dernier état (2026-11-07)**: cadrage seul, aucun code.
-- **Travail non commité** : la fiche.
-- **Prochaine étape** : [human] séance casque sur le souk, puis trancher les points de la section 5.
+- **Dernier état (2026-11-12)**: lot 2 (repli par région en données) fait : `loadRecipe` (`app/src/city/region-palette.ts`) charge la recette
+  embarquée en écartant un élément illisible (repli quartier → région → « ailleurs »), tests `APP-012` dans `app/src/city/material-library.test.ts`,
+  docs à jour. Le format avec origine, la palette de région et « ailleurs » existaient déjà (gen-02) ; aucune bibliothèque JSON par région.
+- **Travail non commité** : aucun.
+- **Prochaine étape** : lot 3 (compression KTX2, [AI]), puis lots [humain] 1 et 4 (séance casque).

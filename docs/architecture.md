@@ -107,6 +107,8 @@ Génération `npm run city` exclusivement sur PC de développement. Tests Vitest
   quartier → région → « ailleurs », origine de chaque élément (`releve` exige une `source`, sinon refus ; APP-013). La
   palette de sol, de voies et de bâtiments, les jeux de façade, les matériaux locaux (`placeOf`) et les figurants (la table de
   région vit dans cette recette, `figurantsTable`) lisent le quartier avant la région.
+  Le repli de matériaux d'un quartier sans photo est cette palette de région (APP-012) ; `loadRecipe` écarte un élément illisible
+  (la ville retombe sur la région puis « ailleurs »), `readRecipe` reste strict.
 - `app/src/city/soup.ts`, `app/src/city/near-route.ts` : géométrie partagée, proximité du parcours.
 - `app/src/city/props.ts`, `app/src/city/furniture.ts` : arbres/mobilier et dimensions réelles, axe de la rue (APP-009).
 - `app/src/city/lamp-rule.ts` : mâts produits par règle, provenance et refus (APP-013).
