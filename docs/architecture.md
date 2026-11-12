@@ -118,6 +118,8 @@ Génération `npm run city` exclusivement sur PC de développement. Tests Vitest
 - `app/src/city/tree-pack.ts`, `app/src/city/tree-assets.ts`, `app/src/city/tree-instances.ts` : validation/chargement du pack CC0, instances reproductibles.
 - `app/src/city/material-library.ts`, `app/src/city/material-variation.ts`, `app/src/city/material-mesh.ts` : bibliothèques CC0 embarquées,
   mémoire plafonnée, variantes déterministes, placage fusionné (APP-012). Images créées par le document injecté.
+  `app/src/city/material-ktx2.ts` : textures KTX2 (Basis) transcodées au chargement par le transcodeur WebAssembly de three.js, servi
+  avec la page sous `/basis/` par `app/vite.config.ts` (plugin `basisTranscoder`, ~0,5 Mo) ; JPEG toujours acceptés.
 - `app/src/city/traffic-catalog.ts`, `app/src/city/traffic-lanes.ts`, `app/src/city/traffic-rule.ts`, `app/src/city/traffic-motion.ts` :
   catalogue/types/régions en données, voies sans bâtiments, moteur pur, proximité et mouvement (APP-014).
 - `app/src/city/traffic-pack.ts`, `app/src/city/traffic-assets.ts`, `app/src/city/traffic.ts` : validation/chargement CC0 et instances ;
@@ -130,7 +132,8 @@ Génération `npm run city` exclusivement sur PC de développement. Tests Vitest
 - `app/data/` : un GeoJSON OSM et une boucle GPS par ville ; `app/data/villes.json` décrit les villes (source unique).
 - `app/assets/` : arbres Quaternius CC0 et figurants CC0 Kenney/Poly Pizza, textures embarquées,
   `app/assets/figurants-catalogue.json` (types et lieux ; la table de région est dans `app/assets/recette-regions.json`) et `app/assets/figurants.json`. Origine/licences : `app/assets/PROVENANCE.md`.
-- `app/assets/materials/` : photos (liens uniquement) et bibliothèques CC0 par quartier.
+- `app/assets/materials/` : photos (liens uniquement) et bibliothèques CC0 par quartier. Textures en KTX2 512 px,
+  encodées par `app/scripts/materials-textures.ts` (`ktx2-encoder`, WebAssembly, sans outil système).
 - `app/scripts/create-city.ts`, `app/scripts/city-args.ts` : commande unique `npm run city -- <identifiant> [options]`
   sur PC de développement, écrit description, extrait, boucle et matériaux, jamais appelée par l'application ;
   écriture groupée après réussite de toutes les étapes, vignette en échec écartée et dite.

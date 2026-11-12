@@ -1,6 +1,6 @@
 // Les bibliothèques de matériaux locaux (prototype : le souk seul) : préparées hors casque (`app/scripts/materials-run.ts`),
 // embarquées dans le dépôt comme du JSON (donc dans le paquet de la page : aucun appel réseau dans le casque), textures en base64
-// décodées par three.js. Un quartier sans bibliothèque n'a pas l'option à l'accueil.
+// (JPEG décodés par three.js, KTX2 transcodés par `material-ktx2.ts`). Un quartier sans bibliothèque n'a pas l'option à l'accueil.
 import { RepeatWrapping, SRGBColorSpace, TextureLoader, Texture } from "three";
 import souqWaqif from "../../assets/materials/doha-souq-waqif.json" with { type: "json" };
 import type { FamilyId } from "./facade-family.ts";
@@ -34,17 +34,25 @@ export const MAX_LOCAL_MATERIALS = 3;
 export const MAX_TEXTURE_BYTES = 4 * 1024 * 1024;
 const FAMILIES: readonly FamilyId[] = ["provencale", "village", "ancien", "recent"];
 const JPEG = "data:image/jpeg;base64,";
+/** Une texture KTX2 (Basis) embarquée : transcodée au chargement dans le format que le GPU lit (`app/src/city/material-ktx2.ts`). */
+export const KTX2 = "data:image/ktx2;base64,";
 
-/** La mémoire GPU des textures d'une bibliothèque : RGBA 8 bits, plus un tiers pour les mipmaps. */
-export const textureBytes = (library: Pick<MaterialLibrary, "materials" | "textureSizePx">): number =>
-  Math.ceil((library.materials.length * 2 * library.textureSizePx ** 2 * 4 * 4) / 3);
+/**
+ * La mémoire GPU des textures d'une bibliothèque, mipmaps comprises (un tiers de plus). Un JPEG est décompressé en RGBA 8 bits
+ * (4 octets par pixel) ; un KTX2 reste compressé par le GPU (ASTC, ETC2 ou BC7 : 1 octet par pixel).
+ */
+export const textureBytes = (library: Pick<MaterialLibrary, "materials" | "textureSizePx">): number => {
+  const pixels = library.textureSizePx ** 2;
+  const bytes = library.materials.flatMap((m) => [m.albedo, m.normal]).reduce((sum, url) => sum + pixels * (url.startsWith(KTX2) ? 1 : 4), 0);
+  return Math.ceil((bytes * 4) / 3);
+};
 
 type Json = Record<string, unknown>;
 const fail = (why: string): never => {
   throw new Error(`bibliothèque de matériaux illisible : ${why}`);
 };
 const hex = (value: unknown): number => (typeof value === "string" && /^#[0-9a-f]{6}$/i.test(value) ? Number.parseInt(value.slice(1), 16) : fail(`couleur ${String(value)}`));
-const image = (value: unknown): string => (typeof value === "string" && value.startsWith(JPEG) ? value : fail("texture hors du dépôt"));
+const image = (value: unknown): string => (typeof value === "string" && (value.startsWith(JPEG) || value.startsWith(KTX2)) ? value : fail("texture hors du dépôt"));
 
 function material(value: Json): LocalMaterial {
   const sizeM = value["sizeM"];

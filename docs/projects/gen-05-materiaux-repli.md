@@ -105,8 +105,17 @@ Aucun : tranchés le 2026-11-12 (voir « Décisions »).
 
 ## 7. Reprise
 
-- **Dernier état (2026-11-12)**: lot 2 (repli par région en données) fait : `loadRecipe` (`app/src/city/region-palette.ts`) charge la recette
-  embarquée en écartant un élément illisible (repli quartier → région → « ailleurs »), tests `APP-012` dans `app/src/city/material-library.test.ts`,
-  docs à jour. Le format avec origine, la palette de région et « ailleurs » existaient déjà (gen-02) ; aucune bibliothèque JSON par région.
+- **Dernier état (2026-11-12)**: lot 3 (compression KTX2) fait. Encodeur `ktx2-encoder` 0.6.0 (MIT, Basis Universal en WebAssembly,
+  pur Node, dépendance de développement de `app/package.json`) dans `app/scripts/materials-textures.ts` (`prepareKtx2Material`) :
+  couleur et normale en ETC1S (≈ 60 Ko chacune ; UASTC pesait 330 Ko par normale), 512 px sans agrandir, mipmaps comprises.
+  Souk régénéré à couleurs et teintes identiques (`app/assets/materials/doha-souq-waqif.json` : 113 Ko → 413 Ko ; le paquet de la page grossit d'autant).
+  Chargeur `app/src/city/material-ktx2.ts` (octets décodés puis `KTX2Loader.parse`, formats GPU sondés par un contexte GL jetable, échec dit
+  par `console.error`), branché dans `app/src/ui/home.ts`. Transcodeur servi avec la page par le plugin `basisTranscoder` de `app/vite.config.ts`
+  sous `/basis/` (dev et build) : 527 Ko de WebAssembly + 57 Ko de JavaScript (≈ 200 Ko compressés), copiés de `three/examples/jsm/libs/basis/`.
+  Maintenance : le transcodeur suit la version de three.js (monter `three` monte le transcodeur) ; l'encodeur n'est lancé que sur PC de
+  développement (`npm run materials:library`), jamais dans le casque ; le format KTX2 est stable, un fichier déjà encodé reste lisible.
+  `APP-012` règle (3) étendue (KTX2 et JPEG en `data:`), règle (4) : un KTX2 compte 1 octet par pixel (2,1 Mo pour le souk, sous 4 Mo).
+  Preuves : tests `APP-012` (`app/src/city/material-ktx2.test.ts`, `app/src/city/material-library.test.ts`, `app/src/city/materials-run.test.ts`, `app/src/ui/home.test.ts`), e2e du souk
+  dans Chromium (transcodage réel, seul `/basis/` est demandé en plus de la page). Non jugé au casque : rendu des normales en ETC1S.
 - **Travail non commité** : aucun.
-- **Prochaine étape** : lot 3 (compression KTX2, [AI]), puis lots [humain] 1 et 4 (séance casque).
+- **Prochaine étape** : lots [humain] 1 et 4 (séance casque), puis vérification et clôture.

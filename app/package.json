@@ -28,6 +28,7 @@
     "happy-dom": "^21.0.4",
     "iwer": "^2.7.0",
     "jpeg-js": "^0.4.4",
+    "ktx2-encoder": "^0.6.0",
     "license-checker-rseidelsohn": "^5.0.1",
     "three": "^0.187.0",
     "typescript": "~6.0.3",
