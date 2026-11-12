@@ -50,9 +50,9 @@ lampadaires aux carrefours, et une requête d'extraction complète (`docs/intent
 - Les objets produits par règle (arbres, lampadaires) n'obstruent aucun accès : passage piéton, entrée, voie du parcours — `APP-009`
 - Les arbres d'alignement suivent la voie avec un espacement varié, déterministe, et un repli quand la voie manque — `APP-009`
 - Tout objet produit par règle est marqué « ajouté par règle », distinct du relevé OSM — `APP-013`
-- Rien n'est dessiné dans la zone tapis et tout s'efface tête baissée — `APP-001`
+- Rien n'est dessiné dans la zone tapis et tout s'efface tête baissée [human] — `APP-001`
 - Les trois plateformes montrent les mêmes arbres, lampadaires et mobilier — `APP-015`
-- La rue paraît composée et crédible à hauteur d'homme [human] — `APP-013`
+- La rue paraît composée et crédible à hauteur d'homme — `APP-013`
 
 ## Contrats modifiés
 
