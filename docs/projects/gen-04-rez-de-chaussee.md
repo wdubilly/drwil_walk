@@ -13,6 +13,7 @@ files:
   - app/src/city/facades.test.ts
   - app/src/city/facade-parts.test.ts
   - app/src/city/facade-plan.test.ts
+  - app/src/city/facades-data.test.ts
   - app/e2e/facades-batiments.test.ts
   - app/src/city/shop-awning.ts
   - app/src/city/shop-awning.test.ts
