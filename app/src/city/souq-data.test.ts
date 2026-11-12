@@ -150,7 +150,7 @@ describe("données du souk", () => {
         features: [
           { properties: { kind: "area", area: "park" }, geometry: { coordinates: [ring] } },
           { properties: { kind: "hedge" }, geometry: { coordinates: [at(0, 0), at(0, 0.001)] } },
-          { properties: { kind: "highway", highway: "residential", name: "Rue A", sidewalk: "left", oneway: "backward", lanes: 2 }, geometry: { coordinates: [at(0, 0), at(0, 0.001)] } },
+          { properties: { kind: "highway", highway: "residential", name: "Rue A", sidewalk: "left", oneway: "backward", lanes: 2, surface: "pave" }, geometry: { coordinates: [at(0, 0), at(0, 0.001)] } },
           { properties: { kind: "highway", highway: "footway", footway: "crossing" }, geometry: { coordinates: [at(0, 0), at(0, 0.001)] } },
           { properties: { kind: "building", heightM: 8, roofShape: "gabled" }, geometry: { coordinates: [ring] } },
           { properties: { kind: "building", heightM: 8, roofShape: "dome" }, geometry: { coordinates: [ring] } },
@@ -163,10 +163,11 @@ describe("données du souk", () => {
     expect(souq.areas[0]?.kind).toBe("park");
     expect(souq.areas[0]?.ring).toHaveLength(4);
     expect(souq.hedges[0]?.points).toHaveLength(2);
-    expect(souq.roads[0]).toMatchObject({ name: "Rue A", sidewalk: "left", oneway: "backward", lanes: 2 });
+    expect(souq.roads[0]).toMatchObject({ name: "Rue A", sidewalk: "left", oneway: "backward", lanes: 2, surface: "pave" });
     expect(souq.roads[1]?.footway).toBe("crossing");
     expect(souq.roads[1]?.oneway).toBeUndefined();
     expect(souq.roads[1]?.lanes).toBeUndefined();
+    expect(souq.roads[1]?.surface).toBeUndefined();
     expect(souq.roads[1]?.name).toBeUndefined();
     expect(souq.buildings.map((b) => b.roofShape)).toEqual(["gabled", undefined]);
   });

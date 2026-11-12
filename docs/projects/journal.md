@@ -576,6 +576,15 @@ One entry per closed project, most recent last.
 - Critères : APP-001 (déjà attesté le 2026-11-06) étiqueté [human] ; APP-008 retiré de [human], `verify` le prouvant automatiquement.
 - Reste à l'humain : lot 4, le jugement des teintes du souk et de Pune au casque ou sur captures ; les fenêtres de latitude/longitude ou régions plus fines (Lyon, trou entre Provence et France du Nord) restent à trancher.
 
+## 2026-11-11 — gen-03-sols-rues : sols et rues par règle
+
+- Le revêtement d'une voie (`surfaceFor`, `app/src/city/roads.ts`) est la balise OSM `surface` si elle est relevée (`surfaceOf`, trois familles : asphalte, pavés, terre), sinon la valeur `sols` de la recette (quartier, région, `ailleurs`) selon la famille `chaussee` ou `pieton` ; origine `releve` ou `regle` (APP-009, APP-013). Il teinte le corps de la voie.
+- États de surface : usure et poussière par une variation de clarté déterministe tirée de l'identifiant OSM (`wearOf`) ; « mouillé » laissé à `gen-13` (météo).
+- « Textures » réalisées en motifs de shader (`app/src/city/road-surface.ts` : joints de pavés, grain d'asphalte, mottes de terre), sans image, d'après la position au sol : poids nul, un seul maillage de voies, aucun appel de rendu en plus, coupé par le profil « performance » (APP-006, APP-015).
+- Décisions (« Traiter maintenant », sondage `drwil-limite`) : périmètre élargi aux types de voie, à l'extraction, à la recette et à `app/src/city/souq.ts` ; réextraction OSM des cinq extraits (`surface` présent : 1 051 voies à Doha Corniche, 253 au souk, 83 à FC Road, 5 à Pune Vieille ville, 1 683 à Rome) ; sols en motifs de shader plutôt qu'en images.
+- Limites : e2e `mobilier-urbain` confié à la CI, non rejoué ici ; les extraits réextraits datent d'aujourd'hui (OSM a pu bouger).
+- Reste à l'humain : lot 4, le jugement des sols du souk et de Pune au casque, dont l'effacement avec la ville tête baissée (APP-001).
+
 ## gen-01-essai-commande
 
 - **Preuve de clôture** : `docs/preuves/gen-01-essai-commande.md`.
@@ -583,3 +592,7 @@ One entry per closed project, most recent last.
 ## gen-02-format-recette
 
 - **Preuve de clôture** : `docs/preuves/gen-02-format-recette.md`.
+
+## gen-03-sols-rues
+
+- **Preuve de clôture** : `docs/preuves/gen-03-sols-rues.md`.

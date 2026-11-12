@@ -3,6 +3,9 @@
 import { BufferGeometry, Color, Float32BufferAttribute } from "three";
 import type { Vec2 } from "../route/geo.ts";
 import type { Road } from "./souq-data.ts";
+import type { Surface } from "../../scripts/osm-tags.ts";
+import { RECIPE, recipeFor } from "./region-palette.ts";
+import { NO_GRAIN, SURFACE_ID } from "./road-surface.ts";
 
 /** Largeur en mètres selon la classe de la voie : les grands axes sont plus larges, les sentiers étroits. */
 const WIDTH_M: Record<string, number> = {
@@ -72,21 +75,73 @@ export function ribbonsGeometry(ribbons: Ribbons): BufferGeometry {
   return geometry;
 }
 
-/** Les voies, puis les rubans de `marks` (trottoirs, passages piétons, chemin suivi) posés par-dessus. */
-export function buildRoadsGeometry(roads: readonly Road[], base = 0x808080, marks: Ribbons = newRibbons()): BufferGeometry {
+/** Les classes de voie réservées aux piétons : leur revêtement de repli est celui de « pieton », les autres celui de « chaussee ». */
+const PEDESTRIAN = new Set(["pedestrian", "living_street", "footway", "path", "steps", "track"]);
+const DEFAULT_SOLS: Record<string, Surface> = { chaussee: "asphalt", pieton: "pave" };
+
+/** Un revêtement et son origine : relevé OSM (`surface`) ou ajouté par la règle de la région (APP-009, APP-013). */
+export interface RoadSurface { kind: Surface; origin: "releve" | "regle" }
+
+/** Le revêtement d'une voie : la balise relevée si elle existe, sinon la valeur de repli de la recette (quartier, région, « ailleurs »). */
+export function surfaceFor(highway: string, tagged: Surface | undefined, sols: Record<string, Surface> = DEFAULT_SOLS): RoadSurface {
+  if (tagged !== undefined) return { kind: tagged, origin: "releve" };
+  const family = PEDESTRIAN.has(baseOf(highway)) ? "pieton" : "chaussee";
+  return { kind: sols[family] ?? DEFAULT_SOLS[family] as Surface, origin: "regle" };
+}
+
+/** Le ton du revêtement posé sur la couleur de la voie : l'asphalte la garde, les pavés l'éclaircissent et la réchauffent, la terre la brunit. */
+const SURFACE_TINT: Record<Surface, { color: number; amount: number } | undefined> = {
+  asphalt: undefined,
+  pave: { color: 0xb09c80, amount: 0.4 },
+  terre: { color: 0x8a6e4b, amount: 0.55 },
+};
+
+/** Écart maximal de clarté dû à l'usure : assez faible pour que la voie reste lisible, assez net pour casser l'aplat. */
+const WEAR_SPREAD = 0.08;
+
+/** L'usure d'une voie, entre -1 (très foncée, huilée) et 1 (très claire, poussiéreuse), déterministe d'après son identifiant OSM (APP-013) ; 0 sans identifiant. */
+export function wearOf(id: number | undefined): number {
+  if (id === undefined) return 0;
+  let h = Math.imul(id | 0, 0x9e3779b1) ^ 0x85ebca6b;
+  h = Math.imul(h ^ (h >>> 15), 0x2c1b3c6d);
+  h = (h ^ (h >>> 12)) >>> 0;
+  return (h / 0xffffffff) * 2 - 1;
+}
+
+/** La couleur du corps d'une voie selon son revêtement. */
+export function surfaceColor(highway: string, base: number, surface: RoadSurface, wear = 0): Color {
+  const body = roadColor(highway, base);
+  const tint = SURFACE_TINT[surface.kind];
+  const toned = tint ? body.lerp(new Color(tint.color), tint.amount) : body;
+  return wear >= 0 ? toned.lerp(new Color(1, 1, 1), wear * WEAR_SPREAD) : toned.multiplyScalar(1 + wear * WEAR_SPREAD);
+}
+
+/** Les voies, puis les rubans de `marks` (trottoirs, passages piétons, chemin suivi) posés par-dessus ; `surfaceKind` dit le grain de chaque sommet. */
+export function buildRoadsGeometry(roads: readonly Road[], base = 0x808080, marks: Ribbons = newRibbons(), place?: { region: string; district?: string }): BufferGeometry {
   const out: Ribbons = newRibbons();
+  const kinds: number[] = [];
+  const sols = place ? recipeFor(RECIPE, place.region, place.district).sols?.value : undefined;
+  const strip = (a: Vec2, b: Vec2, from: number, to: number, lift: number, color: Color, kind: number): void => {
+    const before = out.positions.length;
+    pushStrip(out, a, b, from, to, lift, color);
+    for (let i = before; i < out.positions.length; i += 3) kinds.push(kind);
+  };
   for (const road of roads) {
     const half = widthOf(road.highway) / 2;
-    const body = roadColor(road.highway, base);
+    const surface = surfaceFor(road.highway, road.surface, sols);
+    const body = surfaceColor(road.highway, base, surface, wearOf(road.id));
     const border = body.clone().lerp(new Color(1, 1, 1), BORDER_WHITENING);
     const line = body.clone().lerp(new Color(1, 1, 1), LINE_WHITENING);
     for (const [i, b] of road.points.slice(1).entries()) {
       const a = road.points[i] as Vec2;
-      pushStrip(out, a, b, -half, half, LIFT_M, body);
-      pushStrip(out, a, b, -half, -half + BORDER_WIDTH_M, BORDER_LIFT_M, border);
-      pushStrip(out, a, b, half - BORDER_WIDTH_M, half, BORDER_LIFT_M, border);
-      if (half * 2 >= CENTRE_LINE_MIN_WIDTH_M) pushStrip(out, a, b, -LINE_WIDTH_M / 2, LINE_WIDTH_M / 2, LINE_LIFT_M, line);
+      strip(a, b, -half, half, LIFT_M, body, SURFACE_ID[surface.kind]);
+      strip(a, b, -half, -half + BORDER_WIDTH_M, BORDER_LIFT_M, border, NO_GRAIN);
+      strip(a, b, half - BORDER_WIDTH_M, half, BORDER_LIFT_M, border, NO_GRAIN);
+      if (half * 2 >= CENTRE_LINE_MIN_WIDTH_M) strip(a, b, -LINE_WIDTH_M / 2, LINE_WIDTH_M / 2, LINE_LIFT_M, line, NO_GRAIN);
     }
   }
-  return ribbonsGeometry({ positions: out.positions.concat(marks.positions), colors: out.colors.concat(marks.colors) });
+  const geometry = ribbonsGeometry({ positions: out.positions.concat(marks.positions), colors: out.colors.concat(marks.colors) });
+  const marksKinds = Array.from({ length: marks.positions.length / 3 }, () => NO_GRAIN);
+  geometry.setAttribute("surfaceKind", new Float32BufferAttribute(kinds.concat(marksKinds), 1));
+  return geometry;
 }

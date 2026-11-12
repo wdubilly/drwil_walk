@@ -44,7 +44,7 @@ const richOsm: OverpassResponse = {
     { type: "way", id: 23, tags: { barrier: "hedge" }, geometry: ring.slice(0, 2) },
     { type: "way", id: 24, tags: { barrier: "hedge" }, geometry: ring.slice(0, 1) },
     { type: "way", id: 25, tags: { landuse: "residential" }, geometry: ring },
-    { type: "way", id: 26, tags: { highway: "residential", name: "Rue du Souk", sidewalk: "yes", oneway: "-1", lanes: "2" }, geometry: ring.slice(0, 2) },
+    { type: "way", id: 26, tags: { highway: "residential", name: "Rue du Souk", sidewalk: "yes", oneway: "-1", lanes: "2", surface: "sett" }, geometry: ring.slice(0, 2) },
     { type: "way", id: 27, tags: { highway: "footway", footway: "crossing" }, geometry: ring.slice(0, 2) },
     { type: "way", id: 28, tags: { building: "yes", "roof:shape": "hipped" }, geometry: ring },
     { type: "way", id: 29, tags: { building: "yes", "roof:shape": "dome" }, geometry: ring },
@@ -59,7 +59,7 @@ describe("extraction du souk depuis OpenStreetMap", () => {
     expect(features.features.map((f) => f.properties)).toEqual([
       { kind: "area", area: "park" },
       { kind: "hedge" },
-      { kind: "highway", highway: "residential", name: "Rue du Souk", sidewalk: "both", oneway: "backward", lanes: 2 },
+      { kind: "highway", highway: "residential", name: "Rue du Souk", sidewalk: "both", oneway: "backward", lanes: 2, surface: "pave" },
       { kind: "highway", highway: "footway", footway: "crossing" },
       { kind: "building", heightM: 7, building: "yes", roofShape: "gabled" },
       { kind: "building", heightM: 7, building: "yes" },

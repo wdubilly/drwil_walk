@@ -105,3 +105,16 @@ export function roofShape(tags: Record<string, string>): "gabled" | undefined {
   const shape = tags["roof:shape"];
   return shape === "gabled" || shape === "hipped" ? "gabled" : undefined;
 }
+
+export type Surface = "asphalt" | "pave" | "terre";
+
+const SURFACES: Record<string, Surface> = {
+  asphalt: "asphalt", paved: "asphalt", concrete: "asphalt", "concrete:plates": "asphalt", "concrete:lanes": "asphalt",
+  paving_stones: "pave", sett: "pave", cobblestone: "pave", unhewn_cobblestone: "pave", bricks: "pave", brick: "pave",
+  unpaved: "terre", dirt: "terre", ground: "terre", earth: "terre", gravel: "terre", compacted: "terre", sand: "terre", grass: "terre",
+};
+
+/** Le revêtement relevé d'une voie (`surface`), en trois familles ; rien si la balise est absente ou inconnue (la région fournit le repli). */
+export function surfaceOf(tags: Record<string, string>): Surface | undefined {
+  return SURFACES[(tags["surface"] ?? "").trim().toLowerCase()];
+}

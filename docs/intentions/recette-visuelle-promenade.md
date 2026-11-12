@@ -58,7 +58,8 @@ Gain visuel décroissant, une promenade complète comme preuve à chaque étape.
    journal `docs/projects/journal.md`) ; reste à juger au casque le rendu de la ville créée (lot [humain]).
 2. **La recette elle-même** : inventaire des briques, paramètres régionaux avec repli, règles de placement, gestion des
    données manquantes. C'est le cadrage à finir en premier.
-3. **Compléter le souk de référence** : sols (pavés, asphalte, bordures cohérentes), rez-de-chaussée (boutiques,
+3. **Compléter le souk de référence** : sols (pavés, asphalte, bordures cohérentes ; faits le 2026-11-11 par `gen-03`, jugement au casque
+   à faire), rez-de-chaussée (boutiques,
    vitrines, portes, auvents), placement cohérent des arbres, lampadaires et objets (alignements, espacements, accès
    dégagés), végétation adaptée.
 4. **Prouver la généralisation sur Pune** : un quartier visuellement différent, même moteur, paramètres régionaux
