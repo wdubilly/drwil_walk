@@ -606,3 +606,7 @@ One entry per closed project, most recent last.
 ## gen-03-sols-rues
 
 - **Preuve de clôture** : `docs/preuves/gen-03-sols-rues.md`.
+
+## gen-04-rez-de-chaussee
+
+- **Preuve de clôture** : `docs/preuves/gen-04-rez-de-chaussee.md`.
