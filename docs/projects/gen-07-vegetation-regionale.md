@@ -53,7 +53,7 @@ composants de la recette peuvent aussi utiliser (`docs/intentions/rendu-jeu-vide
 
 ## 2. Hors périmètre
 
-- Les règles d'alignement et d'espacement (`docs/projects/gen-06-placement-coherent.md`) : ce chantier fournit les
+- Les règles d'alignement et d'espacement (`docs/projects/journal.md`) : ce chantier fournit les
   essences, pas la règle de placement.
 - Le relief, l'ombrage, la météo et le vent animé.
 - Les parcs et surfaces vertes issus d'OSM (déjà dans `app/src/city/vegetation.ts`), sauf leur couleur par région.

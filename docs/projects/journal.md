@@ -631,3 +631,7 @@ One entry per closed project, most recent last.
 ## gen-05-materiaux-repli
 
 - **Preuve de clôture** : `docs/preuves/gen-05-materiaux-repli.md`.
+
+## gen-06-placement-coherent
+
+- **Preuve de clôture** : `docs/preuves/gen-06-placement-coherent.md`.
