@@ -40,6 +40,31 @@ describe("éléments d'une façade", () => {
     expect(triangles(withShop)).toBeGreaterThan(0);
   });
 
+  it("APP-008: chaque auvent de boutique ajoute des triangles entiers, à la largeur d'entrée de la région, et rien sans plafond", () => {
+    const counts = (["none", "flat", "striped", "arcade"] as const).map((awning) => {
+      const d = draw({ ...full(), shop: true, awning, entryM: 1.6, floors: 1, floorM: 3.2, cornice: 0 }, 10_000);
+      addWall(d, WALL, false);
+      return triangles(d);
+    });
+    expect(counts[1]).toBeGreaterThan(counts[0] as number);
+    expect(counts[2]).toBeGreaterThan(counts[0] as number);
+    expect(counts[3]).toBeGreaterThan(counts[1] as number);
+    const tight = draw({ ...full(), shop: true, awning: "arcade", floors: 1, floorM: 3.2, cornice: 0 }, 7);
+    addWall(tight, WALL, false);
+    expect(triangles(tight)).toBeLessThanOrEqual(7);
+    const low = draw({ ...full(), shop: true, awning: "flat", floors: 1, floorM: 2.6, cornice: 0 }, 10_000);
+    const lowNone = draw({ ...full(), shop: true, awning: "none", floors: 1, floorM: 2.6, cornice: 0 }, 10_000);
+    addWall(low, WALL, false);
+    addWall(lowNone, WALL, false);
+    expect(triangles(low)).toBe(triangles(lowNone));
+    const wide = draw({ ...full(), shop: true, awning: "none", entryM: 2, floors: 1, cornice: 0 }, 10_000);
+    const narrow = draw({ ...full(), shop: true, awning: "none", entryM: 0.8, floors: 1, cornice: 0 }, 10_000);
+    addWall(wide, WALL, true);
+    addWall(narrow, WALL, true);
+    expect(Math.max(...wide.soup.positions)).toBeGreaterThanOrEqual(0);
+    expect(wide.soup.positions).not.toEqual(narrow.soup.positions);
+  });
+
   it("APP-008: pas de balcon sur un seul étage ni de volets sur une façade récente ; un mur étroit garde sa travée", () => {
     const flat = draw({ ...full(), floors: 1, floorM: 3, balcony: 2, shutters: undefined, cornice: 0 }, 10_000);
     addWall(flat, WALL, false);

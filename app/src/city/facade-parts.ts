@@ -3,6 +3,7 @@
 import { Color } from "three";
 import type { Vec2 } from "../route/geo.ts";
 import type { FacadePlan } from "./facade-plan.ts";
+import { addAwning } from "./shop-awning.ts";
 import { addQuad, addTriangle, type Soup, type V3 } from "./soup.ts";
 
 export interface Wall {
@@ -31,17 +32,17 @@ const SILL_M = 0.9;
 const UP: V3 = [0, 1, 0];
 const DOWN: V3 = [0, -1, 0];
 
-const spend = (d: Draw, triangles: number): boolean => {
+export const spend = (d: Draw, triangles: number): boolean => {
   if (d.left < triangles) return false;
   d.left -= triangles;
   return true;
 };
 
-const at = (w: Wall, along: number, y: number, out: number): V3 => [w.from.x + w.ux * along + w.nx * out, y, w.from.z + w.uz * along + w.nz * out];
-const paint = (d: Draw, hex: number, y: number): Color => new Color(hex).multiplyScalar(d.light(y));
+export const at = (w: Wall, along: number, y: number, out: number): V3 => [w.from.x + w.ux * along + w.nx * out, y, w.from.z + w.uz * along + w.nz * out];
+export const paint = (d: Draw, hex: number, y: number): Color => new Color(hex).multiplyScalar(d.light(y));
 
 /** Un rectangle posé sur le mur, à `out` mètres devant lui. */
-function panel(d: Draw, w: Wall, [a0, a1]: readonly [number, number], [y0, y1]: readonly [number, number], out: number, hex: number): void {
+export function panel(d: Draw, w: Wall, [a0, a1]: readonly [number, number], [y0, y1]: readonly [number, number], out: number, hex: number): void {
   addQuad(d.soup, at(w, a0, y0, out), at(w, a1, y0, out), at(w, a1, y1, out), at(w, a0, y1, out), paint(d, hex, (y0 + y1) / 2), [w.nx, 0, w.nz]);
 }
 
@@ -79,7 +80,7 @@ function balcony(d: Draw, w: Wall, centre: number): void {
 }
 
 function door(d: Draw, w: Wall, centre: number): void {
-  const half = d.plan.family === "recent" ? 0.65 : 0.5;
+  const half = d.plan.shop ? d.plan.entryM / 2 : d.plan.family === "recent" ? 0.65 : 0.5;
   const top = Math.min(2.1, d.plan.floorM - 0.3);
   if (!spend(d, 4)) return;
   panel(d, w, [centre - half, centre + half], [0, top], 0.05, d.plan.door);
@@ -113,6 +114,7 @@ export function addWall(d: Draw, w: Wall, withDoor: boolean): void {
     });
   }
   for (const { centre, floor } of lit) shutters(d, w, centre, floor);
+  for (const { centre, floor } of lit) if (floor === 0) addAwning(d, w, centre);
   if (d.plan.floors >= 2 && d.plan.balcony > 0) centres.forEach((centre, i) => { if (d.plan.balcony === 2 || i % 2 === 0) balcony(d, w, centre); });
 }
 

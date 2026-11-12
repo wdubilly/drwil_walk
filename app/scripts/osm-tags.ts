@@ -44,6 +44,16 @@ export function buildingKind(tags: Record<string, string>): string | undefined {
   return value === "" ? undefined : value;
 }
 
+/** L'usage commercial d'un bâtiment : `shop` pour un commerce, `food` pour un café ou un restaurant ; rien sinon (APP-008). */
+export type Usage = "shop" | "food";
+const FOOD_AMENITIES = new Set(["restaurant", "cafe", "fast_food", "bar", "pub", "food_court", "ice_cream"]);
+export function usageOf(tags: Record<string, string>): Usage | undefined {
+  const shop = (tags["shop"] ?? "").trim().toLowerCase();
+  if (shop !== "" && shop !== "no") return "shop";
+  if (FOOD_AMENITIES.has((tags["amenity"] ?? "").trim().toLowerCase())) return "food";
+  return undefined;
+}
+
 /** Le nombre d'étages (`building:levels`) : un entier de 1 à 60, arrondi ; rien si la valeur est illisible. */
 export function buildingLevels(tags: Record<string, string>): number | undefined {
   const levels = Math.round(parseFloat(tags["building:levels"] ?? ""));

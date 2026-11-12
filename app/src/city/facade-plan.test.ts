@@ -48,8 +48,9 @@ describe("plan d'une façade", () => {
     expect(provencal.length).toBeGreaterThan(0);
     expect(provencal.every((p) => p.cornice >= 1)).toBe(true);
     expect(plans("retail", "ailleurs").every((p) => p.shop)).toBe(true);
-    expect(plans("apartments", "ailleurs").some((p) => p.shop)).toBe(true);
-    expect(plans("apartments", "ailleurs").some((p) => !p.shop)).toBe(true);
+    const byId = Array.from({ length: 200 }, (_, i) => planFacade(base({ id: i + 1, kind: "apartments" }), "ailleurs", 0));
+    expect(byId.some((p) => p.shop)).toBe(true);
+    expect(byId.some((p) => !p.shop)).toBe(true);
     expect(plans("apartments", "ailleurs").some((p) => p.cornice === 1)).toBe(true);
   });
 });
