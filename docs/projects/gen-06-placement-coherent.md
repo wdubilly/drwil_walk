@@ -21,6 +21,7 @@ files:
   - app/src/city/souq-trees.test.ts
   - app/scripts/osm-tags.ts
   - app/scripts/extract-souq.ts
+  - app/src/city/extract-souq.test.ts
   - app/e2e/lampadaires-generes.test.ts
   - app/e2e/mobilier-urbain.test.ts
   - docs/architecture.md
@@ -104,9 +105,8 @@ Aucun : tranchés le 2026-11-12 (voir « Décisions »).
 
 ## 7. Reprise
 
-- **Dernier état (2026-11-12)**: lots 2 et 3 faits. Lot 3 : `alignedTrees` (`app/src/city/tree-instances.ts`) produit les arbres d'alignement
-  (graine de la voie, refus sur autre chaussée, passage piéton, mur/entrée, parcours, objet du relevé ; plafond `MAX_ALIGNED_TREES`) ;
-  `buildTrees` (`app/src/city/props.ts`) accepte ces arbres en dernier paramètre `aligned`, après ceux du relevé. Tests dans `app/src/city/tree-instances.test.ts` et `app/src/city/props.test.ts`.
+- **Dernier état (2026-11-12)**: lots 2, 3 et 4 faits. Lot 4 : `PROP_NODES` (`app/scripts/extract-souq.ts`) demande aussi `highway=stop` et
+  `highway=give_way`, que `propKind` lisait déjà ; test dans `app/src/city/extract-souq.test.ts`. Aucune réextraction lancée (réseau, demandée par l'humain seulement).
 - **Travail non commité** : aucun une fois le lot commité.
-- **Prochaine étape** : lot 4 (requête d'extraction). Limite hors cadre : `app/src/city/souq.ts` n'est pas dans le bloc scope, donc `alignedTrees`
+- **Prochaine étape** : vérifier et clore (lots [humain] 1 et 5 à rappeler). Limite hors cadre : `app/src/city/souq.ts` n'est pas dans le bloc scope, donc `alignedTrees`
   n'est pas encore appelé au chargement (passer son résultat à `buildTrees`) ; les entrées de bâtiment n'existent pas dans les données, le mur sert de repli.
