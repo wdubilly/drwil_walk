@@ -80,7 +80,7 @@ export function buildRoadsGeometry(roads: readonly Road[], base = 0x808080, mark
   const sols = place ? recipeFor(RECIPE, place.region, place.district).sols?.value : undefined;
   for (const road of roads) {
     const half = widthOf(road.highway) / 2;
-    const body = surfaceColor(road.highway, base, surfaceFor(road.highway, road.surface, sols));
+    const body = surfaceColor(road.highway, base, surfaceFor(road.highway, road.surface, sols), wearOf(road.id));
     const border = body.clone().lerp(new Color(1, 1, 1), BORDER_WHITENING);
     const line = body.clone().lerp(new Color(1, 1, 1), LINE_WHITENING);
     for (const [i, b] of road.points.slice(1).entries()) {
@@ -115,9 +115,22 @@ const SURFACE_TINT: Record<Surface, { color: number; amount: number } | undefine
   terre: { color: 0x8a6e4b, amount: 0.55 },
 };
 
+/** Écart maximal de clarté dû à l'usure : assez faible pour que la voie reste lisible, assez net pour casser l'aplat. */
+const WEAR_SPREAD = 0.08;
+
+/** L'usure d'une voie, entre -1 (très foncée, huilée) et 1 (très claire, poussiéreuse), déterministe d'après son identifiant OSM (APP-013) ; 0 sans identifiant. */
+export function wearOf(id: number | undefined): number {
+  if (id === undefined) return 0;
+  let h = Math.imul(id | 0, 0x9e3779b1) ^ 0x85ebca6b;
+  h = Math.imul(h ^ (h >>> 15), 0x2c1b3c6d);
+  h = (h ^ (h >>> 12)) >>> 0;
+  return (h / 0xffffffff) * 2 - 1;
+}
+
 /** La couleur du corps d'une voie selon son revêtement. */
-export function surfaceColor(highway: string, base: number, surface: RoadSurface): Color {
+export function surfaceColor(highway: string, base: number, surface: RoadSurface, wear = 0): Color {
   const body = roadColor(highway, base);
   const tint = SURFACE_TINT[surface.kind];
-  return tint ? body.lerp(new Color(tint.color), tint.amount) : body;
+  const toned = tint ? body.lerp(new Color(tint.color), tint.amount) : body;
+  return wear >= 0 ? toned.lerp(new Color(1, 1, 1), wear * WEAR_SPREAD) : toned.multiplyScalar(1 + wear * WEAR_SPREAD);
 }

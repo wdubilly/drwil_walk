@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { Road } from "./souq-data.ts";
 import { surfaceOf } from "../../scripts/osm-tags.ts";
-import { CENTRE_LINE_MIN_WIDTH_M, buildRoadsGeometry, roadColor, surfaceFor, widthOf } from "./roads.ts";
+import { CENTRE_LINE_MIN_WIDTH_M, buildRoadsGeometry, roadColor, surfaceFor, wearOf, widthOf } from "./roads.ts";
 
 describe("voies dessinées", () => {
   it("APP-003: la largeur suit la classe : les grands axes sont plus larges, les bretelles comme leur voie", () => {
@@ -84,5 +84,25 @@ describe("revêtement des voies", () => {
     expect(first([road], { region: "inde" })).toBe(asphalt);
     expect(first([{ ...road, highway: "pedestrian" }], { region: "golfe", district: "souq-waqif" })).toBe(first([{ ...road, highway: "pedestrian", surface: "pave" }]));
     expect(first([road])).toBe(first([road]));
+  });
+
+  it("APP-013: l'usure est déterministe, bornée, propre à chaque voie, et nulle sans identifiant", () => {
+    const ids = Array.from({ length: 200 }, (_, i) => 1000 + i * 7919);
+    const wears = ids.map(wearOf);
+    expect(wears).toEqual(ids.map(wearOf));
+    expect(Math.min(...wears)).toBeGreaterThanOrEqual(-1);
+    expect(Math.max(...wears)).toBeLessThanOrEqual(1);
+    expect(new Set(wears).size).toBeGreaterThan(150);
+    expect(Math.min(...wears)).toBeLessThan(0);
+    expect(Math.max(...wears)).toBeGreaterThan(0);
+    expect(wearOf(undefined)).toBe(0);
+  });
+
+  it("APP-009: une voie usée est plus foncée, une voie poussiéreuse plus claire, sans changer le nombre de sommets", () => {
+    const base = { highway: "residential", points: [{ x: 0, z: 0 }, { x: 0, z: -20 }] };
+    const shade = (id: number) => buildRoadsGeometry([{ ...base, id }], 0x404040).getAttribute("color").getX(0);
+    const byWear = [1, 2, 3, 4, 5, 6, 7, 8].sort((a, b) => wearOf(a) - wearOf(b));
+    expect(shade(byWear[0] as number)).toBeLessThan(shade(byWear[7] as number));
+    expect(buildRoadsGeometry([{ ...base, id: 1 }]).getAttribute("position").count).toBe(buildRoadsGeometry([base]).getAttribute("position").count);
   });
 });

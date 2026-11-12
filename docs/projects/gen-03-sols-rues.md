@@ -79,10 +79,9 @@ ne sont pas traités (`docs/intentions/rendu-rues-mobilier.md`). Manque aussi : 
   s'effacent comme la ville (`APP-001`, bornes de `APP-012` à relire).
 - 2026-11-07 : **une seule réextraction OSM** pour tous les nouveaux champs (`surface`, `shop`/`amenity`, `highway=stop`,
   eau), faite par un des chantiers `gen-03`, `gen-04`, `gen-06`, `gen-10`, le premier lancé.
+- 2026-11-11 : états retenus d'abord : usé (plus foncé) et poussiéreux (plus clair), une variation de clarté déterministe par voie ; « mouillé » reste à décider (il suppose la météo, `gen-13`).
 
 ## 5. Points à décider
-
-- [decision] Quels états de surface retenir d'abord (usé, mouillé, poussiéreux) ?
 
 ## 6. Incréments
 
@@ -96,6 +95,8 @@ ne sont pas traités (`docs/intentions/rendu-rues-mobilier.md`). Manque aussi : 
 
 ## 7. Reprise
 
-- **Dernier état** (2026-11-07): cadrage seul, aucun code.
-- **Travail non commité** : la fiche.
-- **Prochaine étape** : [decision] trancher les trois points, après `gen-02`.
+- **Dernier état** (2026-11-11) : lots 1 à 3 faits (lecture de `surface`, repli `sols` de la recette, teinte par revêtement, usure déterministe).
+  Les extraits figés n'ont pas encore la balise `surface` : l'extraction la porte, mais la réextraction OSM (réseau) n'est pas faite, donc
+  le repli régional s'applique partout aujourd'hui.
+- **Travail non commité** : aucun après le commit du lot 3.
+- **Prochaine étape** : réextraction OSM des quatre itinéraires (une seule pour `gen-03`, `gen-04`, `gen-06`, `gen-10`) ; lot 4 [human] : jugement au casque.
