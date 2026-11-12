@@ -2,7 +2,7 @@
 
 **Statut** : cadré le 2026-11-07.
 **Risque** : HIGH
-**Maturité** : à préciser
+**Maturité** : prêt
 **Intention** : `docs/intentions/recette-visuelle-promenade.md` (ensemble : `docs/intentions/generateur-ville-complet.md`)
 
 <!-- scope
@@ -76,14 +76,14 @@ mémoire graphique, aucun chargeur KTX2) et un **jugement au casque** avant de g
 - 2026-11-07 : la recette vit en **données de région avec surcharge par quartier**, champ d'origine relu par les preuves.
 - 2026-11-07 : **pas de budget chiffré** par quartier ; la mesure reste exigée.
 
+- 2026-11-12 : repli = **palette de couleurs de `app/src/city/region-palette.ts` seule** (pas de bibliothèque JSON par région ; le souk garde ses photos).
+- 2026-11-12 : **transcodeur KTX2 (WebAssembly servi avec la page) intégré dans ce chantier** ; sa taille et sa maintenance sont à consigner dans le journal.
+- 2026-11-12 : texture à hauteur d'homme : **512 px**.
+- 2026-11-12 : bornes d'`APP-012` (3 matériaux, 4 Mo) **conservées** : aucun contrat modifié.
+
 ## 5. Points à décider
 
-- [decision] Le repli est-il une bibliothèque par région (mêmes JSON que le souk) ou seulement la palette de couleurs de
-  `app/src/city/region-palette.ts` ?
-- [decision] Un transcodeur KTX2 (WebAssembly servi avec la page) vaut-il son poids ? À décider après la mesure au casque.
-- [decision] Taille de texture (256 ou 512 px) à hauteur d'homme.
-- [decision] Les bornes d'`APP-012` (3 matériaux, 4 Mo) suffisent-elles pour le repli, ou faut-il les modifier (alors
-  « Contrats modifiés », approbation du demandeur) ?
+Aucun : tranchés le 2026-11-12 (voir « Décisions »).
 
 ## 6. Incréments
 

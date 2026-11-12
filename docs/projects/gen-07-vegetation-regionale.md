@@ -2,7 +2,7 @@
 
 **Statut** : cadré le 2026-11-07.
 **Risque** : HIGH
-**Maturité** : à préciser
+**Maturité** : prêt
 **Intention** : `docs/intentions/recette-visuelle-promenade.md` (ensemble : `docs/intentions/generateur-ville-complet.md`)
 
 <!-- scope
@@ -76,13 +76,14 @@ composants de la recette peuvent aussi utiliser (`docs/intentions/rendu-jeu-vide
 - 2026-11-07 : un **catalogue partagé** de modèles, des règles et des paramètres régionaux **en données**.
 - 2026-11-07 : pas de budget chiffré par quartier ; la mesure reste exigée.
 
+- 2026-11-12 : palmiers et essences indiennes : **autre pack CC0** (licence relue et consignée avant tout ajout au dépôt).
+- 2026-11-12 : modèles préparés par **le même script paramétré** (`app/scripts/prepare-nature-pack.ts`).
+- 2026-11-12 : jardinières et buissons : **formes produites par code**, comme les haies.
+- 2026-11-12 : plafonds provisoires : **+5 Mo** pour `app/assets/` et **environ 2000 instances** au casque, à ajuster après la mesure.
+
 ## 5. Points à décider
 
-- [decision] Où trouver des palmiers et des essences indiennes sous licence compatible : le pack Quaternius (Standard) n'en
-  contient pas ; une autre source CC0 ou le pack Pro (licence à relire) ?
-- [decision] Les modèles se préparent-ils par le même script (`app/scripts/prepare-nature-pack.ts`) ou un script par pack ?
-- [decision] Jardinières et buissons : modèles glTF ou formes produites par code, comme les haies ?
-- [decision] Poids acceptable de `app/assets/` après ajout, et sur combien d'instances au casque ?
+Aucun : tranchés le 2026-11-12 (voir « Décisions »).
 
 ## 6. Incréments
 

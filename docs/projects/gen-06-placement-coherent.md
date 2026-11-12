@@ -2,7 +2,7 @@
 
 **Statut** : cadré le 2026-11-07.
 **Risque** : HIGH
-**Maturité** : à préciser
+**Maturité** : prêt
 **Intention** : `docs/intentions/recette-visuelle-promenade.md` (ensemble : `docs/intentions/generateur-ville-complet.md`)
 
 <!-- scope
@@ -84,12 +84,14 @@ lampadaires aux carrefours, et une requête d'extraction complète (`docs/intent
 - 2026-11-07 : **une seule réextraction OSM** pour tous les nouveaux champs, faite par le premier des chantiers
   `gen-03`, `gen-04`, `gen-06`, `gen-10` lancé.
 
+- 2026-11-12 : un mât est **refusé à moins d'une demi-chaussée d'une autre voie**.
+- 2026-11-12 : **lampadaires aux carrefours** (un par carrefour) en plus de l'intervalle le long des voies.
+- 2026-11-12 : `highway=stop|give_way` **ajouté à `PROP_NODES`** (avec son modèle de panneau).
+- 2026-11-12 : placement **généré à la préparation de l'extrait** (résultat figé et testable ; extraits à régénérer).
+
 ## 5. Points à décider
 
-- [decision] Refuser un mât à moins d'une demi-chaussée d'une autre voie, au prix d'un calcul de plus au chargement ?
-- [decision] Faut-il des lampadaires **aux** carrefours (un par carrefour) en plus de l'intervalle le long des voies ?
-- [decision] Ajouter `highway=stop|give_way` à `PROP_NODES` ou le retirer de la lecture (aucun nœud dans les quatre emprises) ?
-- [decision] Génération au chargement ou une fois à la préparation de l'extrait ?
+Aucun : tranchés le 2026-11-12 (voir « Décisions »).
 
 ## 6. Incréments
 
