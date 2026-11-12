@@ -56,7 +56,7 @@ Gain visuel décroissant, une promenade complète comme preuve à chaque étape.
 
 1. **Finir le socle** : inscription automatique (faite), essai réel de `npm run city` (fait le 2026-11-11 sur Rome centro storico,
    journal `docs/projects/journal.md`) ; reste à juger au casque le rendu de la ville créée (lot [humain]).
-2. **La recette elle-même** : inventaire des briques, paramètres régionaux avec repli, règles de placement, gestion des
+2. **La recette elle-même** (matériaux de repli et textures KTX2 faits le 2026-11-12 par `gen-05`, jugement au casque à faire) : inventaire des briques, paramètres régionaux avec repli, règles de placement, gestion des
    données manquantes. C'est le cadrage à finir en premier.
 3. **Compléter le souk de référence** : sols (pavés, asphalte, bordures cohérentes ; faits le 2026-11-11 par `gen-03`, jugement au casque
    à faire), rez-de-chaussée (boutiques,

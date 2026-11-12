@@ -1,5 +1,5 @@
 // e2e des matériaux locaux du souk (QUA-020, APP-012, APP-001), dans Chromium : l'option se choisit à l'accueil pour le souk seulement,
-// ses textures embarquées se chargent sans requête hors de la page servie ni erreur WebGL, et tête baissée dans le Quest 3 émulé
+// ses textures KTX2 embarquées se chargent (transcodeur servi avec la page) sans requête hors de la page servie ni erreur WebGL, et tête baissée dans le Quest 3 émulé
 // (IWER), la ville habillée s'efface comme avant.
 import { createRequire } from "node:module";
 import { expect, test, type Page } from "@playwright/test";
@@ -58,10 +58,16 @@ test("chemin 26 : matériaux locaux fixes, aucun choix de rendu dans l'accueil r
 
 test("chemin 26 : au souk, les matériaux locaux chargent leurs textures embarquées, sans réseau ni erreur WebGL", async ({ page }) => {
   const seen = watch(page);
+  const transcoder: string[] = [];
+  page.on("request", (r) => {
+    if (r.url().includes("/basis/")) transcoder.push(new URL(r.url()).pathname);
+  });
   const without = await texturesInPc(page, false);
   const withLocal = await texturesInPc(page, true);
   // Couleur et relief de chaque matériau employé : au moins deux textures de plus.
   expect(withLocal).toBeGreaterThanOrEqual(without + 2);
+  // Les textures sont des KTX2 : le transcodeur WebAssembly vient de la page servie (APP-012), jamais d'un autre serveur.
+  expect(transcoder.sort()).toEqual(["/basis/basis_transcoder.js", "/basis/basis_transcoder.wasm"]);
   await expect(page.locator("#app")).toHaveAttribute("data-route", "doha-souq-waqif");
   await expect(page.getByRole("alert")).toHaveText("");
   expect(seen).toEqual({ errors: [], foreign: [] });

@@ -112,15 +112,17 @@ sur un vrai casque : `docs/intentions/essai-casque-profils-graphiques.md`.
   Les teintes d'un quartier (souk Waqif, Vieille ville de Pune) se surchargent dans `app/assets/recette-regions.json`, avec
   l'origine de chaque élément ; elles jouent aussi sur les façades, les matériaux et les figurants ; teintes inchangées, pas encore jugées au casque.
 - Matériaux locaux (APP-012) : appliqués automatiquement quand une bibliothèque embarquée existe, absents en Performance.
-  Textures CC0 recolorées, teinte/échelle/usure déterministes sans doublon voisin, aucun réseau.
+  Textures CC0 recolorées en KTX2 de 512 px (compressées par le GPU, sous 4 Mo), teinte/échelle/usure déterministes sans doublon voisin,
+  aucun réseau (le transcodeur WebAssembly est servi avec la page).
+  Sans bibliothèque (tout quartier hors souk), le repli est la palette de la région, puis d'« ailleurs » ; une donnée de recette illisible est écartée sans casser la ville.
 - Arbres Quaternius CC0 : quatre variantes de 413–454 triangles, cap et taille reproductibles, au plus 300.
   Échec de chargement signalé, repli sur un arbre simple.
 - Mobilier OSM et marquages (APP-009) : dimensions réelles, axe de rue, bancs, poubelles, panneaux,
   bordures de trottoir et lignes d'arrêt. Les extraits n'ont ni lampadaire ni poubelle ni panneau ;
   bancs au souk et à la Corniche.
 
-Tout s'efface avec la ville. Limites : couleurs sans références suffisantes et textures non compressées ;
-`docs/intentions/palettes-regions-references.md`, `docs/intentions/textures-compressees-quest.md`,
+Tout s'efface avec la ville. Limites : couleurs sans références suffisantes et textures KTX2 pas encore jugées au casque ;
+`docs/intentions/palettes-regions-references.md`,
 `docs/intentions/essai-casque-facades-batiments.md`, `docs/intentions/essai-casque-materiaux-souk.md`,
 `docs/intentions/essai-casque-ville-riche.md`, `docs/intentions/essai-casque-ambiance-cartoon.md`.
 

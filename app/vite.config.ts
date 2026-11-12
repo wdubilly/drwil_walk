@@ -1,10 +1,37 @@
+import { readFileSync } from "node:fs";
 import basicSsl from "@vitejs/plugin-basic-ssl";
+import type { Plugin } from "vite";
 import { defineConfig } from "vitest/config";
+
+const BASIS_DIR = new URL("node_modules/three/examples/jsm/libs/basis/", import.meta.url);
+const BASIS_FILES = { "basis_transcoder.js": "text/javascript", "basis_transcoder.wasm": "application/wasm" } as const;
+
+/**
+ * Le transcodeur KTX2 (JavaScript et WebAssembly de three.js, ~0,5 Mo) est servi avec la page, sous `/basis/`, en
+ * développement comme dans le build : le casque n'appelle aucun autre serveur pendant la marche (APP-012).
+ */
+export const basisTranscoder = (): Plugin => ({
+  name: "drwil-transcodeur-ktx2",
+  configureServer(server) {
+    server.middlewares.use("/basis/", (req, res, next) => {
+      const name = (req.url ?? "").slice(1) as keyof typeof BASIS_FILES;
+      if (!Object.hasOwn(BASIS_FILES, name)) {
+        next();
+        return;
+      }
+      res.setHeader("Content-Type", BASIS_FILES[name]);
+      res.end(readFileSync(new URL(name, BASIS_DIR)));
+    });
+  },
+  generateBundle() {
+    for (const name of Object.keys(BASIS_FILES)) this.emitFile({ type: "asset", fileName: `basis/${name}`, source: readFileSync(new URL(name, BASIS_DIR)) });
+  },
+});
 
 export default defineConfig({
   // WebXR n'est servi qu'en contexte sécurisé : HTTPS (certificat auto-signé) et écoute sur le
   // réseau local, pour ouvrir la page depuis le navigateur du Quest 3.
-  plugins: [basicSsl()],
+  plugins: [basicSsl(), basisTranscoder()],
   server: { host: true },
   preview: { host: true },
   // Le build sort hors de la couche (dist/ de la racine, ignoré par Git) : c8 mesure avec --all

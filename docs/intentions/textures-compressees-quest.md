@@ -1,6 +1,6 @@
 # Intention : compresser les textures des matériaux locaux pour le Quest 3 (KTX2 / Basis)
 
-**Statut** : proposée le 2026-11-04 (limite du chantier facades-materiaux-souk).
+**Statut** : proposée le 2026-11-04 (limite du chantier facades-materiaux-souk) ; traitée le 2026-11-12 par `gen-05` (KTX2 ETC1S 512 px, transcodeur servi avec la page) ; reste le jugement au casque.
 
 ## Besoin
 

@@ -1,6 +1,7 @@
 import { Event as DomEvent, Window } from "happy-dom";
 import { describe, expect, it, vi } from "vitest";
 import { ENTER_LABEL, renderHome } from "./home.ts";
+import { KTX2Loader } from "three/examples/jsm/loaders/KTX2Loader.js";
 import { ITINERARIES } from "../route/itineraries.ts";
 import { DEFAULT_PREFERENCES } from "./preferences.ts";
 
@@ -31,6 +32,18 @@ describe("accueil réduit", () => {
     expect(view.readMaterials()?.library.itinerary).toBe("doha-souq-waqif");
     root.querySelector<HTMLInputElement>("input[value='pune-fc-road']")?.click();
     expect(view.readMaterials()).toBeUndefined();
+  });
+
+  it("APP-012: les textures KTX2 du souk passent par le transcodeur servi avec la page, sans réseau", () => {
+    vi.spyOn(KTX2Loader.prototype, "detectSupport").mockReturnThis();
+    const path = vi.spyOn(KTX2Loader.prototype, "setTranscoderPath");
+    const parse = vi.spyOn(KTX2Loader.prototype, "parse").mockImplementation(() => undefined);
+    const { view } = setup();
+    const materials = view.readMaterials();
+    materials?.texture(materials.library.materials[0]?.albedo as string, true);
+    expect(path).toHaveBeenCalledWith("/basis/");
+    expect(parse.mock.calls[0]?.[0].byteLength).toBeGreaterThan(1000);
+    vi.restoreAllMocks();
   });
 
   it("lit la vitesse dès 1 km/h, sans plafond, au pas de 0,1 et annonce puis normalise une saisie hors limite", () => {

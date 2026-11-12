@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import { areaFor, areaOf } from "../../scripts/materials-areas.ts";
 import { CITIES } from "../../scripts/cities.ts";
 import { DISK, coloursOf, runInventory, runLibrary, toneOf, type Files } from "../../scripts/materials-run.ts";
-import { TEXTURE_PX } from "../../scripts/materials-textures.ts";
+import { KTX2_PX, ktx2DataUri, prepareKtx2Material } from "../../scripts/materials-textures.ts";
 import type { StreetPhoto } from "../../scripts/panoramax.ts";
 import { parseLibrary } from "./material-library.ts";
 import { makeZip } from "./zip-double.ts";
@@ -15,7 +15,7 @@ function memory(initial: Record<string, string>): Files & { files: Record<string
   return { files, read: (path) => files[path] ?? "", write: (path, text) => { files[path] = text; } };
 }
 
-const jpeg = (rgb: readonly [number, number, number], size = TEXTURE_PX): Uint8Array => {
+const jpeg = (rgb: readonly [number, number, number], size = 256): Uint8Array => {
   const data = new Uint8Array(size * size * 4);
   for (let i = 0; i < size * size; i++) data.set([...rgb, 255], i * 4);
   return encode({ width: size, height: size, data }, 90).data;
@@ -85,8 +85,24 @@ describe("préparation des matériaux d'un quartier (hors casque)", () => {
     const library = parseLibrary(JSON.parse(files.files[area.library] as string));
     expect(library.provisional).toBe(true);
     expect(library.materials.map((m) => m.asset)).toEqual(["Plaster001", "Bricks106A", "Planks037A"]);
-    expect(library.textureSizePx).toBe(TEXTURE_PX);
+    expect(library.materials.every((m) => m.albedo.startsWith("data:image/ktx2;base64,q0tUWCAy") && m.normal.startsWith("data:image/ktx2;base64,"))).toBe(true);
+    expect(library.textureSizePx).toBe(256);
   });
+
+  it("APP-012: encode en KTX2 à 512 px (jamais agrandi), couleur sRGB et normale linéaire, mipmaps comprises", async () => {
+    expect(KTX2_PX).toBe(512);
+    const archive = makeZip({ "Plaster001_1K-JPG_Color.jpg": jpeg([128, 128, 128], 1024), "Plaster001_1K-JPG_NormalGL.jpg": jpeg([128, 128, 255], 1024) });
+    const { albedo, normal, sizePx } = await prepareKtx2Material(archive, "Plaster001", [200, 170, 120]);
+    expect(sizePx).toBe(512);
+    const header = (uri: string): Buffer => Buffer.from(uri.slice("data:image/ktx2;base64,".length), "base64");
+    for (const uri of [albedo, normal]) {
+      const bytes = header(uri);
+      expect([bytes.readUInt32LE(20), bytes.readUInt32LE(24)]).toEqual([512, 512]);
+      expect(bytes.readUInt32LE(40)).toBe(10);
+    }
+    const image = { width: 4, height: 4, data: new Uint8Array(64).fill(255) };
+    expect(header(await ktx2DataUri(image, "colour"))).not.toEqual(header(await ktx2DataUri(image, "normal")));
+  }, 60_000);
 
   it("lit les fichiers du dépôt sur le disque", () => {
     expect(JSON.parse(DISK.read("package.json"))).toMatchObject({ name: expect.any(String) as string });

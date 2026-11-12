@@ -1,6 +1,7 @@
 import { DEFAULT_SPEED_KMH, MIN_SPEED_KMH, SPEED_RANGE_TEXT, SPEED_STEP_KMH, clampSpeedKmh, speedLimitMessage, formatSpeedKmh } from "../route/speed.ts";
 import { OSM_ATTRIBUTION } from "../city/licence.ts";
-import { documentTexture, localMaterialsFor, type LocalMaterials } from "../city/material-library.ts";
+import { localMaterialsFor, type LocalMaterials } from "../city/material-library.ts";
+import { textureLoader } from "../city/material-ktx2.ts";
 import type { WeightStorage } from "../route/stats.ts";
 import { renderPcButton } from "../pc/pc-button.ts";
 import { renderRouteChoice } from "./route-choice.ts";
@@ -62,7 +63,7 @@ export function renderHome(doc: Document, root: HTMLElement, storage?: WeightSto
   };
   return {
     root, preferences, readSpeedKmh: announce, readRouteId: () => routes.readId(),
-    readMaterials: () => localMaterialsFor(routes.readId(), (url) => documentTexture(doc, url)),
+    readMaterials: () => localMaterialsFor(routes.readId(), textureLoader(doc)),
     showNotice,
     onEnter: (handler) => { button.addEventListener("click", start(handler)); },
     onEnterPc: (handler) => { pcButton.addEventListener("click", start(handler)); },

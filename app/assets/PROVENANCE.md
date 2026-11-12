@@ -48,8 +48,10 @@ https://docs.ambientcg.com/license/) ; la mention n'est pas obligatoire, elle es
 | Bois | `Planks037A` (couleur et relief, 1K JPG) | https://ambientcg.com/view?id=Planks037A |
 
 Ce qui a été changé (script `app/scripts/materials-textures.ts`, lancé par `npm run materials:library -- doha-souq-waqif`
-depuis `app/`) : réduites à 256 × 256 px, la couleur réduite à sa luminance (rapportée à sa moyenne) puis multipliée par la couleur relevée du
-quartier, réencodées en JPEG (qualité 80) et embarquées en base64 dans le fichier (aucun appel réseau pendant la marche).
+depuis `app/`) : réduites à 512 × 512 px (jamais agrandies), la couleur réduite à sa luminance (rapportée à sa moyenne) puis multipliée par la couleur relevée du
+quartier, réencodées en KTX2 (Basis ETC1S, mipmaps comprises) et embarquées en base64 dans le fichier (aucun appel réseau pendant la marche).
+L'encodeur est `ktx2-encoder` (MIT, encodeur Basis Universal en WebAssembly) ; le transcodeur que la page sert au casque est celui de three.js
+(`examples/jsm/libs/basis/`, MIT, Basis Universal Apache-2.0), copié tel quel dans le build sous `basis/`.
 Les couleurs sont aujourd'hui **provisoires** (la palette du souk) : aucune photo de rue n'a encore été relevée
 (`docs/preuves/materiaux-souk.md`). Les photos de rue ne sont jamais embarquées : l'inventaire
 `materials/doha-souq-waqif-photos.json` n'en garde que le lien, l'identifiant, l'auteur et la licence.

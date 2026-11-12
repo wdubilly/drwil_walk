@@ -8,7 +8,7 @@ import type { LonLat } from "../src/route/geo.ts";
 import { areaOf, type MaterialArea, type Tone } from "./materials-areas.ts";
 import { regionColours } from "./city-colours.ts";
 import { dominantColours, fromHex, luma, type DominantColour, type Rgba } from "./materials-colours.ts";
-import { TEXTURE_PX, ambientCgUrl, prepareMaterial } from "./materials-textures.ts";
+import { ambientCgUrl, prepareKtx2Material } from "./materials-textures.ts";
 import { inventory, inventoryMarkdown, type StreetPhoto } from "./panoramax.ts";
 
 export interface Files {
@@ -60,16 +60,18 @@ export async function coloursOf(fetchFn: typeof fetch, area: MaterialArea, photo
   return { source: "photos" as const, note: `${String(photos.length)} photo(s) de l'inventaire`, list: dominantColours(images) };
 }
 
-/** La bibliothèque du quartier : couleurs, matériaux (textures embarquées) et familles ; écrite dans `app/assets/materials/`. */
+/** La bibliothèque du quartier : couleurs, matériaux (textures KTX2 embarquées) et familles ; écrite dans `app/assets/materials/`. */
 export async function writeLibrary(fetchFn: typeof fetch, id: string, area: MaterialArea, colours: Colours, files: Files): Promise<string> {
   const hexes = colours.list.map((c) => c.hex);
   const materials = [];
+  let textureSizePx = 0;
   for (const source of area.materials) {
     const { colour, tints } = toneOf(hexes, source.tone);
-    const textures = prepareMaterial(await download(fetchFn, ambientCgUrl(source.asset), area.userAgent), source.asset, fromHex(colour));
+    const { sizePx, ...textures } = await prepareKtx2Material(await download(fetchFn, ambientCgUrl(source.asset), area.userAgent), source.asset, fromHex(colour));
+    textureSizePx = sizePx;
     materials.push({ id: source.id, label: source.label, asset: source.asset, sizeM: source.sizeM, colour, tints, ...textures });
   }
-  const library = { schema: 1, itinerary: id, colours, textureSizePx: TEXTURE_PX, materials, families: area.families };
+  const library = { schema: 1, itinerary: id, colours, textureSizePx, materials, families: area.families };
   files.write(area.library, `${JSON.stringify(library)}\n`);
   return `${colours.source} : ${hexes.join(", ")}`;
 }

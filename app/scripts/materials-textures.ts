@@ -1,7 +1,9 @@
 // Préparation des textures d'un matériau (hors casque) : l'archive CC0 d'ambientCG (lue en mémoire, rien d'extrait ni
 // d'exécuté) donne la couleur et la normale ; la couleur est recolorée d'après la couleur relevée sur les photos, les deux
-// sont réduites à une petite taille pour le Quest 3 puis compressées en JPEG et embarquées en base64.
+// sont réduites à une petite taille pour le Quest 3 puis embarquées en base64 : en KTX2 (Basis, mipmaps comprises, compression
+// GPU : `prepareKtx2Material`) ou en JPEG (`prepareMaterial`).
 import { decode, encode } from "jpeg-js";
+import { encodeToKTX2 } from "ktx2-encoder";
 import { openZip } from "../src/city/zip-read.ts";
 import { luma, type Rgb, type Rgba } from "./materials-colours.ts";
 
@@ -56,5 +58,29 @@ export function prepareMaterial(archive: Uint8Array, asset: string, colour: Rgb)
   return {
     albedo: jpegDataUri(recolour(downsample(read(file("Color")), TEXTURE_PX), colour)),
     normal: jpegDataUri(downsample(read(file("NormalGL")), TEXTURE_PX)),
+  };
+}
+
+/** Côté des textures KTX2, en pixels : 512 rend bien à hauteur d'homme, et un KTX2 reste compressé en mémoire graphique. */
+export const KTX2_PX = 512;
+
+/** Une image RGBA en KTX2 (encodeur Basis en WebAssembly, sans outil système) : ETC1S (≈ 60 Ko par texture ; UASTC en pèserait 330 Ko), la couleur en sRGB, la normale en mode « normal map ». */
+export async function ktx2DataUri(image: Rgba, kind: "colour" | "normal"): Promise<string> {
+  const { width, height, data } = image;
+  const options = kind === "colour" ? { isPerceptual: true, isSetKTX2SRGBTransferFunc: true } : { isNormalMap: true, isPerceptual: false };
+  const bytes = await encodeToKTX2(new Uint8Array(0), { ...options, isUASTC: false, generateMipmap: true, imageDecoder: () => Promise.resolve({ data, width, height }) });
+  return `data:image/ktx2;base64,${Buffer.from(bytes).toString("base64")}`;
+}
+
+/** Comme `prepareMaterial`, en KTX2 : jamais agrandi (la source plus petite que 512 px garde sa taille). Rend aussi le côté retenu. */
+export async function prepareKtx2Material(archive: Uint8Array, asset: string, colour: Rgb): Promise<{ albedo: string; normal: string; sizePx: number }> {
+  const zip = openZip(archive);
+  const file = (map: string): Rgba => read(zip.read(`${asset}_1K-JPG_${map}.jpg`));
+  const [albedo, normal] = [file("Color"), file("NormalGL")];
+  const sizePx = Math.min(KTX2_PX, albedo.width);
+  return {
+    albedo: await ktx2DataUri(recolour(downsample(albedo, sizePx), colour), "colour"),
+    normal: await ktx2DataUri(downsample(normal, sizePx), "normal"),
+    sizePx,
   };
 }

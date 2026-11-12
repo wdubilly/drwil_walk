@@ -107,8 +107,35 @@ export function districtAt(file: RecipeFile, origin: LonLat): string | undefined
   return Object.entries(file.districts).find(([, d]) => d.bounds && lat >= d.bounds.south && lat <= d.bounds.north && lon >= d.bounds.west && lon <= d.bounds.east)?.[0];
 }
 
-/** La recette des régions, lue une fois de `app/assets/recette-regions.json` : un fichier mal formé fait échouer le chargement. */
-export const RECIPE: RecipeFile = readRecipe(data);
+const works = (read: () => unknown): boolean => {
+  try { read(); return true; } catch { return false; }
+};
+
+/**
+ * Lecture tolérante de la recette embarquée : un champ, une emprise ou une entrée de région ou de quartier illisible est écarté et
+ * la ville retombe sur le niveau au-dessus, jusqu'à « ailleurs » (APP-012) ; « ailleurs » reste exigé, son absence fait échouer.
+ */
+export function loadRecipe(raw: unknown): RecipeFile {
+  if (!isObject(raw) || !isObject(raw.regions)) return readRecipe(raw);
+  const clean = (entries: unknown, where: string): Record<string, unknown> => {
+    const out: Record<string, unknown> = {};
+    for (const [name, entry] of Object.entries(isObject(entries) ? entries : {})) {
+      if (name === "ailleurs" && where === "regions") { out[name] = entry; continue; }
+      if (!isObject(entry)) continue;
+      const kept: Record<string, unknown> = {};
+      for (const [key, value] of Object.entries(entry)) {
+        const ok = key === "region" ? typeof value === "string" : key === "bounds" ? works(() => readBounds(value, key)) : works(() => readEntry({ [key]: value }, key));
+        if (ok) kept[key] = value;
+      }
+      out[name] = kept;
+    }
+    return out;
+  };
+  return readRecipe({ regions: clean(raw.regions, "regions"), districts: clean(raw.districts, "districts") });
+}
+
+/** La recette des régions, lue une fois de `app/assets/recette-regions.json`, avec écart des éléments illisibles (`loadRecipe`). */
+export const RECIPE: RecipeFile = loadRecipe(data);
 
 /** La palette du sol, des voies et des bâtiments du quartier de l'origine, sinon de sa région, lue de la recette ; « ailleurs » en repli. */
 export const paletteOf = (origin: LonLat): Palette => recipeFor(RECIPE, regionOf(origin), districtAt(RECIPE, origin)).palette.value;
