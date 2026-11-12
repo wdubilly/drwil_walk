@@ -14,6 +14,23 @@ files:
   - app/src/city/facade-parts.test.ts
   - app/src/city/facade-plan.test.ts
   - app/e2e/facades-batiments.test.ts
+  - app/src/city/shop-awning.ts
+  - app/src/city/shop-awning.test.ts
+  - app/src/city/shop-rules.ts
+  - app/src/city/shop-rules.test.ts
+  - app/scripts/osm-tags.ts
+  - app/scripts/osm-tags.test.ts
+  - app/scripts/extract-souq.ts
+  - app/scripts/extract-souq.test.ts
+  - app/src/city/souq-data.ts
+  - app/src/city/souq-data.test.ts
+  - app/data/doha-corniche.json
+  - app/data/pune-fc-road.json
+  - app/data/pune-vieille-ville.json
+  - app/data/rome.json
+  - app/data/souq-waqif.json
+  - docs/projects/journal.md
+  - docs/intentions/recette-visuelle-promenade.md
   - docs/architecture.md
   - docs/features.md
 -->
@@ -71,11 +88,15 @@ toujours `building` ni l'usage (`docs/intentions/rendu-facades-batiments.md`). L
 - 2026-11-07 : **une seule réextraction OSM** pour tous les nouveaux champs, faite par le premier des chantiers
   `gen-03`, `gen-04`, `gen-06`, `gen-10` lancé.
 
+- 2026-11-12 (demandeur) : les boutiques sont pilotées par `shop`, `amenity` (commerces, cafés, restaurants) et `building=retail/commercial` ;
+  l'extraction garde donc l'usage (réextraction des cinq extraits).
+- 2026-11-12 (demandeur) : usage inconnu en zone dense : une boutique est ajoutée par règle, marquée « règle » (APP-013).
+- 2026-11-12 : pas de captures de référence disponibles ; formes simples par région (auvent plat, store incliné, arcade),
+  jugées au casque à l'incrément 4.
+
 ## 5. Points à décider
 
-- [decision] Quels usages OSM pilotent les boutiques (`shop`, `amenity`, `building`) ?
-- [decision] Quelles formes d'auvents et de vitrines par région, avec quelle référence (photos ou captures) ?
-- [decision] Un rez-de-chaussée commerçant est-il ajouté par règle quand l'usage est inconnu, en zone dense ?
+*(aucun : tranchés le 2026-11-12, voir section 4)*
 
 ## 6. Incréments
 
