@@ -1,7 +1,9 @@
 import { InstancedMesh, Matrix4, Quaternion, Vector3 } from "three";
 import { describe, expect, it } from "vitest";
 import type { Prop } from "./souq-data.ts";
-import { buildPackTrees, treeLook, treeSeed } from "./tree-instances.ts";
+import { createPath } from "../route/path.ts";
+import type { Building, Road } from "./souq-data.ts";
+import { MAX_ALIGNED_TREES, alignedTrees, buildPackTrees, treeLook, treeSeed } from "./tree-instances.ts";
 import { testPack } from "./tree-pack-double.ts";
 
 const trees = (count: number): Prop[] => Array.from({ length: count }, (_, i) => ({ kind: "tree", source: "osm", at: { x: i * 7.3, z: -i * 3.1 } }));
@@ -47,5 +49,45 @@ describe("arbres du pack posés dans la ville", () => {
 
   it("APP-003: sans arbre, le groupe est vide", async () => {
     expect(buildPackTrees([], await testPack()).children).toEqual([]);
+  });
+
+  it("APP-009: les arbres d'alignement suivent la voie, d'un espacement varié et toujours le même, marqués « generated »", () => {
+    const route = createPath([{ x: 0, z: 0 }, { x: 300, z: 0 }]);
+    const road: Road = { id: 5, highway: "residential", points: [{ x: 0, z: 0 }, { x: 300, z: 0 }] };
+    const once = alignedTrees([road], [], [], route);
+    expect(alignedTrees([road], [], [], route)).toEqual(once);
+    expect(once.length).toBeGreaterThan(15);
+    expect(once.every((t) => t.kind === "tree" && t.source === "generated" && Math.abs(t.at.z) > 2)).toBe(true);
+    const xs = once.map((t) => t.at.x).sort((a, b) => a - b);
+    const gaps = xs.slice(1).map((x, i) => x - (xs[i] as number));
+    expect(new Set(gaps.map((g) => g.toFixed(2))).size).toBeGreaterThan(gaps.length / 2);
+    expect(Math.min(...gaps)).toBeGreaterThanOrEqual(3);
+  });
+
+  it("APP-009: sans voie carrossable, aucun arbre inventé ; plafonné", () => {
+    const route = createPath([{ x: 0, z: 0 }, { x: 9000, z: 0 }]);
+    expect(alignedTrees([], [], [], route)).toEqual([]);
+    expect(alignedTrees([{ highway: "steps", points: [{ x: 0, z: 0 }, { x: 50, z: 0 }] }, { highway: "residential", footway: "sidewalk", points: [{ x: 0, z: 0 }, { x: 50, z: 0 }] }], [], [], route)).toEqual([]);
+    const long: Road[] = Array.from({ length: 30 }, (_, i) => ({ id: i + 1, highway: "service", points: [{ x: 0, z: i * 20 }, { x: 300, z: i * 20 }] }));
+    expect(alignedTrees(long, [], [], route).length).toBe(MAX_ALIGNED_TREES);
+  });
+
+  it("APP-009: aucun arbre sur un passage piéton, une autre chaussée, un mur, le parcours ou un objet du relevé", () => {
+    const route = createPath([{ x: 0, z: 40 }, { x: 300, z: 40 }]);
+    const road: Road = { id: 5, highway: "residential", points: [{ x: 0, z: 0 }, { x: 300, z: 0 }] };
+    const base = alignedTrees([road], [], [], route);
+    const target = base[3]?.at as { x: number; z: number };
+    const crossing: Road = { highway: "footway", footway: "crossing", points: [{ x: target.x, z: target.z - 5 }, { x: target.x, z: target.z + 5 }] };
+    const wall: Building = { footprint: [{ x: target.x - 1, z: target.z - 1 }, { x: target.x + 1, z: target.z - 1 }, { x: target.x + 1, z: target.z + 1 }, { x: target.x - 1, z: target.z + 1 }], heightM: 9 };
+    const cross: Road = { id: 9, highway: "primary", points: [{ x: target.x, z: -30 }, { x: target.x, z: 30 }] };
+    const near = (list: { at: { x: number; z: number } }[]): boolean => list.some((t) => Math.hypot(t.at.x - target.x, t.at.z - target.z) < 2.5);
+    expect(near(alignedTrees([road, crossing], [], [], route))).toBe(false);
+    const dot: Road = { highway: "footway", footway: "crossing", points: [target, target] };
+    expect(near(alignedTrees([road, dot], [], [], route))).toBe(false);
+    expect(near(alignedTrees([road], [wall] as Building[], [], route))).toBe(false);
+    expect(near(alignedTrees([road, cross], [], [], route))).toBe(false);
+    expect(near(alignedTrees([road], [], [{ kind: "bench", source: "osm", at: { x: target.x + 1, z: target.z } }], route))).toBe(false);
+    const onRoute = createPath([{ x: 0, z: target.z }, { x: 300, z: target.z }]);
+    expect(near(alignedTrees([road], [], [], onRoute))).toBe(false);
   });
 });

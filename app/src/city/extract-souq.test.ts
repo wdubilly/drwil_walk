@@ -78,7 +78,7 @@ describe("extraction du souk depuis OpenStreetMap", () => {
     const query = buildQuery();
     expect(query).toContain('way["building"](25.284,51.529,25.29,51.538)');
     expect(query).toContain('way["highway"](25.284,51.529,25.29,51.538)');
-    for (const node of ['node["natural"="tree"]', 'node["highway"="street_lamp"]', 'node["amenity"="bench"]', 'node["amenity"="waste_basket"]', 'node["traffic_sign"]']) {
+    for (const node of ['node["natural"="tree"]', 'node["highway"="street_lamp"]', 'node["amenity"="bench"]', 'node["amenity"="waste_basket"]', 'node["traffic_sign"]', 'node["highway"="stop"]', 'node["highway"="give_way"]']) {
       expect(query).toContain(`${node}(25.284,51.529,25.29,51.538)`);
     }
     expect(query).toContain("out geom");

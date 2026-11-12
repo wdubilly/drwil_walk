@@ -24,6 +24,7 @@ import type { FacadeDetail } from "./facades.ts";
 import { MAX_LOCAL_MATERIALS, type LocalMaterials } from "./material-library.ts";
 import { buildLocalMaterials } from "./material-mesh.ts";
 import { generateLamps } from "./lamp-rule.ts";
+import { alignedTrees } from "./tree-instances.ts";
 import { buildFurniture, buildTrees, type PlacedLamp, type Sources } from "./props.ts";
 import { buildStreetLights } from "./street-lights.ts";
 import { buildOutlinesGeometry } from "./outlines.ts";
@@ -123,7 +124,7 @@ export function createSouqScene(doc: Document, souq: Souq, options: SceneOptions
   if (page) page.dataset["mobilier"] = `${String(sources.osm)} d'OpenStreetMap · ${String(sources.generated)} produits`;
   const osm = new Group();
   osm.name = "osm";
-  osm.add(ground, greenery, roads, buildings, buildStreetLabels(doc, rich ? souq.roads : [], souq.route), buildTrees(souq.props, souq.route, options.trees, options.maxTrees), furniture);
+  osm.add(ground, greenery, roads, buildings, buildStreetLabels(doc, rich ? souq.roads : [], souq.route), buildTrees(souq.props, souq.route, options.trees, options.maxTrees, alignedTrees(souq.roads, souq.buildings, souq.props, souq.route)), furniture);
   if (options.liveLamps) {
     const masts = buildFurniture(souq.props.filter((p) => p.kind === "lamp"), souq.route, options.maxFurniture, lamps, options.maxGeneratedLamps);
     masts.name = "lampadaires";

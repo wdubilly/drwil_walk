@@ -604,6 +604,14 @@ One entry per closed project, most recent last.
 - Limites : e2e confié à la CI pour la clôture ; `prepareMaterial`, `jpegDataUri` et `TEXTURE_PX` (JPEG 256 px) inutilisés en production, gardés car leurs tests sont hors périmètre ; la préparation télécharge ambientCG (réseau requis hors marche).
 - Reste à l'humain : lot 1 (mesure et jugement du souk) et lot 4 (essai au casque du repli, netteté à 512 px et normale en ETC1S), dont l'effacement avec la ville tête baissée (`APP-001`, sécurité-visibilité).
 
+## 2026-11-12 — gen-06-placement-coherent : placement cohérent des arbres, lampadaires et mobilier
+
+- Lampadaires (`app/src/city/lamp-rule.ts`, `APP-013`) : un mât ne tombe plus sur la chaussée ou le trottoir d'une voie perpendiculaire à un carrefour ; arbres (`app/src/city/tree-instances.ts`) : règle d'alignement avec espacements réguliers mais variés ; mobilier (`app/src/city/props.ts`, `APP-009`) : dégagement des accès, le mur sert de repli faute d'entrées de bâtiment dans les données.
+- Requête d'extraction (`app/scripts/extract-souq.ts`) : demande aussi les nœuds `highway=stop` et `highway=give_way` ; aucune réextraction lancée.
+- Limite hors cadre traitée sur décision de l'humain : `createSouqScene` (`app/src/city/souq.ts`) passe les arbres alignés à `buildTrees`.
+- Limites : e2e confié à la CI pour la clôture ; les quatre extraits n'ont pas été réextraits, donc les panneaux stop et cédez-le-passage ne s'y voient pas encore.
+- Reste à l'humain : lot 1 « trancher et mesurer » (jugement des règles et mesures) et lot 5 « promenade au casque » (jugement du placement dans la ville, dont l'effacement avec la ville tête baissée, `APP-001`, sécurité-visibilité).
+
 ## gen-01-essai-commande
 
 - **Preuve de clôture** : `docs/preuves/gen-01-essai-commande.md`.
@@ -623,3 +631,7 @@ One entry per closed project, most recent last.
 ## gen-05-materiaux-repli
 
 - **Preuve de clôture** : `docs/preuves/gen-05-materiaux-repli.md`.
+
+## gen-06-placement-coherent
+
+- **Preuve de clôture** : `docs/preuves/gen-06-placement-coherent.md`.

@@ -36,9 +36,10 @@ export interface ExtractFeature {
   geometry: { type: "Polygon"; coordinates: number[][][] } | { type: "LineString"; coordinates: number[][] } | { type: "Point"; coordinates: number[] };
 }
 
-/** Les nœuds ponctuels demandés avec les bâtiments et voies : arbres, lampadaires, bancs, poubelles et panneaux. */
+/** Les nœuds ponctuels demandés avec les bâtiments et voies : arbres, lampadaires, bancs, poubelles et panneaux (dont `highway=stop|give_way`, sans `traffic_sign`). */
 export const PROP_NODES = [
   'node["natural"="tree"]', 'node["highway"="street_lamp"]', 'node["amenity"="bench"]', 'node["amenity"="waste_basket"]', 'node["traffic_sign"]',
+  'node["highway"="stop"]', 'node["highway"="give_way"]',
 ] as const;
 
 export function buildQuery(bbox = BBOX): string {
