@@ -20,6 +20,7 @@ files:
   - app/src/city/souq-lampadaires.test.ts
   - app/src/city/souq-trees.test.ts
   - app/src/city/souq.ts
+  - app/src/city/souq.test.ts
   - app/scripts/osm-tags.ts
   - app/scripts/extract-souq.ts
   - app/src/city/extract-souq.test.ts
