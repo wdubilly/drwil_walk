@@ -595,6 +595,15 @@ One entry per closed project, most recent last.
 - Limites : e2e `facades-batiments` confié à la CI, non rejoué ici ; extraits réextraits aujourd'hui (OSM a pu bouger).
 - Reste à l'humain : lot 4, le jugement des rues commerçantes du souk et de Pune Vieille ville au casque, dont l'effacement avec la ville tête baissée (APP-001).
 
+## 2026-11-12 — gen-05-materiaux-repli : repli de matériaux par région et textures KTX2
+
+- Repli par région : le format avec origine, la palette de région et « ailleurs » existaient (gen-02) ; `loadRecipe` (`app/src/city/region-palette.ts`) écarte désormais une donnée illisible (quartier → région → « ailleurs »), tests `APP-012` (matériaux locaux d'un quartier) dans `app/src/city/material-library.test.ts`.
+- Compression KTX2 (limites traitées sur décision du demandeur : périmètre élargi) : encodeur `ktx2-encoder` 0.6.0 (MIT, devDependency, PC de développement seulement), ETC1S 512 px avec mipmaps ; chargeur `app/src/city/material-ktx2.ts` branché dans `app/src/ui/home.ts` ; règle (3) d'`APP-012` étendue au KTX2 en `data:`.
+- Transcodeur WebAssembly servi avec la page sous `/basis/` (`app/vite.config.ts`) : 527 Ko de WebAssembly et 57 Ko de JavaScript (environ 200 Ko compressés), copiés de three.js, donc il suit la version de three.js.
+- Mesure : le souk passe de 113 Ko à 413 Ko de données, 2,1 Mo en mémoire graphique (borne de 4 Mo et de 3 matériaux conservée) ; e2e du souk, 3 passés avec transcodage réel dans Chromium.
+- Limites : e2e confié à la CI pour la clôture ; `prepareMaterial`, `jpegDataUri` et `TEXTURE_PX` (JPEG 256 px) inutilisés en production, gardés car leurs tests sont hors périmètre ; la préparation télécharge ambientCG (réseau requis hors marche).
+- Reste à l'humain : lot 1 (mesure et jugement du souk) et lot 4 (essai au casque du repli, netteté à 512 px et normale en ETC1S), dont l'effacement avec la ville tête baissée (`APP-001`, sécurité-visibilité).
+
 ## gen-01-essai-commande
 
 - **Preuve de clôture** : `docs/preuves/gen-01-essai-commande.md`.
