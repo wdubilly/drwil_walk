@@ -93,6 +93,8 @@ Génération `npm run city` exclusivement sur PC de développement. Tests Vitest
   APP-009) est la balise OSM `surface` si elle est relevée (`surfaceOf`, trois familles : asphalte, pavés, terre), sinon la
   valeur `sols` de la recette (quartier → région → « ailleurs », famille `chaussee` ou `pieton`) ; il teinte le corps de la voie, et `wearOf` y ajoute une usure déterministe
   tirée de l'identifiant OSM (même données, mêmes sols ; un seul maillage de voies, aucun appel de rendu en plus).
+  Le grain (`app/src/city/road-surface.ts`) est dessiné par le shader des voies : joints de pavés, grain d'asphalte, mottes de
+  terre, d'après la position au sol (aucune image, poids nul) ; le profil « performance » (ville non riche) le coupe.
 - `app/src/city/toon.ts`, `app/src/city/outlines.ts` : toon à quatre paliers et contours selon profil.
 - `app/src/city/facade-seed.ts`, `app/src/city/facade-family.ts`, `app/src/city/facade-palettes.ts`, `app/src/city/facade-plan.ts`, `app/src/city/facade-parts.ts`, `app/src/city/facades.ts` :
   graine OSM, familles et palettes régionales, voisins distincts, détail borné (APP-008).

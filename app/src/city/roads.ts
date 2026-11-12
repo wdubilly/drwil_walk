@@ -5,6 +5,7 @@ import type { Vec2 } from "../route/geo.ts";
 import type { Road } from "./souq-data.ts";
 import type { Surface } from "../../scripts/osm-tags.ts";
 import { RECIPE, recipeFor } from "./region-palette.ts";
+import { NO_GRAIN, SURFACE_ID } from "./road-surface.ts";
 
 /** Largeur en mètres selon la classe de la voie : les grands axes sont plus larges, les sentiers étroits. */
 const WIDTH_M: Record<string, number> = {
@@ -74,26 +75,6 @@ export function ribbonsGeometry(ribbons: Ribbons): BufferGeometry {
   return geometry;
 }
 
-/** Les voies, puis les rubans de `marks` (trottoirs, passages piétons, chemin suivi) posés par-dessus. */
-export function buildRoadsGeometry(roads: readonly Road[], base = 0x808080, marks: Ribbons = newRibbons(), place?: { region: string; district?: string }): BufferGeometry {
-  const out: Ribbons = newRibbons();
-  const sols = place ? recipeFor(RECIPE, place.region, place.district).sols?.value : undefined;
-  for (const road of roads) {
-    const half = widthOf(road.highway) / 2;
-    const body = surfaceColor(road.highway, base, surfaceFor(road.highway, road.surface, sols), wearOf(road.id));
-    const border = body.clone().lerp(new Color(1, 1, 1), BORDER_WHITENING);
-    const line = body.clone().lerp(new Color(1, 1, 1), LINE_WHITENING);
-    for (const [i, b] of road.points.slice(1).entries()) {
-      const a = road.points[i] as Vec2;
-      pushStrip(out, a, b, -half, half, LIFT_M, body);
-      pushStrip(out, a, b, -half, -half + BORDER_WIDTH_M, BORDER_LIFT_M, border);
-      pushStrip(out, a, b, half - BORDER_WIDTH_M, half, BORDER_LIFT_M, border);
-      if (half * 2 >= CENTRE_LINE_MIN_WIDTH_M) pushStrip(out, a, b, -LINE_WIDTH_M / 2, LINE_WIDTH_M / 2, LINE_LIFT_M, line);
-    }
-  }
-  return ribbonsGeometry({ positions: out.positions.concat(marks.positions), colors: out.colors.concat(marks.colors) });
-}
-
 /** Les classes de voie réservées aux piétons : leur revêtement de repli est celui de « pieton », les autres celui de « chaussee ». */
 const PEDESTRIAN = new Set(["pedestrian", "living_street", "footway", "path", "steps", "track"]);
 const DEFAULT_SOLS: Record<string, Surface> = { chaussee: "asphalt", pieton: "pave" };
@@ -133,4 +114,34 @@ export function surfaceColor(highway: string, base: number, surface: RoadSurface
   const tint = SURFACE_TINT[surface.kind];
   const toned = tint ? body.lerp(new Color(tint.color), tint.amount) : body;
   return wear >= 0 ? toned.lerp(new Color(1, 1, 1), wear * WEAR_SPREAD) : toned.multiplyScalar(1 + wear * WEAR_SPREAD);
+}
+
+/** Les voies, puis les rubans de `marks` (trottoirs, passages piétons, chemin suivi) posés par-dessus ; `surfaceKind` dit le grain de chaque sommet. */
+export function buildRoadsGeometry(roads: readonly Road[], base = 0x808080, marks: Ribbons = newRibbons(), place?: { region: string; district?: string }): BufferGeometry {
+  const out: Ribbons = newRibbons();
+  const kinds: number[] = [];
+  const sols = place ? recipeFor(RECIPE, place.region, place.district).sols?.value : undefined;
+  const strip = (a: Vec2, b: Vec2, from: number, to: number, lift: number, color: Color, kind: number): void => {
+    const before = out.positions.length;
+    pushStrip(out, a, b, from, to, lift, color);
+    for (let i = before; i < out.positions.length; i += 3) kinds.push(kind);
+  };
+  for (const road of roads) {
+    const half = widthOf(road.highway) / 2;
+    const surface = surfaceFor(road.highway, road.surface, sols);
+    const body = surfaceColor(road.highway, base, surface, wearOf(road.id));
+    const border = body.clone().lerp(new Color(1, 1, 1), BORDER_WHITENING);
+    const line = body.clone().lerp(new Color(1, 1, 1), LINE_WHITENING);
+    for (const [i, b] of road.points.slice(1).entries()) {
+      const a = road.points[i] as Vec2;
+      strip(a, b, -half, half, LIFT_M, body, SURFACE_ID[surface.kind]);
+      strip(a, b, -half, -half + BORDER_WIDTH_M, BORDER_LIFT_M, border, NO_GRAIN);
+      strip(a, b, half - BORDER_WIDTH_M, half, BORDER_LIFT_M, border, NO_GRAIN);
+      if (half * 2 >= CENTRE_LINE_MIN_WIDTH_M) strip(a, b, -LINE_WIDTH_M / 2, LINE_WIDTH_M / 2, LINE_LIFT_M, line, NO_GRAIN);
+    }
+  }
+  const geometry = ribbonsGeometry({ positions: out.positions.concat(marks.positions), colors: out.colors.concat(marks.colors) });
+  const marksKinds = Array.from({ length: marks.positions.length / 3 }, () => NO_GRAIN);
+  geometry.setAttribute("surfaceKind", new Float32BufferAttribute(kinds.concat(marksKinds), 1));
+  return geometry;
 }

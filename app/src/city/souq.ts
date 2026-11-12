@@ -29,6 +29,7 @@ import { buildStreetLights } from "./street-lights.ts";
 import { buildOutlinesGeometry } from "./outlines.ts";
 import { pushMarkings } from "./markings.ts";
 import { buildRoadsGeometry } from "./roads.ts";
+import { roadMaterial } from "./road-surface.ts";
 import { MAX_STREET_NAMES, buildStreetLabels } from "./street-names.ts";
 import { buildVegetation } from "./vegetation.ts";
 import { buildWalkways } from "./walkways.ts";
@@ -107,7 +108,7 @@ export function createSouqScene(doc: Document, souq: Souq, options: SceneOptions
   ground.rotation.x = -Math.PI / 2;
   const marks = buildWalkways(souq.roads, souq.route);
   if (options.markings !== false) pushMarkings(marks, souq.roads, souq.route);
-  const roads = new Mesh(buildRoadsGeometry(souq.roads, souq.palette.road, marks, placeOf(souq.origin)), toonMaterial({ vertexColors: true, side: DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }));
+  const roads = new Mesh(buildRoadsGeometry(souq.roads, souq.palette.road, marks, placeOf(souq.origin)), roadMaterial(rich, { side: DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }));
   roads.name = "voies";
   // Couleurs par sommet : la teinte de chaque bâtiment vient de la géométrie, le matériau reste blanc.
   const buildings = new Mesh(buildBuildingsGeometry(souq.buildings, souq.palette.buildings, souq.route, { detail: options.facades ?? "off", ...placeOf(souq.origin) }), buildingMaterial());

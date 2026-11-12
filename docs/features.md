@@ -101,7 +101,7 @@ sur un vrai casque : `docs/intentions/essai-casque-profils-graphiques.md`.
 
 - Bâtiments extrudés, couleurs OSM (`building:colour`, `roof:colour`, `building:material`) ou palette régionale,
   ombrage vers le pied. Sol et voies en toon à quatre paliers ; voies bordées, ligne centrale dès 7 m.
-- Ville riche : revêtement des voies (asphalte, pavés, terre : balise `surface` relevée, sinon valeur de la région ; légère usure déterministe par voie), trottoirs et passages piétons, parcours jaune, surfaces vertes et haies, jusqu'à 300 toits à deux pans,
+- Ville riche : revêtement des voies (asphalte, pavés, terre : balise `surface` relevée, sinon valeur de la région ; légère usure déterministe par voie, joints de pavés et grain dessinés au sol), trottoirs et passages piétons, parcours jaune, surfaces vertes et haies, jusqu'à 300 toits à deux pans,
   80 auvents, 8 noms de rues à moins de 60 m. Au plus 8 maillages fixes supplémentaires.
 - Façades procédurales (APP-008) : identifiant OSM comme graine, quatre familles adaptées à la région,
   aucun voisin identique, fenêtres, portes, volets, balcons et corniches à moins de 80 m du parcours.
