@@ -53,7 +53,7 @@ toujours `building` ni l'usage (`docs/intentions/rendu-facades-batiments.md`). L
 - Deux rez-de-chaussée voisins ne sont jamais identiques et le tirage reste déterministe — `APP-008`
 - Les façades restent légères : plafond de triangles respecté, réglé par le profil graphique — `APP-008`
 - Sans balise d'usage ou de hauteur, la valeur de repli de la région s'applique, sans géométrie invalide — `APP-008`
-- Les rez-de-chaussée s'effacent avec la ville tête baissée — `APP-001`
+- Les rez-de-chaussée s'effacent avec la ville tête baissée [human] — `APP-001`
 - Les mêmes rez-de-chaussée sur Quest, PC et tablette — `APP-015`
 - Les boutiques ajoutées par règle sont distinguées des commerces relevés dans les données — `APP-013`
 - Les rues commerçantes du souk et de Pune Vieille ville se reconnaissent d'emblée au casque [human] — `APP-001`
@@ -110,6 +110,6 @@ toujours `building` ni l'usage (`docs/intentions/rendu-facades-batiments.md`). L
 
 ## 7. Reprise
 
-- **Dernier état** (2026-11-07): cadrage seul, aucun code.
-- **Travail non commité** : la fiche.
-- **Prochaine étape** : [decision] trancher les trois points, après `gen-02`.
+- **Dernier état** (2026-11-12) : lots 1 à 3 faits et committés (usage OSM, boutiques par règle, auvents, origine relue, mesure au journal).
+- **Travail non commité** : journal, intention et cette fiche.
+- **Prochaine étape** : clôture ; lot 4 [human] (jugement au casque) à faire par le demandeur.
