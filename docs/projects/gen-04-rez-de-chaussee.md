@@ -19,9 +19,8 @@ files:
   - app/src/city/shop-rules.ts
   - app/src/city/shop-rules.test.ts
   - app/scripts/osm-tags.ts
-  - app/scripts/osm-tags.test.ts
   - app/scripts/extract-souq.ts
-  - app/scripts/extract-souq.test.ts
+  - app/src/city/extract-souq.test.ts
   - app/src/city/souq-data.ts
   - app/src/city/souq-data.test.ts
   - app/data/doha-corniche.json
