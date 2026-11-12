@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createPath } from "../route/path.ts";
 import { MAX_GENERATED_LAMPS } from "./props.ts";
-import { MAX_LAMP_ROADS, MIN_OBJECT_GAP_M, SPACING_JITTER, generateLamps, roadSeed, spacingOf } from "./lamp-rule.ts";
+import { MAX_LAMP_ROADS, MIN_OBJECT_GAP_M, SPACING_JITTER, generateLamps, onOtherRoad, roadSeed, spacingOf } from "./lamp-rule.ts";
 import type { Building, Prop, Road } from "./souq-data.ts";
 
 const route = createPath([{ x: 0, z: 0 }, { x: 400, z: 0 }]);
@@ -95,5 +95,25 @@ describe("lampadaires produits par règle", () => {
     const lamps = generateLamps(grid, [], [], route);
     expect(lamps).toHaveLength(MAX_GENERATED_LAMPS);
     expect(Math.max(...lamps.map((l) => l.at.z))).toBeLessThan(200);
+  });
+
+  it("APP-013: aucun mât sur la chaussée d'une voie perpendiculaire, et un mât par carrefour", () => {
+    const main = street("tertiary", 1, { sidewalk: "right", points: [{ x: 0, z: 0 }, { x: 200, z: 0 }, { x: 400, z: 0 }] });
+    const side = street("tertiary", 2, { points: [{ x: 200, z: 0 }, { x: 200, z: 120 }] });
+    const lamps = generateLamps([main, side], [], [], route);
+    expect(lamps.length).toBeGreaterThan(5);
+    expect(lamps.every((l) => Math.abs(l.at.x - 200) >= 3.5 || Math.abs(l.at.z) > 120)).toBe(true);
+    // Un mât de carrefour, près du croisement, hors des deux chaussées.
+    const corner = lamps.filter((l) => Math.hypot(l.at.x - 200, l.at.z) < 8);
+    expect(corner).toHaveLength(1);
+    expect(Math.abs((corner[0] as Prop).at.x - 200)).toBeGreaterThanOrEqual(3.5);
+    expect(Math.abs((corner[0] as Prop).at.z)).toBeGreaterThanOrEqual(3.5);
+    // Sans autre voie, aucun mât ne tombe sur une chaussée ; le même tracé redonne les mêmes mâts.
+    expect(generateLamps([main, side], [], [], route)).toEqual(lamps);
+    const crossing = street("service", 3, { points: [{ x: 100, z: -40 }, { x: 100, z: 40 }] });
+    const withCrossing = generateLamps([main, crossing], [], [], route);
+    expect(withCrossing.every((l) => Math.abs(l.at.x - 100) >= 1.5 || Math.abs(l.at.z) > 3)).toBe(true);
+    expect(onOtherRoad({ x: 100, z: 0 }, main, [main, crossing])).toBe(true);
+    expect(onOtherRoad({ x: 100, z: 0 }, crossing, [crossing])).toBe(false);
   });
 });

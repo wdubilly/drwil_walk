@@ -19,6 +19,10 @@ export const MIN_SIDEWALK_M = 1.2;
 const KERB_OFFSET_M = 0.6;
 /** Part de l'intervalle dont l'écart tiré de la graine le fait varier, dans les deux sens. */
 export const SPACING_JITTER = 0.2;
+/** Deux sommets de voies à moins de cette distance forment un carrefour. */
+const JUNCTION_JOIN_M = 0.5;
+/** Le mât de carrefour est posé à cette distance au-delà du bord de l'autre chaussée. */
+const JUNCTION_CLEARANCE_M = 1.5;
 
 /** Intervalle moyen entre deux mâts selon la classe de voie : voie passante, rue de quartier, ruelle ; les autres classes n'en ont pas. */
 const SPACING_M: Record<string, number> = {
@@ -36,6 +40,7 @@ export function roadSeed(road: Road): number {
 }
 
 interface Candidate {
+  road: Road;
   at: Vec2;
   kerb: Vec2;
   yaw: number;
@@ -61,9 +66,48 @@ function candidates(road: Road, spacing: number): Candidate[] {
       const on = { x: a.x + (b.x - a.x) * t, z: a.z + (b.z - a.z) * t };
       const at = (offset: number): Vec2 => ({ x: on.x + nx * side * offset, z: on.z + nz * side * offset });
       // Le bras du mât (axe Z du modèle) se tend vers la chaussée.
-      out.push({ at: at(half + KERB_OFFSET_M), kerb: at(half), yaw: Math.atan2(-nx * side, -nz * side) });
+      out.push({ road, at: at(half + KERB_OFFSET_M), kerb: at(half), yaw: Math.atan2(-nx * side, -nz * side) });
     }
     walked += length;
+  }
+  return out;
+}
+
+/** Distance d'un point à la ligne d'une voie. */
+function distanceToRoad(p: Vec2, road: Road): number {
+  return Math.min(...road.points.slice(1).map((b, i) => {
+    const a = road.points[i] as Vec2;
+    const [dx, dz] = [b.x - a.x, b.z - a.z];
+    const t = dx === 0 && dz === 0 ? 0 : Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.z - a.z) * dz) / (dx * dx + dz * dz)));
+    return Math.hypot(a.x + dx * t - p.x, a.z + dz * t - p.z);
+  }));
+}
+
+/** Vrai si le point est à moins d'une demi-chaussée d'une autre voie : le mât serait sur sa chaussée. */
+export const onOtherRoad = (p: Vec2, own: Road, streets: readonly Road[]): boolean =>
+  streets.some((r) => r !== own && distanceToRoad(p, r) < widthOf(r.highway) / 2);
+
+/** Un mât par carrefour (sommet partagé par deux voies), au bord de la première voie, juste au-delà de la chaussée de l'autre. */
+function junctionCandidates(streets: readonly Road[]): Candidate[] {
+  const seen = new Set<string>();
+  const out: Candidate[] = [];
+  for (const road of streets) {
+    for (const [k, p] of road.points.entries()) {
+      const other = streets.find((r) => r !== road && r.points.some((q) => Math.hypot(q.x - p.x, q.z - p.z) < JUNCTION_JOIN_M));
+      const key = `${Math.round(p.x).toString()},${Math.round(p.z).toString()}`;
+      if (other === undefined || seen.has(key)) continue;
+      seen.add(key);
+      const q = (road.points[k + 1] ?? road.points[k - 1]) as Vec2;
+      const length = Math.hypot(q.x - p.x, q.z - p.z) || 1;
+      const [ux, uz] = [(q.x - p.x) / length, (q.z - p.z) / length];
+      const along = widthOf(other.highway) / 2 + JUNCTION_CLEARANCE_M;
+      const half = widthOf(road.highway) / 2;
+      for (const side of [1, -1]) {
+        const at = (offset: number): Vec2 => ({ x: p.x + ux * along - uz * side * offset, z: p.z + uz * along + ux * side * offset });
+        const yaw = Math.atan2(uz * side, -ux * side);
+        if (!onOtherRoad(at(half + KERB_OFFSET_M), road, streets)) { out.push({ road, at: at(half + KERB_OFFSET_M), kerb: at(half), yaw }); break; }
+      }
+    }
   }
   return out;
 }
@@ -96,7 +140,7 @@ export function nearBuilding(p: Vec2, buildings: readonly Footprint[], r: number
 }
 
 /**
- * Les lampadaires produits. Trois refus : l'emplacement tombe dans un bâtiment, ou le trottoir (de la bordure au mur) est trop
+ * Les lampadaires produits. Quatre refus : l'emplacement tombe sur la chaussée d'une autre voie (à moins d'une demi-chaussée de son axe), ou tombe dans un bâtiment, ou le trottoir (de la bordure au mur) est trop
  * étroit — un mât à 0,6 m de la bordure dans une emprise a sa bordure à moins de MIN_SIDEWALK_M du mur, un seul test couvre les deux —,
  * ou un autre objet est à moins de MIN_OBJECT_GAP_M. Les objets du relevé occupent la place d'abord ; ils ne sont jamais écartés. Au plus MAX_GENERATED_LAMPS, les plus proches du parcours.
  */
@@ -105,10 +149,12 @@ export function generateLamps(roads: readonly Road[], buildings: readonly Buildi
   const taken: Vec2[] = real.map((p) => p.at);
   const lamps: Prop[] = [];
   const streets = roads.filter((r) => r.footway === undefined && spacingOf(r.highway) !== undefined);
-  const wanted = closest(streets, route, MAX_LAMP_ROADS, (r) => r.points[0] as Vec2).flatMap((road) => candidates(road, spacingOf(road.highway) as number));
+  const near = closest(streets, route, MAX_LAMP_ROADS, (r) => r.points[0] as Vec2);
+  const wanted = [...near.flatMap((road) => candidates(road, spacingOf(road.highway) as number)), ...junctionCandidates(near)];
   // Les plus proches du parcours d'abord, et on s'arrête au plafond : les autres ne seraient jamais dessinés (coût au chargement).
-  for (const { at, kerb, yaw } of closest(wanted, route, wanted.length, (c) => c.at)) {
+  for (const { road, at, kerb, yaw } of closest(wanted, route, wanted.length, (c) => c.at)) {
     if (lamps.length === MAX_GENERATED_LAMPS) break;
+    if (onOtherRoad(at, road, near)) continue;
     if (nearBuilding(kerb, walls, MIN_SIDEWALK_M)) continue;
     if (taken.some((o) => Math.hypot(o.x - at.x, o.z - at.z) < MIN_OBJECT_GAP_M)) continue;
     taken.push(at);

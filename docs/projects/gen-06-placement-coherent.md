@@ -104,6 +104,8 @@ Aucun : tranchés le 2026-11-12 (voir « Décisions »).
 
 ## 7. Reprise
 
-- **Dernier état (2026-11-07)**: cadrage seul, aucun code.
-- **Travail non commité** : la fiche.
-- **Prochaine étape** : [human] trancher les points de la section 5.
+- **Dernier état (2026-11-12)**: lot 2 fait. `app/src/city/lamp-rule.ts` refuse un mât à moins d'une demi-chaussée d'une autre voie
+  (`onOtherRoad`) et pose un mât par carrefour (sommet partagé par deux voies, `junctionCandidates`) ; tests dans `app/src/city/lamp-rule.test.ts`.
+- **Travail non commité** : aucun une fois le lot commité.
+- **Prochaine étape** : lot 3 (alignement des arbres, `app/src/city/tree-instances.ts`). Limite : le refus d'accès aux entrées et passages piétons
+  pour les arbres reste à traiter avec le lot 3.
