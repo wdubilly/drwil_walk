@@ -3,6 +3,7 @@
 import { toLocalMetres, type LonLat, type Vec2 } from "../route/geo.ts";
 import { materialTone, parseHex } from "./tint.ts";
 import { createPath, type Path } from "../route/path.ts";
+import type { Surface } from "../../scripts/osm-tags.ts";
 
 export interface Building {
   /** Identifiant OpenStreetMap : la graine déterministe des façades (APP-008) ; absent des anciennes données. */
@@ -55,6 +56,8 @@ export interface Road {
   oneway?: "forward" | "backward";
   /** Nombre de voies (`lanes`) ; absent : une par sens. */
   lanes?: number;
+  /** Revêtement relevé (`surface`) ; absent : la région fixe la valeur de repli (APP-009). */
+  surface?: Surface;
 }
 
 /** Une surface verte (herbe, parc, jardin, bois) : son contour fermé, en mètres locaux. */
@@ -98,6 +101,7 @@ interface FeatureFile {
       footway?: string;
       oneway?: string;
       lanes?: number;
+      surface?: string;
       area?: string;
     };
     geometry: { coordinates: unknown };
@@ -142,6 +146,7 @@ export function loadSouq(extract: FeatureFile, loop: LoopFile, palette: Palette)
       ...(f.properties.footway ? { footway: f.properties.footway as NonNullable<Road["footway"]> } : {}),
       ...(f.properties.oneway ? { oneway: f.properties.oneway as NonNullable<Road["oneway"]> } : {}),
       ...(f.properties.lanes ? { lanes: f.properties.lanes } : {}),
+      ...(f.properties.surface ? { surface: f.properties.surface as Surface } : {}),
     }));
   const areas = extract.features
     .filter((f) => f.properties.kind === "area")

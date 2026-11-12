@@ -4,7 +4,7 @@ import { BufferGeometry, Color, Float32BufferAttribute } from "three";
 import type { Vec2 } from "../route/geo.ts";
 import type { Road } from "./souq-data.ts";
 import type { Surface } from "../../scripts/osm-tags.ts";
-import recipe from "../../assets/recette-regions.json" with { type: "json" };
+import { RECIPE, recipeFor } from "./region-palette.ts";
 
 /** Largeur en mètres selon la classe de la voie : les grands axes sont plus larges, les sentiers étroits. */
 const WIDTH_M: Record<string, number> = {
@@ -75,11 +75,12 @@ export function ribbonsGeometry(ribbons: Ribbons): BufferGeometry {
 }
 
 /** Les voies, puis les rubans de `marks` (trottoirs, passages piétons, chemin suivi) posés par-dessus. */
-export function buildRoadsGeometry(roads: readonly Road[], base = 0x808080, marks: Ribbons = newRibbons()): BufferGeometry {
+export function buildRoadsGeometry(roads: readonly Road[], base = 0x808080, marks: Ribbons = newRibbons(), place?: { region: string; district?: string }): BufferGeometry {
   const out: Ribbons = newRibbons();
+  const sols = place ? recipeFor(RECIPE, place.region, place.district).sols?.value : undefined;
   for (const road of roads) {
     const half = widthOf(road.highway) / 2;
-    const body = roadColor(road.highway, base);
+    const body = surfaceColor(road.highway, base, surfaceFor(road.highway, road.surface, sols));
     const border = body.clone().lerp(new Color(1, 1, 1), BORDER_WHITENING);
     const line = body.clone().lerp(new Color(1, 1, 1), LINE_WHITENING);
     for (const [i, b] of road.points.slice(1).entries()) {
@@ -95,17 +96,28 @@ export function buildRoadsGeometry(roads: readonly Road[], base = 0x808080, mark
 
 /** Les classes de voie réservées aux piétons : leur revêtement de repli est celui de « pieton », les autres celui de « chaussee ». */
 const PEDESTRIAN = new Set(["pedestrian", "living_street", "footway", "path", "steps", "track"]);
+const DEFAULT_SOLS: Record<string, Surface> = { chaussee: "asphalt", pieton: "pave" };
 
 /** Un revêtement et son origine : relevé OSM (`surface`) ou ajouté par la règle de la région (APP-009, APP-013). */
 export interface RoadSurface { kind: Surface; origin: "releve" | "regle" }
 
-type SolsFile = { regions: Record<string, { sols?: { value: Record<string, Surface> } }>; districts?: Record<string, { region?: string; sols?: { value: Record<string, Surface> } }> };
-
-/** Le revêtement d'une voie : la balise relevée si elle existe, sinon la valeur du quartier, de sa région, puis d'« ailleurs ». */
-export function surfaceFor(highway: string, tagged: Surface | undefined, region: string, district?: string, file: SolsFile = recipe as unknown as SolsFile): RoadSurface {
+/** Le revêtement d'une voie : la balise relevée si elle existe, sinon la valeur de repli de la recette (quartier, région, « ailleurs »). */
+export function surfaceFor(highway: string, tagged: Surface | undefined, sols: Record<string, Surface> = DEFAULT_SOLS): RoadSurface {
   if (tagged !== undefined) return { kind: tagged, origin: "releve" };
-  const hood = district === undefined ? undefined : file.districts?.[district];
-  const sols = hood?.sols ?? file.regions[hood?.region ?? region]?.sols ?? file.regions["ailleurs"]?.sols;
-  const key = PEDESTRIAN.has(baseOf(highway)) ? "pieton" : "chaussee";
-  return { kind: (sols?.value[key] ?? "asphalt"), origin: "regle" };
+  const family = PEDESTRIAN.has(baseOf(highway)) ? "pieton" : "chaussee";
+  return { kind: sols[family] ?? DEFAULT_SOLS[family] as Surface, origin: "regle" };
+}
+
+/** Le ton du revêtement posé sur la couleur de la voie : l'asphalte la garde, les pavés l'éclaircissent et la réchauffent, la terre la brunit. */
+const SURFACE_TINT: Record<Surface, { color: number; amount: number } | undefined> = {
+  asphalt: undefined,
+  pave: { color: 0xb09c80, amount: 0.4 },
+  terre: { color: 0x8a6e4b, amount: 0.55 },
+};
+
+/** La couleur du corps d'une voie selon son revêtement. */
+export function surfaceColor(highway: string, base: number, surface: RoadSurface): Color {
+  const body = roadColor(highway, base);
+  const tint = SURFACE_TINT[surface.kind];
+  return tint ? body.lerp(new Color(tint.color), tint.amount) : body;
 }

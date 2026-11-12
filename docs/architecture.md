@@ -89,7 +89,9 @@ Génération `npm run city` exclusivement sur PC de développement. Tests Vitest
 - `app/src/city/licence.ts`, `app/src/city/attribution.ts` : texte ODbL et mention de scène (APP-003).
 - `app/src/city/buildings.ts`, `app/src/city/tint.ts`, `app/src/city/roofs.ts` : maillages fusionnés, teintes OSM/palette, ombrage et toits.
 - `app/src/city/roads.ts`, `app/src/city/walkways.ts`, `app/src/city/markings.ts`, `app/src/city/street-names.ts` : voies, bordures, parcours, passages piétons,
-  lignes d'arrêt et noms au sol ; `app/src/city/vegetation.ts` : surfaces vertes/haies.
+  lignes d'arrêt et noms au sol ; `app/src/city/vegetation.ts` : surfaces vertes/haies. Le revêtement d'une voie (`surfaceFor`,
+  APP-009) est la balise OSM `surface` si elle est relevée (`surfaceOf`, trois familles : asphalte, pavés, terre), sinon la
+  valeur `sols` de la recette (quartier → région → « ailleurs », famille `chaussee` ou `pieton`) ; il teinte le corps de la voie.
 - `app/src/city/toon.ts`, `app/src/city/outlines.ts` : toon à quatre paliers et contours selon profil.
 - `app/src/city/facade-seed.ts`, `app/src/city/facade-family.ts`, `app/src/city/facade-palettes.ts`, `app/src/city/facade-plan.ts`, `app/src/city/facade-parts.ts`, `app/src/city/facades.ts` :
   graine OSM, familles et palettes régionales, voisins distincts, détail borné (APP-008).
