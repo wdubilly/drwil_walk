@@ -3,6 +3,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join, posix } from "node:path";
 import { BRIEF_DIRS, config, MODEL_RE } from "./briefs.mjs";
+import { historyProblem } from "./state-history.mjs";
 import { fill, STATE_MESSAGES } from "./state-texts.mjs";
 
 export const ACTIVITIES = ["SCOPING", "EXPECTATION", "REQUEST", "BUILD", "EVIDENCE", "VERIFY", "CLOSING"];
@@ -21,16 +22,19 @@ const NEXT = {
 
 export const NEUTRAL_STATE = Object.freeze({ version: 1, activity: "SCOPING", active_brief: null, active_request: null, since: null });
 
-// auto_merge: absent from the neutral state, set only by a human start (`start`).
-// queue, queue_merge (QUA-037): the briefs a human queued at start, run next without a new gesture.
+// auto_merge: legacy mark of the automatic merge authorised at start; no longer written (the automatic merge is the
+// default), still read so that a state written before stays valid (QUA-013: unreadable is a refusal).
+// queue (QUA-037): the briefs a human queued at start, run next without a new gesture; queue_merge: legacy mark of the
+// queue's automatic merge (QUA-188), no longer written, still read like auto_merge.
 // queue_draft (QUA-037): the briefs a human has added so far, one single-choice poll each; SCOPING only, until "finish the queue".
 // parallel (QUA-147): the briefs a human launched at once, each in its own worktree, recorded by the main folder.
 // detour (QUA-050): the workstream set aside while a prior defect is fixed (.githooks/detour.mjs).
 // reopened (QUA-116): the workstream reopened after its closing, `{ pr, human? }`, until back in SCOPING.
 // merge_cancelled: the automatic merge a failed reopening cancelled, `{ pr }`, until a reopening succeeds or back in SCOPING.
-// scoping_merge (QUA-188): the automatic merge of the scoping PR of `{ branch }`, authorised by the human's answer to the
-// end-of-scoping poll; SCOPING only, so never `queue_merge`, which would merge the next workstream of the queue.
+// scoping_merge (QUA-188): legacy mark of the end-of-scoping automatic merge for `{ branch }`, SCOPING only; no longer
+// written, still read like auto_merge.
 // limits (QUA-253): the human's answers to the limits poll, `[{ intent, choice: "now" | "note" }]`, from BUILD to CLOSING.
+// history (QUA-305): the workstream's transitions, `[{ activity, at, reopened? }]`, from its start to the next one.
 const FIELDS = new Set([
   ...Object.keys(NEUTRAL_STATE),
   "auto_merge",
@@ -43,6 +47,7 @@ const FIELDS = new Set([
   "merge_cancelled",
   "scoping_merge",
   "limits",
+  "history",
 ]);
 const ISO_RE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:\d{2})$/;
 export const texts = (root) => STATE_MESSAGES[config(root).lang === "en" ? "en" : "fr"];
@@ -83,6 +88,8 @@ export function validateState(state, root) {
   else if (s !== undefined && state.activity !== "SCOPING") problems.push(T.scopingMergeActivity);
   if (state.limits !== undefined && !(validLimits(state.limits) && ["BUILD", "EVIDENCE", "VERIFY", "CLOSING"].includes(state.activity)))
     problems.push(T.limitsType);
+  const history = historyProblem(state.history, ACTIVITIES, config(root).lang);
+  if (history) problems.push(history);
   if (state.active_request !== null && typeof state.active_request !== "string") problems.push(T.request);
   if (state.auto_merge !== undefined && typeof state.auto_merge !== "boolean") problems.push(T.autoMergeType);
   else if (state.auto_merge === true && state.activity === "SCOPING") problems.push(T.autoMergeScoping);

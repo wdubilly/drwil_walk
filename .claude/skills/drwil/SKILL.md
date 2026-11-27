@@ -22,7 +22,7 @@ anything else):
 | `/drwil-serve` | Live, read-only view of the project, and its link | `npx drwil serve --welcome` |
 | `/drwil-release` | Create a release (tag + GitHub note), optional module | `docs/recipes/create-a-release.md` |
 | `/drwil-start` | Start a workstream: poll of the scoped briefs, the human answer moves to BUILD | `docs/ia-first/7-starting-and-closing.md` |
-| `/drwil-scope` | End a scoping: poll on its PR (automatic merge, manual merge, or continue scoping) | `docs/recipes/working-with-branches.md` |
+| `/drwil-scope` | End a scoping: its PR put in automatic merge by the tool, without a poll | `docs/recipes/working-with-branches.md` |
 
 If `$capability` is `verify`: run `npx drwil verify --agent` at the project
 root (the project's own `drwil` CLI is the source of truth; never derive a
@@ -36,7 +36,8 @@ verdict yourself) and follow its "Next step" line:
 - `GOVERNANCE: MANUAL REVIEW REQUIRED`: stop claiming validation; relay
   "Human attestation required." and the listed contracts, then propose
   first the attestation poll in the chat: prepare it with
-  `npx drwil attest-poll <CONTRACT_ID> --tried "<what you tried>"` and ask
+  `npx drwil attest-poll <CONTRACT_ID> --tried "<what you tried>"` (under
+  Copilot CLI, add `--tool copilot` and pass the JSON to `ask_user`) and ask
   it unchanged, with no answer, default or recommendation added
   (`docs/recipes/attest-a-contract.md`); only the human answers it. As
   fallback, give `drwil attest <CONTRACT_ID>` to the human, as an action

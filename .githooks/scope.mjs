@@ -1,7 +1,6 @@
 // Grammar of the `scope` block of workstream briefs (docs/projects/*.md).
 //
-// Single source of the grammar: the commit-time check (check-docs.mjs) and the
-// reminder to the agent (.claude/hooks/scope-reminder.mjs) both import it.
+// Single source of the grammar: check-docs.mjs and the agent's reminder (.claude/hooks/scope-reminder.mjs) import it.
 // A brief in docs/projects/ may carry, in an HTML comment:
 //
 //     <!-- scope
@@ -10,10 +9,8 @@
 //       - frontend/src/components/Script*
 //     -->
 //
-// A code file is covered if it matches a pattern (fnmatch style) of a brief,
-// delivered or not; a file already delivered on the main branch stays covered by default.
-// Nothing here throws on an unreadable brief: the mechanism
-// helps, it must never break.
+// A code file is covered if it matches a pattern (fnmatch style) of a brief, or is derived from it (scope-derived.mjs);
+// a file already delivered on the main branch stays covered by default. Never throws on an unreadable brief.
 
 import { execFileSync } from "node:child_process";
 import { dirname, resolve } from "node:path";
@@ -165,18 +162,39 @@ export function deliveredFiles(root, env = process.env) {
   return new Set(tree.split("\0").filter((f) => f && !different.has(f)));
 }
 
+/**
+ * `[brief, text]` of the briefs the branch deleted since its merge base with the main branch (the closing deletes the
+ * brief in the PR's own commit), at their last version; unreadable history: empty, never a success (QUA-013).
+ */
+export function closedBriefTexts(root, cfg = {}, env = process.env) {
+  const base = mainBase(root, env);
+  const dir = cfg?.dirs?.projects ?? "docs/projects";
+  const log = base && gitOut(root, ["log", "--no-renames", "--diff-filter=D", "--format=%H", "--name-only", `${base}..HEAD`, "--", dir]);
+  const [texts, seen] = [[], new Set()];
+  let commit = "";
+  for (const line of (log || "").split("\n").filter(Boolean)) {
+    if (/^[0-9a-f]{40}$/.test(line)) commit = line;
+    else if (line.endsWith(".md") && !seen.has(line) && seen.add(line)) texts.push([line, gitOut(root, ["show", `${commit}^:${line}`])]);
+  }
+  return texts;
+}
+
+/** Patterns of those closed briefs; their derived files (scope-derived.mjs) stay covered too, read by check-docs. */
+export const closedBriefPatterns = (root, cfg = {}, env = process.env) => patternsByBrief(closedBriefTexts(root, cfg, env), cfg);
+
 // Root of the project: this module lives in its `.githooks/` (QUA-044).
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
 /**
- * Code files of `paths` that no brief covers, sorted. A delivered file (`deliveredFiles`) stays covered
- * by default once the brief that listed it is closed (QUA-173).
- */
-export function outsideBriefs(paths, byBrief, cfg, delivered = deliveredFiles(ROOT)) {
-  const set = new Set();
-  for (const path of paths) {
-    const p = normalize(path);
-    if (isCode(p, cfg) && !delivered.has(p) && briefsCovering(p, byBrief).length === 0) set.add(p);
+ * Code files of `paths` that no brief covers, sorted. A delivered file (`deliveredFiles`) or one listed by a brief
+ * the branch deleted (`closedBriefPatterns`) stays covered; a brief present at the same path wins (QUA-173). */
+export function outsideBriefs(paths, byBrief, cfg, delivered, closed) {
+  if (delivered === undefined) {
+    delivered = deliveredFiles(ROOT);
+    closed ??= closedBriefPatterns(ROOT, cfg);
   }
-  return [...set].sort();
+  // Recreated after its deletion (reinstall, QUA-116 reopening): the present version must not be overwritten.
+  const covering = new Map([...(closed ?? []), ...byBrief]);
+  const outside = (p) => isCode(p, cfg) && !delivered.has(p) && briefsCovering(p, covering).length === 0;
+  return [...new Set(paths.map(normalize).filter(outside))].sort();
 }

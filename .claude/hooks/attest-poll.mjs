@@ -1,107 +1,65 @@
-// QUA-235 : seul le retour de l'outil humain confirme ; la préparation ne confirme jamais.
-import { createHash } from "node:crypto";
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+// QUA-235 : le sondage d'attestation, lu par le socle des sondages préparés (prepared-poll.mjs) ; seul le retour de
+// l'outil humain confirme, le moteur relance les contrôles et compare l'empreinte vue à la préparation.
+import { attestBatch, attestSnapshot } from "./attest-batch.mjs";
+import { preparedPollHook, readPoll, yesOrRefusal } from "./prepared-poll.mjs";
+
+export { pollDifference } from "./prepared-poll.mjs";
+
+const QUESTION =
+  /^drwil-attest ([A-Z][A-Z0-9]*-\d+(?: [A-Z][A-Z0-9]*-\d+)*)( --renew)?\n[\s\S]*\n\n(?:Essai de l'agent|Agent trial):\n([\s\S]+)$/;
+
+// « humain » n'est pas un refus de forme et se dit à part ; les causes communes sont dans prepared-poll.mjs.
+const TEXTS = {
+  fr: {
+    refused: "sondage d'attestation refusé",
+    none: "aucune attestation enregistrée",
+    redo: 'relancer `drwil attest-poll {id} --tried "<essai>"` et poser son sondage tel quel, sans rien ajouter ni modifier',
+    preuve: "preuve ou couverture changée pendant la question : contrat, contrôle ou fichiers couverts ont bougé",
+    humain: "refus choisi par l'humain (« {d} ») : aucune attestation enregistrée ; ne pas reproposer sans élément nouveau.",
+  },
+  en: {
+    refused: "attestation poll refused",
+    none: "no attestation recorded",
+    redo: 'run `drwil attest-poll {id} --tried "<trial>"` again and ask its poll as is, adding or changing nothing',
+    preuve: "proof or coverage changed during the question: contract, check or covered files moved",
+    humain: "refusal chosen by the human (« {d} »): no attestation recorded; do not ask again without something new.",
+  },
+};
 
 /** Claude Code seul ; tout le contenu sera comparé à la préparation du moteur. */
 export function attestationPoll(input) {
-  const e = input?.tool_input;
-  const q = Array.isArray(e?.questions) ? e.questions.find((q) => q?.header === "drwil-attest") : null;
-  if (!q) return null;
-  const match = /^drwil-attest ([A-Z][A-Z0-9]*-\d+)( --renew)?\n[\s\S]*\n\n(?:Essai de l'agent|Agent trial):\n([\s\S]+)$/.exec(
-    q.question ?? "",
-  );
-  // L'outil ajoute `answers` et `annotations` à tool_input après la réponse humaine : tolérés en
-  // PostToolUse seulement, jamais lus ; seule la question est comparée à la préparation.
-  const added = input.hook_event_name === "PostToolUse" ? ["answers", "annotations"] : [];
-  const asked = { questions: e.questions };
-  const clean =
-    input.tool_name === "AskUserQuestion" &&
-    typeof input.session_id === "string" &&
-    Boolean(input.session_id.trim()) &&
-    typeof input.tool_use_id === "string" &&
-    Boolean(input.tool_use_id.trim()) &&
-    Object.keys(e).every((k) => k === "questions" || added.includes(k)) &&
-    e.questions.length === 1 &&
-    !/\((recommended|recommandée?)\)/i.test(JSON.stringify(asked));
-  return { valid: Boolean(match && clean), id: match?.[1], renew: Boolean(match?.[2]), tried: match?.[3], asked };
+  const poll = readPoll(input, "drwil-attest", QUESTION);
+  return poll && { ...poll, id: poll.match?.[1], renew: Boolean(poll.match?.[2]), tried: poll.match?.[3] };
 }
 
-/** Préparation liée à l'appel, consommée une fois ; aucune réponse lue dans tool_input. */
-export async function attestationHook(input, { root, tell }) {
-  const poll = attestationPoll(input);
-  if (!poll) return null;
-  const pre = input.hook_event_name === "PreToolUse";
-  const post = input.hook_event_name === "PostToolUse";
-  if (!pre && !post) return 0;
-  const refuse = (message) => {
-    if (pre) console.error(`[drwil] ${message}`);
-    else tell(`✗ ${message}`);
-    return pre ? 2 : 0;
-  };
-  const fr = (() => {
-    try {
-      return JSON.parse(readFileSync(join(root, ".drwil", "ia-first.json"), "utf8")).lang !== "en";
-    } catch {
-      return true;
-    }
-  })();
-  const refused = fr
-    ? "sondage d'attestation refusé : utiliser la préparation `drwil attest-poll`, sans réponse, défaut ni recommandation ; aucune attestation enregistrée."
-    : "attestation poll refused: use `drwil attest-poll` preparation, without answers, defaults or recommendations; no attestation recorded.";
-  const dir = join(root, ".drwil", "evidence", "attest-polls");
-  const key = createHash("sha256")
-    .update(JSON.stringify([input.session_id, input.tool_use_id]))
-    .digest("hex");
-  const file = join(dir, `${key}.json`);
-  if (!poll.valid) {
-    rmSync(file, { force: true });
-    return refuse(refused);
-  }
-  try {
-    const { attest, prepareAttestationPoll } = await import("drwil");
-    const options = { targetDir: root, id: poll.id, renew: poll.renew, tried: poll.tried };
-    // L'ordre des clés ne compte pas ; aucun champ fourni par l'agent n'est ignoré.
-    const sorted = (value) =>
-      Array.isArray(value)
-        ? value.map(sorted)
-        : value && typeof value === "object"
-          ? Object.fromEntries(
-              Object.keys(value)
-                .sort()
-                .map((k) => [k, sorted(value[k])]),
-            )
-          : value;
-    const serialise = (value) => JSON.stringify(sorted(value));
-    if (pre) {
-      rmSync(file, { force: true });
-      const prepared = await prepareAttestationPoll(options);
-      if (!prepared.poll || serialise(prepared.poll) !== serialise(poll.asked)) return refuse(prepared.message || refused);
-      mkdirSync(dir, { recursive: true });
-      writeFileSync(file, JSON.stringify({ poll: poll.asked, snapshot: prepared.snapshot, askedAt: new Date().toISOString() }));
+const options = (root, match) => {
+  const ids = match[1].split(" ");
+  return { targetDir: root, id: ids[0], ids, renew: Boolean(match[2]), tried: match[3] };
+};
+
+/** Préparation liée à l'appel, consommée une fois ; une attestation par contrat confirmé. */
+export function attestationHook(input, ctx) {
+  return preparedPollHook(input, ctx, {
+    header: "drwil-attest",
+    pattern: QUESTION,
+    name: "attest-poll",
+    texts: TEXTS,
+    load: () => import("drwil"),
+    prepare: async (drwil, match, root) => {
+      const prepared = await drwil.prepareAttestationPoll(options(root, match));
+      return { ...prepared, data: prepared.snapshots };
+    },
+    confirm: async ({ mod: drwil, match, label, question, data, origin, root, refuse, tell, T, en }) => {
+      const o = options(root, match);
+      const attestOne = (id, confirm) => drwil.attest({ ...o, id, note: o.tried, origin, confirm });
+      const pending = { snapshots: data };
+      if (o.ids.length > 1) return attestBatch({ answer: label, ids: o.ids, pending, attestOne, refuse, tell, en, preuve: T.preuve });
+      const no = yesOrRefusal(question, label);
+      if (no) return refuse(no);
+      const done = await attestSnapshot(o.id, data?.[o.id], attestOne);
+      if (done.changed) return refuse({ cause: "preuve" });
+      tell(done.line);
       return 0;
-    }
-    const pending = JSON.parse(readFileSync(file, "utf8"));
-    rmSync(file);
-    if (
-      serialise(pending.poll) !== serialise(poll.asked) ||
-      !Number.isFinite(Date.parse(pending.askedAt)) ||
-      Date.now() < Date.parse(pending.askedAt) ||
-      Date.now() - Date.parse(pending.askedAt) > 3_600_000
-    )
-      return refuse(refused);
-    const question = poll.asked.questions[0];
-    const answer = input.tool_response?.answers;
-    if (!answer || Object.keys(answer).length !== 1 || answer[question.question] !== question.options[0].label) return refuse(refused);
-    const result = await attest({
-      ...options,
-      note: poll.tried,
-      origin: { source: "claude-poll", sessionId: input.session_id, toolUseId: input.tool_use_id, askedAt: pending.askedAt },
-      confirm: async (_, snapshot) => snapshot === pending.snapshot,
-    });
-    tell(`${result.code === 0 ? "✓" : "✗"} ${result.message}${result.file ? ` : ${result.file}` : ""}`);
-  } catch (e) {
-    return refuse(`${refused} ${e?.message ?? String(e)}`);
-  }
-  return 0;
+    },
+  });
 }

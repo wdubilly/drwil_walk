@@ -20,11 +20,9 @@ export const TEXTS = {
       "  1. Cadrer la fiche {2} (bloc scope : la correction et son test, rien d'autre) et la commiter seule.",
       "  2. Test d'abord, vu échouer ; puis la correction (recette « corriger un défaut ») ; `node .githooks/run-checks.mjs`.",
       `  3. Entrée de journal (${JOURNAL}) « Détour de {0} : … » citant la branche {1}, puis suppression de la fiche ; commit.`,
-      "  4. Push, PR intitulée « Détour de {0} : … », {3}.",
+      "  4. Push, PR intitulée « Détour de {0} : … », mise en fusion automatique comme toute PR : `node .githooks/merge-auto.mjs <numéro>`, puis `node .githooks/pr-watch.mjs <numéro>`.",
       "  5. PR fusionnée : `node .githooks/detour.mjs resume`.",
     ].join("\n"),
-    auto: "fusion automatique programmée (`gh pr merge --auto --merge`)",
-    manual: "fusion laissée à l'humain",
     rulesAhead: "⚠ ces fichiers changent les règles du jeu : le oui de l'humain sera demandé (`allow`) — {0}",
     noDetour: "aucun détour en cours",
     dirty: "reprise refusée : arbre modifié — commiter ou retirer d'abord (rien n'a été touché)",
@@ -37,14 +35,34 @@ export const TEXTS = {
     stashMissing: "reprise refusée : la mise de côté {0} est introuvable dans `git stash list` — état inchangé",
     restore:
       "reprise refusée : la restauration du travail entre en conflit — arbre remis propre, mise de côté {0} intacte, état inchangé ; un humain tranche",
-    resumed: "détour clos : retour sur {1}, rebasée sur {2}, travail restauré ; BUILD sur {0}.",
-    forcePush: "La branche était déjà poussée : `git push --force-with-lease`.",
-    human: "le oui de l'humain se donne dans un terminal interactif (`node .githooks/detour.mjs allow`) ; en file, le sous-agent s'arrête",
+    merge:
+      "reprise refusée : {0} ne se fusionne pas avec {1} sans conflit (fusion annulée) — état inchangé, branche à son commit d'avant, travail mis de côté intact ; un humain tranche",
+    gitFailed:
+      "reprise refusée : git ne dit pas si {0} contient {1} — état inchangé, branche à son commit d'avant, travail mis de côté intact",
+    // {0} detour branch, {1} main branch: the merge commit of a resume on a branch already pushed.
+    mergeMessage: "Reprise après le détour {0} : fusion de {1}",
+    // {0} workstream brief, {1} its branch, {2} main branch. A pushed branch is merged, never rebased.
+    resumed: {
+      rebase: "détour clos : retour sur {1}, rebasée sur {2}, travail restauré ; BUILD sur {0}.",
+      merge:
+        "détour clos : retour sur {1}, {2} fusionnée dans la branche (déjà poussée : rien de réécrit, un simple push suffit), travail restauré ; BUILD sur {0}.",
+      upToDate: "détour clos : retour sur {1}, qui contient déjà {2} (rien à rejouer), travail restauré ; BUILD sur {0}.",
+    },
+    human:
+      "le oui de l'humain se donne depuis le chat par le sondage `drwil-detour` (`node .githooks/state.mjs poll detour`, posé tel quel : seule la réponse de l'humain l'enregistre) ou dans un terminal interactif (`node .githooks/detour.mjs allow`) ; en file, le sous-agent s'arrête",
     confirm: "Le détour {0} change les règles du jeu. L'autoriser ? Retapez DETOUR : ",
     refused: "oui non donné : rien n'a changé",
     allowed: "détour {0} autorisé à changer les règles du jeu",
     reopenConfirm: "Le correctif de la réouverture de {0} change les règles du jeu. L'autoriser ? Retapez DETOUR : ",
     reopenAllowed: "réouverture de {0} autorisée à changer les règles du jeu",
+    // The `drwil-detour` chat poll (QUA-117): {0} detour branch or reopened brief.
+    ask: "Le détour {0} change les règles du jeu (contrat existant, hook, seuil, barrière, CI) : la barrière de périmètre refuse ses commits qui les touchent jusqu'au oui de l'humain.\n\nL'autoriser à changer les règles du jeu ?",
+    reopenAsk:
+      "Le correctif de la réouverture de {0} change les règles du jeu (contrat existant, hook, seuil, barrière, CI) : la barrière de périmètre refuse ses commits qui les touchent jusqu'au oui de l'humain.\n\nL'autoriser à changer les règles du jeu ?",
+    options: [
+      { label: "Autoriser", description: "Les commits qui changent les règles du jeu passent la barrière de périmètre." },
+      { label: "Ne pas autoriser", description: "Rien n'est enregistré ; la barrière continue de les refuser." },
+    ],
     // {0} title, {1} workstream brief, {2} branch, {3} date, {4} risk, {5} scope lines.
     brief: `# Détour : {0} (détour de {1})
 
@@ -92,11 +110,9 @@ files:
       "  1. Scope the brief {2} (scope block: the fix and its test, nothing else) and commit it alone.",
       "  2. Test first, seen failing; then the fix (« fix a defect » recipe); `node .githooks/run-checks.mjs`.",
       `  3. Journal entry (${JOURNAL}) « Detour of {0}: … » citing branch {1}, then delete the brief; commit.`,
-      "  4. Push, PR titled « Detour of {0}: … », {3}.",
+      "  4. Push, PR titled « Detour of {0}: … », set to automatic merge like any PR: `node .githooks/merge-auto.mjs <number>`, then `node .githooks/pr-watch.mjs <number>`.",
       "  5. PR merged: `node .githooks/detour.mjs resume`.",
     ].join("\n"),
-    auto: "automatic merge scheduled (`gh pr merge --auto --merge`)",
-    manual: "merge left to the human",
     rulesAhead: "⚠ these files change the rules: the human's yes will be asked (`allow`) — {0}",
     noDetour: "no detour in progress",
     dirty: "resume refused: worktree modified — commit or remove first (nothing was touched)",
@@ -108,14 +124,31 @@ files:
       "resume refused: {0} does not rebase on {1} without conflict (rebase aborted) — state unchanged, set-aside work intact; a human decides",
     stashMissing: "resume refused: the set-aside work {0} is not in `git stash list` — state unchanged",
     restore: "resume refused: restoring the work conflicts — worktree cleaned, set-aside work {0} intact, state unchanged; a human decides",
-    resumed: "detour closed: back on {1}, rebased on {2}, work restored; BUILD on {0}.",
-    forcePush: "The branch was already pushed: `git push --force-with-lease`.",
-    human: "the human's yes is given in an interactive terminal (`node .githooks/detour.mjs allow`); in a queue, the subagent stops",
+    merge:
+      "resume refused: {0} does not merge with {1} without conflict (merge aborted) — state unchanged, branch at its previous commit, set-aside work intact; a human decides",
+    gitFailed:
+      "resume refused: git cannot tell whether {0} contains {1} — state unchanged, branch at its previous commit, set-aside work intact",
+    mergeMessage: "Resume after detour {0}: merge of {1}",
+    resumed: {
+      rebase: "detour closed: back on {1}, rebased on {2}, work restored; BUILD on {0}.",
+      merge:
+        "detour closed: back on {1}, {2} merged into the branch (already pushed: nothing rewritten, a plain push is enough), work restored; BUILD on {0}.",
+      upToDate: "detour closed: back on {1}, which already contains {2} (nothing to replay), work restored; BUILD on {0}.",
+    },
+    human:
+      "the human's yes is given from the chat by the `drwil-detour` poll (`node .githooks/state.mjs poll detour`, asked as is: only the human's answer records it) or in an interactive terminal (`node .githooks/detour.mjs allow`); in a queue, the subagent stops",
     confirm: "Detour {0} changes the rules. Allow it? Type DETOUR: ",
     refused: "yes not given: nothing changed",
     allowed: "detour {0} allowed to change the rules",
     reopenConfirm: "The fix of the reopening of {0} changes the rules. Allow it? Type DETOUR: ",
     reopenAllowed: "reopening of {0} allowed to change the rules",
+    ask: "Detour {0} changes the rules (existing contract, hook, threshold, gate, CI): the scope gate refuses its commits touching them until the human's yes.\n\nAllow it to change the rules?",
+    reopenAsk:
+      "The fix of the reopening of {0} changes the rules (existing contract, hook, threshold, gate, CI): the scope gate refuses its commits touching them until the human's yes.\n\nAllow it to change the rules?",
+    options: [
+      { label: "Allow", description: "The commits that change the rules pass the scope gate." },
+      { label: "Do not allow", description: "Nothing is recorded; the gate keeps refusing them." },
+    ],
     brief: `# Detour: {0} (detour of {1})
 
 **Status**: opened on {3} (detour of {1}, branch {2}).

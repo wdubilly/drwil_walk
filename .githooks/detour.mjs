@@ -4,42 +4,32 @@
 // for it (QUA-019, no bypassing a check; QUA-017, no direct work on the main branch).
 // - `open <name> --title <defect> [--files <a,b>]` (BUILD): sets the work in progress aside (named
 //   stash, recorded in the state), creates the branch detour/<name> and its brief, points the state at it.
-// - `resume` (once the detour's PR is merged, by squash too: `branchMerged` in close.mjs): back to the
-//   workstream's branch, rebased on the fixed main branch, the work restored, the state pointed back at the workstream's brief; refused without
-//   losing anything if any step fails.
-// - `allow` (human, interactive terminal): the yes a detour, or a reopened workstream's fix (QUA-117),
-//   that changes the rules needs; until then the scope gate refuses its commits touching them (`rulesFiles`).
+// - `resume` (detour-resume.mjs, re-exported): back to the workstream's branch brought up to the fixed main
+//   branch without ever rewriting a pushed branch, the work restored, the state pointed back at the
+//   workstream's brief; refused without losing anything if any step fails.
+// - `allow` (human, interactive terminal, or the `drwil-detour` chat poll read by the hook): the yes a detour, or a
+//   reopened workstream's fix (QUA-117), that changes the rules needs; until then the scope gate refuses its commits
+//   touching them (`rulesFiles`).
 // It never commits, pushes nor opens the PR; the state is written by `setDetour` (state.mjs) only.
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, realpathSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { BRIEF_DIRS, config } from "./briefs.mjs";
-import { branchMerged, mainBranch, mergedPullRequests, noGhText } from "./close.mjs";
+import { mainBranch } from "./close.mjs";
+import { baseRef, git, resume } from "./detour-resume.mjs";
 import { contractsAddedOnly, isHookTest, isRegistry, RULES, rulesFiles, weakenedTests } from "./detour-rules.mjs";
-import { JOURNAL, TEXTS } from "./detour-texts.mjs";
+import { TEXTS } from "./detour-texts.mjs";
 import { minimumLevel, SENSITIVE_PATHS } from "./risk.mjs";
 import { normalize } from "./scope.mjs";
 import { readState, setDetour, stateRoot, writeState } from "./state.mjs";
 import { fill } from "./state-texts.mjs";
 
-export { contractsAddedOnly, isHookTest, isRegistry, RULES, rulesFiles, weakenedTests };
+export { contractsAddedOnly, isHookTest, isRegistry, resume, RULES, rulesFiles, weakenedTests };
 
 const texts = (root) => TEXTS[config(root).lang === "en" ? "en" : "fr"];
 const done = (message) => ({ code: 0, message });
 const refused = (message) => ({ code: 1, message });
-
-const git = (root, ...args) => {
-  const r = spawnSync("git", args, { cwd: root, encoding: "utf8" });
-  return r.status === 0 ? r.stdout.trim() : null;
-};
-
-/** The ref a detour starts from and a resume rebases on: the remote main branch, fetched, if any; else the local one. */
-function baseRef(root, main) {
-  if (git(root, "rev-parse", "--verify", "--quiet", `refs/remotes/origin/${main}`) === null) return main;
-  git(root, "fetch", "-q", "origin", main);
-  return `origin/${main}`;
-}
 
 /** Opens a detour (see the header). `{ code, message }`. */
 export function open(root, name, { title, files = [], now = new Date().toISOString() } = {}) {
@@ -80,46 +70,23 @@ export function open(root, name, { title, files = [], now = new Date().toISOStri
   const rules = rulesFiles(list, cfg);
   const report = [
     fill(T.opened, branch, base, brief, stash ? fill(T.stashed, stash.slice(0, 7)) : ""),
-    fill(T.steps, origin, branch, brief, state.auto_merge === true ? T.auto : T.manual),
+    fill(T.steps, origin, branch, brief),
   ];
   if (rules.length) report.push(fill(T.rulesAhead, rules.join(", ")));
   return done(report.join("\n"));
 }
 
-/** Closes the detour and goes back to the workstream (see the header). `{ code, message }`. */
-export function resume(root, { now = new Date().toISOString(), gh } = {}) {
-  const T = texts(root);
-  const { state } = readState(root);
-  const d = state.detour;
-  if (!d) return refused(T.noDetour);
-  if (git(root, "status", "--porcelain") !== "") return refused(T.dirty);
-  const base = baseRef(root, mainBranch(root) ?? "main");
-  // A PR merged by squash leaves no trace git can see: gh proves it (QUA-058), git alone without it (QUA-059).
-  let merged = branchMerged(root, d.branch, base, []);
-  if (merged === "no") merged = branchMerged(root, d.branch, base, mergedPullRequests(root, { branch: d.branch, gh }));
-  if (merged === "unknown") return refused(`${fill(T.notMerged, d.branch, base)} (${noGhText(root)})`);
-  if (merged === "no") return refused(fill(T.notMerged, d.branch, base));
-  if (git(root, "cat-file", "-e", `${base}:${state.active_brief}`) !== null) return refused(fill(T.briefLeft, state.active_brief, base));
-  if (!(git(root, "show", `${base}:${JOURNAL}`) ?? "").includes(d.branch)) return refused(fill(T.noJournal, d.branch, base));
-  if (git(root, "switch", "-q", d.origin_branch) === null) return refused(fill(T.switchBack, d.origin_branch));
-  if (git(root, "rebase", "-q", base) === null) {
-    git(root, "rebase", "--abort");
-    return refused(fill(T.rebase, d.origin_branch, base));
-  }
-  if (d.stash) {
-    const n = git(root, "stash", "list", "--format=%H").split("\n").indexOf(d.stash);
-    if (n < 0) return refused(fill(T.stashMissing, d.stash.slice(0, 7)));
-    if (git(root, "stash", "apply", "-q", `stash@{${n}}`) === null) {
-      // The worktree was clean before the apply: what is there now comes from the stash, which stays.
-      git(root, "reset", "-q", "--hard");
-      git(root, "clean", "-fdq");
-      return refused(fill(T.restore, d.stash.slice(0, 7)));
-    }
-    git(root, "stash", "drop", "-q", `stash@{${n}}`);
-  }
-  setDetour(root, d.origin_brief, null, now);
-  const pushed = git(root, "rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}") !== null;
-  return done([fill(T.resumed, d.origin_brief, d.origin_branch, base), ...(pushed ? [T.forcePush] : [])].join("\n"));
+/** What awaits the human's yes: the detour's branch, or the reopened workstream's brief; null without either. */
+function awaited(state) {
+  if (state.detour) return { reopened: false, name: state.detour.branch };
+  return state.reopened ? { reopened: true, name: state.active_brief } : null;
+}
+
+/** Records the human's yes (terminal or chat poll). */
+function grant(root, state, { reopened, name }) {
+  if (reopened) writeState(root, { ...state, reopened: { ...state.reopened, human: true } });
+  else setDetour(root, state.active_brief, { ...state.detour, human: true });
+  return done(fill(reopened ? texts(root).reopenAllowed : texts(root).allowed, name));
 }
 
 /**
@@ -129,14 +96,32 @@ export function resume(root, { now = new Date().toISOString(), gh } = {}) {
 export async function allow(root, { tty = false, confirm } = {}) {
   const T = texts(root);
   const { state } = readState(root);
-  const reopened = !state.detour && state.reopened;
-  if (!state.detour && !reopened) return refused(T.noDetour);
+  const target = awaited(state);
+  if (!target) return refused(T.noDetour);
   if (!tty || typeof confirm !== "function") return refused(T.human);
-  const name = reopened ? state.active_brief : state.detour.branch;
-  if (!(await confirm(fill(reopened ? T.reopenConfirm : T.confirm, name)))) return refused(T.refused);
-  if (reopened) writeState(root, { ...state, reopened: { ...state.reopened, human: true } });
-  else setDetour(root, state.active_brief, { ...state.detour, human: true });
-  return done(fill(reopened ? T.reopenAllowed : T.allowed, name));
+  if (!(await confirm(fill(target.reopened ? T.reopenConfirm : T.confirm, target.name)))) return refused(T.refused);
+  return grant(root, state, target);
+}
+
+/** The `drwil-detour` poll of the yes awaited, to ask as is in the chat (QUA-117); writes nothing. */
+export function detourPoll(root) {
+  const T = texts(root);
+  const target = awaited(readState(root).state);
+  if (!target) return refused(T.noDetour);
+  const question = [`drwil-detour ${target.name}`, fill(target.reopened ? T.reopenAsk : T.ask, target.name)].join("\n");
+  const options = T.options.map((o) => ({ ...o }));
+  return { ...done(""), poll: { questions: [{ header: "drwil-detour", question, options }] }, data: target };
+}
+
+/**
+ * Records the yes the human gave by answering the poll, called by the hook only (QUA-117): the same detour, or the
+ * same reopening, must still await it. `{ code, message }`, or null (nothing recorded).
+ */
+export function allowFromPoll(root, data) {
+  const { state } = readState(root);
+  const target = awaited(state);
+  if (!target || target.name !== data?.name || target.reopened !== data.reopened) return null;
+  return grant(root, state, target);
 }
 
 /** Value of the `--name value` option in `args`, or undefined. */

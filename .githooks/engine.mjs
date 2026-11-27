@@ -5,16 +5,16 @@
 // "not-applicable": excluded by design in this context (e.g. QUA-017 in CI).
 import { spawnSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
-import { existsSync, readdirSync } from "node:fs";
 import { availableParallelism, homedir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { globToRegex } from "./glob.mjs";
-import { controlFingerprints, treeFingerprint } from "./fingerprints.mjs";
+import { matchPaths } from "./glob.mjs";
+import { controlFingerprints, stagedConfig, treeFingerprint } from "./fingerprints.mjs";
 import { mainBranchVerdict } from "./engine-branch.mjs";
 import { createLaunchers } from "./engine-launch.mjs";
 import { createPass } from "./engine-pass.mjs";
 import { ciOnly, runAtVerdict, runContext } from "./engine-runat.mjs";
+import { SELF_TEST_ENTRY, selfTestPlan } from "./engine-selftest.mjs";
 import { keepSharded, shardPlan } from "./engine-shards.mjs";
 import { texts } from "./engine-texts.mjs";
 import { checkScope } from "./scope-gate.mjs";
@@ -79,17 +79,7 @@ export function checks(root, { cfg = {}, env = process.env, staged = null, whole
     return { status: r.status, message: r.message, detail: r.detail, configured: r.configured, output };
   });
   add("main-branch", T.branch, () => mainBranchVerdict(root, env, T));
-  const selfTests = () => {
-    if (!full) return { status: "not-applicable", detail: T.minimalMode };
-    const dir = join(root, ".githooks");
-    const tests = existsSync(dir) ? readdirSync(dir).filter((f) => f.endsWith(".test.mjs")) : [];
-    // These tests try drwil's code: an equipped project does not receive them.
-    if (!tests.length) return { status: "not-applicable", detail: T.noTests };
-    if (docsOnly) return { status: "not-run", detail: T.docsOnly };
-    const files = tests.map((f) => join(".githooks", f));
-    const shared = join("outils", "tests-par-fichier.mjs"); // drwil's repository: one run per file and pass, shared with the contracts' checks (QUA-033)
-    return { args: existsSync(join(root, shared)) ? [shared, "--tous", ...files] : ["--test", ...files] };
-  };
+  const selfTests = () => selfTestPlan(root, { full, docsOnly, T });
   add(
     "checks-self-test",
     T.selfTests,
@@ -102,6 +92,7 @@ export function checks(root, { cfg = {}, env = process.env, staged = null, whole
       return t.args ? launchAsync(process.execPath, t.args, {}, name) : t;
     },
   );
+  Object.assign(list.at(-1), SELF_TEST_ENTRY);
   add("ci-coverage", T.ciCoverage, (o, name) => {
     if (!full) return { status: "not-applicable", detail: T.minimalMode };
     const ciFiles = Array.isArray(cfg.ciFiles) ? cfg.ciFiles : [];
@@ -114,6 +105,8 @@ export function checks(root, { cfg = {}, env = process.env, staged = null, whole
   // `runAt` (engine-runat.mjs) reserves a check to some contexts; it is judged before `paths`. `withCiChecks` (option
   // `--with-ci-checks`, QUA-261) also plays the checks left to CI (`runAt: ["ci"]`, QUA-208).
   const runAtOptions = { lang: cfg.lang, ciFiles: cfg.ciFiles, withCi: withCiChecks };
+  // QUA-141: a staged `.drwil/ia-first.json` counts for a check only if it changes what that check reads of it.
+  const touches = staged ? stagedConfig(root) : null;
   for (const c of Array.isArray(cfg.checks) ? cfg.checks : []) {
     const name = c.name ?? c.run;
     const reserved = runAtVerdict(c, name, runContext(staged, env), runAtOptions);
@@ -125,8 +118,8 @@ export function checks(root, { cfg = {}, env = process.env, staged = null, whole
       if (docsOnly) return { status: "not-run", detail: T.docsOnly };
       if (sh?.skip) return sh.skip();
       if (staged && Array.isArray(c.paths) && c.paths.length) {
-        const patterns = c.paths.map(globToRegex);
-        if (!staged.some((f) => patterns.some((p) => p.test(f)))) return { status: "not-run", detail: T.deferred };
+        const inPaths = matchPaths(c.paths);
+        if (!staged.some((f) => touches(f, c) && inPaths(f))) return { status: "not-run", detail: T.deferred };
       }
       return null;
     };

@@ -8,6 +8,7 @@ import { activeElsewhere, createBranch, git } from "./worktree.mjs";
 import { ACTIVITIES, readState, texts, transitionAllowed, validateState, NEUTRAL_STATE } from "./state-validate.mjs";
 import { requiresHuman, verifyEvidence } from "./state-evidence.mjs";
 import { mainCiGate } from "./pr-watch-main.mjs";
+import { withEntry } from "./state-history.mjs";
 import { fill } from "./state-texts.mjs";
 import { move as moveAll, start as startAll, writeState } from "./state.mjs";
 
@@ -37,7 +38,7 @@ function prepareBranch(root, path) {
  * brief. In "human" mode (default), `human` must be true: only for a human answer to a poll read by the tool's
  * hook, or a choice made in an interactive terminal. `{ code: 0 | 1, message }`.
  */
-export function start(root, brief, { human = false, request, autoMerge = false, queue = [], now = new Date().toISOString() } = {}) {
+export function start(root, brief, { human = false, request, queue = [], now = new Date().toISOString() } = {}) {
   const T = texts(root);
   const read = readState(root);
   const origin = read.state.activity;
@@ -71,9 +72,10 @@ export function start(root, brief, { human = false, request, autoMerge = false, 
   const missing = missingCriteria(root, path);
   if (missing === "blocking") return { code: 1, message: fill(T.startNoCriteria, path) };
   const state = { version: 1, activity: "BUILD", active_brief: path, active_request: request ?? null, since: now };
-  // Authorising the merge is an acceptance decision: human only, even in agent mode; a queue carries it.
-  if ((autoMerge === true && human) || (fromQueue && read.state.queue_merge === true)) state.auto_merge = true;
-  if (rest.length) Object.assign(state, { queue: rest, queue_merge: human ? autoMerge === true : read.state.queue_merge === true });
+  state.history = withEntry([], "BUILD", now); // a new workstream, a new history (QUA-305)
+  // The automatic merge is the default (merge-auto.mjs): neither `auto_merge` nor `queue_merge` is written any more,
+  // a legacy one is only read.
+  if (rest.length) Object.assign(state, { queue: rest });
   const problems = validateState(state, root);
   if (problems.length) return { code: 1, message: fill(T.startInvalid, problems.join(" ; ")) };
   const ci = fromQueue ? mainCiGate(root, T) : {}; // a queue waits for its main branch green on GitHub, a human start does not (QUA-251)
@@ -87,12 +89,7 @@ export function start(root, brief, { human = false, request, autoMerge = false, 
   const pruned = prunedMessage(root, pruneMergedBranches(root));
   return {
     code: 0,
-    message:
-      (branch.message ? `${branch.message}\n` : "") +
-      fill(T.started, origin, path, state.auto_merge ? T.mergeAuthorised : "") +
-      next +
-      warned +
-      pruned,
+    message: (branch.message ? `${branch.message}\n` : "") + fill(T.started, origin, path, "") + next + warned + pruned,
   };
 }
 
@@ -111,8 +108,7 @@ export function prepareTransition(read, to, { brief, request, now }, root) {
   if (to === "SCOPING") {
     state = { ...NEUTRAL_STATE, since: now };
     // A queue goes on after a closing; any other return to SCOPING abandons it (QUA-037).
-    if (from === "CLOSING" && read.state.queue?.length)
-      Object.assign(state, { queue: read.state.queue, queue_merge: read.state.queue_merge === true });
+    if (from === "CLOSING" && read.state.queue?.length) Object.assign(state, { queue: read.state.queue });
   } else if (to === "EXPECTATION") {
     if (!brief) return { error: T.briefNeeded };
     state = {
@@ -126,15 +122,17 @@ export function prepareTransition(read, to, { brief, request, now }, root) {
     state = { ...read.state, activity: to, active_request: request ?? read.state.active_request, since: now };
     for (const key of ["merge_cancelled", "queue_draft"]) delete state[key];
   }
+  // EXPECTATION starts a new request: the previous workstream's history stays behind (QUA-305).
+  state.history = withEntry(to === "EXPECTATION" ? [] : read.state.history, to, now);
   const problems = validateState(state, root);
   return problems.length ? { error: problems.join(" ; ") } : { state };
 }
 
 /**
- * Applies a transition and writes the state. `{ code: 0 | 1, message }`. `confirm(question)` is only called if a
- * human is required, and only in front of an interactive terminal: without a terminal, a human transition is refused.
+ * Applies a transition and writes the state. `{ code: 0 | 1, message }`. A human transition needs `human` (the chat poll's
+ * answer, read by the hook, QUA-117) or `confirm(question)` in an interactive terminal; else refused, the poll said.
  */
-export async function move(root, { to, brief, request }, { tty = false, confirm, now = new Date().toISOString() } = {}) {
+export async function move(root, { to, brief, request }, { tty = false, confirm, human = false, now = new Date().toISOString() } = {}) {
   const T = texts(root);
   const read = readState(root);
   const resumed = read.problems.length ? fill(T.resumed, read.problems.join(" ; ")) : "";
@@ -166,8 +164,9 @@ export async function move(root, { to, brief, request }, { tty = false, confirm,
   ) {
     return { code: 1, message: resumed + fill(T.stillThere, read.state.active_brief) };
   }
-  if (requiresHuman(from, to, config(root).transitions)) {
-    if (!tty || typeof confirm !== "function") return { code: 1, message: resumed + fill(T.humanDecision, from, to) };
+  if (requiresHuman(from, to, config(root).transitions) && !human) {
+    const hint = async () => (await import("./state-polls.mjs")).moveHint(root, to, { brief, request });
+    if (!tty || typeof confirm !== "function") return { code: 1, message: resumed + fill(T.humanDecision, from, to) + (await hint()) };
     if (!(await confirm(fill(T.confirm, from, to)))) return { code: 1, message: T.confirmRefused };
   }
   writeState(root, prep.state);
@@ -187,8 +186,8 @@ export async function settleClosing(root, { chain = false, gh } = {}) {
   if (refused) return { message: refused };
   // Cannot be refused here: the brief is gone and CLOSING → SCOPING is free.
   await moveAll(root, { to: "SCOPING" }, {});
-  const head = readState(root).state.queue?.[0];
-  return { message: head && chain ? `${T.settled}\n${startAll(root, head).message}` : T.settled };
+  const launch = chain && readState(root).state.queue?.[0] && startAll(root, readState(root).state.queue[0]);
+  return { message: launch ? `${T.settled}\n${launch.message}` : T.settled, launch };
 }
 
 /** `next`: the queue's head, once the previous PR is merged (open or unknown: refused, QUA-013) and main proven green (QUA-251). */

@@ -1,44 +1,37 @@
 ---
 name: drwil-scope
-description: At the end of a scoping pushed (brief or intention committed on a scoping branch, its PR open), ask the human what to do with the PR — automatic merge, manual merge, or continue scoping on the same branch; the human's answer, read by the tool, is the only authorisation of the automatic merge in SCOPING. Use when a scoping is pushed and its PR opened, or when the human runs /drwil-scope.
+description: At the end of a scoping pushed (brief or intention committed on a scoping branch, its PR open), group the scoping edits of the conversation on that one branch and PR, then set its PR to automatic merge with the tool when needed, without a poll — the automatic merge is the default behaviour. Use when a scoping is pushed and its PR opened, or when the human runs /drwil-scope.
 ---
 
 # End of a scoping (`/drwil-scope`)
 
 A pushed scoping is offered by `/drwil-start` only once its PR is merged: the tool reads the briefs of
-the current folder, that is of the main branch. Deciding what to do with that PR is the human's
-decision: it is **their answer to the poll**, read by a tool hook (`.claude/hooks/prompt-hook.mjs`),
-that records it — never the agent.
+the current folder, that is of the main branch. The automatic merge is the default behaviour: no poll,
+no authorisation to ask for. Its guard is the proof — green CI, PR of the current branch, scheduling read
+back on the forge — carried by `.githooks/merge-auto.mjs`, never by the agent's memory.
 
-1. Read the state: `node .githooks/state.mjs`. Anything other than SCOPING: say so and stop (a
-   workstream's merge is decided at its start, `drwil-merge`).
+1. Read the state: `node .githooks/state.mjs`. In BUILD, a documentation scoping (a brief of
+   `docs/projects/`, an intention of `docs/intentions/`) is done in the workstream's folder, on its branch,
+   without a worktree: the scope gate commits it without changing the state or the active brief, nor
+   widening its scope; it travels and merges with the workstream's PR (no scoping branch or PR of its
+   own, nothing to schedule here). Commit it apart: a commit of briefs and intents only, the active brief
+   untouched — an intention it adds is then no limit, the closing does not ask the limits poll for it. The
+   contracts registry stays out of it. Anything else than SCOPING or
+   BUILD: say so and stop (a workstream's PR is set to automatic merge at its closing, as the state's
+   instruction says). The steps below are those of a scoping made in SCOPING.
 2. The scoping is committed on its own branch, never on the main branch, pushed, and its PR opened
-   (`gh pr create --base <main branch>`); follow its CI with `node .githooks/pr-watch.mjs <number>`.
-3. Open **one** poll, a single question, single choice:
-   - Claude Code (`AskUserQuestion`): `header` exactly `drwil-scope`, `multiSelect: false`, exactly
-     three options, labels exactly `Automatic merge` (the agent schedules the merge of this PR with
-     `.githooks/merge-auto.mjs`), `Manual merge` (nothing is scheduled, the human merges) and
-     `Continue scoping` (the PR stays open, the next scopings go on the same branch).
-   - Copilot CLI (`ask_user`): `message` starting with `drwil-scope :`, a single field named exactly
-     `drwil-scope`, **single choice**: `type: "string"` and `enum` = the three labels above, never
-     `type: "array"` (only the single choice is read reliably).
-   - **Forbidden**: a recommendation (no "(Recommended)", in a label or a description), an answer
-     filled in (`answers`), a default value (`default`), a fourth option: the hook refuses the poll.
-     The human chooses alone.
-4. After the answer, read the `[drwil]` message the hook gives back:
-   - **Automatic merge** (`✓`, authorisation recorded for the branch): run
-     `node .githooks/merge-auto.mjs <number>` — never chain the `gh` commands by hand, never say the
-     merge is scheduled unless it said so; then follow the PR with `node .githooks/pr-watch.mjs <number>`,
-     run again while it says green without merged, 30 minutes at most in all. A refusal or a red CI:
-     report it as is, fix a red CI on the same branch, never bypass it.
-   - **Manual merge**: nothing is scheduled; give the human the PR number and say the brief is offered
-     by `/drwil-start` once the PR is merged.
-   - **Continue scoping**: nothing is scheduled; the PR stays open and the next scopings are committed
-     on **the same branch** (one branch, one PR, no new branch); ask this poll again at the end of the
-     next scoping.
-   - A refusal (`✗`): report it as is, without retrying another way. No `[drwil]` message at all: the
-     hooks are not active in this session — say so and suggest restarting the session.
-5. Never schedule `gh pr merge --auto` on a scoping PR without the "Automatic merge" answer, in any
-   tool: `.githooks/merge-auto.mjs` is the only way, and it refuses without that answer.
-
-Without a poll in the tool: the merge of the scoping PR stays a human gesture.
+   (GitHub: `gh pr create --base <main branch>`; GitLab: its MR, `glab mr create --target-branch <main
+   branch>`).
+3. **Scoping edits grouped**: the next scoping edits of the same conversation are committed, by default, on
+   **the same branch** (one branch, one PR, no new branch), each one pushed; nothing to ask the human. Its
+   merge is scheduled only when it is needed: a `/drwil-start` needs a brief it carries (the poll only
+   offers briefs of the main branch), the human asks for it, or it is offered at the end of the exchange
+   (one sentence, never a poll). A scoping edit is never pushed on a branch whose merge is already
+   scheduled (GitHub: `gh pr view <number> --json autoMergeRequest`; GitLab: `merge_when_pipeline_succeeds`
+   of `glab mr view <number>`) or done: it goes on a new scoping branch cut from the up-to-date main branch.
+4. To schedule the merge, run `node .githooks/merge-auto.mjs <number>`, from the scoping branch: it only
+   schedules the PR of the current git branch — never chain the forge's commands (`gh`, `glab`) by hand,
+   never say the merge is scheduled unless it said so.
+5. Follow the PR with `node .githooks/pr-watch.mjs <number>`, run again while it says green without
+   merged, 30 minutes at most in all. A refusal or a red CI: report it as is, fix a red CI on the same
+   branch, never bypass it.

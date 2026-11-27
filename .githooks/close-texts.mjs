@@ -23,15 +23,25 @@ export const TEXTS = {
     signals: "Avant le commit, ce qui ferait échouer la clôture :",
     byHand: "à corriger à la main (la case dépend de plusieurs fiches, ou la ligne n'a pas de marqueur)",
     clean: "Rien ne ferait échouer la clôture.",
-    proposed: "Corrections proposées, rien n'est écrit (`node .githooks/close.mjs --fix` les applique) :",
+    proposed:
+      "Corrections proposées, rien n'est écrit (`node .githooks/close.mjs --fix` les applique sans clore ; ensuite, `node .githooks/close.mjs` clôt) :",
+    thenClose: "Clôture à lancer ensuite : `node .githooks/close.mjs` (en CLOSING).",
+    alreadyDone: (proof, b, index) =>
+      `clôture déjà faite : preuve ${proof} écrite, fiche ${b} retirée, ligne d'index retirée de ${index} — rien n'est réécrit ni consigné une seconde fois`,
     applied: (n) => `corrections appliquées : ${n}`,
     warnings: "Avertissements (non bloquants) :",
+    unreleased: (log, files) =>
+      `${log} : la branche change du code livré (${files}) sans ligne sous « Unreleased » — si le chantier change ce que voit l'utilisateur, l'ajouter dans le dernier lot du BUILD (la barrière de CLOSING refuse le changelog)`,
     rest: "Reste à l'agent : l'entrée du journal (décisions, limites répondues « Noter en intention » en intentions), puis le commit de clôture.",
     twice: (j, f, n) =>
       `${j} : ${n} entrées citent \`${f}\` — un chantier rouvert met à jour son entrée de journal, il n'en ajoute pas une seconde`,
     journalProof: (f) => `- **Preuve de clôture** : \`${f}\`.`,
     journalAmbiguous: (j, f, n) => `${j} : ${n} entrées correspondent à \`${f}\` — identifier une seule entrée avant la clôture`,
     journalRefused: (r) => `clôture refusée : le journal ne peut pas être complété — ${r}`,
+    journalAdmitted: (list) =>
+      `- **Admis d'office** : ${list.length} — ${list.map(([f, d]) => `\`${f}\` (cas ${d.kind}, de \`${d.from}\`)`).join(", ")}.`,
+    admitted: (list) =>
+      `Admis d'office sur la branche, écrits dans l'entrée du journal : ${list.length} — ${list.map(([f, d]) => `${f} (cas ${d.kind}, de ${d.from})`).join(", ")}`,
   },
   en: {
     usage: "usage: node .githooks/close.mjs [--check] [--fix] [<brief path>] [--logs <folder>]",
@@ -54,14 +64,24 @@ export const TEXTS = {
     signals: "Before the commit, what would make the closing fail:",
     byHand: "to fix by hand (the box depends on several briefs, or the line has no marker)",
     clean: "Nothing would make the closing fail.",
-    proposed: "Proposed corrections, nothing is written (`node .githooks/close.mjs --fix` applies them):",
+    proposed:
+      "Proposed corrections, nothing is written (`node .githooks/close.mjs --fix` applies them without closing; then `node .githooks/close.mjs` closes):",
+    thenClose: "Closing to run next: `node .githooks/close.mjs` (in CLOSING).",
+    alreadyDone: (proof, b, index) =>
+      `closing already done: proof ${proof} written, brief ${b} removed, index line removed from ${index} — nothing is rewritten or recorded a second time`,
     applied: (n) => `corrections applied: ${n}`,
     warnings: "Warnings (non-blocking):",
+    unreleased: (log, files) =>
+      `${log}: the branch changes shipped code (${files}) without a line under « Unreleased » — if the workstream changes what the user sees, add it in the last increment of the BUILD (the CLOSING scope gate refuses the changelog)`,
     rest: "Left to the agent: the journal entry (decisions, limits answered « Record as intent » as intents), then the closing commit.",
     twice: (j, f, n) => `${j}: ${n} entries cite \`${f}\` — a reopened workstream updates its journal entry, it never adds a second one`,
     journalProof: (f) => `- **Closing proof**: \`${f}\`.`,
     journalAmbiguous: (j, f, n) => `${j}: ${n} entries match \`${f}\` — identify a single entry before closing`,
     journalRefused: (r) => `closing refused: the journal cannot be completed — ${r}`,
+    journalAdmitted: (list) =>
+      `- **Admitted as derived**: ${list.length} — ${list.map(([f, d]) => `\`${f}\` (case ${d.kind}, from \`${d.from}\`)`).join(", ")}.`,
+    admitted: (list) =>
+      `Admitted as derived on the branch, written in the journal entry: ${list.length} — ${list.map(([f, d]) => `${f} (case ${d.kind}, from ${d.from})`).join(", ")}`,
   },
 };
 

@@ -72,7 +72,7 @@ read at every request. The full text of each rule is here, read by section
   per limit, naming the files it would touch, the possible « Changed
   contracts » bullet and the `docs/intentions/<name>.md` path it would
   become; two answers, « Handle now » and « Record as intent », none
-  recommended; its form under each tool: section 6, « Limits and merge polls
+  recommended; its form under each tool: section 6, « Limits poll
   parity »). « Handle now » is the yes to widen the scope block, in a
   separate commit. A subagent does not ask the poll: it stops with the
   list of the out-of-scope limits. A one-line note (`.githooks/note.mjs`) is not
@@ -94,8 +94,12 @@ read at every request. The full text of each rule is here, read by section
   active brief's scope is fixed by a detour the agent opens alone —
   `node .githooks/detour.mjs open <name> --title <defect>` sets the work
   aside, branches from the main branch and writes a short brief; its PR is
-  titled « Detour of <brief> »; once merged, `node .githooks/detour.mjs
-  resume` restores the work on the rebased workstream branch. Never widen
+  titled « Detour of <brief> » and put in automatic merge like any PR
+  (`node .githooks/merge-auto.mjs <number>`); once merged, `node .githooks/detour.mjs
+  resume` restores the work on the workstream branch brought up to the main
+  branch: merged when already pushed, never rewritten nor force-pushed; a
+  journal conflict of two appended entries keeps both, the main branch's
+  first, any other conflict is refused. Never widen
   an unrelated scope, never stash by hand. A detour is not a way to widen
   the active brief: widening its `scope` block takes a separate commit,
   which the gate flags with a warning listing the added paths, whatever
@@ -126,12 +130,11 @@ read at every request. The full text of each rule is here, read by section
   Code: `/clear`; another tool: a new conversation): a fresh context does
   not read the closed workstream again. A queue keeps its subagent per
   workstream.
-- **Documentation-only PR**: a PR that touches only documentation
-  (Markdown files, `docs/`) is put in automatic merge by the agent
-  (`gh pr merge --auto --merge`) without asking the `drwil-merge` question;
-  the poll keeps that question for PRs that touch code. The repository must
-  allow auto-merge, otherwise say « auto-merge not allowed by the
-  repository » and leave the merge to the human.
+- **Every PR in automatic merge**: any PR, code or documentation, is put
+  in automatic merge by the agent with `node .githooks/merge-auto.mjs
+  <number>`, without asking any question: there is no merge poll. The
+  repository must allow auto-merge, otherwise say « auto-merge not allowed
+  by the repository » and leave the merge to the human.
 - **Follow the CI of a PR**: after a push or creating a PR, run
   `node .githooks/pr-watch.mjs [<number>]`: it waits for the end of the CI
   and says « green », « merged » or « red » with the failing check. A red
@@ -178,6 +181,16 @@ read at every request. The full text of each rule is here, read by section
   to-attest contracts copied word for word; the main session says
   « verified » only on that copied line. Another tool: the same if it
   allows a subagent without write access, otherwise run them directly.
+- **During a lot, a targeted pass**: while a lot is being built, neither
+  `run-checks` in full nor `drwil verify --agent` is run, and the
+  `drwil-checks` subagent is not called. The commit is the check: its hook
+  picks the checks whose `paths` match the staged files, those of the
+  brief's contracts included as soon as the lot touches their files or
+  tests; the tool judges, never a list chosen by the agent. After a failure:
+  the failing check alone (its `run` command in `.drwil/ia-first.json`) or
+  `npx drwil verify --failed`, which replays only the contracts not PASS.
+  The full pass stays required before VERIFY and at the closing, and the CI
+  stays complete: a targeted pass never replaces them (QUA-019).
 - **Long commands**: a command that can outlast the 120 s of a tool call
   (`run-checks`, `drwil verify`, a commit with hooks) is run through `node
   .githooks/wait-command.mjs <command>` in a Bash call launched with
@@ -194,7 +207,18 @@ read at every request. The full text of each rule is here, read by section
   terminal `drwil attest <ID>` as fallback, never the terminal alone
   (`docs/recipes/attest-a-contract.md`). Likewise, the acceptance verdict
   on a candidate release (`.githooks/release-verdict.mjs` (if present),
-  release module) is a **human** gesture: an agent never runs it.
+  release module) is a **human** gesture: an agent never runs it. Every
+  human gesture is also given from the chat, by a poll the tool prepares
+  without writing anything and that only the hook reads: the attestation
+  (`drwil-attest`), the acceptance of the criteria (`drwil-accept`,
+  `node .githooks/state.mjs poll accept`), the release verdict
+  (`drwil-verdict`, `node .githooks/release-verdict-poll.mjs` (if
+  present)), a transition reserved to the human (`drwil-move`,
+  `node .githooks/state.mjs poll move <ACTIVITY>`) and the yes to a detour
+  or a reopening's fix (`drwil-detour`, `node .githooks/state.mjs poll
+  detour`). The agent asks the prepared poll unchanged, with no answer,
+  default or recommendation; only the human's answer writes the gesture;
+  the terminal stays available.
 - **Project language** (`lang` in `.drwil/ia-first.json`): reply, and write
   briefs, intents, journal entries and commit messages, in that language,
   even though the kit's own files are in English. What a visitor reads

@@ -1,8 +1,9 @@
 // Acceptance of a brief's criteria by the human (split from state.mjs, which wires it): the start the human
 // decides (poll read by the hook, interactive terminal) records the fingerprint of the « Acceptance criteria »
 // section; the closing reads it back, says it in the closing proof and refuses a section modified since, until
-// the human accepts again (`node .githooks/state.mjs accept`, terminal only). The record is local, in the
-// evidence folder outside git, like the state: it holds a fingerprint, never the criteria.
+// the human accepts again (`node .githooks/state.mjs accept` in an interactive terminal, or the `drwil-accept` poll of
+// the chat, prepared by `node .githooks/state.mjs poll accept` and read by the hook, QUA-175). The record is local, in
+// the evidence folder outside git, like the state: it holds a fingerprint, never the criteria.
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -19,28 +20,46 @@ const HUMAN_MARK = /(`+).*?\1|\[(?:humain|human)\]/gi;
 
 const TEXTS = {
   fr: {
-    notTerminal: "acceptation refusée : seul un terminal interactif, tenu par l'humain, enregistre l'acceptation des critères",
+    notTerminal:
+      "acceptation refusée : seul un terminal interactif, tenu par l'humain, enregistre ici l'acceptation des critères ; depuis le chat, préparer le sondage (`node .githooks/state.mjs poll accept`) et le poser tel quel : seule la réponse de l'humain l'enregistre",
     noBrief: "acceptation impossible : aucun chantier actif (`node .githooks/state.mjs`)",
     noCriteria: (b) => `acceptation impossible : ${b} n'a aucun critère d'acceptation`,
     show: (b) => `Critères de ${b} :`,
     confirm: "Taper ACCEPT pour accepter ces critères tels quels : ",
     notConfirmed: "acceptation non confirmée : rien n'est enregistré",
     done: (b, f) => `critères de ${b} acceptés (empreinte ${f})`,
+    ask: "Accepter ces critères tels quels ?",
+    options: [
+      { label: "Accepter", description: "Les critères ci-dessus sont acceptés tels quels ; la clôture les comparera." },
+      { label: "Ne pas accepter", description: "Rien n'est enregistré ; les critères sont à revoir." },
+    ],
   },
   en: {
-    notTerminal: "acceptance refused: only an interactive terminal, held by the human, records the acceptance of the criteria",
+    notTerminal:
+      "acceptance refused: only an interactive terminal, held by the human, records the acceptance of the criteria here; from the chat, prepare the poll (`node .githooks/state.mjs poll accept`) and ask it as is: only the human's answer records it",
     noBrief: "acceptance impossible: no active workstream (`node .githooks/state.mjs`)",
     noCriteria: (b) => `acceptance impossible: ${b} has no acceptance criteria`,
     show: (b) => `Criteria of ${b}:`,
     confirm: "Type ACCEPT to accept these criteria as they are: ",
     notConfirmed: "acceptance not confirmed: nothing is recorded",
     done: (b, f) => `criteria of ${b} accepted (fingerprint ${f})`,
+    ask: "Accept these criteria as they are?",
+    options: [
+      { label: "Accept", description: "The criteria above are accepted as they are; the closing will compare them." },
+      { label: "Do not accept", description: "Nothing is recorded; the criteria are to be reviewed." },
+    ],
   },
 };
 const texts = (root) => TEXTS[config(root).lang === "en" ? "en" : "fr"];
 
 /** `sha256:<16 hex>` of the criteria of `text` (their proofs left out), or null without any. */
 export function criteriaFingerprint(text) {
+  return fingerprint(text, false);
+}
+
+// QUA-174 : avant la 0.11.2, la preuve était retirée avant la marque ; une marque entre le tiret et la preuve
+// laissait la preuve dans le texte. Ce calcul reste relu en repli pour un chantier accepté avant la mise à jour.
+function fingerprint(text, legacy) {
   const items = [];
   let inside = false;
   let open = false;
@@ -56,12 +75,9 @@ export function criteriaFingerprint(text) {
     open = Boolean(item) || (open && /^\s+\S/.test(line));
   }
   if (!items.length) return null;
+  const unmark = (i) => i.replace(HUMAN_MARK, (m) => (m.startsWith("`") ? m : ""));
   const normal = items.map((i) =>
-    i
-      .replace(PROOF_TAIL, "")
-      .replace(HUMAN_MARK, (m) => (m.startsWith("`") ? m : ""))
-      .replace(/\s+/g, " ")
-      .trim(),
+    (legacy ? unmark(i.replace(PROOF_TAIL, "")) : unmark(i).replace(PROOF_TAIL, "")).replace(/\s+/g, " ").trim(),
   );
   return `sha256:${createHash("sha256").update(JSON.stringify(normal)).digest("hex").slice(0, 16)}`;
 }
@@ -108,7 +124,48 @@ export function acceptanceCheck(root, brief, text) {
   const record = readAll(root)[brief];
   if (typeof record?.fingerprint !== "string") return { kind: "none" };
   const current = criteriaFingerprint(text);
-  return { kind: current === record.fingerprint ? "same" : "changed", record, current };
+  const same = current === record.fingerprint || fingerprint(text, true) === record.fingerprint;
+  return { kind: same ? "same" : "changed", record, current };
+}
+
+/** The active brief, its criteria and their fingerprint; `message` (nothing to accept) without a brief or criteria. */
+function activeCriteria(root, T) {
+  const brief = readState(root).state.active_brief;
+  if (!brief) return { message: T.noBrief };
+  let text = "";
+  try {
+    text = readFileSync(join(root, brief), "utf8");
+  } catch {
+    // brief unreadable: reported as without criteria
+  }
+  const labels = acceptanceCriteria(text);
+  if (!labels.length) return { message: T.noCriteria(brief) };
+  return { brief, labels, print: criteriaFingerprint(text), shown: [T.show(brief), ...labels.map((c) => `- ${c.text}`)] };
+}
+
+/**
+ * The `drwil-accept` poll of the active brief, to ask as is in the chat (QUA-175); writes nothing. `data` is what the
+ * hook keeps tied to the call and gives back to `acceptFromPoll` with the human's answer.
+ */
+export function acceptancePoll(root) {
+  const T = texts(root);
+  const c = activeCriteria(root, T);
+  if (c.message) return { code: 1, message: c.message };
+  const question = [`drwil-accept ${c.brief}`, ...c.shown, "", T.ask].join("\n");
+  const options = T.options.map((o) => ({ ...o }));
+  const poll = { questions: [{ header: "drwil-accept", question, options }] };
+  return { code: 0, message: "", poll, data: { brief: c.brief, fingerprint: c.print } };
+}
+
+/**
+ * Records the acceptance the human gave by answering the poll, called by the hook only (QUA-175): the brief must
+ * still be the active one and its criteria those of the poll. Done message, or null (nothing recorded).
+ */
+export function acceptFromPoll(root, data) {
+  const T = texts(root);
+  const c = activeCriteria(root, T);
+  if (c.message || c.brief !== data?.brief || c.print !== data.fingerprint) return null;
+  return T.done(c.brief, recordAcceptance(root, c.brief).fingerprint);
 }
 
 /** `accept` command: records the acceptance of the active brief's criteria, from an interactive terminal only. Exit code. */
@@ -118,22 +175,12 @@ export async function accept(root) {
     console.error(`✗ ${T.notTerminal}`);
     return 1;
   }
-  const brief = readState(root).state.active_brief;
-  if (!brief) {
-    console.error(`✗ ${T.noBrief}`);
+  const c = activeCriteria(root, T);
+  if (c.message) {
+    console.error(`✗ ${c.message}`);
     return 1;
   }
-  let labels = [];
-  try {
-    labels = acceptanceCriteria(readFileSync(join(root, brief), "utf8"));
-  } catch {
-    // brief unreadable: reported as without criteria
-  }
-  if (!labels.length) {
-    console.error(`✗ ${T.noCriteria(brief)}`);
-    return 1;
-  }
-  console.log([T.show(brief), ...labels.map((c) => `- ${c.text}`)].join("\n"));
+  console.log(c.shown.join("\n"));
   const { createInterface } = await import("node:readline/promises");
   const rl = createInterface({ input: process.stdin, output: process.stdout });
   let answer;
@@ -146,6 +193,6 @@ export async function accept(root) {
     console.error(`✗ ${T.notConfirmed}`);
     return 1;
   }
-  console.log(`✓ ${T.done(brief, recordAcceptance(root, brief).fingerprint)}`);
+  console.log(`✓ ${T.done(c.brief, recordAcceptance(root, c.brief).fingerprint)}`);
   return 0;
 }

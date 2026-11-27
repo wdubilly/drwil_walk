@@ -47,7 +47,8 @@ request, instead of direct commits on the main branch.
   it. Their output shows only the failed checks and a summary line (warnings
   counted, full detail in `.drwil/evidence/run-checks.log` (if present)); with Claude
   Code, the `drwil-checks` subagent can run them and return only the verdict
-  and the failures, copied word for word.
+  and the failures, copied word for word. During a lot, no full pass: the commit
+  is the check; after a failure, the failing check alone or `npx drwil verify --failed`.
 - Before merging: check that the pull/merge request CI status checks
   are green (`gh pr checks <n> --watch` on GitHub).
 
@@ -56,19 +57,16 @@ request, instead of direct commits on the main branch.
 - A scoping (brief, intention) is committed on its own branch and goes through
   a pull request like the rest: `/drwil-start` offers a brief only once that
   PR is merged, since it reads the briefs of the main branch.
-- Once the scoping is pushed and its PR open, the `/drwil-scope` skill
-  (skill `scope-a-workstream`) asks the human, in a poll
-  with no default or recommended answer, what to do with the PR:
-  - « Automatic merge »: the hook records the authorisation for the current
-    branch (state `scoping_merge`, SCOPING only); the agent runs
-    `node .githooks/merge-auto.mjs <number>`, which refuses the PR of any
-    other branch, then follows it with `node .githooks/pr-watch.mjs <number>`.
-  - « Manual merge »: nothing is scheduled, the human merges.
-  - « Continue scoping »: nothing is scheduled, the PR stays open and the
-    next scopings are committed on the same branch — one branch, one PR —
-    until the poll is asked again.
-- Without the « Automatic merge » answer, the merge of a scoping PR stays a
-  human gesture; leaving SCOPING drops the authorisation.
+- Once the scoping is pushed and its PR open, the agent puts it in
+  automatic merge, without a poll (skill `scope-a-workstream`,
+  `/drwil-scope`): `node .githooks/merge-auto.mjs <number>`, which refuses
+  the PR of any other branch than the current one, then follows it with
+  `node .githooks/pr-watch.mjs <number>`. The automatic merge is the default
+  behaviour: its guard is the proof (green CI, PR of the current branch,
+  scheduling read back on the forge), never an answer to give.
+- Several scopings to read together before they are merged: the next
+  scopings are committed on the same branch — one branch, one PR — and the
+  merge is scheduled once the last one is pushed.
 
 ## One workstream per worktree
 
@@ -160,19 +158,19 @@ that folder only):
   reachable (absent, not logged in, another forge), only a classic merge
   is recognised, and the start or the resume says so: a branch merged by
   squash is then kept, to delete by hand.
-- Keep what the user reads current, in the closing commit: a workstream
-  that changes what the user sees updates the `README.md` and adds its line
-  under « Unreleased » in `CHANGELOG.md` (if present); one
-  that changes the structure (folder or module, layer, stack) updates the
-  map `docs/architecture.md` — drwil maintains it, and its check reports
-  any code folder it does not cite yet. These three are written in the
-  `docLang` language (absent: the project language).
+- Keep what the user reads current: a workstream changing what the user sees
+  adds its « Unreleased » line to `CHANGELOG.md` (if present) in its last BUILD
+  increment (refused in CLOSING; `close.mjs --check` warns if shipped code
+  changes without it) and updates `README.md` when closing; one changing the
+  structure updates the map `docs/architecture.md` (its check reports any
+  uncited code folder). All three in the `docLang` language (else the project's).
 - Record the workstream's consumption, in the closing commit (done by
   `node .githooks/close.mjs`; by hand:
   `node .githooks/consumption.mjs --record <brief>`), which appends its line to
-  `.drwil/usage.jsonl` (if present) (tokens, models, active time, read from Claude
-  Code's session logs; never twice for the same workstream). Another AI
-  tool: estimate by hand (`docs/recipes/track-consumption-per-increment.md`).
+  `.drwil/usage.jsonl` (if present) (tokens, models, active time, read from the
+  session logs of Claude Code and Copilot CLI; never twice for the same
+  workstream). Another AI tool: estimate by hand
+  (`docs/recipes/track-consumption-per-increment.md`).
 - Close the intent loop, in the closing commit: a limit within the scope is
   handled; one answered « Record as intent » to the `drwil-limite` poll (end of
   BUILD) becomes an intent brief (`docs/intentions/`, never a workstream brief;
@@ -192,7 +190,8 @@ that folder only):
   commit; commit the fix and push normally (no history rewritten). A fix
   that changes the rules (an existing contract modified or removed, hook,
   threshold, gate, CI) waits for the human's yes, like a detour
-  (`node .githooks/detour.mjs allow`, interactive terminal). Then Evidence,
+  (`node .githooks/detour.mjs allow`, interactive terminal, or the chat's
+  `drwil-detour` poll, `node .githooks/state.mjs poll detour`). Then Evidence,
   Verify and Closing as the first time: update the workstream's journal
   entry (a second entry citing the same proof makes the closing fail),
   `node .githooks/close.mjs` rewrites the proof on the new verified commit

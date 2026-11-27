@@ -9,33 +9,24 @@
 //   chosen briefs, in the order of the poll's options, never in the order of the clicks: the agent
 //   starts the next one after each closing (QUA-037). Under a tool that reads a single choice only, the human
 //   builds the same queue by chained `drwil-file` polls, one brief per answer (queue-poll.mjs).
-// - End-of-scoping poll (`drwil-scope`, QUA-187): refused unless it offers exactly the three answers,
-//   none recommended nor filled in; the human's answer is recorded by `.githooks/state.mjs` (`scopingMerge`).
+// No merge poll at start nor at the end of a scoping: the automatic merge is the default (QUA-163, QUA-187).
 // The same hooks serve Claude Code and Copilot CLI, which reads this settings file; only the poll
 // formats differ. Gemini CLI and Codex call `prompt-hook.mjs <tool>`: portable-polls.mjs (QUA-266).
 import { readFileSync, realpathSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import {
-  NOT_NOW_RE,
-  humanAnswer,
-  inPollOrder,
-  mergeAuthorised,
-  parallelChosen,
-  scopeChoice,
-  scopePoll,
-  scopePollValid,
-  startPoll,
-  worktreeChosen,
-} from "./start-poll.mjs";
+import { NOT_NOW_RE, humanAnswer, inPollOrder, parallelChosen, startPoll, worktreeChosen } from "./start-poll.mjs";
 import { queueHook } from "./queue-poll.mjs";
 import { limitHook } from "./limit-poll.mjs";
-import { mergeHook } from "./merge-poll.mjs";
 import { attestationHook } from "./attest-poll.mjs";
+import { acceptanceHook } from "./accept-poll.mjs";
+import { verdictHook } from "./verdict-poll.mjs";
+import { moveHook } from "./move-poll.mjs";
+import { detourHook } from "./detour-poll.mjs";
 import { portableMain } from "./portable-polls.mjs";
 
-export { humanAnswer, inPollOrder, mergeAuthorised, parallelChosen, scopeChoice, scopePoll, startPoll, worktreeChosen };
-export { attestationHook };
+export { humanAnswer, inPollOrder, parallelChosen, startPoll, worktreeChosen };
+export { acceptanceHook, attestationHook, detourHook, moveHook, verdictHook };
 
 // The folder holding this hook's .claude/, never the current folder: it follows the agent's `cd`.
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
@@ -50,10 +41,6 @@ const TEXTS = {
       "aucune réponse lue dans le sondage de lancement : rien n'est lancé, l'état est inchangé. Repli : `node .githooks/state.mjs start` dans un terminal interactif.",
     error: (m) =>
       `erreur au lancement (${m}) : rien n'est lancé, l'état est inchangé. Repli : \`node .githooks/state.mjs start\` dans un terminal interactif.`,
-    scopeRefused:
-      "drwil : sondage de fin de cadrage refusé — exactement trois réponses (« Automatic merge », « Manual merge », « Continue scoping »), en choix unique, sans réponse remplie, valeur par défaut ni recommandation ; c'est l'humain qui choisit.",
-    scopeNoAnswer: "aucune réponse lue dans le sondage de fin de cadrage : rien n'est autorisé, l'état est inchangé.",
-    scopeError: (m) => `erreur à la lecture du sondage de fin de cadrage (${m}) : rien n'est autorisé, l'état est inchangé.`,
   },
   en: {
     refused: "drwil: start poll refused — it must contain neither an answer nor a default value; the human chooses.",
@@ -64,24 +51,30 @@ const TEXTS = {
       "no answer read in the start poll: nothing started, the state is unchanged. Fallback: `node .githooks/state.mjs start` in an interactive terminal.",
     error: (m) =>
       `error while starting (${m}): nothing started, the state is unchanged. Fallback: \`node .githooks/state.mjs start\` in an interactive terminal.`,
-    scopeRefused:
-      "drwil: end-of-scoping poll refused — exactly three answers (« Automatic merge », « Manual merge », « Continue scoping »), single choice, with no answer filled in, default value or recommendation; the human chooses.",
-    scopeNoAnswer: "no answer read in the end-of-scoping poll: nothing authorised, the state is unchanged.",
-    scopeError: (m) => `error while reading the end-of-scoping poll (${m}): nothing authorised, the state is unchanged.`,
   },
 };
 
-/** What the agent reads after the poll: never silent on a drwil start poll. */
-function tell(text) {
+/**
+ * What the agent reads after the poll: never silent on a drwil start poll. A refusal (✗) is also shown to the
+ * human (`systemMessage`): the agent's context alone may never reach them (QUA-179). Copilot CLI, which runs this hook
+ * from .claude/settings.json, reads only a top-level `additionalContext` after a tool (its native format, QUA-065):
+ * without it, its agent saw no `[drwil]` line, a refused « This folder » start looked like nothing (2026-11-22).
+ */
+function say(text, copilot) {
   console.log(
     JSON.stringify({
       hookSpecificOutput: {
         hookEventName: "PostToolUse",
         additionalContext: `[drwil] ${text}`,
       },
+      ...(copilot ? { additionalContext: `[drwil] ${text}` } : {}),
+      ...(text.startsWith("✗") ? { systemMessage: `[drwil] ${text}` } : {}),
     }),
   );
 }
+
+/** A poll in Copilot CLI's `ask_user` form (`message`), the only one whose answer comes as `tool_result`. */
+const fromCopilot = (input) => typeof input?.tool_input?.message === "string";
 
 function language() {
   try {
@@ -91,31 +84,6 @@ function language() {
   }
 }
 
-/** End-of-scoping poll (QUA-187): refused before it is shown if it is not the human's free choice; answer recorded after. */
-async function scopeHook(input) {
-  const poll = scopePoll(input);
-  if (!poll) return 0;
-  const T = TEXTS[language()];
-  if (input.hook_event_name === "PreToolUse") {
-    if (scopePollValid(poll)) return 0;
-    console.error(T.scopeRefused);
-    return 2;
-  }
-  if (input.hook_event_name !== "PostToolUse") return 0;
-  const choice = scopeChoice(input, poll);
-  if (!choice) {
-    tell(`✗ ${T.scopeNoAnswer}`);
-    return 0;
-  }
-  try {
-    const r = (await import(pathToFileURL(join(ROOT, ".githooks", "state.mjs")).href)).scopingMerge(ROOT, choice);
-    tell(`${r.code === 0 ? "✓" : "✗"} ${r.message}`);
-  } catch (e) {
-    tell(`✗ ${T.scopeError(e?.message ?? String(e))}`);
-  }
-  return 0;
-}
-
 async function main() {
   let input;
   try {
@@ -123,12 +91,17 @@ async function main() {
   } catch {
     return 0;
   }
-  const attestation = await attestationHook(input, { root: ROOT, tell });
-  if (attestation !== null) return attestation;
+  const copilot = fromCopilot(input);
+  const tell = (text) => say(text, copilot);
+  // Sondages préparés (QUA-235) : attestation, acceptation des critères (QUA-175), verdict de recette (QUA-053),
+  // transition réservée à l'humain et oui au détour (QUA-117).
+  for (const hook of [attestationHook, acceptanceHook, verdictHook, moveHook, detourHook]) {
+    const code = await hook(input, { root: ROOT, tell });
+    if (code !== null) return code;
+  }
   const poll = startPoll(input);
   const ctx = { root: ROOT, lang: language(), tell };
-  // A standalone `drwil-merge` poll (QUA-265) gives the automatic merge back from BUILD to CLOSING.
-  if (!poll) return (await queueHook(input, ctx)) ?? (await limitHook(input, ctx)) ?? (await mergeHook(input, ctx)) ?? scopeHook(input);
+  if (!poll) return (await queueHook(input, ctx)) ?? (await limitHook(input, ctx)) ?? 0;
   const event = input.hook_event_name;
   if (event === "PreToolUse") {
     if (poll.prefilled) {
@@ -161,17 +134,13 @@ async function main() {
     return 0;
   }
   try {
-    const autoMerge = mergeAuthorised(input, poll);
     // The new folder's state is written by its own start; this folder's state does not change.
     const worktree = async () => await import(pathToFileURL(join(ROOT, ".githooks", "worktree.mjs")).href);
     const r = parallelChosen(input, poll)
-      ? await (await worktree()).launchParallel(ROOT, [first, ...queue], { autoMerge })
+      ? await (await worktree()).launchParallel(ROOT, [first, ...queue])
       : worktreeChosen(input, poll)
-        ? await (await worktree()).launchInWorktree(ROOT, first, {
-            autoMerge,
-            queue,
-          })
-        : (await import(pathToFileURL(join(ROOT, ".githooks", "state.mjs")).href)).start(ROOT, first, { human: true, autoMerge, queue });
+        ? await (await worktree()).launchInWorktree(ROOT, first, { queue })
+        : (await import(pathToFileURL(join(ROOT, ".githooks", "state.mjs")).href)).start(ROOT, first, { human: true, queue });
     tell(`${r.code === 0 ? "✓" : "✗"} ${r.message}`);
   } catch (e) {
     // Never blocks the tool: the state stays unchanged, the Git gate remains; the agent is told why.

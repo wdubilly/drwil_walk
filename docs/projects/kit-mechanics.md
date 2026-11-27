@@ -117,6 +117,19 @@ files:
   - .githooks/check-diff-coverage.mjs
   - .githooks/recette-note.mjs
   - .githooks/recette-note-texts.mjs
+  - .githooks/contract-tests.mjs
+  - .githooks/contract-tests-reporters.mjs
+  - .githooks/format-staged.mjs
+  - .githooks/merge-auto-forge.mjs
+  - .githooks/close-done.mjs
+  - .githooks/state-history.mjs
+  - .githooks/state-polls.mjs
+  - .githooks/engine-selftest.mjs
+  - .githooks/run-checks-kit.mjs
+  - .githooks/detour-resume.mjs
+  - .githooks/consumption-split.mjs
+  - .githooks/scope-derived.mjs
+  - .githooks/release-verdict-poll.mjs
 -->
 
 ## 1. Need

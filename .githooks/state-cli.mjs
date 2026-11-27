@@ -82,7 +82,7 @@ export async function main(args, root, input = process.stdin) {
     const tty = Boolean(process.stdin.isTTY && process.stdout.isTTY);
     let choice = args[1];
     let human = false;
-    let [autoMerge, inWorktree] = [false, false];
+    let inWorktree = false;
     if (tty) {
       // An interactive terminal: the human chooses themselves (never a preselected choice).
       const { createInterface } = await import("node:readline/promises");
@@ -101,7 +101,6 @@ export async function main(args, root, input = process.stdin) {
           choice = briefs[n - 1]?.path;
         }
         human = choice !== undefined && (await rl.question(fill(T.confirmStart, choice))).trim() === "START";
-        if (human) autoMerge = (await rl.question(T.askMerge)).trim() === "MERGE";
         if (human) inWorktree = (await rl.question(T.askWorktree)).trim() === "WORKTREE";
       } finally {
         rl.close();
@@ -111,8 +110,8 @@ export async function main(args, root, input = process.stdin) {
         return 1;
       }
     }
-    if (inWorktree) return report(await (await import("./worktree.mjs")).launchInWorktree(root, choice, { autoMerge }), root);
-    const r = start(root, choice, { human, autoMerge, request: option(args, "--request") });
+    if (inWorktree) return report(await (await import("./worktree.mjs")).launchInWorktree(root, choice), root);
+    const r = start(root, choice, { human, request: option(args, "--request") });
     return report(r, root);
   }
   // The queue (QUA-037): `next` starts its head (allowed to the agent: the human decided the queue),
@@ -122,22 +121,26 @@ export async function main(args, root, input = process.stdin) {
     return report(r, root);
   }
   if (args[0] === "lot") return (await import("./state-cli-lots.mjs")).lotCommand(args, root);
+  if (args[0] === "poll") return (await import("./state-polls.mjs")).pollCommand(args, root);
   if (args[0] === "reopen") {
     const r = reopen(root);
     return report(r, root);
   }
   const prompt = ["reminder", "copilot-message", "gemini-message"].includes(args[0]);
-  let settled = "";
+  let [settled, said] = ["", ""];
   if (args[0] !== "move") {
     // Reading: the closing whose PR is merged is over; a failure here never breaks a session.
     try {
-      settled = (await settleClosing(root, { chain: prompt })).message;
+      const s = await settleClosing(root, { chain: prompt });
+      // A chained launch (refused or not) is said before the reminder: the prompt hooks would drop it (QUA-179).
+      [settled, said] = [s.message, s.launch ? s.message : ""];
     } catch {}
   }
+  const withSaid = (text) => [said, text].filter(Boolean).join("\n\n") || null;
   if (args[0] === "reminder") {
     // Prompt hook (Claude Code: UserPromptSubmit): writes only if the state changed, never breaks a prompt.
     try {
-      const text = reminderIfChanged(root);
+      const text = withSaid(reminderIfChanged(root));
       if (text) console.log(text);
     } catch {}
     return 0;
@@ -149,7 +152,7 @@ export async function main(args, root, input = process.stdin) {
       if (args[0] === "copilot-start") out = { additionalContext: context(readState(root), root) };
       else {
         const prompt = (await readStdinJson(input))?.transformedPrompt;
-        const text = typeof prompt === "string" ? reminderIfChanged(root) : null;
+        const text = typeof prompt === "string" ? withSaid(reminderIfChanged(root)) : null;
         if (text) out = { modifiedTransformedPrompt: `${text}\n\n${prompt}` };
       }
     } catch {}
@@ -161,7 +164,7 @@ export async function main(args, root, input = process.stdin) {
     const hookEventName = args[0] === "gemini-start" ? "SessionStart" : "BeforeAgent";
     let out = {};
     try {
-      const text = hookEventName === "SessionStart" ? context(readState(root), root) : reminderIfChanged(root);
+      const text = hookEventName === "SessionStart" ? context(readState(root), root) : withSaid(reminderIfChanged(root));
       if (text) out = { hookSpecificOutput: { hookEventName, additionalContext: text } };
     } catch {}
     console.log(JSON.stringify(out));

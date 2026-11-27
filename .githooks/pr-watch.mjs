@@ -7,15 +7,21 @@
 // and writes the proof a queue needs before its next workstream (QUA-251, pr-watch-main.mjs), within the
 // same time limit (GitHub only). Valid for every AI tool: a plain Node script on top of `gh` or `glab`. QUA-262: the checks left
 // to CI (`runAt: ["ci"]`) are proven by that CI alone: green names them, anything else says the workstream stays in CLOSING.
+// QUA-100: a skipped or neutral check never counts as passed; a verdict is said only on the PR's head equal to the local
+// commit of its branch; no CI yet is waited for during a grace period counted inside the time limit; every forge call
+// has a time limit. Its automatic merge scheduled, a green PR is waited for until merged, seen in the main branch by git.
 // Usage: node .githooks/pr-watch.mjs [<pr or mr number>] [--timeout <minutes>]
-// Exit code: 0 green, or merged with the main branch's CI green; 1 red, closed without merge, main branch's
-// CI red or alert issue open; 2 not run (main branch's CI included).
+// Exit code: 0 green, or merged and main branch's CI green; 1 red, closed unmerged, main CI red or alert issue; 2 not run.
 import { spawnSync } from "node:child_process";
 import { readFileSync, realpathSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { changeForge, ciChecks, lookMr } from "./close-checks.mjs";
-import { followMain } from "./pr-watch-main.mjs";
+import { ghJson, look, lookGitlab, localTip } from "./merge-auto-forge.mjs";
+import { followMain, keepView, mergedInMain, scheduledMerge } from "./pr-watch-main.mjs";
+
+/** Grace period for the PR's CI to appear: a push to a branch with an open PR runs a skipped CI before the PR's own. */
+export const GRACE_MS = 3 * 60_000;
 
 const TEXTS = {
   fr: {
@@ -24,13 +30,21 @@ const TEXTS = {
     noGlab: "glab injoignable ou non connecté (glab auth login), ou aucune MR pour cette branche",
     pr: "PR #{0}",
     mr: "MR !{0}",
-    noChecks: "aucun contrôle de CI sur la {0}",
-    timeout: "délai de {0} min dépassé, contrôles encore en cours sur la {1}",
+    noChecks: "aucun contrôle de CI sur la {0} après {1} min d'attente",
+    timeout: "délai de {0} min dépassé sur la {1}",
+    running: " — en cours : {0}",
+    queued: " — en file d'attente, jamais démarrés : {0} (aucune relance automatique)",
+    stale: " — sa tête ({0}) n'est pas le commit local {1}",
+    staleWaiting: "[pr-watch] {0} : tête de la PR {1}, commit local {2} — attente de la CI du commit local…",
+    graceWaiting: "[pr-watch] {0} : CI de la PR pas encore inscrite, attente (délai de grâce de {1} min)…",
     merged: "[pr-watch] {0} fusionnée.",
     closed: "[pr-watch] {0} fermée sans fusion.",
     green: "[pr-watch] {0} : CI verte ({1} contrôle(s)).",
     red: "[pr-watch] {0} : CI rouge — en échec : {1}. Corriger la cause, jamais contourner (QUA-019).",
     waiting: "[pr-watch] {0} : {1} contrôle(s) en cours…",
+    autoWaiting: "[pr-watch] {0} : CI verte, fusion automatique programmée — attente de la fusion…",
+    autoPending: " — CI verte, fusion programmée pas encore vue dans la branche principale{0}",
+    noFetch: " (git fetch en échec)",
     ciProven: " Contrôles confiés à la CI joués par cette CI : {0}.",
     ciUnproven: "\n[pr-watch] contrôles confiés à la CI non prouvés ({0}) : la clôture n'est pas acquise, le chantier reste en CLOSING.",
     mrMerged: "[pr-watch] CI de la MR à la fusion : {0} ; CI de la branche principale non suivie hors GitHub, à vérifier à la main.",
@@ -54,13 +68,21 @@ const TEXTS = {
     noGlab: "glab unreachable or not logged in (glab auth login), or no MR for this branch",
     pr: "PR #{0}",
     mr: "MR !{0}",
-    noChecks: "no CI check on {0}",
-    timeout: "{0} min limit reached, checks still running on {1}",
+    noChecks: "no CI check on {0} after waiting {1} min",
+    timeout: "{0} min limit reached on {1}",
+    running: " — running: {0}",
+    queued: " — queued, never started: {0} (no automatic restart)",
+    stale: " — its head ({0}) is not the local commit {1}",
+    staleWaiting: "[pr-watch] {0}: PR head {1}, local commit {2} — waiting for the local commit's CI…",
+    graceWaiting: "[pr-watch] {0}: the PR's CI is not registered yet, waiting (grace period of {1} min)…",
     merged: "[pr-watch] {0} merged.",
     closed: "[pr-watch] {0} closed without merge.",
     green: "[pr-watch] {0}: CI green ({1} check(s)).",
     red: "[pr-watch] {0}: CI red — failing: {1}. Fix the cause, never bypass (QUA-019).",
     waiting: "[pr-watch] {0}: {1} check(s) running…",
+    autoWaiting: "[pr-watch] {0}: CI green, automatic merge scheduled — waiting for the merge…",
+    autoPending: " — CI green, scheduled merge not seen in the main branch yet{0}",
+    noFetch: " (git fetch failed)",
     ciProven: " Checks left to CI played by this CI: {0}.",
     ciUnproven: "\n[pr-watch] checks left to CI not proven ({0}): the closing is not acquired, the workstream stays in CLOSING.",
     mrMerged: "[pr-watch] MR CI at the merge: {0}; main branch CI not followed outside GitHub, to check by hand.",
@@ -80,6 +102,9 @@ const TEXTS = {
   },
 };
 
+// Reading the forge lives in merge-auto-forge.mjs; re-exported for close.mjs and the tests.
+export { bucket, ciOf, ghJson, localTip, look } from "./merge-auto-forge.mjs";
+
 const fill = (message, ...values) => message.replace(/\{(\d)\}/g, (_, i) => values[i]);
 
 /** Messages in the project's language (French by default). */
@@ -91,62 +116,42 @@ export function texts(root = process.cwd()) {
   return TEXTS[lang];
 }
 
-/** `gh` (or `glab`, `tool`) with JSON output; null when it fails or answers something unreadable. */
-export function ghJson(args, run = spawnSync, tool = "gh") {
-  const r = run(tool, args, { encoding: "utf8" });
-  if (r.status !== 0 && !r.stdout) return null;
-  try {
-    return JSON.parse(r.stdout);
-  } catch {
-    return null;
-  }
-}
-
-/**
- * Bucket of one check of `statusCheckRollup`: a check run (status, conclusion) or a commit status
- * (state). Read from `gh pr view`, which every gh version knows (`gh pr checks --json` came later).
- */
-export function bucket(c) {
-  if (c.state !== undefined) return c.state === "SUCCESS" ? "pass" : ["PENDING", "EXPECTED"].includes(c.state) ? "pending" : "fail";
-  if (c.status !== "COMPLETED") return "pending";
-  if (["SUCCESS", "NEUTRAL", "SKIPPED"].includes(c.conclusion)) return "pass";
-  return c.conclusion === "CANCELLED" ? "cancel" : "fail";
-}
-
-/** CI state of a list of `{ name, bucket }`: { state: "none" | "red" | "pending" | "green", failed?, pending?, total? }. */
-function ciOf(checks) {
-  if (!checks.length) return { state: "none" };
-  const failed = checks.filter((c) => c.bucket === "fail" || c.bucket === "cancel").map((c) => c.name);
-  if (failed.length) return { state: "red", failed };
-  const pending = checks.filter((c) => c.bucket === "pending").length;
-  return pending ? { state: "pending", pending } : { state: "green", total: checks.length };
-}
-
-/** One look at the PR: { state: "merged" | "closed" | "green" | "red" | "pending" | "none" | "not-run", … }; merged: `ci`, its CI state. */
-export function look(pr, gh) {
-  const view = gh(["pr", "view", ...(pr ? [pr] : []), "--json", "number,state,statusCheckRollup,mergeCommit,headRefOid"]);
-  if (!view) return { state: "not-run" };
-  const ci = ciOf((view.statusCheckRollup ?? []).map((c) => ({ name: c.name ?? c.context, bucket: bucket(c) })));
-  if (view.state === "MERGED")
-    return { state: "merged", number: view.number, mergeCommit: view.mergeCommit?.oid, ci: ci.state, head: view.headRefOid };
-  if (view.state === "CLOSED") return { state: "closed", number: view.number };
-  return { ...ci, number: view.number, head: view.headRefOid };
-}
-
 /**
  * Waits until the PR's (or MR's, `forge` "gitlab") CI is over, then, once merged, the main branch's CI (GitHub); at most
  * `timeout` minutes; returns { code, message }. `ci`: the checks left to CI, named by every verdict (QUA-262).
  */
 export async function watch({ root = process.cwd(), pr, timeout = 30, interval = 15_000, forge = "github", ci = [], sleep, ...rest }) {
   const { gh = (a) => ghJson(a), glab = (a) => ghJson(a, spawnSync, "glab"), now = Date.now, log = () => {}, T = texts() } = rest;
+  const { localHead = (branch) => localTip(root, branch), inMain = (head) => mergedInMain(root, head) } = rest;
   const wait = sleep ?? ((ms) => new Promise((r) => setTimeout(r, ms)));
-  const end = now() + timeout * 60_000;
+  const start = now();
+  const end = start + timeout * 60_000;
+  // The grace period counts inside the time limit, never on top of it.
+  const graceEnd = Math.min(start + GRACE_MS, end);
+  const graceMin = Math.round((graceEnd - start) / 60_000);
   const gitlab = forge === "gitlab";
   const name = (n) => fill(gitlab ? T.mr : T.pr, n);
   const proven = (ok, message) => `${message}${ci.length ? fill(ok ? T.ciProven : T.ciUnproven, ci.join(", ")) : ""}`;
   const done = (code, message) => ({ code, message: proven(code === 0, message) });
+  const short = (sha) => String(sha ?? "?").slice(0, 7);
+  const seen = keepView(glab);
   for (;;) {
-    const s = gitlab ? lookMr(pr, glab) : look(pr, gh);
+    let s = gitlab ? lookGitlab(pr, seen.glab, lookMr) : look(pr, gh);
+    if (s.state === "not-run") return done(2, fill(T.notRun, gitlab ? T.noGlab : T.noGh));
+    if (s.state === "closed") return done(1, fill(T.closed, name(s.number)));
+    // A verdict on another commit than the local one is not this push's: wait for the PR's head to catch up.
+    const local = localHead(s.branch);
+    if (local && s.head !== local) {
+      const stale = fill(T.stale, short(s.head), short(local));
+      if (now() >= end) return done(2, fill(T.notRun, fill(T.timeout, timeout, name(s.number)) + stale));
+      log(fill(T.staleWaiting, name(s.number), short(s.head), short(local)));
+      await wait(interval);
+      continue;
+    }
+    const inGrace = now() < graceEnd;
+    const green = s.state === "green" && !(s.early && inGrace);
+    let git = null;
+    if (green) ({ s, git } = scheduledMerge(s, { gitlab, view: seen.view, gh, inMain }));
     if (s.state === "merged" && gitlab) {
       const code = s.ci === "green" ? 0 : s.ci === "red" ? 1 : 2;
       return done(code, `${fill(T.merged, name(s.number))}\n${fill(T.mrMerged, T.states[s.ci])}`);
@@ -155,13 +160,19 @@ export async function watch({ root = process.cwd(), pr, timeout = 30, interval =
       const main = await followMain({ root, pr: s.number, sha: s.mergeCommit, gh, wait, now, end, interval, log, T });
       return { code: main.code, message: `${fill(T.merged, name(s.number))}\n${main.message}` };
     }
-    if (s.state === "closed") return done(1, fill(T.closed, name(s.number)));
-    if (s.state === "green") return done(0, fill(T.green, name(s.number), s.total));
     if (s.state === "red") return done(1, fill(T.red, name(s.number), s.failed.join(", ")));
-    if (s.state === "not-run") return done(2, fill(T.notRun, gitlab ? T.noGlab : T.noGh));
-    if (s.state === "none") return done(2, fill(T.notRun, fill(T.noChecks, name(s.number))));
-    if (now() >= end) return done(2, fill(T.notRun, fill(T.timeout, timeout, name(s.number))));
-    log(fill(T.waiting, name(s.number), s.pending));
+    if (green && !git) return done(0, fill(T.green, name(s.number), s.total));
+    if (s.state === "none" && !inGrace) return done(2, fill(T.notRun, fill(T.noChecks, name(s.number), graceMin)));
+    if ((s.state === "pending" || git) && now() >= end) {
+      const parts = [
+        s.running?.length ? fill(T.running, s.running.join(", ")) : "",
+        s.queued?.length ? fill(T.queued, s.queued.join(", ")) : "",
+        git ? fill(T.autoPending, git.state === "not-run" ? T.noFetch : "") : "",
+      ];
+      return done(2, fill(T.notRun, fill(T.timeout, timeout, name(s.number)) + parts.join("")));
+    }
+    const waiting = git ? T.autoWaiting : s.state === "pending" ? T.waiting : T.graceWaiting;
+    log(fill(waiting, name(s.number), s.state === "pending" ? s.pending : graceMin));
     await wait(interval);
   }
 }

@@ -35,35 +35,41 @@ queue.
 - **Close**: free as soon as the `drwil verify` evidence is valid (see
   above); closing removes rights, and accepting the work remains the human
   PR merge.
+- **Scoping during a workstream**: in BUILD, a brief (`docs/projects/`) or
+  an intention (`docs/intentions/`) is created or edited in the
+  workstream's folder, on its branch, without a worktree: the scope gate
+  commits it like any brief, without changing the state or the active
+  brief; its scope never covers the workstream (a code file outside the
+  active brief stays refused), and the contracts registry stays refused
+  outside the active brief's scope. The scoping merges with the
+  workstream's PR. An intent brief added by such a scoping commit (briefs
+  and intents only, the active brief untouched) is no limit: the closing
+  does not ask the « Record as intent » answer for it (limits below).
 - **Limits outside the scope**: at the end of BUILD and
   before VERIFY, the human answers, per limit, a poll headed
   `drwil-limite` (« Handle now » or « Record as intent », read by the hook
   and recorded in the state); a limit within the scope is handled on the
   spot. `node .githooks/close.mjs` refuses, before writing anything, an
-  intent brief added by the branch without the « Record as intent » answer
+  intent brief added by the branch (a scoping commit's excepted) without the « Record as intent » answer
   for its path, or answered « Handle now », and names the poll to ask.
-- **Merge authorised at start** (Claude Code: a second question of the
-  poll, Copilot CLI: a second field) named `drwil-merge` lets the human
-  accept in advance; their answer,
-  read by the hook, is kept in the local state (`auto_merge`) until
-  going back to Scoping, never set by the agent (even with
-  `transitions: agent`). In CLOSING, after verify PASS and pushing the
-  closing commit, the agent schedules `gh pr merge --auto --merge`: the
-  host only merges once the required checks pass ("Allow auto-merge"
-  repository setting required). In the terminal, `start` asks the same
-  question (type `MERGE`). Without that answer, the agent never schedules
-  the merge, in any tool. Once the closing PR is merged, the next `start`
-  (or `next`) goes back to Scoping by itself: the brief is deleted and the
-  PR merged (main branch current, or the branch merged, `gh` for a
-  squash).
-- **Merge given back during the workstream**: from BUILD to CLOSING, a
-  standalone poll headed `drwil-merge` (one single-choice question,
-  exactly « Automatic merge » and « Manual merge », none recommended nor
-  filled in; Copilot CLI: one `drwil-merge` field) writes or withdraws
-  `auto_merge`, read by the hook — e.g. after `state.mjs resume`, which
-  never rebuilds it and says so. No command line writes it.
-- **Worktree at start**: an optional
-  third question of the poll (Claude Code) or field (Copilot CLI) named
+- **Automatic merge by default**: no merge poll, at start or at the end
+  of a scoping. In CLOSING, after verify PASS and pushing the closing
+  commit, the agent runs `node .githooks/merge-auto.mjs <number>`, which
+  schedules the automatic merge of the PR of the current git branch only
+  (never another branch's), after the forge has computed it, updated it if
+  it is behind, and reads the scheduling back on the forge: the host only
+  merges once the required checks pass ("Allow auto-merge" repository
+  setting required). The same tool puts a scoping PR or a detour PR in
+  automatic merge. The guard is the proof — green CI, PR of the current
+  branch, scheduling read back — never an answer to give. A merge
+  cancelled by a failed reopening is rescheduled by the human only. The
+  legacy marks `auto_merge` and `scoping_merge` of an existing state stay
+  readable, without effect, and are no longer written. Once the closing PR
+  is merged, the next `start` (or `next`) goes back to Scoping by itself:
+  the brief is deleted and the PR merged (main branch current, or the
+  branch merged, `gh` for a squash).
+- **Worktree at start**: a
+  question of the poll (Claude Code) or field (Copilot CLI) named
   `drwil-worktree`, "New worktree" or "This folder", lets the human run the
   workstream in a sibling folder `../<repository>-<brief>`, branch
   `workstream/<brief>` cut from the up-to-date main branch. The hook reads the
